@@ -1,7 +1,8 @@
+wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/01/18 16:23:46 $ $Revision: 1.16 $             )
+( lib-editor: $Date: 2005/03/14 02:55:28 $ $Revision: 1.17 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -54,6 +55,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.17  2005/03/14 02:55:28  feaelin
+  Changed the 'in the editor' say/pose to use the default colors.
+
   Revision 1.16  2005/01/18 16:23:46  feaelin
   Corrected problem that would crash the editor when formatting lines with
   ANSI codes in them.
@@ -194,14 +198,15 @@ $define SRNGinsert  sr-insertrng  $enddef
     dup "\"" 1 strncmp not if
         1 strcut swap pop
         "^NOTE^< In the editor > You say, \"" over strcat "\"" strcat
-        me @ swap ansi_notify me @ name " says, \"" strcat
-        swap strcat "\"" strcat
+        me @ swap ansi_notify
+        "^AQUA^" me @ name strcat " says, \"^YELLOW^" strcat
+        swap strcat "^AQUA^\"^RESET^" strcat
         me @ location me @ rot ansi_notify_except
         1 exit
     then
     dup ":" 1 strncmp not if
         1 strcut swap pop
-        me @ name " " strcat swap strcat
+        "^AQUA^" me @ name strcat " " strcat swap strcat
         "^NOTE^< In the editor > " over strcat
         me @ swap ansi_notify
         me @ location me @
@@ -665,5 +670,5 @@ q
 @set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.16 $
-"Installation of lib-editor complete.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
+wh me=Installation of lib-editor complete.
