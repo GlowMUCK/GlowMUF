@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/16 02:03:22 $ $Revision: 1.13 $             )
+( lib-editor: $Date: 2005/01/14 06:37:48 $ $Revision: 1.14 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -54,6 +54,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.14  2005/01/14 06:37:48  feaelin
+  Entering a period without any commands no longer results in an program
+  error.
+
   Revision 1.13  2004/04/16 02:03:22  feaelin
   Fixed bug in EDITORargument that caused the editor to crash after being
   passed certain combinations of "invalid line references".
@@ -204,6 +208,9 @@ $define SRNGinsert  sr-insertrng  $enddef
         1 + rot 1 + rot rot 1 exit
     then
     " " STRsplit swap 1 strcut swap pop
+    dup not if
+      me @ "^RED^Invalid Command." ansi_notify pop 1 exit
+    then
     dup
     "i#end#abort#h#i#l#p#al#ap#del#copy#move#find#repl#join#split#left#center#right#color#indent#format#ruler#ruler1#ruler2#ruler3#sort"
     swap instr not if
@@ -648,5 +655,5 @@ q
 @set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
 "Installation of lib-editor complete.
