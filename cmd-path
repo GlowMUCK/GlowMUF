@@ -2,11 +2,14 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2000/12/21 14:16:23 $ $Revision: 1.3 $
+( cmd-path: $Date: 2001/02/21 03:09:04 $ $Revision: 1.4 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.4  2001/02/21 03:09:04  feaelin
+  Added 'backlink' functionality, modified default help.
+
   Revision 1.3  2000/12/21 14:16:23  feaelin
   Fixed missing public function definitions getlock and obvexits.
 
@@ -94,9 +97,16 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "@path exit simulator v1.0 by PakRat -- Type '@phelp' for help." n
-  "~~~~~~~~~~~~~~~~~~~~" n $enddef
-  
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.4 $ $Date: 2001/02/21 03:09:04 $"
+  begin
+    dup "$" instr while
+    "$" STRsplit strcat
+  repeat
+  a
+  "^Aqua^Type '^YELLOW^@phelp^AQUA^' for help." a
+  "^YELLOW^----------------------------------------------------------------------------" a
+$enddef
+
 $def n plr @ swap notify
 $def a plr @ swap ansi_notify
 $def cmp cmd @ strcmp not
@@ -156,6 +166,17 @@ $endif
   
 $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   
+: get-reverse-dir
+  dup ";" instring dup if 1 - strcut else pop "" then swap
+  "i" "o" trysub "o" "i" trysub
+  "s" "n" trysub "n" "s" trysub
+  "e" "w" trysub "w" "e" trysub
+  "d" "u" trysub "u" "d" trysub
+  "se" "nw" trysub "ne" "sw" trysub
+  "sw" "ne" trysub "nw" "se" trysub
+  swap strcat
+;
+   
 : dir-prop ( s -- s ) tolower
   dup ";" instring dup if 1 - strcut else pop "" then swap
   "o" "out"   trysub  "i" "in"    trysub
@@ -415,31 +436,63 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   "settings for all directions." n
 ;
   
-: cmd-path ( -- )
-  arg @ "=" split "=" split
-  strip rot strip rot strip rot
-  3 pick 3 pick and if
-    rot dup key ! dir-prop dir !
-    swap match2 dst !
-    val !
+: cmd-path-help
+  TITLE
+  "^WHITE^Usage:  ^YELLOW^@path <^BROWN^dir^YELLOW^>=<^BROWN^dbref^YELLOW^>[^BROWN^=name^YELLOW^][^BROWN^,backlink^YELLOW^]" a
+  "^WHITE^Where:  ^BROWN^dir      ^WHITE^= ^AQUA^north, south, east, west, up, down, in, out, nw, sw, ne," a
+  "                   ^AQUA^se, or a number from 1 to 10" a
+  "        ^BROWN^dbref    ^WHITE^= ^AQUA^Dbref # of room to make a path to" a
+  "        ^BROWN^name     ^WHITE^= ^AQUA^name for exit listers (optional)" a
+  "        ^BROWN^backlink ^WHITE^= ^AQUA^name of backlink to create on dest (optional)" a
+  " " a
+  " ^BROWN^Example: ^AQUA^@path north=#4496=Henry's Pad,Hallway" a
+  "^YELLOW^----------------------------------------------------------------------------" a
+;
   
-    dst @ okobj? if
-      plr @ src @ controls? plr @ dst @ controls?
-      dst @ "L" flag? or and if
-        src @ dir @ dst @ path-set-dir-link
-        src @ dir @ "na" val @ path-set-dir-prop
-        "Path linked from " src @ unparseobj strcat
-        " to " strcat dst @ unparseobj strcat
-        "." strcat n
-      else NOPERM a then
-    else NODEST a then
+: cmd-path ( -- )
+  arg @ "" strcmp not if cmd-path-help exit then
+  arg @ "," explode
+  dup 3 < if
+    swap
+    ( Forward link )
+    "=" split "=" split
+    strip rot strip rot strip rot
+    3 pick 3 pick and if
+      rot dup key ! dir-prop dir !
+      swap match2 dst !
+      val !
+      dst @ okobj? if
+        plr @ src @ controls? plr @ dst @ controls?
+        dst @ "L" flag? or and if
+          src @ dir @ dst @ path-set-dir-link
+          src @ dir @ "na" val @ path-set-dir-prop
+          "Path linked from " src @ unparseobj strcat
+          " to " strcat dst @ unparseobj strcat
+          "." strcat n
+        else NOPERM a then
+      else NODEST a then
+    else
+      pop pop pop cmd-path-help
+    then
+    2 = if
+      ( Back link )
+      strip val ! src @ dst @ src ! dst !
+      dir @ get-reverse-dir dir !
+      dst @ okobj? if
+        plr @ src @ controls? plr @ dst @ controls?
+        dst @ "L" flag? or and if
+          src @ dir @ dst @ path-set-dir-link
+          src @ dir @ "na" val @ path-set-dir-prop
+          "Path linked from " src @ unparseobj strcat
+          " to " strcat dst @ unparseobj strcat
+          "." strcat n
+        else NOPERM a then
+      else NODEST a then
+    else
+      pop cmd-path-help
+    then
   else
-    pop pop pop TITLE
-    "dir   -- north, south, east, west, up, down, in, out," n
-    "         nw, sw, ne, se, or a number from 1 to 10" n
-    "dbref -- Dbref # of room to make a path to" n
-    "name  -- optional name for exit listers (not required)" n
-    " " n "@path dir=#dbref=name" n
+    popn cmd-path-help
   then
 ;
   
@@ -921,8 +974,7 @@ q
 @set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
 @set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $tmp/prog1=_version:FM$Revision: 1.4 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
