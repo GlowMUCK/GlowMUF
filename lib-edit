@@ -2,20 +2,21 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 1998/07/29 01:30:37 $ $Revision: 1.1 $
-  Originally from the FuzzBall MUF distribution                                 )
-( ----------------------------------------------------------------------------- )
+( lib-edit: $Date: 1998/07/29 16:47:50 $ $Revision: 1.2 $
+  Originally from the FuzzBall MUF distribution                               )
+( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
   inserver prim 'sort' is available.  If you're installing this lib on a server
-  that does not have a 'sort' prim, uncomment the next line.                    )
+  that does not have a 'sort' prim, uncomment the next line.
+)
 
 ( $def NOSORTPRIM )
 
 ( Stack Based String Range Editing Routines
-start, end, pos, and dest are all with reference to the start of the range
-that is towards the bottom of the stack.  A 1 means the first item of the
-range; the item deepest in the stack.  offset is the number of stack items
-between the top of the string range and the bottom parameter.
+  start, end, pos, and dest are all with reference to the start of the range
+  that is towards the bottom of the stack.  A 1 means the first item of the
+  range; the item deepest in the stack.  offset is the number of stack items
+  between the top of the string range and the bottom parameter.
   
     EDITsearch  [            {rng} ... offset string start -- {rng} ... pos ]
       Searches a range of strings for the first occurence of a substring. This
@@ -85,14 +86,17 @@ between the top of the string range and the bottom parameter.
       Takes a range and formats it similarly to the way that the UNIX fmt
       command would, splitting long lines, and joining short ones.
 )
-( ----------------------------------------------------------------------------- )
+( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.2  1998/07/29 16:47:50  glow
+  Cleaned up documentation.
+
   Revision 1.1  1998/07/29 01:30:37  glow
   Initial revision
 
 )
-( ----------------------------------------------------------------------------- )
+( --------------------------------------------------------------------------- )
 $include $lib/strings
 $include $lib/stackrng
 $define SRNGextract sr-extractrng $enddef
@@ -453,7 +457,7 @@ q
 @register #me lib-edit=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W
-@set $tmp/prog1=/_/de:lib-edit: List lines 10-89 for documentation.
+@set $tmp/prog1=/_/de:lib-edit: List lines 8-82 for documentation.
 @set $tmp/prog1=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
 @set $tmp/prog1=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
 @set $tmp/prog1=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
@@ -471,6 +475,6 @@ q
 @set $tmp/prog1=/_defs/EDITshuffle:"$lib/edit" match "EDITshuffle" call
 @set $tmp/prog1=/_defs/EDITsort:"$lib/edit" match "EDITsort" call
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
-@set $tmp/prog1=/_docs:@list $lib/edit=10-89
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_docs:@list $lib/edit=8-82
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-edit complete.
