@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1998/07/26 20:14:21 $ $Revision: 1.1 $
+( cmd-register $Date: 1998/07/26 20:26:58 $ $Revision: 1.2 $
   Original Author: Unknown                              
   Updated for Glowmuck by: Andy
   Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
@@ -10,9 +10,11 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.2  1998/07/26 20:26:58  glow
+   *** empty log message ***
+
    Revision 1.1  1998/07/26 20:14:21  glow
    Initial revision
-
    Updated to bring it in line with any improvements made in FBMUF5.61.
    Cleaned up use of macros, e.g. made it so no macros or libs are required to
     run/compile cmd-register on a glowmuck server.
@@ -216,5 +218,5 @@ q
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:$Revision: 1.1 $
+@set $cmd/register=_version:$Revision: 1.2 $
 "Installation of cmd-register finished.
