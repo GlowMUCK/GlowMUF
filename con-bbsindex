@@ -1,0 +1,86 @@
+"Beginning installation of con-bbsindex...
+@prog con-bbsindex
+1 99999 d
+1 i
+( con-bbsindex: $Date: 1999/04/17 18:12:16 $ $Revision: 1.1 $
+  Author: Andy
+  --------------------------------------------------------------------------- )
+(
+  $Log: con-bbsindex,v $
+  Revision 1.1  1999/04/17 18:12:16  feaelin
+  Initial revision
+
+)
+( $bbs index system to show new messages )
+
+$include $lib/glowstandard  
+$def IndexRef   #0
+$def IndexDir   "_bbs/"
+  
+: get-new ( mbrdref -- i )
+  me @ "_prefs/bbs/new/" rot intostr strcat getpropval
+  dup 0 < if pop 0 then 1 -
+;
+  
+: basename "_bbs/msgs" ;
+ 
+: okpubboard? ( d -- i )
+  dup ok? not if pop 0 exit then
+  dup room? not if pop 0 exit then
+  dup "@bbsadm" getpropstr .yes? if
+    pop me @ .arch? exit
+  then
+  dup "~bbswiz" getpropstr .yes? if
+    pop me @ .mage? exit
+  then
+  "_bbspub" getpropstr .yes?
+;
+public okpubboard?
+    
+: BBScountnew ( d i -- i )
+  swap dup basename "/" strcat nextprop 0
+  ( curmsg d prop newmsgs )
+  begin over while
+    over dup "/" rinstr strcut swap pop atoi
+    5 pick > if 1 + then
+    3 pick rot nextprop swap
+  repeat -4 rotate pop pop pop
+;
+  
+: BBSlistnew ( i -- )
+  "me" match .guest? if pop exit then
+  1 IndexRef IndexDir nextprop
+  begin dup while
+    ( Showall? Count Prop )
+    IndexRef over getpropstr atoi dbref
+    dup okpubboard? if
+      dup get-new 5 pick over 0 >= or if
+      ( showall count prop board# lastmsg# )
+        over swap BBScountnew 5 pick over or if
+          swap name " has " strcat
+          4 pick intostr " at " strcat
+          "Board " swap strcat
+          swap strcat over intostr strcat
+          " new message" strcat
+          swap 1 = not if "s." else "." then strcat .tell
+        else pop pop then ( Don't show if no new messages )
+      else pop pop then ( Don't show unread boards )
+      swap 1 + swap    
+    else pop then
+    IndexRef swap nextprop
+  repeat pop pop pop
+;
+PUBLIC BBSlistnew
+  
+: con-bbsindex ( s -- ) "Connect" stringcmp trig or not if 0 BBSlistnew then ;
+.
+c
+q
+@register con-bbsindex=con/bbsindex
+@register #me con-bbsindex=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set #0=/~connect/bbsindex:$con/bbsindex
+"Installation of con-bbsindex complete.
