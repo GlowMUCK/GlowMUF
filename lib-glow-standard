@@ -1,0 +1,335 @@
+"Beginning installation of lib-glow-standard...
+@prog lib-glow-standard
+1 99999 d
+1 i
+( lib-glow-standard: $Date: 1998/07/27 19:50:36 $ $Revision: 1.1 $                                       )
+( -------------------------------------------------------------------------- )
+( A library based on the macros originally stored in the following files:
+  macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
+  Majority of these library functions are small enough they are simply
+  defined in the /_defs/ properties on this program and no reference to them
+  are in the body of this muf-program.
+  After some debugging problems, I've made the decision to make ALL the
+  functions in this library begin with a period.  I know that this will
+  cause a little confusion on mucks that are still using macros, but it's
+  necessary to make it clear that it's these functions are not local to the
+  program using them.  Okay, therez three exceptions, deal with it:
+  for, endfor, xor.  They are all defined both with periods and without..    )
+( -------------------------------------------------------------------------- )
+( Many macros taken from:
+  PakRat's Macro Package A [macro-macro]
+  Copyright 1996 by Andrew Nelson, All rights reserved
+  cleancommas -- make commafied lists prettier
+  run         -- run description programs
+  wrapnotify  -- do line-wrapping for notify
+  split       -- split a string given a delimiter
+  splitarg    -- split a string at first space or = sign
+  pmatch      -- match a player name
+  null        -- basic null program, for locks, always true                  )
+( -------------------------------------------------------------------------- )
+( lib-props (now merged with lib-glow-standard, Originally in FB's MUF Dist.
+  PROPS Library -- Contains useful property handling routines.
+                                                                            
+  setpropstr [dbref propname strval -- ]
+    sets a property, or removes it if the string is null.
+   
+  envprop [startdbref propname -- stringval]
+    searches down the environment tree from the given object, looking for
+    a property with the given name.  Returns it's value, or a null string
+    if it wasn't found.
+  
+  envsearch [startdbref propname -- locationdbref]
+    Also searches down the envtree for the given property, but returns the
+    dbref of the object it was found on instead of the string value.  Returns
+    #-1 if it cannot find the property.
+  
+  locate-prop [startdbref propname -- locationdbref]
+    Given a property name and dbref, finds the property, whether on the dbref
+    itself, an environment of the dbref, or a proploc of the dbref.  If none,
+    returns #-1.
+)  
+( -------------------------------------------------------------------------- )
+(
+  $Log: lib-glow-standard,v $
+  Revision 1.1  1998/07/27 19:50:36  glow
+  Initial revision
+
+)
+( -------------------------------------------------------------------------- ) 
+$define tell me @ swap notify $enddef
+$define wrap me @ swap wrapnotify $enddef
+$define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
+ 
+( Beginning of Wrapnotify )
+: last-color ( s -- s )
+  "\\~" "\\^" subst
+  dup "^" rinstr dup if
+    1 - strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop
+      "^" swap strcat
+      "^" strcat
+    else pop pop "" then
+  else pop pop "" then
+;
+ 
+: wraploop ( i d s -- d s )
+  dup ansi_strlen 4 pick > if
+    3 pick over swap 1 ansi_offset strcut
+    swap dup " " rinstr
+    dup 0 > if
+      strcut swap striptail
+      4 pick swap
+      dup last-color
+      rot rot ansi_notify
+      swap striplead strcat swap strcat
+    else
+      pop 3 pick swap
+      dup last-color
+      rot rot ansi_notify
+      swap strcat
+    then
+    wraploop
+  else rot pop then
+;
+ 
+: wrapnotify ( d s -- )
+  over "_prefs/linewrap" getpropstr yes? not if ansi_notify exit then
+  over "_prefs/screenwidth" getpropstr dup if
+    (set custom linewidth)
+    atoi dup 0 >= not if
+      pop 80
+    then
+  else pop 80 then
+  dup if
+    rot rot wraploop
+  else pop then
+  ansi_notify
+;
+ 
+( End of Wrapnotify )
+
+( Beginning of locate-prop )
+: proplocsearch ( startdbref propname -- locationdbref )
+  over swap                                   ( d d s )
+  me @ "search" remove_prop
+  begin over ok? while
+    over over getpropstr if
+      me @ "search" remove_prop
+      pop swap pop exit               ( d )
+    then
+    over intostr "search/" swap strcat me @ swap getpropstr if
+      me @ "search" remove_prop
+      pop pop intostr
+      "Error: loop in proploc found at #" swap strcat tell
+      #-1 exit
+    then
+    over intostr "search/" swap strcat me @ swap "yes" 0 addprop
+    swap "_proploc" getpropstr dup if       ( d s d' )
+      atoi dbref swap                 ( d d' s )
+    else
+      pop #-1 swap
+    then
+  repeat
+  me @ "search" remove_prop
+  pop pop pop #-1 exit
+;
+ 
+: locate-prop ( d s -- d' )
+    over ok? not over not or if
+        pop pop #-1 exit
+    then
+    over over proplocsearch dup ok? if              ( d s d' )
+        rot rot pop pop exit
+    then
+    pop envpropstr pop
+;
+
+( End of locate-prop )
+ 
+: CleanCommas ( s -- s )
+  dup not if exit then
+  dup strlen 1 - over ", " rinstr = if dup strlen 2 - strcut pop then
+  dup strlen over "," rinstr = if dup strlen 1 - strcut pop then
+  dup " " 1 strncmp not if 1 strcut swap pop then
+  dup ", " rinstr dup if
+     over swap 1 - strcut pop ", " rinstr if
+  dup ", " rinstr strcut " and" swap strcat strcat
+  else " and " ", " subst then else pop then
+;
+ 
+: pmatch ( d -- s )
+  dup "me" strcmp not if pop "me" match exit then
+    "*" swap strcat match
+;
+ 
+: run ( s -- ) ( Run program or else show the text )
+  me @ swap pronoun_sub
+  dup "{" instr over "}" instr and if
+    trigger @ swap "(@Desc)" 1 parsempi
+  then
+  dup "@" 1 strncmp if wrap exit then
+  dup " " instr dup if
+    1 - strcut 1 strcut swap pop
+  else pop "" then
+  swap 1 strcut swap pop
+  dup "$" 1 strncmp not if match else atoi dbref then
+  dup program? if
+    depth 22 > if  
+      pop pop "Program loop aborted." tell
+    else call then
+  else pop wrap then
+;
+ 
+: split ( s si -- s s )
+   over over instr dup if
+      rot swap 1 - strcut rot strlen strcut swap pop
+   else pop pop "" then
+;
+ 
+: splitargs ( s -- s s )
+  dup " " instr if
+    dup "=" instr if
+      dup " " instr over "=" instr - 0 < if
+        " " split
+      else "=" split then
+    else " " split then
+  else "=" split then
+;
+
+: fhelp ( s -- )
+  "he" match if "Cannot find help here." tell pop exit then
+  "me" match swap "he " swap strcat force
+;
+
+: null ( -- ) 
+  depth 1 = if pop 1 then 
+; ( ** LAST PROGRAM ** )
+
+public null
+public cleancommas
+public fhelp
+public pmatch
+public run
+public split
+public splitargs
+public wrapnotify
+.
+c
+q
+@register lib-glow-standard=cmd/null
+@register lib-glow-standard=lib/glowstandard
+@register lib-glow-standard=lock/true
+@register #me lib-glow-standard=tmp/prog1
+@register #me lib-glow-standard=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+@set $tmp/prog1=/_/de:A library of macros, intended to replace those usually defined by using def in the MUF program editor.
+@set $tmp/prog1=/_defs/.addpropstr:dup not if pop remove_prop else 0 addprop then
+@set $tmp/prog1=/_defs/.arch?:"archwizard" flag?
+@set $tmp/prog1=/_defs/.archwizard?:"ARCHWIZARD" flag?
+@set $tmp/prog1=/_defs/.blank?:striplead not
+@set $tmp/prog1=/_defs/.builder?:dup "builder" flag? swap .truemage? or
+@set $tmp/prog1=/_defs/.cap:( s -- s') 1 strcut swap toupper swap strcat
+@set $tmp/prog1=/_defs/.check:stringcmp not
+@set $tmp/prog1=/_defs/.cleancommas:"$lib/glowstandard" match "cleancommas" call
+@set $tmp/prog1=/_defs/.cmd?:( s -- i ) dup "#" 1 strncmp not swap "-" 1 strncmp not or
+@set $tmp/prog1=/_defs/.confirm:( s -- i ) ( displays query string and waits for user input-- returns 1 if user said "y" ) me @ swap notify read 1 strcut pop "y" stringcmp not
+@set $tmp/prog1=/_defs/.control?:(d --i) me @ swap controls
+@set $tmp/prog1=/_defs/.controls:controls
+@set $tmp/prog1=/_defs/.cr:me @ " " notify
+@set $tmp/prog1=/_defs/.dark?:dup "D" flag? swap "_dark" \getpropstr or ( d -- i )
+@set $tmp/prog1=/_defs/.debug-line:( -- ) prog "!d" over "d" set set (shows a single debug line)
+@set $tmp/prog1=/_defs/.debug-off:( -- ) prog "!D" set ( set a program !debug from this line )
+@set $tmp/prog1=/_defs/.debug-on:( -- ) prog "D" set ( set a program debug from this line )
+@set $tmp/prog1=/_defs/.descwrap:"$macro/descwrap" match call
+@set $tmp/prog1=/_defs/.endfor:1 - dup not until then pop
+@set $tmp/prog1=/_defs/.envprop:envpropstr swap pop
+@set $tmp/prog1=/_defs/.envsearch:envpropstr pop
+@set $tmp/prog1=/_defs/.explode:2 pick swap instr dup if strcut swap dup strlen 1 - strcut pop swap else pop then
+@set $tmp/prog1=/_defs/.fhelp:"$lib/glowstandard" match "fhelp" call
+@set $tmp/prog1=/_defs/.firstname:( d -- s ) name dup ";" instr if dup ";" instr 1 - strcut pop then
+@set $tmp/prog1=/_defs/.for:dup if begin
+@set $tmp/prog1=/_defs/.getprop?:getpropstr dup if 1 else pop 0 then
+@set $tmp/prog1=/_defs/.guest?:dup "guest" flag? swap "truemage" flag? not and
+@set $tmp/prog1=/_defs/.hide:( L x -- x L ) over 2 + .neg rotate
+@set $tmp/prog1=/_defs/.initialize:"me" match dup me ! location loc !
+@set $tmp/prog1=/_defs/.input:( s -- s' ) (Notify to ME and READ.) me @ swap notify read
+@set $tmp/prog1=/_defs/.kill-stack:( ? -- ) depth popn
+@set $tmp/prog1=/_defs/.letterstr:"abcdefghijklmnopqrstuvwxyz"
+@set $tmp/prog1=/_defs/.locate-prop:"$lib/glowstandard" match "locate-prop"
+@set $tmp/prog1=/_defs/.longdesc:"$macro/longdesc" match call
+@set $tmp/prog1=/_defs/.macro:( "macro" -- ? ) "$macro/" swap strcat match call
+@set $tmp/prog1=/_defs/.mage?:"mage" flag?
+@set $tmp/prog1=/_defs/.make-loc-safe:( -- ) .safe-loc loc !
+@set $tmp/prog1=/_defs/.make-me-safe:( -- ) .safe-me me !
+@set $tmp/prog1=/_defs/.moveto:"$macro/moveto" match call
+@set $tmp/prog1=/_defs/.mpi?:dup "meeper" flag? swap .truemage? or
+@set $tmp/prog1=/_defs/.namesplit:( d -- s1 s2 ) dup unparseobj swap name strlen strcut
+@set $tmp/prog1=/_defs/.neg:( i -- -i ) 0 swap -
+@set $tmp/prog1=/_defs/.no?:( s -- i ) ( checks that string starts with "n", is "0", or is blank ) tolower "n" 1 strncmp not
+@set $tmp/prog1=/_defs/.noguest:"me" match .guest? if me @ "^RED^This command is unavailable to guests." ansi_notify pop exit then
+@set $tmp/prog1=/_defs/.null:not
+@set $tmp/prog1=/_defs/.null?:not
+@set $tmp/prog1=/_defs/.otell:loc @ me @ rot notify_except ( s -- ) ( Display string to everyone in my room except me )
+@set $tmp/prog1=/_defs/.pb:me @ "----------------------------------------------------------------------------" notify
+@set $tmp/prog1=/_defs/.pmatch:"$lib/glowstandard" match "pmatch" call
+@set $tmp/prog1=/_defs/.pmatch+:"$lib/glowstandard" match "pmatch" call
+@set $tmp/prog1=/_defs/.private?:( dbref -- private? )  "_private" getpropstr .yes?
+@set $tmp/prog1=/_defs/.quote_string:(s -- "s") "\"" swap strcat "\"" strcat 
+@set $tmp/prog1=/_defs/.read:( s -- s' ) tell read
+@set $tmp/prog1=/_defs/.reg-call:( "regprogname" -- ? ) "$" swap strcat match call
+@set $tmp/prog1=/_defs/.remove:( not implemented ) pop pop
+@set $tmp/prog1=/_defs/.run:"$lib/glowstandard" match "run" call
+@set $tmp/prog1=/_defs/.safe-loc:( -- d ) "here" match
+@set $tmp/prog1=/_defs/.safe-me:( -- d ) "me" match
+@set $tmp/prog1=/_defs/.say:me @ swap notify
+@set $tmp/prog1=/_defs/.secure:( -- ) "me" match dup me ! location loc !
+@set $tmp/prog1=/_defs/.security?:"_private" getpropstr .yes?
+@set $tmp/prog1=/_defs/.seek:( x L -- L x ) dup 2 + rotate
+@set $tmp/prog1=/_defs/.setpropstr:dup if setprop else pop remove_prop then
+@set $tmp/prog1=/_defs/.setpennies:( d i -- ) over pennies 0 swap - 3 pick swap addpennies addpennies ( sets d's pennies to i )
+@set $tmp/prog1=/_defs/.showstr:( s1 ... si i -- ) begin dup while dup 1 + rotate tell 1 - repeat pop
+@set $tmp/prog1=/_defs/.sort:2 sort
+@set $tmp/prog1=/_defs/.spacecut:( s -- s' ) begin "  " "   " subst dup "   " instr not until
+@set $tmp/prog1=/_defs/.split:"$lib/glowstandard" match "split" call
+@set $tmp/prog1=/_defs/.split2:"$lib/glowstandard" match "split" call
+@set $tmp/prog1=/_defs/.splitarg:"$lib/glowstandard" match "splitargs" call
+@set $tmp/prog1=/_defs/.splitargs:"$lib/glowstandard" match "splitargs" call
+@set $tmp/prog1=/_defs/.splitfirst:"$lib/glowstandard" match "splitargs" call
+@set $tmp/prog1=/_defs/.sps:striplead
+@set $tmp/prog1=/_defs/.stackset:( s -- s' ) dup " " instr dup not if pop pop "" else strcut swap pop then
+@set $tmp/prog1=/_defs/.strcheck:over if over strlen strcut pop stringcmp not else pop pop 0 then
+@set $tmp/prog1=/_defs/.strcutat:"$lib/glowstandard" match "split" call
+@set $tmp/prog1=/_defs/.stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
+@set $tmp/prog1=/_defs/.strip:strip
+@set $tmp/prog1=/_defs/.strip_extra:dup ";" instr dup if 1 - strcut pop else pop then
+@set $tmp/prog1=/_defs/.stripspaces:strip
+@set $tmp/prog1=/_defs/.sts:striptail
+@set $tmp/prog1=/_defs/.suwiz?:me @ "M" flag? swap "B" flag? or
+@set $tmp/prog1=/_defs/.swait:swap sleep #-1 swap notify_except
+@set $tmp/prog1=/_defs/.tell:me @ swap notify
+@set $tmp/prog1=/_defs/.tell-all:me @ location #-1 rot notify_except
+@set $tmp/prog1=/_defs/.tell-me:me @ swap notify
+@set $tmp/prog1=/_defs/.tell_me:me @ swap notify
+@set $tmp/prog1=/_defs/.tellme:me @ swap notify
+@set $tmp/prog1=/_defs/.tmage?:"TRUEMAGE" flag?
+@set $tmp/prog1=/_defs/.trim_spaces:striplead striptail
+@set $tmp/prog1=/_defs/.truemage?:"TRUEMAGE" flag?
+@set $tmp/prog1=/_defs/.unique:(not implemented) pop pop
+@set $tmp/prog1=/_defs/.wiz?:"me" match "wizard" flag?
+@set $tmp/prog1=/_defs/.wizard?:"wizard" flag?
+@set $tmp/prog1=/_defs/.wizmatch:"$lib/glowstandard" match "pmatch" call
+@set $tmp/prog1=/_defs/.wizpmatch:"$lib/glowstandard" match "pmatch" call
+@set $tmp/prog1=/_defs/.wrap:me @ swap .wrapnotify
+@set $tmp/prog1=/_defs/.wrapnotify:"$lib/glowstandard" match "wrapnotify" call
+@set $tmp/prog1=/_defs/.wrapstr:( s1 ... si i -- ) begin dup while dup 1 + rotate .wrap 1 - repeat pop
+@set $tmp/prog1=/_defs/.xor:over over or rot rot and not and ( i1 i2 -- i )
+@set $tmp/prog1=/_defs/.yes?:( s -- i ) ( checks that string starts with y ) tolower "y" 1 strncmp not
+@set $tmp/prog1=/_defs/.yto1:1 strcut pop "y" stringcmp not if 1 else 0 then
+@set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
+@set $tmp/prog1=/_defs/for:dup if begin
+@set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+"Installation of lib-glow-standard completed.
