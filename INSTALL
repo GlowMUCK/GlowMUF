@@ -1,4 +1,4 @@
-INSTALL $Date: 2001/01/15 15:17:27 $ $Revision: 1.9 $
+INSTALL $Date: 2004/02/12 04:39:56 $ $Revision: 1.10 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.2 (Alpha Release)
 ---------
@@ -24,6 +24,7 @@ lib-case
 lib-mpi
 lib-connects
 lib-showlist
+cmd-mv-cp
 lib-userprop
 
 	At this point, if you're going to install cmd-path, you should do
@@ -43,6 +44,15 @@ Comments about some other programs:
   cmd-path:
     This program requires lib-userprop.
 
+  cmd-page:
+    This program requires lib-userprop.  You'll also need to use the wpsetup
+    command to setup a userpropdir for it (wpsetup add cmd-page=p).  Don't
+    forget to use page #setup.
+
+  cmd-laston:
+    This program has a dependency on cmd-page. I recommend installing cmd-page
+    first.
+
   cmd-cinfo:
     This program requires you have cmd-find and cmd-laston installed to
     function properly.
@@ -59,23 +69,18 @@ Comments about some other programs:
     This program requires that you install a current version of cmd-path to
     function correctly.
 
+  con-bbsindex:
+    Requires /_bbs/boardname:boardroomref to be set on #0 to function properly.
+
   cmd-bbs:
     This program requires that you have con-bbsindex installed to function
     correctly.
-   
-  con-bbsindex:
-    Requires /_bbs/boardname:boardroomref to be set on #0 to function properly.
 
   cmd-enterdesc:
     This program requires cmd-lsedit.
 
   cmd-watch/con-watch: 
     These programs need to be installed together.
-
-  cmd-page:
-    This program requires lib-userprop.  You'll also need to use the wpsetup
-    command to setup a userpropdir for it (wpsetup add cmd-page=p).  Don't
-    forget to use page #setup.
 
   cmd-tell:
     You need cmd-page installed beofre this program will work.
@@ -87,7 +92,7 @@ Comments about some other programs:
     and #1 cannot be forced.
 
   cmd-archive:
-    Can't be used by #1 to archive programs on glowmuck 3.0.1.  cmd-archive
+    Can't be used by #1 to archive programs on glowmuck 3.0.1+.  cmd-archive
     uses the force prim to @list programs, and #1 cannot be forced.
 
   cmd-conhistory:
