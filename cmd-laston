@@ -1,0 +1,179 @@
+"Beginning installation of cmd-laston...
+@prog cmd-laston
+1 99999 d
+1 i
+( cmd-laston: $Date: 2000/01/27 18:33:38 $ $Revision: 1.1 $ )
+( Author: PakRat
+( New Global @last by PakRat -- stores disconnects and connects on the )
+( connection system programs, this way people can't be shown as online )
+( when they were actually just swept to another room. )
+  
+( *** SETUP *** )
+( @reg #program=cmd/laston                                      )
+( @set $cmd/laston=2 [ May need W bit ]                         )
+( @set $cmd/laston=L                                            )
+( @propset #0=dbref:/~connect/laston:program                    )
+( @propset #0=dbref:/~disconnect/laston:program                 )
+( @action @last;last;@laston;laston=#0                          )
+( @link @last=$cmd/laston                                       )
+( @desc @last=@$cmd/laston -help                                )
+
+$include $lib/glowstandard  
+$define BLOCKPROP "_prefs/block/last-on" $enddef
+$define CONPROP "_/lc"  $enddef
+$define DISPROP "_/ld"  $enddef
+  
+: Last-Title
+  "Last-On Info: Muck Local Time (CST)" .tell
+  "~~~~~~~" .tell
+;
+  
+: Last-Help
+  Last-Title
+  "USAGE: @last names    -- Shows when player last connected" .tell
+  "       @last #help    -- Shows help screen" .tell
+  "       @last #block   -- Blocks others from seeing your @last" .tell
+  "       @last #unblock -- Restores it so others can see it" .tell
+;
+  
+: Last-Block ( -- )
+  me @ BLOCKPROP "yes" 0 addprop
+  "Only you and wizards can see your Last-On information now." .tell
+;
+  
+: Last-Unblock ( -- )
+  me @ BLOCKPROP remove_prop
+  "Anyone can now see your Last-On information now." .tell
+;
+  
+: AddNum ( s i s i -- s i )
+  dup intostr rot strcat swap ( s i s i )
+  dup 1 = not if swap "s" strcat swap then
+  0 = if pop "" then ( s i s )
+  dup if ", " strcat then
+  rot swap strcat swap
+;  
+  
+: Tell-Time ( i -- s ) 
+  "" swap ( s i )
+  dup 2419200 / " moon" swap AddNum 2419200 %
+  dup 86400 /  " day" swap AddNum 86400 % 
+  over "moon" instr not if
+    dup  3600 / " hour" swap AddNum  3600 %
+    over "day" instr not if
+      dup    60 /  " min" swap AddNum    60 %
+      over "hour" instr not if
+        dup " sec" swap AddNum
+      then
+    then
+  then
+  pop 
+  .cleancommas
+;
+  
+: Last-Check ( d -- )
+  dup awake? if
+    name " is online now." strcat .tell
+    exit
+  then
+  dup BLOCKPROP getpropstr .yes? if
+    dup me @ dbcmp me @ .mage? or not if
+      name " wishes to keep their Last-On information private."
+      strcat .tell exit
+    then
+  then
+  dup DISPROP getpropval
+  dup if ( d i )
+    "%I:%M%p" over timefmt tolower
+    dup 1 strcut pop "0" strcmp not if 1 strcut swap pop then
+    " on %A, %b " 3 pick timefmt strcat
+    "%e, %Y."
+    3 pick timefmt striplead strcat
+    over systime swap - Tell-Time
+    " ago at " strcat
+    swap strcat
+    3 pick name
+    " left " strcat
+    swap strcat
+    .tell
+    ( d i )
+    over CONPROP getpropval
+    dup 3 pick 3 pick > and if -
+      ( d i )
+      Tell-Time swap
+      "%s" pronoun_sub
+      1 strcut swap toupper swap strcat
+      "-- " swap strcat
+      " was online for " strcat 
+      swap strcat
+      "." strcat .tell
+    else ( d i i )
+      pop pop pop
+    then
+  else
+    pop name " hasn't been on for a while." strcat .tell
+  then
+;
+  
+: Last-Main ( s -- )
+  dup if
+    .noguest
+    dup "#" 1 strncmp not if
+      1 strcut swap pop ( com )
+      dup "help" stringcmp not if
+        pop Last-Help exit
+      else dup "block" stringcmp not if
+        pop Last-Block exit
+      else dup "unblock" stringcmp not if
+        pop Last-UnBlock exit
+      then then then
+    then    
+    
+    Last-Title
+    " " "," subst
+    striplead striptail
+    begin 
+      dup "  " instr
+    while 
+      " " "  " subst 
+    repeat
+    
+    " " explode ""
+    ( s1 s2 ... si i failstr )
+    begin over while
+      swap 1 - swap 
+      rot
+      dup .pmatch dup if
+        Last-Check pop
+      else
+        pop
+        " " swap strcat 
+        "," strcat strcat
+      then
+    repeat
+    swap pop
+    dup if 
+      .cleancommas
+      dup " and " instr if " are." else " is." then strcat
+      "I don't know who " swap strcat .tell
+    else
+      pop
+    then
+  else
+  .noguest
+    pop Last-Help
+  then
+;
+.
+c
+q
+@register cmd-laston=cmd/laston
+@register #me cmd-laston=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=W3
+@action @last;last;@laston;laston=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/laston
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-laston complete.
