@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/01/14 02:34:30 $ $Revision: 1.17 $                    )
+( cmd-page: $Date: 2005/01/21 16:43:48 $ $Revision: 1.18 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.18  2005/01/21 16:43:48  feaelin
+  Added output that displays the addressee list in the message header
+
   Revision 1.17  2005/01/14 02:34:30  feaelin
   Correct problem where 'mail to <name>' no longer worked after 1.15.
 
@@ -1045,7 +1048,7 @@ $endif
   86400 / 86400 * +
 ;
  
-: mail-unparse-mesg ( msg:"#dbref day@hh:mm:ss Amesg" -- name time msg )
+: mail-unparse-mesg ( msg:"#dbref day@hh:mm:ss Amesg" -- name time msg addresseelist )
   " " STRsplit swap
   dup "#" 1 strncmp not if
     1 strcut swap pop
@@ -1093,14 +1096,25 @@ $endif
     then
     intostr ":" strcat swap strcat "Unknown day at " swap strcat swap
   then
+  dup "(to" rinstr dup if
+    3 + strcut swap
+    dup strlen 4 - strcut pop swap
+    dup strlen 1 - strcut pop
+  else
+    pop me @ name
+  then
+
 ;
+
  
-: list-message (s--)
+: list-message ( s -- )
+  "^RED^=====" tell
   mail-unparse-mesg
-  rot "=====" tell
-  "From: " swap strcat tell
-  swap "Date: " swap strcat tell
-  "-----" tell
+  4 rotate
+  "^VIOLET^From: ^PURPLE^" swap strcat tell
+  "^VIOLET^To: ^PURPLE^" swap strcat tell
+  swap "^VIOLET^Date: ^PURPLE^" swap strcat tell
+  "^RED^-----" tell
   unwrap " " tell
 ;
  
@@ -1700,7 +1714,7 @@ $endif
     "^INFO^-- Oldest unread mail is dated "
     over maildir "/1" strcat Ugetpropstr
     mail-unparse-mesg
-    pop swap pop strcat
+    pop pop swap pop strcat
     "." strcat tell
   then
   pop 1 - check-each
@@ -1812,7 +1826,7 @@ $endif
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/14 02:34:30 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/21 16:43:48 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -2055,7 +2069,7 @@ $endif
     swap 5 pick swap 
     ( pdb sprop i-1 "i> " pdb i )
     swap 5 pick mail-getmsg
-    mail-unparse-mesg
+    mail-unparse-mesg pop
     ( pdb sprop i-1 "i> " "name" "time" "msg" )
     " from " 4 rotate strcat
     ": " strcat
@@ -2114,7 +2128,7 @@ $endif
       pop "Invalid saved mail message number." tell
     else
       me @ omaildir mail-getmsg
-      mail-unparse-mesg
+      mail-unparse-mesg pop
       rot "(Orig. from " swap strcat
       ", " strcat
       rot strcat
@@ -2700,7 +2714,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.17 $"
+  "MUFpage v2.5FM$Revision: 1.18 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2894,5 +2908,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.17 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.18 $
 wh me=Installation of cmd-page complete.
