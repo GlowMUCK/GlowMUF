@@ -2,7 +2,7 @@
 @prog cmd-sweep
 1 99999 d
 1 i
-( cmd-sweep: $Date: 2000/12/22 18:15:46 $ $Revision: 1.1 $ )
+( cmd-sweep: $Date: 2000/12/22 18:18:04 $ $Revision: 1.2 $                    )
 ( Authors: Tygryss, IMiR of XR, Scotfox                                       )
 ( Written: 1991 May 02                                                        )
 ( --------------------------------------------------------------------------- )
@@ -24,6 +24,12 @@
     _sweep/public?      if 'yes' means this room in sweepable by anyone.
     _sweep/immune?      If yes, means this THING doesn't home from inventory
                          when the player is swept.
+)
+(
+  $Log: cmd-sweep,v $
+  Revision 1.2  2000/12/22 18:18:04  feaelin
+  Added support for zombie/puppets as shown in fbmuf version of cmd-sweep
+
 )
   
 $define DEFAULT_SWEEP_MESG
@@ -248,5 +254,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Sweeps all sleepers from the current room, if you have permission.  See 'sweep #help'
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-sweep complete.
