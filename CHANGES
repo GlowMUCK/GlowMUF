@@ -1,0 +1,91 @@
+25 July 1998: Beta Release of this distribution
+------------------------------------------------------------------------------
+Included a sample database of the programs arranged per the admin-guide
+
+1 June 1998: Alpha Release of this distribution
+------------------------------------------------------------------------------
+Original Base: Glowmuf 1.9.3 Release and FuzzBall MUF 5.61 Release
+
+With this initial release I have four objectives in mind:
+1) Change all the libs and muf programs so that they do not use macros but
+   use a new library called lib-glow-standard (registered as lib/glowstandard)
+2) Update the programs with any bugfixes or improvements included in the
+   FuzzBall Distribution (FB5.60) of MUF programs.
+3) Update the programs for compatibility with GlowMuck 3.0.1
+4) Assign a version number to each program and library so in future releases,
+   we can tell which libraries or programs need updated.  Any program or
+   library that makes no mention of a version number will get assigned
+   FM1.0 as the version number.  If the program already has a version
+   number the FM1.0 will be appended to that version number. This way
+   a quick glance at @reg will tell you which programs are out of date.
+   (In case you're curious, I'm simply using my initials, seemed an easy way
+   to differentiate between FB's dist, Andy's dist for glow, and my dist for
+   glow).
+Other 'Across the board' changes:
+5) Many of the libs/programs had more complete documentation as a comment in
+   the FB5.61 version of them.  I've included this documentation.  In addition,
+   I've set the @desc of the libraries to tell you what lines to list to see
+   that documentation.
+6) I've adjusted the scripts so that at the beginning and end there is a 'say'
+   that tells you it's beginning or ending the installation, and what it's
+   installing.  I have had problems in the past with seeing when the 
+   installation is done, or if that 'pause' is just a some big huge lag. 
+
+Programs originally written for glow MUF 1.9.3 or earlier, MUF FB5.61 or
+earlier, or the original TinyMuck (any version), may or may not work 'as is'
+if you're this distribution of libs.  At a minimum, any program using a
+'standard macro' will require a $include $lib/glowstandard line towards the
+beginning of the program. (I generally try to put the line with any other
+$includes...). 
+-------------------------------------------------------------------------------
+cmd-register:
+  I had to reincorporate the support for _version and _lib-version. Apparently,
+  at some point it was removed from cmd-register.  Replaced calls to macros
+  .strcheck, .noguest/guest? and sls/sts with the actual muf code they
+  contained.  cmd-register is a special case, in that it can't make calls to
+  libraries in it's definition, since it's installed before any libraries
+  exist.  Bear this in mind when you decide to change library functions such
+  as .tell changes to any library functions will NOT affect cmd-register.
+
+lib-glow-standard:
+  This file is new in this release.  It includes the macros contained in
+  macro-macro, std-defs, def-pmatch, lib-props.  Be warned that almost all of
+  the functions are prefixed by a period (e.g. .tell) prevent any potential
+  conflicts with local words/functions.  The only exceptions are: for, endfor,
+  xor.
+
+lib-stackrng:
+  Removed the redundant popoffn function (it was indentical in function as the
+  inserver 'popn'.  Made sure that sr-deleterng and sr-poprng functions were
+  changed appropiately.
+
+cmd-mv-cp:
+  Oops.  It was registering as cmd/mv-cp, but the lib defs props
+  that were being set were using $global/mv-cp.  Minor bug there.
+  I changed it so it is being registered as lib/mv-cp and cmd/mv-cp,
+  changed lib defs to use $lib/mv-cp.
+
+macro-macro:
+  This file no longer exists.  All the macros from it have been moved to
+  the $lib/glowstandard (lib-glow-standard).
+
+macro-showlist:
+  This file was converted to be used as $lib/showlist, and the file-name
+  change to lib-showlist.  reg_names and file names should reflect function!
+
+cmd-archive:
+  Added the fb feature =p.  Fixed a bug where @archiv'ing #0 resulted in a error.
+
+cmd-ic-ooc:
+  New in this release.  A quick and dirty for setting the in_character flag for
+  players.  defaults to ic=in character, ooc=out of character.
+
+cmd-page:
+  For 'idle status' it now uses the "idletime" sysparm instead of an arbitrary
+  value and the help screens are cleaned up. (Thank you, Maddax).
+
+con-caller:
+  Commented out the ~accept checking, this is only used on Legacy.
+
+cmd-ic-ooc:
+  New in this distribution.  Sets/unsets the in_character flag.

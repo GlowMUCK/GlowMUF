@@ -1,0 +1,23 @@
+1ST-README $Date: 1998/07/25 18:20:15 $ $Revision: 1.0 $
+---------------------------------------------------------------------------
+Warning!!!!!!
+
+BACKUP!BACKUP!
+I can't say it enough times.  If you try to install these updated libs on
+your system, and it breaks so many programs that you can't fix 'em all,
+and you don't have backup......
+
+Installing lib-glow-standard as is on an existing server (e.g. one with
+programs already installed), will potentially break other programs until
+they're upgraded to use lib-glow-standard (usually as simple as adding
+$include $lib/glowstandard, but not always).  If you want to install
+lib-glow-standard one a already up and running, lots of programs already
+installed system, try using lib-glow-standard-existing instead.
+
+Any other programs should install okay (be careful not to mess up any local
+modifications, if any).  If they do, feel free to let me know.  
+
+
+
+
+
