@@ -1,8 +1,8 @@
-"Beginning installation of cmd-page...
+wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2004/09/05 13:29:49 $ $Revision: 1.7 $                     )
+( cmd-page: $Date: 2004/12/12 17:00:35 $ $Revision: 1.8 $                     )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop             )
@@ -14,6 +14,9 @@
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.8  2004/12/12 17:00:35  feaelin
+  A quick hack to force page to use lib-editor.
+
   Revision 1.7  2004/09/05 13:29:49  feaelin
   Fixed issue where wizards couldn't override the guest? flag to page guests
 
@@ -41,6 +44,7 @@ $include $lib/glow
 $include $lib/strings
 $include $lib/showlist
 $include $lib/userprop
+$include $lib/editor
   
 $def sizelimit 2500
 $def daysold 9999
@@ -1177,7 +1181,7 @@ $endif
   
 : remove-noguest (dbrefrange count nullstr -- dbrefrange sleeperstr)
   over not if swap pop sort-stringwords exit then
-  3 pick 3 + rotate dup noguest? not or if
+  3 pick 3 + rotate dup noguest? not if
     -4 rotate
   else
     name " " strcat strcat
@@ -1651,7 +1655,7 @@ $endif
  
 : multi-send (msg names--)
   over not if
-    pop pop "No mail message sent." tell exit
+    pop pop "^INFO^No mail message sent." tell exit
   then
   do-getplayers
   me @ guest? if do-noguest then
@@ -1748,7 +1752,7 @@ $endif
 
 : show-header ( s -- )
   me @ swap 
-  "^FOREST^MUFpage v2.5FM$Revision: 1.7 $by Foxen                                            ^YELLOW^"
+  "^FOREST^MUFpage v2.5FM$Revision: 1.8 $by Foxen                                            ^YELLOW^"
   swap strcat
   begin
     dup "$" instr while
@@ -1757,7 +1761,7 @@ $endif
   "" "Revision: " subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                Updated $Date: 2004/09/05 13:29:49 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                Updated $Date: 2004/12/12 17:00:35 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -1919,7 +1923,23 @@ $endif
   EM-Loop
 ;
  
-: Edit-Mail (--s) ( This is my cheapo editor, no frills :)
+: Edit-Mail ( -- s)
+  ( call editor )
+  0 EDITOR
+  ( loop through the strings, building a superstring, delimited the way
+    Page exists. I know, this is a hack, but its quick and easy. )
+  "abort" strcmp not if
+    popn "" exit
+  then
+  "" over begin
+    swap "{" strcat ( begin the next line )
+    swap dup 3 + rotate ( fetch the next line off the stack )
+    rot swap strcat "}" strcat swap ( add the new line, terminate it with } )
+    1 - dup 0 = ( are we done yet? )
+  until pop swap pop
+;
+
+: Old-Edit-Mail (--s) ( This is my cheapo editor, no frills :)
   "Enter the subject for this letter:" tell
   read "Re: " swap strcat "}{" strcat
   " " tell
@@ -2673,7 +2693,7 @@ public check
   depth dept !
   main
   depth dept @ 1 - = not if
-    "* Please tell PakRat you saw this line and what you typed to get it." tell
+    "* Please report this message and what you typed to get it at glowmuck.sourceforge.net." tell
     .debug-line
   then
 ;
@@ -2828,5 +2848,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.7 $
-"Installation of cmd-page complete.
+@set $cmd/page=/_version:2.5FM$Revision: 1.8 $
+wh me=Installation of cmd-page complete.
