@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2004/12/12 17:00:35 $ $Revision: 1.8 $                     )
+( cmd-page: $Date: 2004/12/12 18:10:02 $ $Revision: 1.9 $                     )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop             )
@@ -14,6 +14,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.9  2004/12/12 18:10:02  feaelin
+  Fixed bug that introduced extra curly-braces in a multi-line message
+
   Revision 1.8  2004/12/12 17:00:35  feaelin
   A quick hack to force page to use lib-editor.
 
@@ -1752,7 +1755,7 @@ $endif
 
 : show-header ( s -- )
   me @ swap 
-  "^FOREST^MUFpage v2.5FM$Revision: 1.8 $by Foxen                                            ^YELLOW^"
+  "^FOREST^MUFpage v2.5FM$Revision: 1.9 $by Foxen                                            ^YELLOW^"
   swap strcat
   begin
     dup "$" instr while
@@ -1761,7 +1764,7 @@ $endif
   "" "Revision: " subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                Updated $Date: 2004/12/12 17:00:35 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                Updated $Date: 2004/12/12 18:10:02 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -1932,11 +1935,10 @@ $endif
     popn "" exit
   then
   "" over begin
-    swap "{" strcat ( begin the next line )
-    swap dup 3 + rotate ( fetch the next line off the stack )
-    rot swap strcat "}" strcat swap ( add the new line, terminate it with } )
+    dup 3 + rotate ( fetch the next line off the stack )
+    rot swap strcat "}{" strcat swap ( add the new line, terminate it with } )
     1 - dup 0 = ( are we done yet? )
-  until pop swap pop
+  until pop swap pop dup strlen 2 - strcut pop
 ;
 
 : Old-Edit-Mail (--s) ( This is my cheapo editor, no frills :)
@@ -2848,5 +2850,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.8 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.9 $
 wh me=Installation of cmd-page complete.
