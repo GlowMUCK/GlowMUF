@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/01/11 19:26:30 $ $Revision: 1.14 $                    )
+( cmd-page: $Date: 2005/01/12 19:52:38 $ $Revision: 1.15 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,12 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.15  2005/01/12 19:52:38  feaelin
+  Corrected problem where if you mistakenly used *name instead of name, page
+  would blow up. It now assumes that if it can't find an alias named 'name'
+  that its a username, and if it can't find the player, simply reports that
+  it can't find the player. :)
+
   Revision 1.14  2005/01/11 19:26:30  feaelin
   More colorization
 
@@ -463,7 +469,8 @@ $endif
   over swap get-personal-alias
   dup not if
     pop get-global-alias
-  else swap pop
+  else 
+    swap pop
   then
 ;
   
@@ -845,10 +852,15 @@ $endif
     then
   then
   dup "*" 1 strncmp not if
-    1 strcut swap pop me @
-    get-alias " " strcat
-    swap strcat single-space
-    get-playerdbrefs exit
+    1 strcut swap pop dup me @
+    get-alias dup if
+      swap pop
+      " " strcat
+      swap strcat single-space
+      get-playerdbrefs exit
+    else
+      pop
+    then
   then
   dup player-match? dup -1 = if
     pop pop pop
@@ -1794,7 +1806,7 @@ $endif
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/11 19:26:30 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/12 19:52:38 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -2679,7 +2691,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.14 $"
+  "MUFpage v2.5FM$Revision: 1.15 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2873,5 +2885,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.14 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.15 $
 wh me=Installation of cmd-page complete.
