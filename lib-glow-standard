@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2001/02/21 17:30:37 $ $Revision: 1.15 $          )
+( lib-glow-standard: $Date: 2001/02/24 21:31:53 $ $Revision: 1.16 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,6 +50,11 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.16  2001/02/24 21:31:53  feaelin
+  Minor cleanup.
+  Fixed a recursing definition bug with $def sort blah .sort
+  definitions.
+
   Revision 1.15  2001/02/21 17:30:37  feaelin
   Added null and nothing to the 'registered' names of the library.
 
@@ -252,11 +257,9 @@ q
 @set $tmp/prog1=/_defs/.arch?:"archwizard" flag?
 @set $tmp/prog1=/_defs/.archwizard?:"ARCHWIZARD" flag?
 @set $tmp/prog1=/_defs/.blank?:striplead not
-@set $tmp/prog1=/_defs/.builder?:dup "builder" flag? swap .truemage? or
+@set $tmp/prog1=/_defs/.builder?:dup "builder" flag? swap "mage" flag? or
 @set $tmp/prog1=/_defs/.cap:( s -- s') 1 strcut swap toupper swap strcat
-@set $tmp/prog1=/_defs/.check:stringcmp not
 @set $tmp/prog1=/_defs/.cleancommas:"$lib/glowstandard" match "cleancommas" call
-@set $tmp/prog1=/_defs/.cmd?:( s -- i ) dup "#" 1 strncmp not swap "-" 1 strncmp not or
 @set $tmp/prog1=/_defs/.confirm:( s -- i ) ( displays query string and waits for user input-- returns 1 if user said "y" ) me @ swap notify read 1 strcut pop "y" stringcmp not
 @set $tmp/prog1=/_defs/.control?:(d --i) me @ swap controls
 @set $tmp/prog1=/_defs/.controls:controls
@@ -314,7 +317,7 @@ q
 @set $tmp/prog1=/_defs/setpropstr:dup if setprop else pop remove_prop then
 @set $tmp/prog1=/_defs/.setpennies:( d i -- ) over pennies 0 swap - 3 pick swap addpennies addpennies ( sets d's pennies to i )
 @set $tmp/prog1=/_defs/.showstr:( s1 ... si i -- ) begin dup while dup 1 + rotate tell 1 - repeat pop
-@set $tmp/prog1=/_defs/.sort:2 sort
+@set $tmp/prog1=/_defs/.sort:2 \sort
 @set $tmp/prog1=/_defs/.spacecut:( s -- s' ) begin "  " "   " subst dup "   " instr not until
 @set $tmp/prog1=/_defs/.sps:striplead
 @set $tmp/prog1=/_defs/.stackset:( s -- s' ) dup " " instr dup not if pop pop "" else strcut swap pop then
@@ -351,5 +354,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.15 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.16 $
 "Installation of lib-glow-standard completed.
