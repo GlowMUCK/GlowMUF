@@ -2,7 +2,7 @@
 @prog macro-descwrap
 1 99999 d
 1 i
-( macro-descwrap: $Date: 1998/08/23 21:25:01 $ $Revision: 1.1 $
+( macro-descwrap: $Date: 1998/08/23 21:32:34 $ $Revision: 1.2 $
   Author: Pakrat                                                             )
 ( -------------------------------------------------------------------------- )
  ( Line/Word Wrapper by PakRat  Copyright 1993 All Rights Reserved       )
@@ -22,6 +22,9 @@
 ( -------------------------------------------------------------------------- )
 ( 
   $Log: macro-descwrap,v $
+  Revision 1.2  1998/08/23 21:32:34  glow
+  Bringing into line with Legacy's more current version.
+
   Revision 1.1  1998/08/23 21:25:01  glow
   Initial revision
 
@@ -31,7 +34,8 @@ $include $lib/glowstandard
  
  : notifywordwrap ( s -- )
   dup not if pop "You see nothing special." then
-  trigger @ player? trigger @ "_look_notify" getpropstr and if
+  trigger @ player? trigger @ thing? or
+  trigger @ "_look_notify" getpropstr and if
   trigger @ "_look_format" getpropstr dup not if pop ">> %n looked at you <<" 
   then me @ swap pronoun_sub trigger @ swap notify then
   trigger @ swap pronoun_sub 
