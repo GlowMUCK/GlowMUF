@@ -1,0 +1,56 @@
+"Beginning installation of cmd-beep...
+@prog cmd-beep
+1 99999 d
+1 i
+( cmd-beep: $Date: 1999/04/18 17:15:41 $ $Revision: 1.1 $
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-beep,v $
+  Revision 1.1  1999/04/18 17:15:41  feaelin
+  Initial revision
+
+)
+
+$include $lib/glow
+
+: cmd-beep ( s -- )
+  .noguest
+  dup not if pop
+    "Usage: beep <player> or beep here -- sends ##beep## to player or room"
+    .tellme exit
+  then
+  dup "here" stringcmp not if pop
+    loc @ #-1 "^beep^" ansi_notify_except
+    loc @ #-1 "##Beep##" notify_except
+    exit
+  then
+  .pmatch dup not if pop
+    "I don't know who that is." .tellme exit
+  then
+  dup awake? not if pop
+    "They are sleeping." .tellme exit
+  then
+  dup "HAVEN" flag? if pop
+    "They are set haven." .tellme exit
+  then
+  dup .private? over location .private? or if
+    "They wish for privacy." .tellme exit
+  then
+  dup "From " me @ name strcat "..." strcat notify
+  dup "^beep^" ansi_notify
+  "##Beep##" notify
+  "Beeped." .tellme
+;
+.
+c
+q
+@register cmd-beep=cmd/beep
+@register #me cmd-beep=tmp/prog1
+@set $tmp/prog1=M2
+@action beep=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/beep
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-beep complete.
