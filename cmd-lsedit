@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-lsedit...
 @prog cmd-lsedit
 1 99999 d
 1 i
-( cmd-lsedit: $Date: 2005/04/04 18:22:25 $ $Revision: 1.6 $                   )
+( cmd-lsedit: $Date: 2005/04/05 23:32:55 $ $Revision: 1.7 $                   )
 ( Purpose: Front end for lib-editor as an actual text editor                  )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -10,6 +10,9 @@ wh me=Beginning installation of cmd-lsedit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-lsedit,v $
+  Revision 1.7  2005/04/05 23:32:55  feaelin
+  Corrected library calls according to the new standard.
+
   Revision 1.6  2005/04/04 18:22:25  feaelin
   Removed redundantly duplicated words that are already defined in lib-lmgr
   Cleaned up the installer script
@@ -28,10 +31,6 @@ wh me=Beginning installation of cmd-lsedit...
 
   Revision 1.2  2001/01/22 05:27:18  feaelin
   Added lscopy and lsmove commands
-
-  Revision 1.1  2000/01/25 17:57:29  feaelin
-  Initial revision
-
 )
  
 $include $lib/lmgr
@@ -39,8 +38,7 @@ $include $lib/edit
 $include $lib/editor
 $include $lib/strings
 $include $lib/mv-cp
- 
-$def .atell me @ swap ansi_notify
+
 ( We don't need these...they're in lib-lmgr 2005-04-04 IDE   
 : LMGRdeletelist
   over over LMGRgetcount
@@ -55,80 +53,81 @@ $def .atell me @ swap ansi_notify
  )
   
 : lsedit-loop  ( listname dbref {rng} mask currline cmdstr -- )
-    EDITORloop
+    EDITOR-loop
     dup "save" stringcmp not if
         pop pop pop pop
         3 pick 3 + -1 * rotate
         over 3 + -1 * rotate
         dup 5 + pick over 5 + pick
-        over over LMGRdeletelist
-        1 rot rot LMGRputrange
-        4 pick 4 pick LMGRgetlist
+        over over LMGR-deletelist
+        1 rot rot LMGR-putrange
+        4 pick 4 pick LMGR-getlist
         dup 3 + rotate over 3 + rotate
-        "^SUCC^< List saved. >" .atell
+        "^SUCC^< List saved. >" me @ swap ansi_notify
         "" lsedit-loop exit
     then
     dup "abort" stringcmp not if
-        "^INFO^< list not saved. >" .atell
+        "^INFO^< list not saved. >" me @ swap ansi_notify
         pop pop pop pop pop pop pop pop pop exit
     then
     dup "end" stringcmp not if
         pop pop pop pop pop pop
         dup 3 + rotate over 3 + rotate
-        over over LMGRdeletelist
-        1 rot rot LMGRputrange
-        "^SUCC^< list saved. >" .atell exit
+        over over LMGR-deletelist
+        1 rot rot LMGR-putrange
+        "^SUCC^< list saved. >" me @ swap ansi_notify exit
     then
 ;
  
 : do-delete
-  "^SUCC^List to be deleted is as follows:" .atell
-  2 pick 2 pick LMGRgetlist EDITdisplay
-  "^FAIL^Enter YES if you are sure you want to delete the list." .atell
+  "^SUCC^List to be deleted is as follows:" me @ swap ansi_notify
+  2 pick 2 pick LMGR-getlist EDIT-display
+  "^FAIL^Enter YES if you are sure you want to delete the list." me @ swap
+  ansi_notify
   read
   "YES" stringcmp not if
     swap "#" strcat remove_prop
-    "^SUCC^List removed." .atell
+    "^SUCC^List removed." me @ swap ansi_notify
   else
-    "^INFO^List removal aborted." .atell
+    "^INFO^List removal aborted." me @ swap ansi_notify
   then
 ;
  
 : do-copy
   swap
   "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
-  .atell read
+  me @ swap ansi_notify read
   dup "." stringcmp not if 
     pop 2 pick
   else
     strip
     dup not if
-      "^FAIL^Invalid database item." .atell
+      "^FAIL^Invalid database item." me @ swap ansi_notify
       depth popn exit
     then
     match dup not if
       pop
-      "^FAIL^I don't know what database item you mean." .atell
+      "^FAIL^I don't know what database item you mean." me @ swap ansi_notify
       depth popn exit
     else 
       dup #-2 dbcmp if
         pop
-        "^FAIL^I don't know which one you mean." .atell
+        "^FAIL^I don't know which one you mean." me @ swap ansi_notify
         depth popn exit
       then
     then
     me @ over owner dbcmp not
     me @ "w" flag? not and if
-      pop pop "^FAIL^Permission denied." .atell exit
+      pop pop "^FAIL^Permission denied." me @ swap ansi_notify exit
     then
   then
   "^INFO^Enter the destination property or '.' if you are copying to the same property."
-  .atell read
+  me @ swap ansi_notify read
   dup "." stringcmp not if
     pop 2 pick
   else
     dup not if
-      "^FAIL^I didn't understand that list." .atell
+      "^FAIL^I didn't understand that list." me @ swap ansi_notify
       depth popn exit
     then
     "/" swap strcat
@@ -136,49 +135,53 @@ $def .atell me @ swap ansi_notify
     dup "/@" instr
     over "/~" instr or
     me @ "wizard" flag? not and if
-      "^FAIL^Permission denied." .atell
+      "^FAIL^Permission denied." me @ swap ansi_notify
       depth popn exit
     then
   then
-  "#" strcat 3 pick "#" strcat 3 put copy-prop
-  if "^SUCC^Copy successful." .atell else "^FAIL^Copy failed." .atell then
+  "#" strcat 3 pick "#" strcat 3 put MVCP-copy-prop
+  if 
+    me @ "^SUCC^Copy successful." ansi_notify
+  else
+    me @ "^FAIL^Copy failed." ansi_notify
+  then
 ;
  
 : do-move
   swap
   "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
-  .atell read
+  me @ swap ansi_notify read
   dup "." stringcmp not if 
     pop 2 pick
   else
     strip
     dup not if
-      "^FAIL^Invalid database item." .atell
+      "^FAIL^Invalid database item." me @ swap ansi_notify
       depth popn exit
     then
     match dup not if
       pop
-      "^FAIL^I don't know what database item you mean." .atell
+      "^FAIL^I don't know what database item you mean." me @ swap ansi_notify
       depth popn exit
     else 
       dup #-2 dbcmp if
         pop
-        "^FAIL^I don't know which one you mean." .atell
+        "^FAIL^I don't know which one you mean." me @ swap ansi_notify
         depth popn exit
       then
     then
     me @ over owner dbcmp not
     me @ "w" flag? not and if
-      pop pop "^FAIL^Permission denied." .atell exit
+      pop pop "^FAIL^Permission denied." me @ swap ansi_notify exit
     then
   then
   "^INFO^Enter the destination property or '.' if you are copying to the same property."
-  .atell read
+  me @ swap ansi_notify read
   dup "." stringcmp not if
     pop 2 pick
   else
     dup not if
-      "^FAIL^I didn't understand that list." .atell
+      "^FAIL^I didn't understand that list." me @ swap ansi_notify
       depth popn exit
     then
     "/" swap strcat
@@ -186,32 +189,32 @@ $def .atell me @ swap ansi_notify
     dup "/@" instr
     over "/~" instr or
     me @ "wizard" flag? not and if
-      "^FAIL^Permission denied." .atell
+      "^FAIL^Permission denied." me @ swap ansi_notify
       depth popn exit
     then
   then
-  "#" strcat 3 pick "#" strcat 3 put move-prop 
-  if "^SUCC^Move successful." .atell else "^FAIL^Move failed." .atell then
+  "#" strcat 3 pick "#" strcat 3 put MVCP-move-prop 
+  if "^SUCC^Move successful." me @ swap ansi_notify else "^FAIL^Move failed." me @ swap ansi_notify then
 ;
  
 : show-help
-  "Usage:" .atell
-  "lsedit <database item>=<listname>     - Edit <listname>" .atell
-  "lsdel <database item>=<listname>      - Delete <listname>" .atell
-  "lscopy <database item>=<listname>     - Copy <listname>" .atell
-  "lsmove <database item>=<listname>     - Move <listname>" .atell
-  "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." .atell
+  "Usage:" me @ swap ansi_notify
+  "lsedit <database item>=<listname>     - Edit <listname>" me @ swap ansi_notify
+  "lsdel <database item>=<listname>      - Delete <listname>" me @ swap ansi_notify
+  "lscopy <database item>=<listname>     - Copy <listname>" me @ swap ansi_notify
+  "lsmove <database item>=<listname>     - Move <listname>" me @ swap ansi_notify
+  "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." me @ swap ansi_notify
 ; 
  
 : cmd-lsedit
   .noguest
   dup "#help" stringcmp not if show-help exit then
   "me" match me !
-  "=" STRsplit strip swap strip
+  "=" STR-split strip swap strip
   swap
   dup "" strcmp not if
     "^FAIL^You must specify a listname.  Syntax: " command @ strcat 
-    " <database item>=<listname>." strcat .atell
+    " <database item>=<listname>." strcat me @ swap ansi_notify
     pop pop exit
   then
   "/" swap strcat
@@ -219,27 +222,27 @@ $def .atell me @ swap ansi_notify
   dup "/@" instr
   over "/~" instr or
   me @ "wizard" flag? not and if
-    "^FAIL^Permission denied." .atell
+    "^FAIL^Permission denied." me @ swap ansi_notify
     pop pop exit
   then
   swap strip
   dup not if
     "^FAIL^You must specify a database item.  Syntax: " command @ strcat 
-    " <database item>=<listname>." .atell
+    " <database item>=<listname>." me @ swap ansi_notify
     pop pop exit
   then
   match dup not if pop
     "^FAIL^I don't know what database item you mean.  Syntax: " command @ strcat 
-    " <database item>=<listname>." .atell
+    " <database item>=<listname>." me @ swap ansi_notify
     pop exit
   else dup #-2 dbcmp if pop
     "^FAIL^I don't know which one you mean.  Syntax: " command @ strcat 
-    " <database item>=<listname>" .atell
+    " <database item>=<listname>" me @ swap ansi_notify
     pop exit
   then then
     me @ over owner dbcmp not
     me @ "w" flag? not and if
-      pop pop "^FAIL^Permission denied." .atell exit
+      pop pop "^FAIL^Permission denied." me @ swap ansi_notify exit
   then
   command @ "lsdel" instr if do-delete exit then
   command @ "lsrem" instr if do-delete exit then
@@ -249,12 +252,12 @@ $def .atell me @ swap ansi_notify
   command @ "lsmove" stringcmp not if do-move exit then
   command @ "lsmv" stringcmp not if do-move exit then
   "^NOTE^<    Welcome to the list editor.  You can get help by entering '.h'     >^RESET^"
-  .atell
+  me @ swap ansi_notify
   "^NOTE^< '.end' will exit and save the list.  '.abort' will abort any changes. >^RESET^"
-  .atell
+  me @ swap ansi_notify
   "^NOTE^<    To save changes to the list, and continue editing, use '.save'     >^RESET^"
-  .atell
-  over over LMGRgetlist
+  me @ swap ansi_notify
+  over over LMGR-getlist
   "save" 1 ".i $" lsedit-loop
 ;
 .
@@ -268,6 +271,6 @@ q
 @link $tmp/exit1=$cmd/lsedit
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/lsedit #help
-@set $tmp/lsedit=/_/de:Type 'lsedit #help' for help
-@set $cmd/lsedit=_version:FM$Revision: 1.6 $
+@set $cmd/lsedit=/_/de:Type 'lsedit #help' for help
+@set $cmd/lsedit=_version:FM$Revision: 1.7 $
 wh me=Installation of cmd-lsedit complete.
