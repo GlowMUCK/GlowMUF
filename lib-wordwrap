@@ -1,0 +1,69 @@
+"Beginning installation of lib-wordwrap.muf...
+@prog lib-wordwrap.muf
+1 10000 d
+i
+( lib-wordwrap By Iain E. Davis AKA Feaelin                                  )
+( With Thanks to Andy's original wrapnotify code                             )
+( $Revision: 1.1 $ $Date: 2004/01/20 03:24:28 $                              )
+( -------------------------------------------------------------------------- )
+(
+  $Log: lib-wordwrap,v $
+  Revision 1.1  2004/01/20 03:24:28  feaelin
+  Initial revision
+
+)
+( -------------------------------------------------------------------------- )
+
+var line_count
+
+: last-color ( s -- s )
+  "\\~" "\\^" subst
+  dup "^" rinstr dup if
+    1 - strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop
+      "^" swap strcat
+      "^" strcat
+    else pop pop "" then
+  else pop pop "" then
+;
+
+: wraploop ( i s -- s1 s2 ... n sn )
+  dup ansi_strlen 3 pick > if
+    2 pick over swap 1 ansi_offset strcut
+    swap dup " " rinstr
+    dup 0 > if
+      strcut swap striptail
+      dup last-color
+      rot rot
+      -5 line_count @ - rotate
+      line_count @ 1 + line_count !
+      striplead strcat swap strcat
+    else
+      pop
+      dup last-color
+      rot rot -4 line_count @ - rotate
+      line_count @ 1 + line_count !
+      swap strcat
+    then
+    wraploop
+  else swap pop line_count @ 1 + line_count ! then
+;
+
+: wordwrap ( i s -- s1 s2 ... sn n )
+  0 line_count ! wraploop 0 line_count @ - rotate line_count @
+;
+
+public wordwrap
+
+: main
+  pop 20 "^CYAN^^RED^This line should be longer than 10 characters, I hope" wordwrap
+;
+.
+c
+q
+@set lib-wordwrap.muf=W3
+@set lib-wordwrap.muf=_version:$Revision: 1.1 $
+@set lib-wordwrap.muf=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
+@register lib-wordwrap.muf=lib/wordwrap
+"Installation completed.
