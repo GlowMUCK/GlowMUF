@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 1998/07/29 17:24:16 $ $Revision: 1.3 $
+( lib-edit: $Date: 2000/01/10 20:54:44 $ $Revision: 1.4 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -89,6 +89,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.4  2000/01/10 20:54:44  feaelin
+  Minor documentation fixes.
+
   Revision 1.3  1998/07/29 17:24:16  glow
   Put back in a missing 'swap' in EDITjoin.
 
@@ -460,7 +463,6 @@ q
 @register #me lib-edit=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W
-@set $tmp/prog1=/_/de:lib-edit: List lines 8-82 for documentation.
 @set $tmp/prog1=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
 @set $tmp/prog1=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
 @set $tmp/prog1=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
@@ -478,6 +480,7 @@ q
 @set $tmp/prog1=/_defs/EDITshuffle:"$lib/edit" match "EDITshuffle" call
 @set $tmp/prog1=/_defs/EDITsort:"$lib/edit" match "EDITsort" call
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
-@set $tmp/prog1=/_docs:@list $lib/edit=8-82
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_docs:@list $lib/edit=9-82
+@set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-edit complete.
