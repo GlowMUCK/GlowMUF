@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 1998/07/28 19:18:38 $ $Revision: 1.1 $
+( lib-stackrng: $Date: 1998/07/28 19:21:11 $ $Revision: 1.2 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling object -- SRNG ****                 
@@ -45,9 +45,11 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.2  1998/07/28 19:21:11  glow
+  Removed popoffn and replaced the definition of sr-poprng with it simply calling the inserver 'popn'.
+
   Revision 1.1  1998/07/28 19:18:38  glow
   Initial revision
-
 )
 ( --------------------------------------------------------------------------- )
   
