@@ -2,44 +2,44 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/04/04 16:11:50 $ $Revision: 1.11 $                   )
+( lib-match: $Date: 2005/04/05 21:08:02 $ $Revision: 1.12 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
-( Dependencies: lib-stackrng                                                  )
+( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( Matching library MATCH                                                      )
-( MATCHpmatch: playername -- playerdbref                                      )
+( MATCH-pmatch: playername -- playerdbref                                     )
 (   Takes a string with a possible player name in it. It returns the dbref of )
 (   that player, if it can find it. Returns #-1 if it cannot.                 )
 (                                                                             )
-( MATCHnoisy_match: itemname -- itemdbref                                     )
+( MATCH-noisy_match: itemname -- itemdbref                                    )
 (   Takes a string with a possible item name in it. It returns the dbref of   )
 (   the database item is if is found. If it is not found, it tells the user   )
 (   that it doesn't see that here and returns #-1. If it finds several matches)
 (   it tells the user that it doesn't know which item was meant, and returns  )
 (   #-2.                                                                      )
 (                                                                             )
-( MATCHnoisy_pmatch: playername -- playerdbref                                )
+( MATCH-noisy_pmatch: playername -- playerdbref                               )
 (   This routine takes a string with a possible playername and returns the    )
 (   dbref of that player, if it can find it. If it cannot find the player,    )
 (   then it tells the user that it doesn't know who that is, and it returns   )
 (   #-1.                                                                      )
 (                                                                             )
-( MATCHmatch_controlled: itemname -- itemdbref                                )
+( MATCH-match_controlled: itemname -- itemdbref                               )
 (   This routine basically does a .noisy_match, and checks that what is       )
 (   returned is controlled by the user. If it is not, then it tells the user  )
 (   Permission Denied, and returns #-1. Otherwise it returns the dbref of the )
 (   item matched.                                                             )
 (                                                                             )
-( MATCHmulti_rmatch: objref smatchstr -- dn .. d1 n                           )
+( MATCH-multi_rmatch: objref smatchstr -- dn .. d1 n                          )
 (   This function takes a dbref for the thing/player/room that it is to match )
 (   in, and a smatch style comparison string and returns the dbrefs of all the)
 (   contained database items within who's names matched the string. There is  )
 (   an integer on top giving how many dbrefs were returned. If no items were  )
 (   matched, it only returns a 0.                                             )
 (                                                                             )
-( MATCHtable_match: xnone xambig sn xn .. s1 x1 n comp func -- smat xmat      )
+( MATCH-table_match: xnone xambig sn xn .. s1 x1 n comp func -- smat xmat     )
 (   This function takes, in order:                                            )
 (     - a data value of any type to return if no matches are made. {xnone}    )
 (     - a data value of any type to return if the match is amiguous. {xambig} )
@@ -56,7 +56,7 @@ wh me=Begining installation of lib-match...
 (   xnone if no matches are found. It returns a null string and xambig if more)
 (   than one match was found.                                                 )
 (                                                                             )
-( MATCHstd_table_match:                                                       )
+( MATCH-std_table_match:                                                      )
 (   This function runs .table_match with a standard comparator fuction that   )
 (   expects the comparators to be strings. The match comparator routine       )
 (   matches if comp matches the beginning of the comparator exactly. Example: )
@@ -64,6 +64,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.12  2005/04/05 21:08:02  feaelin
+  Removed unneeded $include of lib-stackrng
+
   Revision 1.11  2005/04/04 16:11:50  feaelin
   Documentation Update
 
@@ -99,7 +102,6 @@ wh me=Begining installation of lib-match...
   Added .controls from fbmuf.
 )
 ( --------------------------------------------------------------------------- )
-$include $lib/stackrng
  
 : noisy_match (s -- d)
   dup if match else pop #-1 then
@@ -234,7 +236,14 @@ q
 @set $lib/match=/_defs/MATCHstd_table_match:"$lib/match" match "std_table_match" call
 @set $lib/match=/_defs/MATCHtable_match:"$lib/match" match "table_match" call
 @set $lib/match=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
+@set $lib/match=/_defs/MATCH-pmatch: "$lib/match" match "pmatch" call
+@set $lib/match=/_defs/MATCH-match_controlled:"$lib/match" match "match_controlled" call
+@set $lib/match=/_defs/MATCH-noisy_match:"$lib/match" match "noisy_match" call
+@set $lib/match=/_defs/MATCH-noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@set $lib/match=/_defs/MATCH-std_table_match:"$lib/match" match "std_table_match" call
+@set $lib/match=/_defs/MATCH-table_match:"$lib/match" match "table_match" call
+@set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-55
-@set $lib/match=/_lib-version:FM$Revision: 1.11 $
+@set $lib/match=/_lib-version:FM$Revision: 1.12 $
 wh me=Installation of lib-match completed.
