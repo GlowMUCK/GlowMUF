@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1999/04/16 19:55:55 $ $Revision: 1.9 $
+( cmd-register $Date: 1999/04/16 20:29:19 $ $Revision: 1.10 $
   Original Author: Unknown                              
   Updated for Glowmuck by: Andy
   Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
@@ -10,6 +10,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.10  1999/04/16 20:29:19  feaelin
+   Brought in line with FBMUF5.64.  A minor idiot proofing with @reg #prop =
+
    Revision 1.9  1999/04/16 19:55:55  feaelin
    Changed the priority of the exit to M3.
 
@@ -17,7 +20,7 @@
    Fixed annoying bug with updating the Revision string used for comparing.
 
    Revision 1.7  1998/07/27 21:07:41  glow
-   Fixed strip-rcs to handle a null $Revision: 1.9 $
+   Fixed strip-rcs to handle a null $Revision: 1.10 $
 
    Revision 1.6  1998/07/27 19:40:20  glow
    During earlier changes, messed up the wiz-level.  It's now corrected.
@@ -208,6 +211,10 @@ lvar regprop
   then
   
   dup "=" instr not if
+    regobj @ #0 dbcmp not if
+      "You need to specify a value to set with @reg #prop" .tell
+      pop exit
+    then
     "^GREEN^Registered objects on "
     regobj @ unparseobj strcat
     ":" strcat tell
@@ -249,5 +256,5 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.9 $
+@set $cmd/register=_version:FM$Revision: 1.10 $
 "Installation of cmd-register finished.
