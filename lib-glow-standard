@@ -2,54 +2,60 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2003/05/04 22:42:46 $ $Revision: 1.18 $          )
+( lib-glow-standard: $Date: 2004/04/11 20:06:28 $ $Revision: 1.19 $          )
+( Author: Various                                                            )
+( Contributors: Feaelin, Various                                             )
+( Dependencies: None                                                         )
 ( -------------------------------------------------------------------------- )
-( A library based on the macros originally stored in the following files:
-  macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
-  Majority of these library functions are small enough they are simply
-  defined in the /_defs/ properties on this program and no reference to them
-  are in the body of this muf-program.
-  After some debugging problems, I've made the decision to make ALL the
-  functions in this library begin with a period.  I know that this will
-  cause a little confusion on mucks that are still using macros, but it's
-  necessary to make it clear that it's these functions are not local to the
-  program using them.  Okay, there are four exceptions, deal with it:
-  for, endfor, stringncmp, xor. They are all defined both with periods and
-  without. )
+( A library based on the macros originally stored in the following files:    )
+( macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file        )
+( Majority of these library functions are small enough they are simply       )
+( defined in the /_defs/ properties on this program and no reference to them )
+( are in the body of this muf-program.                                       )
+( After some debugging problems, I've made the decision to make ALL the      )
+( functions in this library begin with a period.  I know that this will      )
+( cause a little confusion on mucks that are still using macros, but it's    )
+( necessary to make it clear that it's these functions are not local to the  )
+( program using them.  Okay, there are four exceptions, deal with it:        )
+( for, endfor, stringncmp, xor. They are all defined both with periods and   )
+( without.                                                                   )
 ( -------------------------------------------------------------------------- )
-( Many macros taken from:
-  PakRat's Macro Package A [macro-macro]
-  Copyright 1996 by Andrew Nelson, All rights reserved
-  cleancommas -- make commafied lists prettier
-  run         -- run description programs
-  wrapnotify  -- do line-wrapping for notify
-  pmatch      -- match a player name
-  null        -- basic null program, for locks, always true                  )
+( Many macros taken from:                                                    )
+( PakRat's Macro Package A [macro-macro]                                     )
+( Copyright 1996 by Andrew Nelson, All rights reserved                       )
+( cleancommas -- make commafied lists prettier                               )
+( run         -- run description programs                                    )
+( wrapnotify  -- do line-wrapping for notify                                 )
+( pmatch      -- match a player name                                         )
+( null        -- basic null program, for locks, always true                  )
 ( -------------------------------------------------------------------------- )
-( lib-props (now merged with lib-glow-standard, Originally in FB's MUF Dist.
-  PROPS Library -- Contains useful property handling routines.
-                                                                            
-  setpropstr [dbref propname strval -- ]
-    sets a property, or removes it if the string is null.
-   
-  envprop [startdbref propname -- stringval]
-    searches down the environment tree from the given object, looking for
-    a property with the given name.  Returns it's value, or a null string
-    if it wasn't found.
+( lib-props (now merged with lib-glow-standard, Originally in FB's MUF Dist. )
+( PROPS Library -- Contains useful property handling routines.               )
+(                                                                            )
+( setpropstr [dbref propname strval -- ]                                     )
+(   sets a property, or removes it if the string is null.                    )
+(                                                                            )
+( envprop [startdbref propname -- stringval]                                 )
+(   searches down the environment tree from the given object, looking for    )
+(   a property with the given name.  Returns it's value, or a null string    )
+(   if it wasn't found.                                                      )
+(                                                                            ) 
+( envsearch [startdbref propname -- locationdbref]                           )
+(   Also searches down the envtree for the given property, but returns the   )
+(   dbref of the object it was found on instead of the string value. Returns )
+(   #-1 if it cannot find the property.                                      )
+(                                                                            )
+( locate-prop [startdbref propname -- locationdbref]                         )
+(   Given a property name and dbref, finds the property, whether on the dbref)
+(   itself, an environment of the dbref, or a proploc of the dbref.  If none,)
+(   returns #-1.                                                             )
+( -------------------------------------------------------------------------- )
   
-  envsearch [startdbref propname -- locationdbref]
-    Also searches down the envtree for the given property, but returns the
-    dbref of the object it was found on instead of the string value.  Returns
-    #-1 if it cannot find the property.
-  
-  locate-prop [startdbref propname -- locationdbref]
-    Given a property name and dbref, finds the property, whether on the dbref
-    itself, an environment of the dbref, or a proploc of the dbref.  If none,
-    returns #-1.
-)  
-( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.19  2004/04/11 20:06:28  feaelin
+  Fixed documentation for compatibility with the MUF editor's 'view' command.
+
   Revision 1.18  2003/05/04 22:42:46  feaelin
   Change .noguest to use ^FAIL^ instead of ^RED^
 
@@ -355,5 +361,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.18 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.19 $
 "Installation of lib-glow-standard completed.
