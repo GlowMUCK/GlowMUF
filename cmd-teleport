@@ -2,13 +2,17 @@
 @prog cmd-teleport
 1 99999 d
 1 i
-( cmd-teleport: $Date: 2001/01/12 18:02:28 $ $Revision: 1.3 $ )
+( cmd-teleport: $Date: 2004/02/14 15:40:06 $ $Revision: 1.4 $ )
 ( Author: Scotfox                 )
 ( --------------------------------------------------------------------------- )
 ( teleport.muf v2, by Scotfox, 1-October-93 )
 ( global and wizard aliases added by Quercus 9/96)
 (
   $Log: cmd-teleport,v $
+  Revision 1.4  2004/02/14 15:40:06  feaelin
+  Adjusted the worldprop define to handle the new adjustable props.
+  See 'find' for details.
+
   Revision 1.3  2001/01/12 18:02:28  feaelin
   Added feature to prevent teleportation between worlds, which is settable
   by archwizards by using tele #worldonly.
@@ -28,14 +32,18 @@ $def anotify me @ swap ansi_notify
  
 $def TELREF #0
 
-$define worldprop "~world" $enddef
+: worldprop
+  #0 "_prefs/find/worldprop" getpropstr dup STRblank? if
+    pop "~world"
+  then
+;
  
 lvar me_jump_ok
 lvar room_jump_ok
 lvar alias_type
  
 : do-help  ( -- )
-  "^FOREST^Teleport by Scotfox $Revision: 1.3 $ $Date: 2001/01/12 18:02:28 $"
+  "^FOREST^Teleport by Scotfox $Revision: 1.4 $ $Date: 2004/02/14 15:40:06 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -333,5 +341,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/teleport 
-@set $tmp/prog1=/_version:2.0FM$Revision: 1.3 $
+@set $tmp/prog1=/_version:2.0FM$Revision: 1.4 $
 "Installation of cmd-teleport complete.
