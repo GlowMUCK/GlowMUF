@@ -1,0 +1,19 @@
+"Beginning installation of lock-wizard...
+@prog lock-wizard
+1 99999 d
+1 i
+
+$include $lib/glowstandard
+
+: lock-wizard
+  "me" match .wizard?
+;
+.
+c
+q
+@register lock-wizard=lock/wizard
+@register #me lock-wizard=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M1
+@set $tmp/prog1=_version:FM1.0
+"Installation of lock-wizard complete.
