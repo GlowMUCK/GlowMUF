@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/01/11 19:19:16 $ $Revision: 1.12 $                    )
+( cmd-page: $Date: 2005/01/11 19:23:47 $ $Revision: 1.13 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.13  2005/01/11 19:23:47  feaelin
+  More colorization
+
   Revision 1.12  2005/01/11 19:19:16  feaelin
   Revised mail check to have the blinking feature and be colorized.
 
@@ -1791,7 +1794,7 @@ $endif
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/11 19:19:16 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/11 19:23:47 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -1804,6 +1807,8 @@ $endif
  
 : show-changes ( -- )
   "Changes" show-header
+  "MUFpage v2.5FM1.13 2005/01/11  Added color and blinking to mail check."
+  "MUFpage v2.5FM1.12 2005/01/11  Added color and blinking to mail check."
   "MUFpage v2.5FM1.11 2005/01/11  Corrected display errors in #changes."
   "MUFpage v2.5FM1.10 2005/01/11  Changed p #mail so that p #mail <name> <name>"
   "                               works correctly. Added the p #changes command"
@@ -2202,8 +2207,8 @@ $endif
     Do-PurgeOldMail
     pop me @ 1 check-each
     " " tell
-    "Type 'mail read' to read new mail, or 'mail new' to peek at it." tell
-    "Use 'mail old' to read saved mail, 'mail help' for help." tell
+    "^SUCC^Type '^INFO^mail read^SUCC^' to read new mail, or '^INFO^mail new^SUCC^' to peek at it." tell
+    "^SUCC^Use '^INFO^mail old^SUCC^' to read saved mail, '^INFO^mail help^SUCC^' for help." tell
     exit
   then
   dup " " STRsplit
@@ -2673,7 +2678,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.12 $"
+  "MUFpage v2.5FM$Revision: 1.13 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2867,5 +2872,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.12 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.13 $
 wh me=Installation of cmd-page complete.
