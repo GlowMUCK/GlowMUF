@@ -1,5 +1,5 @@
-cmd-emotion: 'me' doesn't work as expected (try hug by itself, and then hug me).
-cmd-emotion: all-room, all-muck?
-cmd-emotion: far-action
-cmd-path: if a muck is using a custom look, cmd-path's obvious exits may bail because the stack does not contain (@Succ)
-
+* Libraries should be changed to have a more consistent interface, e.g.
+  all should use the format lib-strings uses: STRblank?, etc.
+* lib-mesgbox: MBOX-insmesg: Fails to insert correctly. Instead it replaces the
+               message that it is supposed to be inserting in front of.
+* lib-editor: I've been thinking spellcheck would be a nice thing to have.

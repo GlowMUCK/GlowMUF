@@ -1,6 +1,24 @@
-CHANGES $Date: 2004/02/27 18:16:24 $ $Revision: 1.9 $
+CHANGES $Date: 2004/03/26 03:01:17 $ $Revision: 1.10 $
 Author: Feaelin
-2004 February 27: FM 1.1
+2004 March 14: FM 1.01
+01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)
+                  to make calls to the public functions in lib-stackrng. Fixed
+                  a series of logic flaws in SRNGfilterng that caused it to not
+                  work at all. Fixed bugs in SRNGswaprng, it now works as
+                  advertised.
+02) lib-edit:     Made the .format and right-justify commands work correctly
+                  with text that has color codes in it.
+03) cmd-bbs:      Added color (thanks to Wixenstyx!) and applied bugfixes
+                  discovered by Wixenstyx.
+                  Replaced call to EDITdisplay to EDITansi_display so you can
+                  use color in the body text of your messages.
+                  Added customization features that allow you to change where
+                  the data is stored and also, if needed, change the output to
+                  reflect any changes you make to the command names.
+                  (see the program text for details). This also required some
+                  minor changes to con-bbsindex.
+
+2004 February 27: FM 1.00
 ---------------------------------------------------------------------------
 01) cmd-teleport: Added the anti-crossworld teleport feature to cmd-teleport
                   Adjusted to handle properly the customizable props for
