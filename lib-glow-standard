@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2000/01/10 18:42:07 $ $Revision: 1.14 $          )
+( lib-glow-standard: $Date: 2001/02/21 17:30:37 $ $Revision: 1.15 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,6 +50,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.15  2001/02/21 17:30:37  feaelin
+  Added null and nothing to the 'registered' names of the library.
+
   Revision 1.14  2000/01/10 18:42:07  feaelin
   Finished fixing up documentation...for now.
 
@@ -142,7 +145,7 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
 ;
  
 ( End of Wrapnotify )
-
+  
 ( Beginning of locate-prop )
 : proplocsearch ( startdbref propname -- locationdbref )
   over swap                                   ( d d s )
@@ -178,7 +181,7 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
     then
     pop envpropstr pop
 ;
-
+  
 ( End of locate-prop )
  
 : CleanCommas ( s -- s )
@@ -213,16 +216,17 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
     else call then
   else pop wrap then
 ;
-
+  
 : fhelp ( s -- )
   "he" match if "Cannot find help here." tell pop exit then
   "me" match swap "he " swap strcat force
 ;
-
-: null ( -- ) 
+  
+( This must be the last word in the library! )
+: null-true ( -- ) 
   depth 1 = if pop 1 then 
 ; ( ** LAST PROGRAM ** )
-
+  
 public null
 public cleancommas
 public fhelp
@@ -233,6 +237,8 @@ public wrapnotify
 c
 q
 @register lib-glow-standard=cmd/null
+@register lib-glow-standard=null
+@register lib-glow-standard=nothing
 @register lib-glow-standard=lib/glowstandard
 @register lib-glow-standard=lib/glow
 @register lib-glow-standard=lock/true
@@ -345,5 +351,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.15 $
 "Installation of lib-glow-standard completed.
