@@ -2,7 +2,7 @@
 @prog lib-index
 1 99999 d
 1 i
-( lib-index: $Date: 1998/08/23 16:18:09 $ $Revision: 1.1 $
+( lib-index: $Date: 1998/08/23 16:19:30 $ $Revision: 1.2 $
   Originally taken from the FuzzBall MUF distribution.
   Author: ErmaFelna                                                           )
 ( --------------------------------------------------------------------------- )
@@ -115,6 +115,9 @@
 ( --------------------------------------------------------------------------- )
 (
  $Log: lib-index,v $
+ Revision 1.2  1998/08/23 16:19:30  glow
+ Fixed documentation up.
+
  Revision 1.1  1998/08/23 16:18:09  glow
  Initial revision
 
@@ -737,7 +740,7 @@ q
 @register #me lib-index=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_/de:lib-index: List lines 1-109 for documentation.
+@set $tmp/prog1=/_/de:lib-index: List lines 5-109 for documentation.
 @set $tmp/prog1=/_defs/.index-add:"$lib/index" match "index-add" call
 @set $tmp/prog1=/_defs/.index-add-sort:"$lib/index" match "index-add-sort" call
 @set $tmp/prog1=/_defs/.index-delete:"$lib/index" match "index-delete" call
@@ -765,6 +768,6 @@ q
 @set $tmp/prog1=/_defs/.std-index-set:"$lib/index" match "std-index-set" call
 @set $tmp/prog1=/_defs/.std-index-value:"$lib/index" match "std-index-value" call
 @set $tmp/prog1=/_defs/.std-index-write:"$lib/index" match "std-index-write" call
-@set $tmp/prog1=/_docs:@list $lib/index=1-109
-@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.1 $
+@set $tmp/prog1=/_docs:@list $lib/index=5-109
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.2 $
 "Installation of lib-index complete.
