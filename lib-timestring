@@ -1,0 +1,62 @@
+"Beginning installation of lib-timestring...
+@prog lib-timestring
+1 99999 d
+1 i
+( lib-timestring: $Date: 1998/08/23 18:55:34 $ $Revision: 1.1 $                                           )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-timestring,v $
+  Revision 1.1  1998/08/23 18:55:34  glow
+  Initial revision
+
+)
+( converts a number of seconds into a string containing )
+( the number of days, hours, minutes, and seconds. )
+: time_string ( n -- s )
+    "" swap
+    dup 0 < if pop 0 then
+    dup 86400 / dup if
+        dup intostr " day" strcat
+        swap 1 = not if "s" strcat then
+        ", " strcat
+        rot swap strcat swap
+    else pop
+    then
+    dup 86400 % 3600 / dup if
+        dup intostr " hour"  strcat
+        swap 1 = not if "s" strcat then
+        ", " strcat
+        rot swap strcat swap
+    else pop
+    then
+    dup 3600 % 60 / dup if
+        dup intostr " minute"  strcat
+        swap 1 = not if "s" strcat then
+        ", " strcat
+        rot swap strcat swap
+    else pop
+    then
+    dup 60 % dup if
+        dup intostr " second"  strcat
+        swap 1 = not if "s" strcat then
+        rot swap strcat swap
+    else pop
+    then pop
+    strip " " "  " subst
+    dup dup strlen 1 - strcut
+    "," strcmp not if swap then
+    pop
+;
+.
+c
+q
+@register lib-timestring=lib/timestring
+@register #me lib-timestring=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M2
+@set $tmp/prog1=/_defs/.time_string:"$lib/timestring" match call
+@set $tmp/prog1=/_defs/.timestring:"$lib/timestring" match call
+@set $tmp/prog1=/_defs/time_string:"$lib/timestring" match call
+@set $tmp/prog1=/_defs/timestring:"$lib/timestring" match call
+@set $tmp/prog1=_lib-version:FM1.0
+"Installation of lib-timestring complete.
