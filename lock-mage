@@ -1,0 +1,21 @@
+"Beginning installation of lock-mage...
+@prog lock-mage
+1 99999 d
+1 i
+( lock-mage: $Date: 1999/02/21 01:04:07 $$Revision: 1.1 $
+  --------------------------------------------------------------------------- )
+
+$include $lib/glowstandard
+
+: lock-mage ( s -- )
+  "me" match .mage?
+;
+.
+c
+q
+@register lock-mage=lock/mage
+@register #me lock-mage=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M1
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of lock-mage complete.
