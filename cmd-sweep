@@ -2,7 +2,7 @@
 @prog cmd-sweep
 1 99999 d
 1 i
-( cmd-sweep: $Date: 2000/12/22 18:18:04 $ $Revision: 1.2 $                    )
+( cmd-sweep: $Date: 2004/05/08 17:09:54 $ $Revision: 1.3 $                    )
 ( Authors: Tygryss, IMiR of XR, Scotfox                                       )
 ( Written: 1991 May 02                                                        )
 ( --------------------------------------------------------------------------- )
@@ -27,6 +27,9 @@
 )
 (
   $Log: cmd-sweep,v $
+  Revision 1.3  2004/05/08 17:09:54  feaelin
+  Minor cleanup.
+
   Revision 1.2  2000/12/22 18:18:04  feaelin
   Added support for zombie/puppets as shown in fbmuf version of cmd-sweep
 
@@ -160,7 +163,7 @@ dup program? if dup owner else #-3 then moveto
         me @ "_sweep/sweep" .envprop
         dup not if pop trigger @ "_sweep/sweep" .envprop then
         dup not if pop
-   DEFAULT_SWEEP_MESG
+	   DEFAULT_SWEEP_MESG
         then
         me @ swap pronoun_sub
         me @ name " " strcat swap strcat
@@ -234,7 +237,10 @@ dup program? if dup owner else #-3 then moveto
           home-player
         then
       else
-dup location over program? if over owner else over getlink then dbcmp if
+	dup location over program? if
+	  over owner else over getlink
+	then
+	dbcmp if
           me @ "That's already home!" notify
         else
           dup name " sent home." strcat
@@ -254,5 +260,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Sweeps all sleepers from the current room, if you have permission.  See 'sweep #help'
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
 "Installation of cmd-sweep complete.
