@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/03 05:44:11 $ $Revision: 1.11 $
+( lib-editor: $Date: 2004/04/05 01:34:02 $ $Revision: 1.12 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,9 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.12  2004/04/05 01:34:02  feaelin
+  Wizbit change.
+
   Revision 1.11  2004/04/03 05:44:11  feaelin
   Added the .ruler command.
   Spotted a minor bug in .color that would allow you to 'color' with
@@ -616,12 +619,12 @@ q
 @register lib-editor=lib/editor
 @register #me lib-editor=tmp/prog1
 @set $tmp/prog1=L
-@set $tmp/prog1=W4
+@set $tmp/prog1=W3
 @set $tmp/prog1=/_defs/editor:"$lib/editor" match "editor" call
 @set $tmp/prog1=/_defs/editorheader:"$lib/editor" match "editorheader" call
 @set $tmp/prog1=/_defs/editorloop:"$lib/editor" match "editorloop" call
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
 "Installation of lib-editor complete.
