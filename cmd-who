@@ -2,7 +2,7 @@
 @prog cmd-who
 1 99999 d
 1 i
-( cmd-who: $Date: 2000/12/22 02:39:00 $ $Revision: 1.1 $                                                  )
+( cmd-who: $Date: 2004/02/23 15:34:40 $ $Revision: 1.2 $                                                  )
 ( Author: Scotfox                                                             )
 ( --------------------------------------------------------------------------- )
 ( Shows a list of everybody connected.  By Scotfox.                           )
@@ -14,21 +14,21 @@ $define notify .wrapnotify $enddef
 : equaltest  stringcmp not ;
  
 lvar roomstuff
-: get-connected-list  ( namelist total howmanyleft )
+: get-connected-list  ( concount -- namelist total howmanyleft )
     begin dup 0 > while
-        dup condbref name    ( namelist total howmanyleft newname )
-        rot rot              ( namelist newname total howmanyleft )
-        1 - repeat
-    pop
+        dup condbref dup 
+        dup "/@/dark" getpropstr .yes? swap location me @ location
+        dbcmp or if
+          pop swap 1 - swap
+        else
+          name    
+          rot rot              ( namelist newname total howmanyleft )
+        then
+        1 - 
+    repeat pop
     1 sort
-    'equaltest 1 .unique
-    loc @ contents dup roomstuff !
-    begin dup #-1 dbcmp not while
-        name 'equaltest .remove
-        roomstuff @ next dup roomstuff ! repeat
-    pop
 ;
-: glue-together-list  ( namelist gluedstring howmany )
+: glue-together-list  ( namelist gluedstring howmany  -- s)
     begin dup 0 > while
         rot                  ( namelist gluedstring howmany name )
         over 1 = if  "and " swap strcat
@@ -42,7 +42,6 @@ lvar roomstuff
     concount dup 1 = if
         me @ "^GREEN^You are the only one connected." notify exit then
     dup get-connected-list
-    1 sort
     dup 0 <= if
         pop
         "^GREEN^Everyone is in this room." me @ swap notify exit then
@@ -171,6 +170,7 @@ $define MIN_IDLE 3 (minutes) $enddef
 ;
  
 : main
+    pop
     show-connected
     cmd-who
 ;
@@ -181,7 +181,7 @@ q
 @register cmd-who=lib/cmdwho
 @register #me cmd-who=tmp/prog1
 @set $tmp/prog1=L
-@set $tmp/prog1=W2
+@set $tmp/prog1=W3
 @set $tmp/prog1=/_defs/.eval-loop:"$desc" match "eval-loop" call
 @set $tmp/prog1=/_defs/.format-print:"$desc" match "format-print" call
 @set $tmp/prog1=/_defs/.gen-desc:"$desc" match "gen-desc" call
@@ -189,7 +189,7 @@ q
 @set $tmp/prog1=/_defs/.split-args:"$desc" match "split-args" call
 @set $tmp/prog1=/_defs/.wipe-list:"$desc" match "wipe-list" call
 @set $tmp/prog1=/_docs:@list $desc-docs
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 @action who=here=tmp/exit1
 @link $tmp/exit1=$cmd/who
 @set $tmp/exit1=/_/de:@$cmd/who
