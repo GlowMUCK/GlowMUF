@@ -2,7 +2,7 @@
 @prog lib-reflist
 1 99999 d
 1 i
-( lib-reflist: $Date: 1998/08/23 16:07:05 $ $Revision: 1.1 $
+( lib-reflist: $Date: 2000/01/10 21:34:22 $ $Revision: 1.2 $
   Originally from FuzzBall MUF Distribution                                 )
 ( ------------------------------------------------------------------------- )
 ( DBref list manager -- REF
@@ -54,6 +54,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-reflist,v $
+  Revision 1.2  2000/01/10 21:34:22  feaelin
+  Documentation update.
+
   Revision 1.1  1998/08/23 16:07:05  glow
   Initial revision
 
@@ -216,7 +219,6 @@ q
 @set $tmp/prog1=S
 @set $tmp/prog1=B
 @set $tmp/prog1=M2
-@set $tmp/prog1=/_/de:lib-reflist: List lines 3-48 for documentation.
 @set $tmp/prog1=/_defs/REF-add:"$lib/reflist" match "REF-add" call
 @set $tmp/prog1=/_defs/REF-delete:"$lib/reflist" match "REF-delete" call
 @set $tmp/prog1=/_defs/REF-first:"$lib/reflist" match "REF-first" call
@@ -226,6 +228,7 @@ q
 @set $tmp/prog1=/_defs/REF-allrefs:"$lib/reflist" match "REF-allrefs" call
 @set $tmp/prog1=/_defs/REF-filter:"$lib/reflist" match "REF-filter" call
 @set $tmp/prog1=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
-@set $tmp/prog1=/_docs:@list $lib/reflist=3-48
-@set $tmp/prog1=_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_/de:lib-reflist: List lines 3-45 for documentation.
+@set $tmp/prog1=/_docs:@list $lib/reflist=3-45
+@set $tmp/prog1=_lib-version:FM$Revision: 1.2 $
 "Installation of lib-reflist complete.
