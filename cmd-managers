@@ -1,0 +1,169 @@
+"Beginning installation of cmd-managers...
+@prog cmd-managers
+1 99999 d
+1 i
+( cmd-managers: $Date: 2000/01/27 21:11:19 $ $Revision: 1.1 $ )
+( Author: Artie )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$include $lib/strings
+
+: MinDays 2 ;
+( ManagerLock.muf by Artie )
+( -- Lock any programs to it that only managers should use )
+( -- Create a mana;managers; etc command, list managers and do system fxs )
+
+( Compatibility hacks: )
+$def PadText ( s i -- s ) " " swap STRfillfield
+$def split STRsplit
+$def setpropstr ( d ps s -- ) dup if 1 addprop else pop remove_prop then
+
+: a ( s -- ) 
+  me @ swap ansi_notify 
+;
+: ManMessage 
+  "Mail comments and questions to the creator of your world." a 
+;
+
+: popn ( xn ... x i -- ) 
+  dup not if pop exit then swap pop 1 - popn 
+;
+: pop1n ( xn ... x x2 i -- x2 )
+  dup not if pop exit then rot pop 1 - pop1n 
+;
+: spacesplit 
+  " " explode 1 - swap pop
+;
+: split2 ( s -- s s )
+  dup " " instr if dup "=" instr if
+  dup " " instr over "=" instr - 0 < if " " split else
+  "=" split then else " " split then else "=" split then
+;
+
+( List Routines -- format:" 1234, 1254, 84," -- Player dbrefs )
+: InList? ( s d -- i )
+  intostr " " swap strcat "," strcat instr 
+;
+: AddToList ( s d -- s )
+  intostr " " swap strcat "," strcat strcat 
+;
+: RemFromList ( s d -- s )
+  intostr " " swap strcat "," strcat over over
+  instr dup if rot swap 1 - strcut rot strlen strcut swap pop strcat else
+  pop pop then
+;
+: atodn2loop (sn...s i n--dn...d i) 
+  dup not if pop exit then
+  1 - over 2 + rotate atoi dbref rot rot atodn2loop
+;
+: ListToNI (s--dn...d i) 
+  spacesplit dup atodn2loop 
+;
+: CountMembers ( s -- i ) 
+  spacesplit dup pop1n 
+;
+: GetVoters ( -- s )
+  prog "_/M/Voters" getpropstr 
+;
+
+: SetVoters ( s -- ) 
+  prog "_/M/Voters" rot setpropstr 
+;
+
+: GetStats ( d -- s ) 
+  prog "_/M/S/W" rot intostr strcat getpropstr 
+;
+
+: SetStats ( d s -- ) 
+  "_/M/S/W" rot intostr strcat swap prog rot rot
+  setpropstr 
+;
+
+( Subroutines )  
+: Voter? ( d -- i ) 
+  GetVoters swap InList? 
+;
+: Godfather? ( d -- i ) 
+  prog owner dbcmp 
+;
+: Manager? ( d -- i )
+  dup Godfather? if pop 1 else Voter? then 
+;
+: NumVoters ( -- i ) GetVoters CountMembers ;
+(*)
+: AddMember ( s -- ) 
+  .pmatch dup if
+  GetVoters swap over over InList? if
+  pop pop "That person can already vote." a else
+  dup Godfather? if pop pop "That person is the Godfather!" a else
+  AddToList SetVoters "Member added." a then then
+  else pop "I don't recognize that name." a then
+;
+: RemMember ( s -- ) 
+  .pmatch dup if
+  GetVoters swap over over InList? if
+  RemFromList SetVoters "Member removed." a else
+  pop pop "That person is not a voting member." a then
+  else pop "I don't recognize that name." a then
+;
+: DescMember ( s -- ) 
+  split2 swap .pmatch dup if
+  dup Manager? if swap SetStats "Stats set." a
+  else pop pop "That person isn't a manager." a then
+  else pop pop "I don't recognize that name." a then
+;
+: ListManagersLoop ( dn ... d a ) 
+  dup not if pop exit then 1 - swap
+  dup Manager? if
+  dup name 12 PadText " -- " strcat
+  over awake? if "On-Line!" else "        " then strcat " -- " strcat
+  over GetStats 50 PadText strcat a
+  then pop ListManagersLoop
+;
+: M-List ( -- ) ( Show managers )
+  "World Creators and Realm Landlords" a
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" a
+  GetVoters ListToNI ListManagersLoop
+  " " a ManMessage
+;
+: M-GHelp ( -- )
+  "Manager Lister by PakRat Copyright 1993 All Rights Reserved" a
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" a
+  "mana help -- This screen" a
+  "mana add  -- Add a voting manager" a
+  "mana rem  -- Remove a voting manager" a
+  "mana desc -- Describe a manager's domain" a
+  "mana      -- List managers and worlds" a
+;
+(*)
+: M-Mana ( s M? -- ) ( Setup managers by Godfather )
+  pop Split2 swap me @ Godfather? if
+     dup "help" stringcmp not if pop pop M-GHelp  exit then
+     dup "add"  stringcmp not if pop AddMember  exit then
+     dup "rem"  stringcmp not if pop RemMember  exit then
+     dup "desc" stringcmp not if pop DescMember exit then
+  then pop pop M-List
+;
+(*)
+: M-Lock-Main ( ? -- ) ( Check lock, run commands )
+  me @ Manager? ( Find out if this person has privs )
+  trigger @ if ( take care of #-1 ) trigger @ .firstname ( ? Man? s )
+     dup "managers" strcmp not if pop M-Mana exit then
+     pop
+  then ( ? M? -- That's all folks!  M? returns the program lock check. )
+;
+public manager?
+.
+c
+q
+@register cmd-managers=cmd/managers
+@register #me cmd-managers=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M2
+@action managers;manager;mana=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/managers
+@set $tmp/exit1=/_/fl:Down for tinkering.
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-managers complete.
