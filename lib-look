@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/12 14:57:51 $ $Revision: 1.8 $                 )
+( cmd/lib-look: $Date: 2004/04/12 15:50:55 $ $Revision: 1.9 $                 )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -77,6 +77,10 @@
   
 ( 
   $Log: lib-look,v $
+  Revision 1.9  2004/04/12 15:50:55  feaelin
+  Fixed bug in look that caused it to display dbrefs & flags for players that
+  had 'color' turned on.
+
   Revision 1.8  2004/04/12 14:57:51  feaelin
   Fixed issue where obvious things like 'me' and 'here' didn't match correctly
   in cmd-look. Changed failed messages to use the FAIL color code.
@@ -154,15 +158,14 @@ lvar realtrig
 ;
 
 : unparse ( d -- s )
-  me @ "Silent" flag?
-  if
+  me @ "Silent" flag? if
     "%P" UPOspecial-unparseobj exit
   then
   dup control? not
   if
     dup "Link_OK" flag? not
     if
-      dup "Chown_OK" flag? not
+      dup "Chown_OK" flag? over player? not and not
       if
         dup "Abode" flag? not
         if
@@ -489,6 +492,6 @@ q
 @set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=1-71
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.8 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.8 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.9 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.9 $
 "Installation of lib-look complete.
