@@ -2,7 +2,7 @@
 @prog lib-userprop
 1 99999 d
 1 i
-( lib-userprop: $Date: 1998/08/23 18:38:49 $ $Revision: 1.1 $
+( lib-userprop: $Date: 1999/02/13 19:09:36 $ $Revision: 1.2 $
   Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 ( WizProp-Propdir Manager by PakRat v1.1 -- $lib/userprop               
@@ -59,6 +59,9 @@ $def Wizard? .archwizard?
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-userprop,v $
+  Revision 1.2  1999/02/13 19:09:36  feaelin
+  lib-userprop needs lib-strings.
+
   Revision 1.1  1998/08/23 18:38:49  glow
   Initial revision
 
@@ -85,6 +88,7 @@ $define SetPropStr dup if SetProp else pop Remove_Prop then $enddef
 $define SetPropVal dup if SetProp else pop Remove_Prop then $enddef
   
 $include $lib/glowstandard
+$include $lib/strings
 
 lvar PropDirFunc
 lvar bytes 
@@ -470,5 +474,5 @@ q
 @action wpsetup;wizpropsetter=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:Set up $lib/userprop propdirs for programs, Arch only.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-userprop completed...
