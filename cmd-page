@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/01/11 15:53:45 $ $Revision: 1.10 $                    )
+( cmd-page: $Date: 2005/01/11 17:00:33 $ $Revision: 1.11 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.11  2005/01/11 17:00:33  feaelin
+  Fixed erros in the version matching and the #changes display.
+
   Revision 1.10  2005/01/11 15:53:45  feaelin
   Changed p #mail so that p #mail <name> <name>... works correctly. Added
   back in the p #changes command and notification that the version has
@@ -48,7 +51,7 @@ wh me=Beginning installation of cmd-page...
   Revision 1.1  1999/04/18 22:04:50  feaelin
   Initial revision
 )
-lvar dept
+( Include files )
 $include $lib/glow
 $include $lib/strings
 $include $lib/showlist
@@ -57,6 +60,10 @@ $include $lib/editor
 $include $lib/case
 $include $lib/edit
   
+( Local Variables )
+lvar current-version
+lvar dept
+
 $def sizelimit 2500
 $def daysold 9999
 $def maildir  "mail#" 
@@ -66,7 +73,6 @@ $def tell me @ swap .wrapnotify
 $def guest? dup "guest" flag? swap "mage" flag? not and
   
 $def strftime swap timefmt
-$def split .split2
 $def Uenvprop Uenvpropstr swap pop
   
 $def descr_idle descrcon conidle
@@ -381,7 +387,7 @@ $endif
     "Personal alias set." tell
   else
     3 pick " " swap over strcat strcat
-    split " " swap strcat strcat strip
+    STRsplit " " swap strcat strcat strip
     "Personal alias cleared." tell
   then
   strip set-p-aliases
@@ -434,7 +440,7 @@ $endif
     "Global alias set." tell
   else
     3 pick " " swap over strcat strcat
-    split " " swap strcat strcat strip
+    STRsplit " " swap strcat strcat strip
     "Global alias cleared." tell
   then
   strip set-g-aliases
@@ -480,7 +486,7 @@ $endif
   
 : list-p-aliases-loop (playerdbref aliasesstr -- )
   dup not if pop pop exit then
-  " " split swap dup 4 pick get-personal-alias
+  " " STRsplit swap dup 4 pick get-personal-alias
   " -- " swap strcat over 10 fillspace swap strcat
   strcat tell
   list-p-aliases-loop
@@ -496,7 +502,7 @@ $endif
   
 : list-g-aliases-loop (aliasesstr -- )
   dup not if pop exit then
-  " " split swap dup get-global-alias
+  " " STRsplit swap dup get-global-alias
   " -- " swap strcat over 10 fillspace swap strcat
   strcat tell
   list-g-aliases-loop
@@ -511,7 +517,7 @@ $endif
   
 : list-matching-aliases-loop (matchstr aliasesstr -- )
   dup not if pop exit then
-  " " split swap dup me @ get-alias
+  " " STRsplit swap dup me @ get-alias
   " -- " swap strcat over 10 fillspace swap strcat strcat
   dup " " swap over strcat strcat tolower
   4 pick " " swap over strcat strcat
@@ -538,7 +544,7 @@ $endif
 ;
   
 : stringmatch? (str cmpstr #charsmin-- bool)
-  rot " " split pop rot rot
+  rot " " STRsplit pop rot rot
   swap over strcut swap
   4 rotate 4 rotate strcut rot rot
   stringcmp if pop pop 0 exit then
@@ -572,7 +578,7 @@ $endif
   " " swap strcat dup tolower
   " " 4 rotate strcat tolower instr
   dup not if pop pop 0 exit then
-  strcut swap pop " " split pop
+  strcut swap pop " " STRsplit pop
   player-match?
 ;
   
@@ -647,7 +653,7 @@ $endif
   int intostr " " strcat
   " #" swap strcat
   me @ getignorestr
-  swap split strcat
+  swap STRsplit strcat
   me @ setignorestr
 ;
   
@@ -661,7 +667,7 @@ $endif
   
 : list-ignored-loop (str ignorestr -- str)
   dup not if pop sort-stringwords " " strcat exit then
-  " " split swap 1 strcut
+  " " STRsplit swap 1 strcut
   swap pop atoi dbref
   dup check-ignored-dbref if
     name " " strcat
@@ -698,7 +704,7 @@ $endif
   int intostr " " strcat
   " #" swap strcat
   me @ getprioritystr
-  swap split strcat
+  swap STRsplit strcat
   me @ setprioritystr
 ;
   
@@ -712,7 +718,7 @@ $endif
   
 : list-priority-loop (str prioritystr -- str)
   dup not if pop sort-stringwords " " strcat exit then
-  " " split swap 1 strcut
+  " " STRsplit swap 1 strcut
   swap pop atoi dbref
   dup check-priority-dbref if
     name " " strcat
@@ -780,7 +786,7 @@ $endif
       then
     then
   then
-  3 pick " " split pop
+  3 pick " " STRsplit pop
   1 strcut strlen 3 <
   over not if swap pop " " swap then
   ".,?!:' " rot instr and
@@ -811,10 +817,10 @@ $endif
   
 : get-playerdbrefs  (count nullstr playersstr -- dbref_range unrecstr)
   dup not if pop sort-stringwords exit then
-  " " split swap
+  " " STRsplit swap
   dup "(" 1 strncmp not if
     " " strcat swap strcat
-    ")" split swap pop strip
+    ")" STRsplit swap pop strip
     get-playerdbrefs exit
   then
   dup "#" 1 strncmp not if
@@ -993,7 +999,7 @@ $endif
     exit
   then
   over maildir mail-getdel
-  dup " " split pop 1 strcut swap pop
+  dup " " STRsplit pop 1 strcut swap pop
   atoi dbref me @ dbcmp not if
     rot rot 1 - mail-erase-loop
   else
@@ -1016,7 +1022,7 @@ $endif
 ;
  
 : mail-unparse-mesg ( msg:"#dbref day@hh:mm:ss Amesg" -- name time msg )
-  " " split swap
+  " " STRsplit swap
   dup "#" 1 strncmp not if
     1 strcut swap pop
     atoi dbref
@@ -1025,7 +1031,7 @@ $endif
     else
       pop "*TOAD*"
     then
-    swap "@" split
+    swap "@" STRsplit
     swap atoi dup getday
     swap - dup not if
       pop "Today, "
@@ -1037,8 +1043,8 @@ $endif
       then
     then
     swap sysfix "%b %e, " strftime
-    strcat swap " " split rot rot
-    ":" split swap atoi dup 11 > if
+    strcat swap " " STRsplit rot rot
+    ":" STRsplit swap atoi dup 11 > if
       12 - " PM"
     else
       " AM"
@@ -1052,8 +1058,8 @@ $endif
       1 strcut swap pop
     then
   else
-    swap 3 strcut swap pop ") -- " split
-    swap ":" split swap atoi dup 11 > if
+    swap 3 strcut swap pop ") -- " STRsplit
+    swap ":" STRsplit swap atoi dup 11 > if
       12 - " PM"
     else
       " AM"
@@ -1556,7 +1562,7 @@ $endif
     (derefrange plyrstr mesg mesg formatname)
     get-format-prop
     (derefrange plyrstr mesg mesg format)
-    over " " split pop
+    over " " STRsplit pop
     1 strcut strlen 3 <
     over not if swap pop " " swap then
     ".,?!:' " rot instr and
@@ -1683,7 +1689,7 @@ $endif
   dup if
     over 3 + rotate
     dup pagepose? if
-      1 strcut swap pop dup " " split
+      1 strcut swap pop dup " " STRsplit
       pop 1 strcut strlen 3 < over not if
         swap pop " " swap
       then
@@ -1770,13 +1776,17 @@ $endif
 
 : show-header ( s -- )
   me @ swap 
-  "^FOREST^MUFpage v2.5FM$Revision: 1.10 $ by Foxen                                           ^YELLOW^"
-  swap strcat
-  "" "$Revision: 1.10 $" subst
+  "^FOREST^" current-version @ strcat " by Foxen                                          ^YELLOW^"
+  strcat swap strcat
+  "" "Revision: " subst
+  "" " $" subst
+  "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated $Date: 2005/01/11 15:53:45 $"
-  "" "$Date: 2005/01/11 15:53:45 $" subst
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/11 17:00:33 $"
+  "" "Date: " subst
+  "" " $" subst
+  "" "$" subst
   dup strlen 10 - strcut pop
   ansi_notify
   me @
@@ -1786,12 +1796,11 @@ $endif
  
 : show-changes ( -- )
   "Changes" show-header
-  "$Log: cmd-page,v $
-  "Revision 1.10  2005/01/11 15:53:45  feaelin
-  "Changed p #mail so that p #mail <name> <name>... works correctly. Added
-  "back in the p #changes command and notification that the version has
-  "changed.
-  ""
+  "MUFpage v2.5FM1.11 2005/01/11  Corrected display errors in #changes."
+  "MUFpage v2.5FM1.10 2005/01/11  Changed p #mail so that p #mail <name> <name>"
+  "                               works correctly. Added the p #changes command"
+  "                               and notification that the version has changed"
+  "^YELLOW^----------------------------------------------------------------------------"
   depth
   EDITansi_display
 ;  
@@ -2063,7 +2072,7 @@ $endif
 : Do-For (s--)
   ( Main routine to forward old mail to new recipients )
   ( Invaluable for harrassing page #mail )
-  " to " split dup not if
+  " to " STRsplit dup not if
     pop pop "Usage: mail forward msgnum to people" tell
   else
     swap atoi dup omaildir Valid? not if
@@ -2300,7 +2309,7 @@ $endif
       tell exit
     then
     dup " " instr if
-      " " split swap
+      " " STRsplit swap
       dup "#mail" 2 stringmatch? if
         pop mail-main exit
       then
@@ -2357,7 +2366,7 @@ $endif
       then
       dup "#ignore" 2 stringmatch? if
         pop strip dup "=" instr if
-          "=" split strip
+          "=" STRsplit strip
           swap strip swap
           me @ set-ignoremsg
           "Ignore message is set." tell
@@ -2378,7 +2387,7 @@ $endif
       then
       dup "#format" 2 stringmatch? if
         pop dup "=" instr if
-          "=" split strip swap
+          "=" STRsplit strip swap
           strip single-space
           "_" " " subst
           me @ swap rot
@@ -2394,7 +2403,7 @@ $endif
       then
       dup "#oformat" 3 stringmatch? if
         pop dup "=" instr if
-          "=" split strip swap
+          "=" STRsplit strip swap
           strip single-space
           "_" " " subst
           me @ swap rot
@@ -2410,7 +2419,7 @@ $endif
       then
       dup "#alias" 2 stringmatch? if
         pop dup "=" instr if
-          "=" split single-space
+          "=" STRsplit single-space
           strip swap
           strip single-space
           dup not if
@@ -2428,7 +2437,7 @@ $endif
         then exit
       then
       dup "#global" 2 stringmatch? if
-        pop "=" split strip single-space
+        pop "=" STRsplit strip single-space
         swap strip single-space
         dup not if
           "page: #global: Alias name cannot be null"
@@ -2612,14 +2621,14 @@ $endif
   
     me @ guest? if
       dup " " instr if
-        " " split pop
+        " " STRsplit pop
         "Guests are not allowed to use multi-page." tell
       then
     then
   
     multi-summon    (do a summons page)
   else
-    "=" split
+    "=" STRsplit
     strip
     dup pagepose? if
       1 strcut swap pop
@@ -2629,7 +2638,7 @@ $endif
     then
     swap strip single-space
     dup "!" 1 strncmp not if
-      " " split swap
+      " " STRsplit swap
       1 strcut swap pop
       dup not if pop "page" then
       set-curr-format
@@ -2637,7 +2646,7 @@ $endif
   
     me @ guest? if
       dup " " instr if
-        " " split pop
+        " " STRsplit pop
         "Guests are not allowed to use multi-page." tell
       then
     then
@@ -2654,8 +2663,12 @@ public page
 public mail
 public check
  
-lvar current-version
 : main
+  "MUFpage v2.5FM$Revision: 1.11 $"
+  "" "Revision: " subst
+  "" " $" subst
+  "" "$" subst
+  current-version !
   "me" match dup me !
   location loc !
   trig trigger !
@@ -2675,8 +2688,6 @@ lvar current-version
   then
   command @ 1 strcut pop "m" stringcmp if
   page-main else mail-main then
-  "MUFpage v2.5FM$Revision: 1.10 $" "" "$Revision: 1.10 $" subst
-  current-version !
   me @ get-last-version current-version @ strcmp if
     "Page has been upgraded.  Type 'page #changes' to see the latest mods." tell
     me @ get-last-version dup if
@@ -2847,5 +2858,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.10 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.11 $
 wh me=Installation of cmd-page complete.
