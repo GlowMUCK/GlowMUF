@@ -2,8 +2,9 @@
 @prog cmd-cinfo
 1 99999 d
 1 i
-$include $lib/glowstandard
-$def awake? dup player? if \awake? else pop 0 then
+( cmd-cinfo: $Date: 1999/02/14 16:30:00 $ $Revision: 1.2 $
+  Originally from the Glowmuck 1.9.3 
+  ---------------------------------------------------------------------- )
 ( Connect info by PakRat )
 ( Gives various infos when one connects or calls the command )
 (*Features: )
@@ -14,6 +15,11 @@ $def awake? dup player? if \awake? else pop 0 then
 ( -# times online )
 ( -Who is with you and awake )
 (*)
+
+$include $lib/glowstandard
+$include $lib/strings
+
+$def awake? dup player? if \awake? else pop 0 then
 ( Macros )
 : find "$cmd/find" match "FindDbrefList" call ;
 : last "$cmd/laston" match call ;
@@ -319,5 +325,5 @@ q
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/cinfo help
-@set $tmp/prog1=_version:FM1.0
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-cinfo complete.
