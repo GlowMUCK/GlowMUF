@@ -1,0 +1,46 @@
+"Beginning installation of cmd-parentcleaner...
+@prog cmd-parclean
+1 99999 d
+1 i
+( cmd-parentcleaner: $Date: 2000/12/21 21:21:41 $ $Revision: 1.1 $                                        )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+lvar from
+lvar to
+: parclean ( s -- )
+  pop
+  "me" match me !
+  
+  me @ .wizard? not if "Permission denied." .tell exit then
+  
+  "$par/par" match from !
+  "$par/misc" match to !
+  from @ room? to @ room? and not if
+    "$par/par and $par/misc not set." .tell
+  exit then
+  
+  from @ contents from !
+  begin from @ ok? while
+    from @ dup next from !
+    dup room? not if pop continue then
+    dup "abode" flag? if pop continue then
+    dup to @ moveto
+    dup unparseobj " owned by " strcat
+    over owner unparseobj " moved." strcat
+    strcat
+    .tell
+    pop
+  repeat
+  "Done." .tell
+;
+    
+.
+c
+q
+@register cmd-parclean=cmd/parentcleaner
+@register #me cmd-parclean=tmp/prog1
+@set $tmp/prog1=W3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Beginning installation of cmd-parentcleaner...
