@@ -1,15 +1,18 @@
-"Beginning Installation of cmd-register
+wh me=Beginning Installation of cmd-register
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2004/04/15 00:50:56 $ $Revision: 1.18 $                 )
+( cmd-register $Date: 2005/04/03 14:37:58 $ $Revision: 1.19 $                 )
 ( Purpose: Handle registration of database items for virtual references       )
 ( Author: Unknown                                                             )
-( Contributors: Andy & Feaelin                                                )
+( Contributors: Andy, Feaelin                                                 )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.19  2005/04/03 14:37:58  feaelin
+   Documentation update, changes to the installation script to make it cleaner.
+
    Revision 1.18  2004/04/15 00:50:56  feaelin
    Updated cmd-register's documentation again. Added some color and version
    display.
@@ -79,7 +82,7 @@ lvar regprop
  
 : do-header
   "^WHITE^------------------------------------------------------------------------------" tell
-  "^FOREST^cmd-register: " "$Revision: 1.18 $" 
+  "^FOREST^cmd-register: " "$Revision: 1.19 $" 
   1 strcut swap pop dup strlen 2 - strcut pop strcat tell
   "^WHITE^------------------------------------------------------------------------------" tell
 ;
@@ -114,7 +117,7 @@ lvar regprop
   "^RESET^Type '^INFO^@reg #help2^RESET^' for additional information." tell
   do-footer
 ;
-
+ 
 : do-help-2
   do-header
   "^INFO^Example:  '@reg #12345 = sample^RESET^'" tell
@@ -147,7 +150,7 @@ lvar regprop
         swap pop
     then
 ;
-
+ 
 ( Using RCS to automatically update the version prop? This prettifies the
   result! FM-IDE 1998July26                                                )
 : strip-rcs ( s -- s' )
@@ -164,7 +167,7 @@ lvar regprop
   then
   "^ ^" swap strcat
 ;
-
+ 
 : list-props ( d s -- )
   begin
     dup while
@@ -210,7 +213,7 @@ lvar regprop
   repeat
   pop pop
 ;
-  
+ 
 : cmd-@register
   "me" match dup "guest" flag? swap "truemage" flag? not and if
     me @ "^FAIL^This command is unavailable to guests." ansi_notify pop exit
@@ -368,6 +371,7 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.18 $
+@set $cmd/register=/_version:FM$Revision: 1.19 $
+@set $cmd/register=/_/de:Use '@register #help' to get more information.
 @set $cmd/register=_docs:@register #help
-"Installation of cmd-register finished.
+wh me=Installation of cmd-register finished.
