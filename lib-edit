@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
+( lib-edit: $Date: 2004/04/03 05:09:00 $ $Revision: 1.8 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -99,6 +99,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.8  2004/04/03 05:09:00  feaelin
+  Fixed .split and .format so that they preserve color on lines that they split
+
   Revision 1.7  2004/04/01 05:39:12  feaelin
   Added feature which allows the user to prepend each line in a range with
   a color code. Updated documentation for recent changes.
@@ -124,6 +127,7 @@
 
 )
 ( --------------------------------------------------------------------------- )
+$include $lib/glow
 $include $lib/strings
 $include $lib/stackrng
 $define SRNGextract sr-extractrng $enddef
@@ -285,8 +289,28 @@ $endif
     strcat swap
     1 - EDITjoin
 ;
-  
-  
+ 
+: check_ansi
+  ( {rng} excess splitchars rmargin wrapmargin string -- {rng} excess splitchars rmargin wrapmargin string )
+  dup "^" rinstr dup if
+    1 - over swap strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop toupper dup
+      "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
+      swap instr if
+        "^" swap strcat "^" strcat 
+        6 pick strcat 5 put
+      else
+        pop
+      then
+    else
+      pop pop
+    then
+  else
+    pop
+  then
+;
+ 
 : EDITsplit-splitloop (string splitchars last -- string string)
     over not if
         swap pop
@@ -315,7 +339,7 @@ $endif
         else pop
         then exit
     then
-    EDITsplit-split -6 rotate 5 rotate 1 + -5 rotate
+    EDITsplit-split check_ansi -6 rotate 5 rotate 1 + -5 rotate
     EDITsplit-loop
 ;
   
@@ -552,5 +576,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
 "Installation of lib-edit complete.
