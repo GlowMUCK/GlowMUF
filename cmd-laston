@@ -2,7 +2,7 @@
 @prog cmd-laston
 1 99999 d
 1 i
-( cmd-laston: $Date: 2000/01/27 18:33:38 $ $Revision: 1.1 $ )
+( cmd-laston: $Date: 2000/01/27 20:00:55 $ $Revision: 1.2 $ )
 ( Author: PakRat
 ( New Global @last by PakRat -- stores disconnects and connects on the )
 ( connection system programs, this way people can't be shown as online )
@@ -12,38 +12,43 @@
 ( @reg #program=cmd/laston                                      )
 ( @set $cmd/laston=2 [ May need W bit ]                         )
 ( @set $cmd/laston=L                                            )
-( @propset #0=dbref:/~connect/laston:program                    )
-( @propset #0=dbref:/~disconnect/laston:program                 )
+( @set #0=/~connect/laston:$cmd/laston                          )
+( @set #0=/~disconnect/laston:$cmd/laston                       )
 ( @action @last;last;@laston;laston=#0                          )
 ( @link @last=$cmd/laston                                       )
 ( @desc @last=@$cmd/laston -help                                )
 
-$include $lib/glowstandard  
-$define BLOCKPROP "_prefs/block/last-on" $enddef
-$define CONPROP "_/lc"  $enddef
-$define DISPROP "_/ld"  $enddef
+$include $lib/glow
+  
+$def BLOCKPROP "_prefs/block/last-on"
+$def CONPROP "@/lc"
+$def DISPROP "@/ld"
+$def OCONPROP "_/lc"
+$def ODISPROP "_/ld"
+$def a me @ swap ansi_notify
   
 : Last-Title
-  "Last-On Info: Muck Local Time (CST)" .tell
-  "~~~~~~~" .tell
+  "  " .tell
+  "^YELLOW^Last-On Info: ^BLUE^Muck Local Time (CST)" a
+  "^RED^~~~~~~~~~~~~" a
 ;
   
 : Last-Help
   Last-Title
-  "USAGE: @last names    -- Shows when player last connected" .tell
-  "       @last #help    -- Shows help screen" .tell
-  "       @last #block   -- Blocks others from seeing your @last" .tell
-  "       @last #unblock -- Restores it so others can see it" .tell
+  "^BROWN^Usage: ^YELLOW^@last names    ^AQUA^-- ^CYAN^Shows when player last connected" a
+  "       ^YELLOW^@last #help    ^AQUA^-- ^CYAN^Shows help screen" a
+  "       ^YELLOW^@last #block   ^AQUA^-- ^CYAN^Blocks others from seeing your @last" a
+  "       ^YELLOW^@last #unblock ^AQUA^-- ^CYAN^Restores it so others can see it" a
 ;
   
 : Last-Block ( -- )
   me @ BLOCKPROP "yes" 0 addprop
-  "Only you and wizards can see your Last-On information now." .tell
+  "^GREEN^Only you and wizards can see your Last-On information now." a
 ;
   
 : Last-Unblock ( -- )
   me @ BLOCKPROP remove_prop
-  "Anyone can now see your Last-On information now." .tell
+  "^GREEN^Anyone can now see your Last-On information now." a
 ;
   
 : AddNum ( s i s i -- s i )
@@ -73,16 +78,17 @@ $define DISPROP "_/ld"  $enddef
   
 : Last-Check ( d -- )
   dup awake? if
-    name " is online now." strcat .tell
+    name " is online now." strcat "^YELLOW^" swap strcat a
     exit
   then
   dup BLOCKPROP getpropstr .yes? if
     dup me @ dbcmp me @ .mage? or not if
       name " wishes to keep their Last-On information private."
-      strcat .tell exit
+      strcat "^RED^" swap strcat a exit
     then
   then
   dup DISPROP getpropval
+  dup not if pop dup ODISPROP getpropval then
   dup if ( d i )
     "%I:%M%p" over timefmt tolower
     dup 1 strcut pop "0" strcmp not if 1 strcut swap pop then
@@ -95,9 +101,10 @@ $define DISPROP "_/ld"  $enddef
     3 pick name
     " left " strcat
     swap strcat
-    .tell
+    "^AQUA^" swap strcat a
     ( d i )
     over CONPROP getpropval
+    dup not if pop over OCONPROP getpropval then
     dup 3 pick 3 pick > and if -
       ( d i )
       Tell-Time swap
@@ -106,12 +113,20 @@ $define DISPROP "_/ld"  $enddef
       "-- " swap strcat
       " was online for " strcat 
       swap strcat
-      "." strcat .tell
+      "." strcat "^YELLOW^" swap strcat a
     else ( d i i )
       pop pop pop
     then
   else
-    pop name " hasn't been on for a while." strcat .tell
+    pop name " hasn't been on for a while." strcat "^YELLOW^" swap strcat a
+  then
+;
+  
+: aliasmatch ( s -- {d} )
+  "$cmd/page" match dup if
+    0 "" 4 rotate 4 rotate "get-playerdbrefs" call pop
+  else
+    .pmatch dup if 1 else pop 0 then
   then
 ;
   
@@ -143,8 +158,11 @@ $define DISPROP "_/ld"  $enddef
     begin over while
       swap 1 - swap 
       rot
-      dup .pmatch dup if
-        Last-Check pop
+      dup aliasmatch dup if
+        begin dup while
+          1 - swap
+          Last-Check
+        repeat pop pop
       else
         pop
         " " swap strcat 
@@ -155,7 +173,7 @@ $define DISPROP "_/ld"  $enddef
     dup if 
       .cleancommas
       dup " and " instr if " are." else " is." then strcat
-      "I don't know who " swap strcat .tell
+      "I don't know who " swap strcat "^RED^" swap strcat a
     else
       pop
     then
@@ -170,10 +188,11 @@ q
 @register cmd-laston=cmd/laston
 @register #me cmd-laston=tmp/prog1
 @set $tmp/prog1=L
+@set $tmp/prog1=V
 @set $tmp/prog1=W3
-@action @last;last;@laston;laston=here=tmp/exit1
+@action @last;last;@laston;laston;lastlog;ll=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/laston
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-laston complete.
