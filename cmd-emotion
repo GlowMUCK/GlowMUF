@@ -2,11 +2,14 @@
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2000/12/25 03:26:24 $ $Revision: 1.2 $
+( cmd-emotion: $Date: 2000/12/25 05:55:22 $ $Revision: 1.3 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.3  2000/12/25 05:55:22  feaelin
+  Added 'hug #far' type feature.
+
   Revision 1.2  2000/12/25 03:26:24  feaelin
   Made 'hug me' type stuff work as expected.
 
@@ -34,11 +37,12 @@
   
 ( More setup can be done to customize responses of actions.             )
 lvar thing lvar dept
+lvar far
 $include $lib/glow
 $include $lib/strings
 
-$def n (s --) "^YELLOW^" swap strcat me @ swap ansi_notify
-$def t (s --) "^YELLOW^" swap strcat thing @ swap notify
+$def n (s --) "^INFO^" swap strcat me @ swap ansi_notify
+$def t (s --) "^INFO^" swap strcat thing @ swap notify
 $def dopt 3 pick swap 2 strncmp not 3 pick rot 2 strncmp not or
 $def yes? (--i) read 1 strcut pop "y" stringcmp not
 $def resdir "_prefs/action/response/"
@@ -76,12 +80,27 @@ $def getoverb "o" over getaverb over dosub
 : helpscreen-1
 "Emotion Help Screen 1" n
 " " n
-command @ " -all              -- list all known socials" strcat n
-command @ " -pose             -- setup emotion for verb alone" strcat n
-command @ " -setup <sex/name> -- setup emotions to people" strcat n
-command @ " -list  <sex/name> -- list settings for an emotion" strcat n
-command @ " -new   <verb>     -- add a new social verb" strcat n
-command @ " -rem   <verb>     -- remove a bad social verb" strcat n
+command @ " #all              -- list all known socials" strcat n
+command @ " #pose             -- setup emotion for verb alone" strcat n
+command @ " #setup <sex/name> -- setup emotions to people" strcat n
+command @ " #list  <sex/name> -- list settings for an emotion" strcat n
+command @ " #new   <verb>     -- add a new social verb" strcat n
+command @ " #rem   <verb>     -- remove a bad social verb" strcat n
+prog "mage" flag? if
+  command @ " *<target>         -- far hug given target" strcat n
+  command @ " #far <target>     -- far hug given target" strcat n
+else
+  me @ "mage" flag? if
+    " " n
+    "A wizard can set this program with a minimum of mage to allow #far" n
+    "functionality." n
+  then
+then
+
+" " n
+"In any of the commands above a hyphen can be used instead of #." n
+"For example: " command @ strcat " -all instead of " strcat command @ strcat
+" #all." strcat n
 " " n
 "You can put %substs in anything and it will change to a name or word." n
 "'You bonk %victim!' will turn into 'You bonk Artie!' if you bonk Artie." n
@@ -237,7 +256,11 @@ command @ " -rem   <verb>     -- remove a bad social verb" strcat n
   dup if
     thing @ .firstname " " strcat swap strcat
     thing @ swap over dosub
-    loc @ #-1 rot "^CYAN^" swap strcat ansi_notify_except 1
+    loc @ #-1 rot "^CYAN^" swap strcat
+    far @ 1 = if
+      " ^GREEN^(from afar)^ ^" strcat
+    then
+    ansi_notify_except 1
   else pop 0 then
 ;
   
@@ -412,7 +435,18 @@ $def LiORes "o" swap resdir listemotion
   "-a" "#a" dopt if pop showall exit then
   "-n" "#n" dopt if getarg newverb exit then
   "-r" "#d" dopt if getarg remverb exit then
-  
+  "-f" "#f" dopt prog "mage" flag? and if
+     " " .split
+     "*" swap strcat swap pop
+  then
+  dup "*" 1 strncmp not if 1 far !
+    dup match dup player? if
+      location loc !
+    else
+      pop
+    then
+  then  
+
   thing @ dup player? over thing? or swap room? or not if
     pop "That isn't a very emotional @thing." n exit
   then
@@ -443,14 +477,22 @@ $def LiORes "o" swap resdir listemotion
     dup getoverb over getoresponse
     dup not if pop else "  " swap strcat strcat then
     thing @ .firstname " " strcat swap strcat
-    loc @ thing @ rot "^CYAN^" swap strcat ansi_notify_except
+    loc @ thing @ rot "^CYAN^" swap strcat
+    far @ 1 = if
+      " ^GREEN^(from afar)^ ^" strcat
+    then
+    ansi_notify_except
     
     dup getverb over getresponse
       dup 1 strcut pop "@" strcmp not if
       swap thing @ swap .wrapnotify .run
     else
       dup not if pop else "  " swap strcat strcat then
-      thing @ swap "^CYAN^" swap strcat .wrapnotify
+      thing @ swap "^CYAN^" swap strcat
+      far @ 1 = if
+        " ^GREEN^(from afar)^ ^" strcat
+      then
+      .wrapnotify
     then
     
     pop 
@@ -480,6 +522,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.2 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.3 $
 "Installation of cmd-emotion complete.
 "Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
