@@ -2,11 +2,11 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/04/05 15:51:48 $ $Revision: 1.12 $                    )
+( lib-edit: $Date: 2005/04/05 16:22:57 $ $Revision: 1.13 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
-( Dependencies: lib-strings, lib-stackrng, lib-glow-standard                  )
+( Dependencies: lib-strings, lib-stackrng                                     )
 ( --------------------------------------------------------------------------- )
 ( Stack Based String Range Editing Routines                                   )
 ( 'start', 'end', 'pos' are all relative to the start of the range that is    )
@@ -31,8 +31,7 @@ wh me=Beginning installation of lib-edit...
 (   Copies text within a string range from one line to another, inserting it  )
 (   in the new location.                                                      )
 (                                                                             )
-( EDIT-display: {range} --                                                    )
-(   displays the range of strings on the stack to the user.                   )
+( EDIT-display: {range} --                                                    ) (   displays the range of strings on the stack to the user.                   )
 (                                                                             )
 ( EDIT-fmt_rng: {range} ... offset cols start end -- {range'} ...             )
 (   Formats the given subrange in the string range to COLS columns. This is   )
@@ -94,6 +93,9 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.13  2005/04/05 16:22:57  feaelin
+  Fixed library calls to lib-strings and lib-stackrng
+
   Revision 1.12  2005/04/05 15:51:48  feaelin
   Added word aliases for library words to fit the new standard.
 
@@ -139,9 +141,6 @@ wh me=Beginning installation of lib-edit...
 
 $include $lib/strings
 $include $lib/stackrng
-$define SRNGextract sr-extractrng $enddef
-$define SRNGinsert  sr-insertrng  $enddef
-$define SRNGcopy    sr-copyrng    $enddef
  
 : EDITforeach ( {str_rng} ... offset 'function data start end -- {str_rng'} )
               ( 'function must be addr of a [string data -- string] function)
@@ -198,17 +197,17 @@ $define SRNGcopy    sr-copyrng    $enddef
     else
         3 pick 3 pick >= if pop pop pop pop exit then
     then
-    over - 1 + swap 4 pick 2 + rot rot SRNGextract
+    over - 1 + swap 4 pick 2 + rot rot SRNG-extract
     ( {rng'} ... offset dest {subrng} )
     dup 3 + rotate over 3 + rotate
     ( {rng'} ... {rng2} offset dest )
-    SRNGinsert
+    SRNG-insert
 ;
  
 : EDITcopy    ( {rng} ... offset dest start end -- {rng'} )
-    over - 1 + swap 4 pick 2 + rot rot SRNGcopy
+    over - 1 + swap 4 pick 2 + rot rot SRNG-copy
     dup 3 + rotate over 3 + rotate
-    SRNGinsert
+    SRNG-insert
 ;
   
 (
@@ -284,7 +283,7 @@ $endif
  
 : EDITjoin ( {rng} -- string )
     dup 2 < if pop exit then
-    rot STRsts rot STRsls
+    rot striptail rot striplead
     over if
       over dup strlen 1 - strcut swap pop
       ".!?" swap instr if "  " else " " then
@@ -360,15 +359,15 @@ $endif
         dup 3 + dup rotate pop dup rotate pop
         dup rotate pop dup rotate pop pop exit
     then
-    dup 4 + 1 1 SRNGextract pop
+    dup 4 + 1 1 SRNG-extract pop
     ( {rng} splitchars rmargin wrapmargin {rng2} string )
-    dup STRblank? not if
+    dup STR-blank? not if
         over 6 + dup pick swap dup pick swap 1 - pick
         EDITsplit dup 2 + rotate + 1 - swap
         ( {rng} splitchars rmargin wrapmargin {rng2} string )
         over 6 + pick dup if
             3 pick + 6 + pick
-            dup STRblank?
+            dup STR-blank?
         else pop "" 1
         then
         ( {rng} splitchars rmargin wrapmargin {rng2} string nocat? )
@@ -389,12 +388,12 @@ $endif
 : EDITfmt_rng ( {str_rng} ... offset cols start end -- {str_rng'} ... )
     over - 1 + over swap
     ({rng} ... off cols start start cnt )
-    5 pick 3 + swap rot SRNGextract
+    5 pick 3 + swap rot SRNG-extract
     ({rng'} ... off cols start {srng})
     "- " over 4 + rotate dup 20 - EDITformat
     ({rng'} ... off start {srng})
     dup 3 + rotate over 3 + rotate
-    SRNGinsert
+    SRNG-insert
 ;
  
 : EDITshuffle-innerloop ( {rng} shuffles loop -- {rng'} )
@@ -464,7 +463,7 @@ $endif
 ;
  
 : EDITleft-func (string null -- string )
-    pop STRsls
+    pop striplead
 ;
  
 : EDITleft ( {strrng} ... offset start end -- {strrng'} ... )
@@ -472,7 +471,7 @@ $endif
 ;
  
 : EDITcenter-func (string cols -- string )
-    swap STRstrip dup ansi_strlen
+    swap strip dup ansi_strlen
     dup 4 pick >= if
         pop swap pop exit
     then
@@ -487,7 +486,7 @@ $endif
 ;
  
 : EDITright-func (string cols -- string )
-    swap STRstrip dup ansi_strlen
+    swap strip dup ansi_strlen
     dup 4 pick >= if
         pop swap pop exit
     then
@@ -502,7 +501,7 @@ $endif
 ;
  
 : EDITindent-func (str cols -- str)
-    swap dup strlen swap STRsls
+    swap dup strlen swap striplead
     dup strlen rot swap - rot +
     dup 1 < if pop exit then
     "                                        "
@@ -517,10 +516,10 @@ $endif
 : EDITjoin_rng ( {str_rng} ... offset start end -- {str_rng'} ... )
     over - 1 + over
     ({rng} ... off start cnt start )
-    4 pick 2 + rot rot SRNGextract
+    4 pick 2 + rot rot SRNG-extract
     ({rng'} ... off start {srng})
     EDITjoin 1 4 rotate 4 rotate
-    SRNGinsert
+    SRNG-insert
 ;
  
 PUBLIC EDITsearch
@@ -592,5 +591,5 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.12 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.13 $
 wh me=Installation of lib-edit complete.
