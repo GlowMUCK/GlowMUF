@@ -2,11 +2,14 @@
 @prog cmd-conhistory
 1 99999 d
 1 i
-( cmd-conhistory: $Date: 1999/04/18 21:00:32 $ $Revision: 1.1 $
+( cmd-conhistory: $Date: 1999/04/18 23:15:56 $ $Revision: 1.2 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-conhistory,v $
+  Revision 1.2  1999/04/18 23:15:56  feaelin
+  Needed glow library support
+
   Revision 1.1  1999/04/18 21:00:32  feaelin
   Initial revision
 
@@ -14,7 +17,9 @@
 ( New Global @ConHistory by PakRat -- stores disconnects and connects on the )
 ( connection system programs, this way people can't be shown as online )
 ( when they were actually just swept to another room. )
-  
+
+$include $lib/glow  
+
 $def BLOCKPROP "_prefs/block/last-on"
 $def CONPROP  "@/lc"
 $def OCONPROP "_/lc"
@@ -419,7 +424,7 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=V
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 @action @conhistory;@conhist;@ch;conhistory;conhist;ch=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/conhistory #help
