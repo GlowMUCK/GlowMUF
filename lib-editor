@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/04/04 14:31:05 $ $Revision: 1.19 $             )
+( lib-editor: $Date: 2005/04/05 19:50:50 $ $Revision: 1.20 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -20,7 +20,7 @@ wh me=Installing lib-editor...
 (        The format is:                                                       )
 (          {strs} count -- {strs'} count' exitcmdstr                          )
 (                                                                             )
-( EDITORloop is more complex. it takes the strings and count [hereafter to be )
+( EDITOR-loop is more complex. it takes the strings and count [hereafter to be)
 (        referred to as a range], a string containing the space seperated     )
 (        names of the commands it should return on [in addition to abort and  )
 (        end], the position in the range that you want it to set the          )
@@ -38,11 +38,11 @@ wh me=Installing lib-editor...
 (          {rng} mask curpos cmdstr --                                        )
 (               {rng'} mask curpos argstr startline endline exitcmd           )
 (                                                                             )
-( EDITORparse takes and returns arguments identically to .sedit_loop, but     )
+( EDITOR-parse takes and returns arguments identically to .sedit_loop, but    )
 (        only executes the command you pass it without doing any more editing )
 (        on the range, before returning.                                      )
 (                                                                             )
-( EDITORheader takes and returns no arguments, but prints out a standard      )
+( EDITOR-header takes and returns no arguments, but prints out a standard     )
 ( message about the user entering the editor.  EDITOR calls this              )
 ( automatically.                                                              )
 (                                                                             )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.20  2005/04/05 19:50:50  feaelin
+  Revised library word names and library calls to reflect standards change.
+
   Revision 1.19  2005/04/04 14:31:05  feaelin
   Documentation and script updated.
 
@@ -120,14 +123,6 @@ wh me=Installing lib-editor...
 $include $lib/strings
 $include $lib/stackrng
 $include $lib/edit
-
-$define SRNGcat     sr-catrng     $enddef
-$define SRNGpop     sr-poprng     $enddef
-$define SRNGextract sr-extractrng $enddef
-$define SRNGswap    sr-swaprng    $enddef
-$define SRNGcopy    sr-copyrng    $enddef
-$define SRNGdelete  sr-deleterng  $enddef
-$define SRNGinsert  sr-insertrng  $enddef
  
 : EDITORerror ( errnum -- )
     dup       1 = if pop "Invalid line reference."
@@ -223,7 +218,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         4 pick 5 + 3 pick - -1 * rotate
         1 + rot 1 + rot rot 1 exit
     then
-    " " STRsplit swap 1 strcut swap pop
+    " " STR-split swap 1 strcut swap pop
     dup not if
       dup string? if pop then 
       pop 8 EDITORerror 1 exit
@@ -236,9 +231,9 @@ $define SRNGinsert  sr-insertrng  $enddef
       then
     then
     swap
-    "=" STRsplit STRstrip swap
-    dup STRstrip if
-        " " STRsplit STRstrip swap STRstrip
+    "=" STR-split strip swap
+    dup strip if
+        " " STR-split strip swap strip
         7 pick 6 pick rot EDITORargument
         ( {str_rng} mask currline cmd arg3str arg2str arg1int )
         dup not if
@@ -260,7 +255,7 @@ $define SRNGinsert  sr-insertrng  $enddef
   
     ( {strrng} mask currline cmdstr arg3str args1int arg2int )
     4 rotate dup " " swap over strcat strcat
-    7 pick " " swap over strcat strcat STRsinglespace swap instr if
+    7 pick " " swap over strcat strcat STR-singlespace swap instr if
         0 exit
     then
   
@@ -297,7 +292,7 @@ $define SRNGinsert  sr-insertrng  $enddef
             then
           then
         then
-        EDITsort dup 3 + rotate over 3 + rotate
+        EDIT-sort dup 3 + rotate over 3 + rotate
         dup 1 - 0 0 "^SUCC^< %1 lines sorted. >" EDITORmesg
         1 exit
     then
@@ -310,7 +305,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over over 0
         "^SUCC^< deleting %2 lines starting at line %1  (Now current line) >"
         EDITORmesg
-        2 swap rot SRNGdelete
+        2 swap rot SRNG-delete
         1 exit
     then
     dup "l" stringcmp not if
@@ -321,7 +316,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over over swap - 1 + 3 pick
         -4 rotate -4 rotate
         ( {strrng} mask currline cnt frst start end )
-        4 0 4 rotate 4 rotate EDITlist
+        4 0 4 rotate 4 rotate EDIT-list
         0 "^SUCC^< listed %1 lines starting at line %2 >"
         EDITORmesg 1 exit
     then
@@ -333,7 +328,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over over swap - 1 + 3 pick
         -4 rotate -4 rotate
         ( {strrng} mask currline cnt frst start end )
-        4 0 4 rotate 4 rotate EDITansi_list
+        4 0 4 rotate 4 rotate EDIT-ansi_list
         0 "^SUCC^< listed %1 lines starting at line %2 >"
         EDITORmesg 1 exit
     then
@@ -345,7 +340,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over over swap - 1 + 3 pick
         -4 rotate -4 rotate
         ( {strrng} mask currline cnt frst start end )
-        4 1 4 rotate 4 rotate EDITlist
+        4 1 4 rotate 4 rotate EDIT-list
         0 "^SUCC^< listed %1 lines starting at line %2 >"
         EDITORmesg 1 exit
     then
@@ -357,7 +352,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over over swap - 1 + 3 pick
         -4 rotate -4 rotate
         ( {strrng} mask currline cnt frst start end )
-        4 1 4 rotate 4 rotate EDITansi_list
+        4 1 4 rotate 4 rotate EDIT-ansi_list
         0 "^SUCC^< listed %1 lines starting at line %2 >"
         EDITORmesg 1 exit
     then
@@ -366,10 +361,10 @@ $define SRNGinsert  sr-insertrng  $enddef
         pop if 6 EDITORerror then
         dup not if pop over then
         over not if 10 EDITORerror pop pop 1 exit then
-        2 rot rot EDITsearch dup if
+        2 rot rot EDIT-search dup if
             dup 0 0 "^SUCC^< Found.  Going to line %1 >"
             EDITORmesg swap pop
-            2 over dup 1 EDITlist
+            2 over dup 1 EDIT-list
         else
             pop 0 0 0
             "^FAIL^< pattern not found >"
@@ -382,25 +377,25 @@ $define SRNGinsert  sr-insertrng  $enddef
         pop 3 pick not if 11 EDITORerror pop pop pop 1 exit then
         over not if pop pop over dup then
         dup not if pop dup then
-        rot 6 pick 5 pick rot STRstrip EDITORargument
+        rot 6 pick 5 pick rot strip EDITORargument
         dup not if pop pop pop 1 exit then rot rot
         ( {strrng} mask currline arg3i arg1i arg2i )
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Moved %1 lines from line %2 to line %3.  (dest now curr line) >"
         EDITORmesg 3 pick 4 put
-        2 -4 rotate EDITmove 1 exit
+        2 -4 rotate EDIT-move 1 exit
     then
     dup "copy" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
         pop 3 pick not if 11 EDITORerror pop pop pop 1 exit then
         over not if pop pop over dup then
         dup not if pop dup then
-        rot 6 pick 5 pick rot STRstrip EDITORargument
+        rot 6 pick 5 pick rot strip EDITORargument
         dup not if pop pop pop 1 exit then rot rot
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Copied %1 lines from line %2 to line %3.  (now current line) >"
         EDITORmesg 3 pick 4 put
-        2 -4 rotate EDITcopy 1 exit
+        2 -4 rotate EDIT-copy 1 exit
     then
     dup "repl" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -411,19 +406,19 @@ $define SRNGinsert  sr-insertrng  $enddef
             pop pop pop 1 exit
         then
         ( {strrng} mask currline args1int arg2int arg3str )
-        1 strcut swap STRsplit -4 rotate
+        1 strcut swap STR-split -4 rotate
         dup not if
             pop pop pop pop
             10 EDITORerror 1 exit
         then
         -4 rotate 3 -5 rotate
-        7 5 pick 4 pick EDITsearch dup if
+        7 5 pick 4 pick EDIT-search dup if
             dup 0 0 "< Replaced.  Going to line %1 >"
             EDITORmesg dup 7 put
             rot pop swap over -6 rotate
             ({rng} mask currline first 3 oldtext newtext first arg2int)
-            EDITreplace ({rng} mask currline first)
-            2 1 rot dup ({rng} mask currline 2 1 first first) EDITlist
+            EDIT-replace ({rng} mask currline first)
+            2 1 rot dup ({rng} mask currline 2 1 first first) EDIT-list
         else
             pop pop pop pop pop pop
             0 0 0 "< pattern not found >"
@@ -438,7 +433,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup 1 + then over 3 put
         over over swap - 1 + 3 pick 0
         "^SUCC^< Joining %1 lines starting at line %2. (Now current line) >"
-        EDITORmesg 2 rot rot EDITjoin_rng
+        EDITORmesg 2 rot rot EDIT-join_rng
         1 exit
     then
     dup "split" stringcmp not if
@@ -483,7 +478,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then
         over over swap - 1 + 3 pick 0
         "^SUCC^< Left justifying %1 lines starting at line %2. >"
-        EDITORmesg 2 rot rot EDITleft
+        EDITORmesg 2 rot rot EDIT-left
         1 exit
     then
     dup "center" stringcmp not if
@@ -498,7 +493,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Centered %1 lines starting at line %2 for screenwidth %3. >"
-        EDITORmesg 2 -4 rotate EDITcenter 1 exit
+        EDITORmesg 2 -4 rotate EDIT-center 1 exit
     then
     dup "color" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -516,7 +511,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then
         over over swap - 1 + 3 pick 0
         "^SUCC^< Colorized %1 lines starting at line %2. >"
-        EDITORmesg 2 -4 rotate EDITcolor 1 exit
+        EDITORmesg 2 -4 rotate EDIT-color 1 exit
     then
     dup "right" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -530,11 +525,11 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Right justified %1 lines starting at line %2 to column %3. >"
-        EDITORmesg 2 -4 rotate EDITright 1 exit
+        EDITORmesg 2 -4 rotate EDIT-right 1 exit
     then
     dup "format" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
-        pop rot STRstrip dup not if pop "80" then
+        pop rot strip dup not if pop "80" then
         dup number? not if
             pop pop pop 12 EDITORerror 1 exit
         then atoi
@@ -544,7 +539,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then over 4 put
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
-        EDITORmesg 2 -4 rotate EDITfmt_rng 1 exit
+        EDITORmesg 2 -4 rotate EDIT-fmt_rng 1 exit
     then
     dup "indent" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -558,7 +553,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         dup not if pop dup then
         over over swap - 1 + 3 pick 5 pick
         "^SUCC^< Indented %1 lines starting at line %2, %3 columns. >"
-        EDITORmesg 2 -4 rotate EDITindent 1 exit
+        EDITORmesg 2 -4 rotate EDIT-indent 1 exit
     then
     dup "ruler" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -591,7 +586,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
         0 0 0 "^INFO^< Edit aborted. >"
         EDITORmesg
-        pop pop pop pop pop pop SRNGpop
+        pop pop pop pop pop pop SRNG-pop
         0 "" 1 "" 1 1 "abort" 0 exit
     then
     dup tolower "h" 1 strncmp not if
@@ -628,7 +623,7 @@ $define SRNGinsert  sr-insertrng  $enddef
 "^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 "^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
-        33 EDITansi_display
+        33 EDIT-ansi_display
         pop pop pop pop 1 exit
     then
     pop pop pop pop 8 EDITORerror 1
@@ -669,7 +664,11 @@ q
 @set $lib/editor=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
 @set $lib/editor=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
 @set $lib/editor=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
+@set $lib/editor=/_defs/EDITOR:"$lib/editor" match "editor" call
+@set $lib/editor=/_defs/EDITOR-header:"$lib/editor" match "editorheader" call
+@set $lib/editor=/_defs/EDITOR-loop:"$lib/editor" match "editorloop" call
+@set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
 @set $lib/editor=/_docs:@list $lib/editor=1-51
 @set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
-@set $lib/editor=/_lib-version:FM$Revision: 1.19 $
+@set $lib/editor=/_lib-version:FM$Revision: 1.20 $
 wh me=Installation of lib-editor complete.
