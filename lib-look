@@ -1,88 +1,97 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/10 17:24:47 $ $Revision: 1.5 $
-  Originally part of the FuzzBall MUF distribution.                           )
+( cmd/lib-look: $Date: 2004/04/11 18:46:00 $ $Revision: 1.6 $                 )
+( Originally part of the FuzzBall MUF distribution.                           )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
 ( --------------------------------------------------------------------------- )
 ( Set of library routines for doing 'look' functions.
   The following functions are included in this library:
-  safecall:  x d --
+  LOOKsafecall:  x d --
        Takes a dbref which is assumed to be a command or @desc-like program
        that takes one parameter, usually a string, and returns no values.]
        It ensures that none of the variables me, loc, trigger, or command
        are modified, and that no garbage is left behind on the stack.
-  unparse:  d -- s
+  LOOKunparse:  d -- s
        Takes a dbref, and returns either just its name, or the name plus
        flags, depending on the permissions of me @.
-  contents-filter:  a d -- d... i
+  LOOKcontents-filter:  a d -- d... i
        Takes the address of a 'filter' routine and a dbref, and returns a
        range on the stack of the filtered contents of the object.  The first
        item to print is the bottom of the stack range.  The filter should
        be  d -- i; it takes a dbref and returns a true/false value to say
        whether or not the dbref should be put into the list.
-  get-contents:  d -- d... i
+  LOOKget-contents:  d -- d... i
        Takes a dbref, and returns the list of its contents, filtered through
        the standard filter which acts like the server's contents list:
        Dark rooms don't list anything unless the room or the objects are
        yours, dark objects not owned by you don't show, and you don't show.
        This list has the first element in the contents at the bottom of the
        stack.
-  long-display:  d... i --
+  LOOKlong-display:  d... i --
        List the dbref stack range given, in the usual format for the server.
        All elements on separate lines, using unparse.  The bottom element is
        printed first.
-  short-list:  d... i -- s
+  LOOKlist-objects:  d -- 
+       Lists all the 'objects' that are setup by the @object/@detail commands
+       Parallels long-display.
+  LOOKshort-list:  d... i -- s
        Turns the range of dbrefs on the stack into a properly formatted
        string, with commas.  1 element is just returned, 2 elements returns
        '1 and 2', more elements return '1, 2, 3, and 4' or similar.  Returns
        a null string if there are no elements.  Again, the bottom element is
        first in the list.
-  short-display:  d... i --
+  LOOKshort-display:  d... i --
        Calls short-list, then prints out "You see <string>." to the user.
        Prints "You see nothing." if nothing is on the list.
-  list-contents:  s d --
-       Calls get-contents followed by long-display to print out all of the
-       contents of the given dbref.  If there are any contents listed, then
-       the string on the stack is printed out, for "Contents:" or the like.
-       If the contents list is empty, the string is ignored.
-  str-desc:  s --
-       Takes string 's', and prints it out as a description.  Matches the
+  LOOKlist-contents:  s d --
+       Calls get-contents followed by long-display and list-objects to print
+       out all of the contents of the given dbref. If there are any contents
+       listed, then  the string on the stack is printed out, for "Contents:"
+       or the like. If the contents list is empty, the string is ignored.
+  LOOKstr-desc:  s --
+       Takes string 's', and prints it out as a description. Matches the
        '@###' and '@$prog' values properly, and uses them with the present
        trigger value.  If neither of these exist, or if they're invalid,
-       the rest of the string is just printed out.
-  dbstr-desc:  d s --
+       the rest of the string is just printed out. Does NOT parse MPI.
+  LOOKdbstr-desc:  d s --
        Runs str-desc, using the value d on the stack as the effective
-       trigger value.
-  db-desc:  d --
+       trigger value. Parses MPI as appropiate.
+  LOOKdb-desc:  d --
        Does a full description of the object, including name and succ/fail
        if the dbref given is a room, and contents. All programs run with
        the dbref given in 'trigger @'. Will return the proper values for
-       dbref's #-1 and #-2 as well.
-  cmd-look:  s --
+       dbref's #-1 and #-2 as well. Parses MPI as appropiate.
+  LOOKcmd-look:  s --
        Does a match function, then calls db-desc with the results.  This
        will simulate the usual 'look' command.
 )
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.6  2004/04/11 18:46:00  feaelin
+  Added the library calls LOOKxxx, to be more inline with the standard.
+  Added support for @object/@detail details. Correspondingly added some
+  related library calls.
+
   Revision 1.5  2004/04/10 17:24:47  feaelin
   Fixed minor issues in the std-filter function.
-
+  
   Revision 1.4  2004/04/10 15:09:40  feaelin
   Fixed issue where if you didn't control the item, or you were set silent,
   the database item name wasn't colorized.
-
+  
   Revision 1.3  2004/04/08 13:38:36  feaelin
   Fixed issues where lib-look didn't parse color in descriptions by default.
   Fixed issue where lib-look didn't parse MPI in descriptions and messages.
   Further cleaned up dependency on macros.
-
+  
   Revision 1.2  2004/03/26 03:21:18  feaelin
   Reduced macro/library dependence.
-
+  
   Revision 1.1  1998/08/23 15:47:21  glow
   Initial revision
-
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/glow
@@ -151,6 +160,7 @@ lvar realtrig
 ;
  
 ( Don't see rooms.  Don't see programs you can't link to. )
+( Don't see dark things, except you always see zombies and players. )
 : std-filter ( d -- i )
   dup me @ dbcmp if pop 0 exit then
   dup room? if pop 0 exit then
@@ -234,11 +244,31 @@ lvar realtrig
   then
 ;  
  
+: list-objects ( d -- )
+  dup "_obj/" nextprop
+  begin
+    dup "" strcmp while
+    dup ";" STRsplit pop
+    "/" STRsplit swap pop
+    "thing" UPOcolor-query
+    me @ "silent" flag? not if
+      3 pick control? if
+        "^YELLOW^(detail)" strcat
+      then
+    then
+    tell
+    over swap nextprop
+  repeat
+  pop pop
+; PUBLIC list-objects
+ 
 : list-contents ( s d -- )
-  get-contents dup
+  dup "_obj/" nextprop STRblank? not swap
+  dup get-contents dup dup 4 + rotate or
   if
-    dup 2 + rotate tell
+    dup 3 + rotate tell
     long-display
+    list-objects
   else
     pop pop
   then
@@ -277,7 +307,7 @@ lvar realtrig
  
 : dbstr-desc ( d s -- )
   swap trigger @ realtrig ! trigger !
-  str-desc
+  trigger @ swap "(@Desc)" 1 parsempi str-desc
   realtrig @ trigger !
 ;
  
@@ -342,12 +372,49 @@ $endif
   realtrig @ trigger !
   pop
 ;
+
+: detail-dbmatch ( d s -- s )
+  swap dup "_obj/" nextprop
+  begin
+    dup "" strcmp while
+    dup 4 pick instring if
+      over swap getprop
+      0 while
+    then
+    over swap nextprop
+  repeat
+  dup "" strcmp if -3 rotate pop pop exit then
+  pop
+  dup "_det/" nextprop
+  begin
+    dup "" strcmp while
+    dup 4 pick instring if
+      over swap getprop
+      0 while
+    then
+    over swap nextprop
+  repeat
+  -3 rotate pop pop
+;
+
+: detail-match ( s -- )
+  "here" match dup rot 
+  detail-dbmatch
+  "(@Desc)" 1 parsempi
+  dup "" strcmp not if
+    0 exit
+  else
+    str-desc
+    pop 1 exit
+  then
+;
  
 : cmd-look ( s -- )
   dup not
   if
-    pop "here"
+    pop "here" match db-desc exit
   then
+  dup detail-match if exit then
   match db-desc
 ;
  
@@ -380,12 +447,26 @@ q
 @set $tmp/prog1=/_defs/.get-contents:"$lib/look" match "get-contents" call
 @set $tmp/prog1=/_defs/.list-contents:"$lib/look" match "list-contents" call
 @set $tmp/prog1=/_defs/.long-display:"$lib/look" match "long-display" call
+@set $tmp/prog1=/_defs/.list-objects:"$lib/look" match "list-objects" call
 @set $tmp/prog1=/_defs/.safecall:"$lib/look" match "safecall" call
 @set $tmp/prog1=/_defs/.short-display:"$lib/look" match "short-display" call
 @set $tmp/prog1=/_defs/.short-list:"$lib/look" match "short-list" call
 @set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
+@set $tmp/prog1=/_defs/LOOKcmd-look:"$lib/look" match "cmd-look" call
+@set $tmp/prog1=/_defs/LOOKcontents-filter:"$lib/look" match "contents-filter" call
+@set $tmp/prog1=/_defs/LOOKdb-desc:"$lib/look" match "db-desc" call
+@set $tmp/prog1=/_defs/LOOKdbstr-desc:"$lib/look" match "dbstr-desc" call
+@set $tmp/prog1=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
+@set $tmp/prog1=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
+@set $tmp/prog1=/_defs/LOOKlist-objects:"$lib/look" match "list-objects" call
+@set $tmp/prog1=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
+@set $tmp/prog1=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
+@set $tmp/prog1=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
+@set $tmp/prog1=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
+@set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=3-60
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.5 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.5 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.6 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.6 $
 ff"Installation of lib-look complete.
