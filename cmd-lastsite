@@ -1,0 +1,26 @@
+"Beginning installation of cmd-lastsite...
+@prog cmd-lastsite
+1 99999 d
+1 i
+( cmd-lastsite: $Date: 2000/01/27 20:32:54 $ $Revision: 1.1 $ )
+( Author: PakRat )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+: main
+  .noguest
+  "me" match dup "@/lastsite" getpropstr
+  swap name " last logged on from " strcat swap strcat "." strcat .tell
+;
+.
+c
+q
+@register cmd-lastsite=cmd/lastsite
+@register #me cmd-lastsite=tmp/prog1
+@set $tmp/prog1=W3
+@action @lastsite;lastsite;@lasthost;lasthost=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@lastsite lists the last known site you logged in from.
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-lastsite complete.
