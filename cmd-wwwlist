@@ -1,0 +1,47 @@
+"Beginnning installation of cmd-wwwlist...
+@prog cmd-wwwlist
+1 99999 d
+1 i
+( cmd-wwwlist: $Date: 2000/12/22 18:53:34 $ $Revision: 1.1 $                                              )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-wwwlist,v $
+  Revision 1.1  2000/12/22 18:53:34  feaelin
+  Initial revision
+
+)
+$include $lib/glow
+
+$def WWWPROP "_/www"
+$def SITESTR "http://www.kemenel.org:1315/"
+: plist ( s -- ) pop
+  0 dbtop int begin dup 0 > while dup dbref
+    dup player? if dup .guest? not if
+      dup WWWPROP getpropstr
+    else 0 then else 0 then if
+      name rot 1 + rot
+    else pop then
+  1 - repeat pop
+  ( s ) 3 sort
+  begin dup while
+    1 - swap
+    over if 3 pick tolower over tolower 1 strncmp else 1 then
+    if 1 ( newline ) else 0 then swap
+    ( i s )
+    "<a href=\"" SITESTR strcat "/~" strcat over strcat "\">" strcat
+    swap strcat "</a>" strcat over not if "," strcat then
+    .tell
+    if "<p>" .tell then
+  repeat pop
+;
+.
+c
+q
+@register cmd-wwwlist=cmd/wwwlist
+@register #me cmd-wwwlist=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=M2
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-wwwlist completed.
