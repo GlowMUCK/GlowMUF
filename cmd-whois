@@ -2,7 +2,7 @@
 @program cmd-whois
 1 99999 d
 1 i
-( cmd-whois: $Date: 2000/12/22 18:40:17 $ $Revision: 1.1 $ )
+( cmd-whois: $Date: 2000/12/22 18:49:29 $ $Revision: 1.2 $ )
 ( Authors: Scotfox, Casual                                                    )
 ( --------------------------------------------------------------------------- )
 ( whois.muf, by Scotfox, 20-July-1993 )
@@ -10,6 +10,9 @@
 
 ( 
   $Log: cmd-whois,v $
+  Revision 1.2  2000/12/22 18:49:29  feaelin
+  Brought in-line with glowmuf 3.1.5
+
   Revision 1.1  2000/12/22 18:40:17  feaelin
   Initial revision
 
@@ -81,8 +84,9 @@ $def MARK "[!] "
 : do-showdesc
     ( playerdbref )
     dup "_prefs/whois_showdesc" getpropstr .no? not if
-        dup "_/ide" getpropstr dup not if pop dup desc then
+        dup "_/ide" getpropstr if "_/ide" else "_/de" then
         "!!!" swap  ( put a marker there )
+        3 pick swap "(Whois)" 1 parseprop
         do-desc
         begin  ( take off everything above the marker )
             dup string? not if pop continue then
@@ -93,7 +97,8 @@ $def MARK "[!] "
     0 "_whois/"
     begin 3 pick swap nextprop dup while  ( playerdbref count propname )
 (        dup "_whois/showdesc" strcmp not if continue then )
-        3 pick over getpropstr  ( playerdbref count propname propstr )
+         ( 3 pick over getpropstr ) ( playerdbref count propname propstr )
+         3 pick over "(Whois)" 1 parseprop
         over 7 strcut swap pop ": " strcat swap strcat .tell
         swap 1 + dup 10 = if break else swap then
     repeat pop pop
@@ -126,10 +131,10 @@ c
 q
 @register cmd-whois=cmd/whois
 @register #me cmd-whois=tmp/prog1
-@set $tmp/prog1=M2
+@set $tmp/prog1=M3
 @action whois;finger;pinfo=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/whois
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-whois complete.
