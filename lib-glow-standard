@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1999/04/16 23:43:17 $ $Revision: 1.8 $                                       )
+( lib-glow-standard: $Date: 1999/04/18 04:10:45 $ $Revision: 1.9 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -49,6 +49,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.9  1999/04/18 04:10:45  feaelin
+  Added alias for .setpropstr
+
   Revision 1.8  1999/04/16 23:43:17  feaelin
   Oops.  Some that crap wasn't supposed to be in here. *grin*
 
@@ -292,6 +295,7 @@ q
 @set $tmp/prog1=/_defs/.security?:"_private" getpropstr .yes?
 @set $tmp/prog1=/_defs/.seek:( x L -- L x ) dup 2 + rotate
 @set $tmp/prog1=/_defs/.setpropstr:dup if setprop else pop remove_prop then
+@set $tmp/prog1=/_defs/setpropstr:dup if setprop else pop remove_prop then
 @set $tmp/prog1=/_defs/.setpennies:( d i -- ) over pennies 0 swap - 3 pick swap addpennies addpennies ( sets d's pennies to i )
 @set $tmp/prog1=/_defs/.showstr:( s1 ... si i -- ) begin dup while dup 1 + rotate tell 1 - repeat pop
 @set $tmp/prog1=/_defs/.sort:2 sort
@@ -328,5 +332,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
 "Installation of lib-glow-standard completed.
