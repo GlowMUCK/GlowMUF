@@ -1,0 +1,220 @@
+"Beginning Installation of cmd-register
+@prog cmd-register
+1 99999 d
+1 i
+( cmd-register $Date: 1998/07/26 20:14:21 $ $Revision: 1.1 $
+  Original Author: Unknown                              
+  Updated for Glowmuck by: Andy
+  Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
+  Requires GlowMuck 3.0.0 or Later                                            )
+( --------------------------------------------------------------------------- )
+( 
+   $Log: cmd-register,v $
+   Revision 1.1  1998/07/26 20:14:21  glow
+   Initial revision
+
+   Updated to bring it in line with any improvements made in FBMUF5.61.
+   Cleaned up use of macros, e.g. made it so no macros or libs are required to
+    run/compile cmd-register on a glowmuck server.
+   Also added some pretty colors! Fixed _reg props to use refs instead of
+    string props.  Included backward compatibility with servers that are still
+    using strings for those references.
+
+)          
+$define tell me @ swap ansi_notify $enddef
+
+lvar regobj
+lvar regprop
+
+: do-help
+  "The @register program is used to make objects, particularly programs," tell
+  "globally available to all users.  Basic syntax:" tell
+  " " tell
+  "  @reg                     ... to list globally registered programs." tell
+  "  @reg <propdir>           ... to list globally registered programs" tell
+  "                               in a particular propdir." tell
+  "  @reg <object> = <name>   ... to register <object> as <name>." tell
+  " " tell
+  "By default, registrations are made on #0 in _reg or the specified" tell
+  "subpropdir of _reg." tell
+  " " tell
+  "Of course, only wizards have permission to change #0, but mortal" tell
+  "players can still store registrations on themselves or other objects" tell
+  "which they own, using the following options:" tell
+  "  #me                      ... makes the registration on the user." tell
+  "  #prop <targobj>:<prop>   ... makes the registration on <targobj>" tell
+  "                               in propdir <prop>" tell
+  "Type '@reg #help2' for examples." tell
+;
+
+: do-help-2
+  "Example:  @reg #12345 = sample" tell
+  "This registers object #12345 as '_reg/sample' on #0, so that players" tell
+  "can refer to it as '$sample' instead of '#12345'." tell
+  " " tell
+  "Example:  @reg lib-reflist = lib/reflist" tell
+  "This registers the program lib-reflist as '_reg/lib/reflist' on #0," tell
+  "so that coders can use '$include $lib/reflist' in their programs." tell
+  " " tell
+  "Example:  @reg #me #20645 = pet" tell
+  "This registers object #20645 as '_reg/pet' on the user.  The user" tell
+  "may now refer to #20645 as '$pet'.  Since the registration is not" tell
+  "on #0, only the user may use this reference." tell
+  " " tell
+  "Example:  @reg #prop #9876:_arrive #12345=sample" tell
+  "This registers object #12345 as '_arrive/sample' on #9876.  Notice" tell
+  "that it is not registered as '_reg/_arrive/sample'.  The #prop" tell
+  "option does not include '_reg' automatically." tell
+;
+ 
+: split
+    swap over over swap
+    instr dup not if
+        pop swap pop ""
+    else
+        1 - strcut rot
+        strlen strcut
+        swap pop
+    then
+;
+  
+: list-props ( d s -- )
+  begin
+    dup while
+    dup strlen 1 - strcut
+    dup "/" strcmp if
+      strcat break
+    else pop
+    then
+  repeat
+  "/" strcat over swap nextprop
+  begin
+    dup while
+    over over getprop
+    dup if
+      dup number? if
+        atoi dbref
+      then
+      dup ok? if
+        dup unparseobj
+	over "_version" getpropstr
+        dup if
+          "     Ver. " swap strcat strcat
+        else pop
+        then
+        swap "_lib-version" getpropstr
+        dup if
+          "     Lib.ver. " swap strcat strcat
+        else pop
+        then
+      else pop "<garbage>"
+      then
+      over ": " strcat swap strcat
+      regprop @ strlen strcut swap pop
+      "  " swap strcat tell
+    else pop
+    then
+    over over propdir? if
+      dup regprop @ strlen strcut swap pop
+      "    " swap strcat
+      "/ (directory)" strcat tell
+    then
+    over swap nextprop
+  repeat
+  pop pop
+;
+  
+: cmd-@register
+  "me" match dup "guest" flag? swap "truemage" flag? not and if
+    me @ "^RED^This command is unavailable to guests." ansi_notify pop exit
+  then
+  "me" match me !
+  dup "#help2" stringcmp not if do-help-2 exit then
+  dup "#help" over if
+    over strlen strcut pop stringcmp not else pop pop 0
+  then if do-help exit then
+  striplead dup tolower "#me" 3 strncmp not if
+    " " split swap pop
+    me @ regobj !
+    "_reg/" regprop !
+  else
+    dup tolower "#prop" 5 strncmp not if
+      " " split swap pop
+      " " split swap
+      ":" split
+      (rest obj prop)
+      swap dup not if pop "me" then
+      dup "@" strcmp not if pop "#0" then
+      match dup not if
+        me @ "^RED^I don't see that target object here." ansi_notify
+        pop pop pop exit
+      then
+      dup #-2 dbcmp if
+        me @ "^RED^I don't know which target object you mean." ansi_notify
+        pop pop pop exit
+      then
+      me @ over owner dbcmp
+      me @ "wizard" flag? or not if
+        me @ "^RED^Permission Denied." ansi_notify
+        pop pop pop exit
+      then
+      regobj !
+      dup not if pop "/" then      (if no propdir selected, use default)
+      dup dup strlen 1 - strcut swap pop
+      "/" strcmp if "/" strcat then    (if propdir doesn't end in /, append /)
+      regprop !
+    else
+      me @ "w" flag? not
+      over "=" instr and if
+        me @ "^RED^Permission denied." ansi_notify
+        pop exit
+      then
+      #0 regobj !
+      "_reg/" regprop !
+    then
+  then
+  
+  dup "=" instr not if
+    "^GREEN^Registered objects on "
+    regobj @ unparseobj strcat
+    ":" strcat tell
+    regobj @ regprop @ rot strcat list-props
+    "^YELLOW^Done." tell exit
+  then
+  "=" split strip swap strip
+  match dup not if
+    "^RED^I don't see that object here." tell pop exit
+  then
+  dup #-2 dbcmp if
+    "^RED^I don't know which object you mean." tell pop exit
+  then
+  
+  swap
+  " " split if
+    pop pop "^RED^You cannot have spaces in the registration name." tell exit
+  then
+  regobj @ regprop @ 3 pick strcat getpropstr
+  dup if
+    dup "#" 1 strncmp not if 1 strcut swap pop then
+    regprop @ 3 pick strcat " used to be registered to " strcat
+    swap atoi dbref unparseobj strcat
+    "^YELLOW^" swap strcat tell
+  else pop
+  then
+  regobj @ regprop @ 3 pick strcat 4 pick setprop
+  regprop @ swap strcat " is now registered to " strcat
+  swap unparseobj strcat " on " strcat 
+  regobj @ unparseobj strcat
+  "^YELLOW^" swap strcat tell
+;
+.
+c
+q
+@set cmd-register=W2
+@action @register;@registe;@regist;@regis;@regi;@reg=here=tmp/exit1
+@link $tmp/exit1=cmd-register
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/register #help
+@register cmd-register=cmd/register
+@set $cmd/register=_version:$Revision: 1.1 $
+"Installation of cmd-register finished.
