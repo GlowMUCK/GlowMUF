@@ -1,0 +1,19 @@
+"Beginning installation of lock-killer...
+@prog lock-killer
+1 99999 d
+1 i
+( lock-kill: $Date: 1999/02/20 20:42:03 $ $Revision: 1.1 $
+  Author: Andy
+  --------------------------------------------------------------------------- )
+: lock-kill
+  "me" match "KILL" flag?
+;
+.
+c
+q
+@register lock-killer=lock/killer
+@register #me lock-killer=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M1
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of lock-killer complete.
