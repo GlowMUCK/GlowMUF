@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1998/07/30 19:20:41 $ $Revision: 1.6 $
+( lib-strings: $Date: 1998/07/30 19:25:37 $ $Revision: 1.7 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
@@ -38,6 +38,9 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
+  Revision 1.7  1998/07/30 19:25:37  glow
+  *** empty log message ***
+
   Revision 1.6  1998/07/30 19:20:41  glow
   Added synonyms of .split: .splitarg, .splitargs, .splitfirst, .strcutat.
 
@@ -45,7 +48,7 @@ This routine is useful for parsing command line input:
   *** empty log message ***
 
   Revision 1.4  1998/07/30 19:14:48  glow
-  Added STRsplitargs (.splitargs)
+  Added STRsplitargs/.splitargs
 
   Revision 1.3  1998/07/30 04:11:20  glow
   Updated STRsplit
@@ -201,5 +204,5 @@ q
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
 "Installation of lib-strings complete.
