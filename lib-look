@@ -1,8 +1,8 @@
-"Beginning installation of lib-look...
+wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/20 22:05:52 $ $Revision: 1.13 $                )
+( cmd/lib-look: $Date: 2004/04/22 01:52:09 $ $Revision: 1.14 $                )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -80,6 +80,10 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.14  2004/04/22 01:52:09  feaelin
+  Fixed issues with LOOKshort-list where it wasn't colorizing as you might
+  expect it to.
+
   Revision 1.13  2004/04/20 22:05:52  feaelin
   Okay. This time, I REALLY made std-filter public. And fixed the docs up
   properly.
@@ -256,7 +260,7 @@ lvar realtrig
 : short-list ( d... i -- s )
   dup 3 <
   if
-    1 - dup 2 + rotate name over
+    1 - dup 2 + rotate "%P" UPOspecial-unparseobj over
     if
       " " strcat
     then
@@ -265,12 +269,13 @@ lvar realtrig
     begin
       over 1 >
     while
-      swap 1 - swap over 3 + rotate name ", " strcat strcat
+      swap 1 - swap over 3 + rotate "%P" UPOspecial-unparseobj
+      "^WHITE^, " strcat strcat
     repeat
   then
   swap
   if
-    "and " strcat swap name strcat
+    "^WHITE^and " strcat swap "%P" UPOspecial-unparseobj strcat
   then
 ;
  
@@ -283,7 +288,7 @@ lvar realtrig
   then
 ;  
  
-: list-details ( d -- )
+: list-objects ( d -- )
   dup "_obj/" nextprop
   begin
     dup "" strcmp while
@@ -299,7 +304,7 @@ lvar realtrig
     over swap nextprop
   repeat
   pop pop
-; PUBLIC list-details
+; PUBLIC list-objects
  
 : list-contents ( s d -- )
   dup "_obj/" nextprop STRblank? not swap
@@ -307,7 +312,7 @@ lvar realtrig
   if
     dup 3 + rotate tell
     long-display
-    list-details
+    list-objects
   else
     pop pop
   then
@@ -558,7 +563,7 @@ q
 @set $lib/look=/_defs/LOOKdetail-desc:"$lib/look" match "detail-desc" call
 @set $lib/look=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
 @set $lib/look=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
-@set $lib/look=/_defs/LOOKlist-details:"$lib/look" match "list-details" call
+@set $lib/look=/_defs/LOOKlist-objects:"$lib/look" match "list-objects" call
 @set $lib/look=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
 @set $lib/look=/_defs/LOOKprop:"$lib/look" match "look-prop" call
 @set $lib/look=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
@@ -569,6 +574,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.13 $
-@set $lib/look=/_version:1.31FM$Revision: 1.13 $
-"Installation of lib-look complete.
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.14 $
+@set $lib/look=/_version:1.31FM$Revision: 1.14 $
+wh me=Installation of lib-look complete.
