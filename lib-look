@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/22 01:52:09 $ $Revision: 1.14 $                )
+( cmd/lib-look: $Date: 2004/04/22 17:16:22 $ $Revision: 1.15 $                )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -80,6 +80,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.15  2004/04/22 17:16:22  feaelin
+  Added support for player darking via the /@/dark:yes prop
+
   Revision 1.14  2004/04/22 01:52:09  feaelin
   Fixed issues with LOOKshort-list where it wasn't colorizing as you might
   expect it to.
@@ -207,8 +210,20 @@ lvar realtrig
 : std-filter ( d -- i )
   dup me @ dbcmp if pop 0 exit then
   dup room? if pop 0 exit then
-  dup player? if pop 1 exit then
-  dup dup thing? swap "z" flag? and if pop 1 exit then
+  dup player? if
+    prog "@allowdarkplayers" getpropstr "yes" strcmp not if
+      dup "@/dark" getpropstr "yes" strcmp swap pop exit
+    else
+      pop 1 exit
+    then
+  then
+  dup dup thing? swap "z" flag? and if
+    prog "@allowdarkplayers" getpropstr "yes" strcmp not if
+      dup "@/dark" getpropstr "yes" strcmp swap pop exit
+    else
+      pop 1 exit
+    then
+  then
   dup program? if
     dup control? over "Link_OK" flag? or if
       pop 1 exit
@@ -574,6 +589,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.14 $
-@set $lib/look=/_version:1.31FM$Revision: 1.14 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.15 $
+@set $lib/look=/_version:1.31FM$Revision: 1.15 $
 wh me=Installation of lib-look complete.
