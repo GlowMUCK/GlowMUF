@@ -1,7 +1,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/03/26 03:21:18 $ $Revision: 1.2 $
+( cmd/lib-look: $Date: 2004/04/08 13:38:36 $ $Revision: 1.3 $
   Originally part of the FuzzBall MUF distribution.                           )
 ( --------------------------------------------------------------------------- )
 ( Set of library routines for doing 'look' functions.
@@ -65,6 +65,11 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.3  2004/04/08 13:38:36  feaelin
+  Fixed issues where lib-look didn't parse color in descriptions by default.
+  Fixed issue where lib-look didn't parse MPI in descriptions and messages.
+  Further cleaned up dependency on macros.
+
   Revision 1.2  2004/03/26 03:21:18  feaelin
   Reduced macro/library dependence.
 
@@ -73,10 +78,10 @@
 
 )
 ( --------------------------------------------------------------------------- )
-( $include $lib/glowstandard )
 $include $lib/strings
 $include $lib/match
 $include $lib/stackrng
+$include $lib/unparseobj
  
 lvar sme
 lvar sloc
@@ -108,7 +113,7 @@ lvar realtrig
 ;
  
 : control? ( d -- i )
-  me @ swap .controls
+  me @ swap controls
 ;
  
 : dark? ( d -- i )
@@ -133,7 +138,7 @@ lvar realtrig
       then
     then
   then
-  unparseobj
+  color-unparseobj
 ;
  
 ( Don't see rooms.  Don't see programs you can't link to. )
@@ -234,13 +239,13 @@ lvar realtrig
 ;
  
 : str-desc ( s -- )
-  .stripspaces dup
+  striplead striptail dup
   if
     dup "@" 1 strncmp
     if
       tell
     else
-      1 strcut swap pop " " .split .stripspaces swap
+      1 strcut swap pop " " STRsplit striplead striptail swap
       dup "$" 1 strncmp
       if
         atoi dbref
@@ -249,7 +254,7 @@ lvar realtrig
       then
       dup ok?
       if
-        dup trigger @ owner swap .controls over "Link_OK" flag? or
+        dup trigger @ owner swap controls over "Link_OK" flag? or
         if
           safecall
         else
@@ -284,7 +289,8 @@ lvar realtrig
   if
     dup unparse tell
   then
-  dup desc str-desc
+  dup "/_/de" "(@Desc)" 1 parseprop
+  str-desc
   dup room?
   if
 $ifndef __version<Muck2.2fb4.5
@@ -294,27 +300,29 @@ $else
     0
 $endif
     if
-      dup fail dup
+      dup "/_/fl" "(@Fail)" 1 parseprop
       if
         str-desc
       else
         pop
       then
-      dup ofail otell
+      dup "/_/ofl" "(@OFail)" 1 parseprop 
+      otell
     else
-      dup succ dup
+      dup "/_/sc" "(@Succ)" 1 parseprop dup
       if
         str-desc
       else
         pop
       then
-      dup osucc otell
+      dup "/_/osc" "(@OSucc)" 1 parseprop
+      otell
     then
-    "Contents:" over list-contents
+    "^BLUE^Contents:" over list-contents
   else
     dup player?
     if
-      "Carrying:" over list-contents
+      "^BLUE^Carrying:" over list-contents
     then
   then
   realtrig @ trigger !
@@ -349,7 +357,7 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=S
 @set $tmp/prog1=H
-@set $tmp/prog1=M2
+@set $tmp/prog1=W3
 @set $tmp/prog1=/_/de:lib-look:List lines 3-60 for documentation.
 @set $tmp/prog1=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
 @set $tmp/prog1=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
@@ -364,6 +372,6 @@ q
 @set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=3-60
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.2 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.2 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.3 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.3 $
 ff"Installation of lib-look complete.
