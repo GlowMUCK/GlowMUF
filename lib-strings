@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/03/21 01:31:43 $ $Revision: 1.14 $                 )
+( lib-strings: $Date: 2005/04/03 14:55:01 $ $Revision: 1.15 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -41,6 +41,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.15  2005/04/03 14:55:01  feaelin
+  Fixed installer script
+
   Revision 1.14  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -179,44 +182,43 @@ public splitargs
 c
 q
 @register lib-strings=lib/strings
-@register #me lib-strings=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W
-@set $tmp/prog1=/_defs/.asc:"$lib/strings" match "STRasc" call
-@set $tmp/prog1=/_defs/.blank?:striplead not
-@set $tmp/prog1=/_defs/.center:"$lib/strings" match "center" call
-@set $tmp/prog1=/_defs/.chr:"$lib/strings" match "STRchr" call
-@set $tmp/prog1=/_defs/.command_parse:"$lib/strings" match "STRparse" call
-@set $tmp/prog1=/_defs/.fillfield:"$lib/strings" match "fillfield" call
-@set $tmp/prog1=/_defs/.left:"$lib/strings" match "left" call
-@set $tmp/prog1=/_defs/.right:"$lib/strings" match "right" call
-@set $tmp/prog1=/_defs/.rsplit:"$lib/strings" match "rsplit" call
-@set $tmp/prog1=/_defs/.singlespace:"$lib/strings" match "sms" call
-@set $tmp/prog1=/_defs/.sms:"$lib/strings" match "sms" call
-@set $tmp/prog1=/_defs/.split:"$lib/strings" match "split" call
-@set $tmp/prog1=/_defs/.split2:"$lib/strings" match "split" call
-@set $tmp/prog1=/_defs/.splitarg:"$lib/strings" match "splitargs" call
-@set $tmp/prog1=/_defs/.splitargs:"$lib/strings" match "splitargs" call
-@set $tmp/prog1=/_defs/.splitfirst:"$lib/strings" match "splitargs" call
-@set $tmp/prog1=/_defs/.stripspaces:strip
-@set $tmp/prog1=/_defs/.strcutat:"$lib/strings" match "splitargs" call
-@set $tmp/prog1=/_defs/STRasc:"$lib/strings" match "STRasc" call
-@set $tmp/prog1=/_defs/STRblank?:striplead not
-@set $tmp/prog1=/_defs/STRcenter:"$lib/strings" match "center" call
-@set $tmp/prog1=/_defs/STRchr:"$lib/strings" match "STRchr" call
-@set $tmp/prog1=/_defs/STRfillfield:"$lib/strings" match "fillfield" call
-@set $tmp/prog1=/_defs/STRleft:"$lib/strings" match "left" call
-@set $tmp/prog1=/_defs/STRparse:"$lib/strings" match "STRparse" call
-@set $tmp/prog1=/_defs/STRright:"$lib/strings" match "right" call
-@set $tmp/prog1=/_defs/STRrsplit:"$lib/strings" match "rsplit" call
-@set $tmp/prog1=/_defs/STRsinglespace:"$lib/strings" match "sms" call
-@set $tmp/prog1=/_defs/STRsls:striplead
-@set $tmp/prog1=/_defs/STRsms:"$lib/strings" match "sms" call
-@set $tmp/prog1=/_defs/STRsplit:"$lib/strings" match "split" call
-@set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
-@set $tmp/prog1=/_defs/STRstrip:strip
-@set $tmp/prog1=/_defs/STRsts:striptail
-@set $tmp/prog1=/_docs:@list $lib/strings=1-37
-@set $tmp/prog1=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
+@set $lib/strings=L
+@set $lib/strings=W
+@set $lib/strings=/_defs/.asc:"$lib/strings" match "STRasc" call
+@set $lib/strings=/_defs/.blank?:striplead not
+@set $lib/strings=/_defs/.center:"$lib/strings" match "center" call
+@set $lib/strings=/_defs/.chr:"$lib/strings" match "STRchr" call
+@set $lib/strings=/_defs/.command_parse:"$lib/strings" match "STRparse" call
+@set $lib/strings=/_defs/.fillfield:"$lib/strings" match "fillfield" call
+@set $lib/strings=/_defs/.left:"$lib/strings" match "left" call
+@set $lib/strings=/_defs/.right:"$lib/strings" match "right" call
+@set $lib/strings=/_defs/.rsplit:"$lib/strings" match "rsplit" call
+@set $lib/strings=/_defs/.singlespace:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/.sms:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/.split:"$lib/strings" match "split" call
+@set $lib/strings=/_defs/.split2:"$lib/strings" match "split" call
+@set $lib/strings=/_defs/.splitarg:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/.splitargs:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/.splitfirst:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/.stripspaces:strip
+@set $lib/strings=/_defs/.strcutat:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/STRasc:"$lib/strings" match "STRasc" call
+@set $lib/strings=/_defs/STRblank?:striplead not
+@set $lib/strings=/_defs/STRcenter:"$lib/strings" match "center" call
+@set $lib/strings=/_defs/STRchr:"$lib/strings" match "STRchr" call
+@set $lib/strings=/_defs/STRfillfield:"$lib/strings" match "fillfield" call
+@set $lib/strings=/_defs/STRleft:"$lib/strings" match "left" call
+@set $lib/strings=/_defs/STRparse:"$lib/strings" match "STRparse" call
+@set $lib/strings=/_defs/STRright:"$lib/strings" match "right" call
+@set $lib/strings=/_defs/STRrsplit:"$lib/strings" match "rsplit" call
+@set $lib/strings=/_defs/STRsinglespace:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/STRsls:striplead
+@set $lib/strings=/_defs/STRsms:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/STRsplit:"$lib/strings" match "split" call
+@set $lib/strings=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/STRstrip:strip
+@set $lib/strings=/_defs/STRsts:striptail
+@set $lib/strings=/_docs:@list $lib/strings=1-37
+@set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
+@set $lib/strings=/_lib-version:FM$Revision: 1.15 $
 wh me=Installation of lib-strings complete.
