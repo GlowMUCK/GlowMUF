@@ -2,7 +2,7 @@
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2004/02/23 05:04:44 $ $Revision: 1.4 $               )
+( cmd-find: $Date: 2004/02/23 05:14:18 $ $Revision: 1.5 $               )
 ( Author: PakRat                                                        )
 ( Mods By: Regabyr AKA Jennifer Boeyink                                 ) 
 ( --------------------------------------------------------------------- )
@@ -23,14 +23,21 @@
 ( been parented at all.                                                 )
 (                                                                       )
 ( You can set "_hideprivate?" to yes on the program itself, and any     )
-( players set private will not be shown at all on the find list         )
+( players set private will not be shown at all on the find list.        )
+(                                                                       )
+( You can set "_hidewizards?" to yes on the program itself, and all     )
+( wizards will not be shown at all on the find list.
+(                                                                       )
 ( --------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
+  Revision 1.5  2004/02/23 05:14:18  feaelin
+  Added 'hidewizards' feature
+
   Revision 1.4  2004/02/23 05:04:44  feaelin
   Fixed bugs in the dark support.
   Added "hideprivate" feature.
-
+  
   Revision 1.3  2004/02/14 15:41:51  feaelin
   Added dark support.
   Added customizable headers by adjusting props on the program.
@@ -108,6 +115,9 @@ lvar step
     dup "@/dark" getpropstr yes?  ( dn-1...d1 n dn b )
     prog "_hideprivate?" getpropstr yes? if 
       over private? or over location private? or
+    then
+    prog "_hidewizards?" getpropstr yes? if 
+      over "truemage" flag? or
     then
     if
       pop step @ 1 - step !
@@ -411,7 +421,7 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0FM" "$Revision: 1.4 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  "Find 2.0FM" "$Revision: 1.5 $" 11 strcut swap pop dup strlen 1 - strcut pop
   " by PakRat" strcat strcat n
   "~~~~~~~~~~~~~~~~~~" n
   "Find lists information about where players are on the game." n
@@ -520,5 +530,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $tmp/prog1=_version:2.0FM$Revision: 1.4 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.5 $
 "Installation of cmd-find complete.
