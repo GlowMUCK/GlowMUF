@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2000/01/10 18:18:54 $ $Revision: 1.12 $          )
+( lib-glow-standard: $Date: 2000/01/10 18:23:21 $ $Revision: 1.13 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,8 +50,8 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
-  Revision 1.12  2000/01/10 18:18:54  feaelin
-  Updated docs and fixed the _docs property.
+  Revision 1.13  2000/01/10 18:23:21  feaelin
+  Updated documentation and added the _docs property.
 
   Revision 1.10  1999/04/18 19:08:32  feaelin
   Added alias for stringncmp
@@ -340,6 +340,6 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog!=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
+@set $tmp/prog1=/_docs:@list $lib/glow=1-46
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
 "Installation of lib-glow-standard completed.
