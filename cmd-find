@@ -2,13 +2,18 @@
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2000/01/26 15:15:42 $ $Revision: 1.1 $ )
+( cmd-find: $Date: 2001/01/15 15:17:27 $ $Revision: 1.2 $ )
 ( Author: PakRat                                                        )
 ( --------------------------------------------------------------------- )
 ( PakRat's find copyright 1993 V2.1 with new realm and help features.   )
 ( This may work with an M2, but may need an M3 or W.                    )
 ( Set it L, @reg it to cmd/find, @desc it to @$cmd/find -help           )
-  
+(
+  $Log: cmd-find,v $
+  Revision 1.2  2001/01/15 15:17:27  feaelin
+  *** empty log message ***
+
+)
 lvar ftype
 lvar showline
 lvar dept
@@ -24,6 +29,7 @@ $define yes?     .yes?            $enddef
 $define no?      .no?             $enddef
 $define private? .private?        $enddef
   
+( if you change the worldprop you should also change it in cmd-teleport )
 $define worldprop "~world" $enddef
 $define areaprop  "_land"  $enddef
   
@@ -438,5 +444,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-find complete.

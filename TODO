@@ -1,3 +1,5 @@
-Make sure cmd-page checks #idletime still.
-hug me doesn't work as expected.
+cmd-emotion: 'me' doesn't work as expected (try hug by itself, and then hug me).
+cmd-emotion: all-room, all-muck?
+cmd-emotion: far-action
+cmd-path: if a muck is using a custom look, cmd-path's obvious exits may bail because the stack does not contain (@Succ)
 

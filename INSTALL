@@ -1,4 +1,4 @@
-INSTALL $Date: 2000/12/20 14:11:51 $ $Revision: 1.8 $
+INSTALL $Date: 2001/01/15 15:17:27 $ $Revision: 1.9 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.2 (Alpha Release)
 ---------
@@ -93,6 +93,9 @@ Comments about some other programs:
   cmd-conhistory:
     Requires a current version of cmd-page to be installed.
 
+  cmd-notify:
+    Requires con-caller to function.
+
   con-guest:
     If you're not using con-caller, don't forget to set a ~connect prop
     for this program.  You will also need to set the GS string in the program
@@ -108,7 +111,13 @@ Comments about some other programs:
     out by default.  Keep in mind this program calls several others,
     I'd look it over before using it, and see if you actually need it.
     Programs it will need to be installed: con-guest, cmd-announce, cmd-page,
-    and con-watch.
+    and con-watch.  It will be more useful if cmd-notify is installed also.
+
+  cmd-parclean:
+    You will need to register your parent of all parents using @register as
+    par/par (@reg <dbref>=par/par) and register a parent to drop things into
+    as par/misc (@reg <dbref>=par/misc).  Cleans up parents and drops extras
+    in $par/misc.
 
 	The only one of these libraries or muf-programs I "wrote" is the
 lib-glow-standard one (which is mostly just a cut n' paste of the macros

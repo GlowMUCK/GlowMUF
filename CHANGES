@@ -1,10 +1,15 @@
-CHANGES $Date: 2000/12/20 14:11:51 $ $Revision: 1.6 $
+CHANGES $Date: 2001/01/15 15:17:27 $ $Revision: 1.7 $
 ---------------------------------------------------------------------------
-19 December 2000:
+22 December 2000: Beta Release 1
+---------------------------------------------------------------------------
 1) Fixed issue with cmd-bbs not dealing with custom look programs properly,
    and updated documentation accordingly.
+2) Fixed cmd-vote's wiz access to changing votes
+3) In theory, the rcs-ifying and compatibility w/ lib-glow pass is now
+   complete.
 
 27 January 2000: Alpha Release 4
+----------------------------------------------------------------------------
 1) Documentation and fixes for cmd-setworld, cmd-teleport, and cmd-roomcheck
    Minor updates on several others.
 
