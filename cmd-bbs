@@ -2,7 +2,7 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2000/12/19 20:10:37 $ $Revision: 1.4 $
+( cmd-bbs: $Date: 2000/12/19 20:18:49 $ $Revision: 1.5 $
   Author: Garth Minette
   --------------------------------------------------------------------------- )
 ( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette )
@@ -33,7 +33,17 @@
 ( You can set _bbslib but not _bbs to keep a bbs from being in a library )
 ( You can set _bbsuse but not _bbs to keep a bbs from being in a mirror )
 ( You can set _bbspub but not _bbs to make a bbs library only, storage room )
-  
+
+( @desc an object with @dbref or @$cmd/bbs to allow a 'look' at the board to )
+( list the messages on the board.                                            )
+
+( 
+  $Log: cmd-bbs,v $
+  Revision 1.5  2000/12/19 20:18:49  feaelin
+  Documentation fixes.
+
+)
+
 $include $lib/strings
 $include $lib/lmgr
 $include $lib/mesg
@@ -575,10 +585,10 @@ q
 @set $tmp/prog1=/_defs/.get-legal-prop:"$desc" match "get-legal-prop" call
 @set $tmp/prog1=/_defs/.split-args:"$desc" match "split-args" call
 @set $tmp/prog1=/_defs/.wipe-list:"$desc" match "wipe-list" call
-@set $tmp/prog1=/_docs:@list $desc-docs
+@set $tmp/prog1=/_docs:@list $cmd/bbs=1-33
 @action bbhelp;bbread;bbnext;bbindex;bbnew;bbwrite;bbedit;bbhide;bberase;bbkeep;bbclear;read;write;erase;protect=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $tmp/prog1=_version:FM$Revision: 1.4 $
+@set $tmp/prog1=_version:FM$Revision: 1.5 $
 "Installation of cmd-bbs complete.
