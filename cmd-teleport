@@ -1,0 +1,277 @@
+"Beginning installation of cmd-teleport...
+@prog cmd-teleport
+1 99999 d
+1 i
+( cmd-teleport: $Date: 2000/01/27 16:32:34 $ $Revision: 1.1 $ )
+( Author: Scotfox                 )
+( --------------------------------------------------------------------------- )
+( teleport.muf v2, by Scotfox, 1-October-93 )
+( global and wizard aliases added by Quercus 9/96)
+ 
+$include $lib/glowstandard
+$include $lib/strings
+
+$def DEPART  "The world around you fades into mist." 
+$def ODEPART "%N fades into mist, and is gone."      
+$def ARRIVE  "You find yourself elsewhere..."        
+$def OARRIVE "A mist appears and condenses into %n." 
+ 
+$def TELREF #0
+ 
+lvar me_jump_ok
+lvar room_jump_ok
+lvar alias_type
+ 
+: do-help  ( -- )
+    " " .tell
+    "Teleport by by Scotfox" .tell
+    " " .tell
+    "tel #1234  or  tel 1234      teleports you to room #1234." .tell
+    "tel JoeUser                  teleports you to where JoeUser is." .tell
+    " " .tell
+    "tel #help                    shows this help screen." .tell
+    "tel #props                   shows properties to set on rooms." .tell
+    " " .tell
+    "Personal teleport aliases:" .tell
+    "tel #alias bedroom = #1234   sets alias 'bedroom' to room #1234." .tell
+    "tel bedroom                  then teleports you to room #1234." .tell
+    "tel #alias bedroom = here    sets alias 'bedroom' to this room."  .tell
+    "tel #alias                   shows you the aliases you have set." .tell
+    "tel #alias bedroom           shows you what 'bedroom' is set to." .tell
+    "tel #alias bedroom =         erases that alias." .tell
+  me @ .mage? if
+    " " .tell
+    "Use #galias, #halias, and #walias to set global, hidden, and" .tell
+    "wiz-only teleport aliases." .tell
+  then
+;
+: do-props ( -- )
+    "The room you're going to must be JUMP_OK and not '_private:yes'." .tell
+    "The room you start from must be JUMP_OK or '_teleport/ok:yes'." .tell
+    " " .tell
+    "Properties on players or rooms:" .tell
+    "_teleport/depart             what you see when you leave." .tell
+    "_teleport/odepart            what others see when you leave." .tell
+    "_teleport/arrive             what you see when you arrive." .tell
+    "_teleport/oarrive            what others see when you arrive." .tell
+    "_teleport/fail               what you see if you can't go there." .tell
+    "_teleport/ok                 on !J room, still okay to tel from" .tell
+    "For oarrive and odepart start with %n to show your name in poses." .tell
+;
+: padfield  ( text width -- paddedtext )
+    swap "                                        " strcat
+    swap strcut pop " " strcat
+;
+: str2dbref  ( s -- d )
+    dup "#" 1 strncmp not if 1 strcut swap pop then  (remove leading '#')
+    dup number? not if pop #-1 exit then
+    atoi dbref
+;
+: check-for-recycle ( s -- s )
+    dup str2dbref room? not if pop "" then
+;
+: find-alias  ( alias-string -- dest-string )
+    dup me @ "_teleport/aliases/" rot strcat getpropstr dup if swap pop check-for-recycle exit then
+    pop dup TELREF "_teleport/galiases/" rot strcat getpropstr dup if swap pop check-for-recycle exit then
+    pop dup TELREF "_teleport/haliases/" rot strcat getpropstr dup if swap pop check-for-recycle exit then
+    pop .wiz? not if "" exit then
+    TELREF "_teleport/waliases/" rot strcat getpropstr check-for-recycle
+;
+: get-dest-dbref  ( deststring -- destdbref )
+    dup find-alias dup if swap pop str2dbref exit else pop then  ( alias? )
+    dup .pmatch dup ok? if swap pop location exit  ( player? )
+       else pop then
+    dup "home" stringcmp not if
+      "To get home just type 'home'." .tell
+    pop #-1 exit then
+    me @ location .private? not if
+      dup "here" stringcmp not if pop me @ location exit then
+    then
+    dup match dup not if pop str2dbref else swap pop then
+    dup ok? not if pop
+        "I don't know what that is." .tell #-1 exit then
+    dup room? not if "That's not a room." .tell pop #-1 exit then
+    ( roomdbref )
+;
+: leaving-messages  ( -- )
+    loc @ "_teleport/depart" envpropstr swap pop
+    dup not if pop me @ "_teleport/depart" getpropstr then
+    dup not if pop DEPART then
+    me @ swap pronoun_sub .run
+ 
+    loc @ "_teleport/odepart" envpropstr swap pop
+    dup not if pop me @ "_teleport/odepart" getpropstr then
+    dup not if pop ODEPART then
+    me @ swap pronoun_sub
+    loc @ me @ rot notify_except 
+;
+: arriving-messages  ( destdbref -- )
+    dup "_teleport/arrive" envpropstr swap pop
+    dup not if pop me @ "_teleport/arrive" getpropstr then
+    dup not if pop ARRIVE then
+    me @ swap pronoun_sub .run
+ 
+    dup "_teleport/oarrive" envpropstr swap pop
+    dup not if pop me @ "_teleport/oarrive" getpropstr then
+    dup not if pop OARRIVE then
+    me @ swap pronoun_sub
+    over me @ rot notify_except
+;
+: show-alias  ( which-alias -- )
+    dup if  ( if we're given an alias to work with )
+        dup find-alias  ( alias value )
+        dup not if
+           alias_type @ dup 1 = if pop "You don't have an " 
+              else dup 2 = if pop "There is no global "
+              else 3 = if "There is no hidden " else 
+              "There is no wizard " then then then
+            swap pop "alias named '" strcat swap strcat
+            "'." strcat .tell
+        else
+           alias_type @ dup 1 = if pop "T" 
+              else dup 2 = if pop
+              .wiz? not if "You may not set global aliases." .tell exit then
+            "Global t" else 3 = if 
+              .wiz? not if "You may not set hidden aliases." .tell exit then
+            "Hidden t" else "Wizard t" then then then
+            "eleport alias '" strcat rot strcat "' is set to '" strcat
+            swap strcat "'." strcat .tell
+        then
+    exit then
+ 
+    ( if we're not given any alias to work with, then list the available ones )
+    pop alias_type @ dup 1 = if pop "Your "
+      else dup 2 = if pop "Global " else 3 = if "Hidden " else "Wizard " then then then
+    "teleport aliases: (Type 'tel #help' for help.)" strcat " " .tell .tell " " .tell
+    alias_type @ dup 1 = if pop me @ "aliases/"
+      else dup 2 = if pop TELREF "galiases/" else 3 = if TELREF "haliases/"
+      else TELREF "waliases/" then then then
+        "_teleport/" swap strcat begin
+        over swap nextprop dup while  ( player/progdbref propname )
+        over over getpropstr  ( player/progdbref propname value )
+        over dup "/" rinstr strcut swap pop
+        ( player/progdbref propname value alias )
+        dup strlen 10 >= if " " strcat else 10 padfield then
+        " -- " strcat swap atoi dbref dup dup 
+        room? not IF pop pop "*NOT A ROOM*" ELSE name swap
+        owner name "'s " strcat swap strcat THEN strcat .tell
+        (": " strcat swap strcat .tell)
+    repeat
+    pop pop
+;
+: do-alias  ( alias-string -- )
+    dup "#alias" stringcmp not if 6 else 7 then
+    strcut swap pop strip  ( chop '#alias' off the beginning of the string )
+    dup not if pop "" show-alias exit then
+    dup "=" instr not if show-alias exit then
+    ( alias-string equals-loc )
+    "=" STRsplit strip swap strip swap
+    ( aliasname aliasdest )
+    over not if 
+      pop pop "You must specify an alias." .tell exit
+    then
+    dup not if
+      pop alias_type @ 1 = if me @ else TELREF then
+      swap "_teleport/" alias_type @ dup 1 = if pop "aliases/"
+        else dup 2 = if pop "galiases/" else 3 = if "haliases/"
+        else "waliases/" then then then
+      strcat swap strcat remove_prop
+      "Alias removed." .tell exit then
+    get-dest-dbref dup #-1 dbcmp if pop pop exit then
+ 
+    over over alias_type @ dup 1 = if pop "T" else dup 2 = if pop
+      .wiz? not if "You may not set that alias." .tell exit then
+      "Global t" else 3 = if 
+      .wiz? not if "You may not set that alias." .tell exit then
+      "Hidden t" else "Wizard t" then then then
+    "eleport alias '" strcat rot strcat "' set to room " strcat
+    swap intostr strcat "." strcat .tell
+ 
+    "_teleport/" alias_type @ dup 1 = if pop "aliases/" else dup 2 = if pop
+      "galiases/" else 3 = if
+      "haliases/" else "waliases/" then then then
+      strcat rot strcat swap
+      alias_type @ 1 = if me @ else TELREF then
+    rot rot intostr setprop
+;
+: source-teleport-ok?  ( -- ok? )
+    loc @ "J" flag? if                  1 exit then
+    loc @ "_teleport/ok" envpropstr swap pop .yes? if  1 exit then
+    loc @ owner me @ dbcmp if           1 exit then
+    "You can't teleport from here." .tell 0
+;
+: dest-teleport-ok?  ( destdbref -- destdbref ok? )
+    dup owner me @ dbcmp if 1 exit then  ( always ok if I own it )
+    dup .private? if
+        me @ .wizard? if dup name else "That room" then
+        " is private." strcat .tell 0 exit then
+    dup "J" flag? not if
+        dup "_teleport/fail" envpropstr swap pop dup if
+            .run 0 exit
+        else pop
+          dup name " is not @set JUMP_OK." strcat .tell 0 exit then
+        then
+    me @ .guest? if
+        dup "GUEST" flag? not if
+          "Guests are not allowed there." .tell 0 exit
+        then
+    then
+    1  ( ok )
+;
+: wizard-override?  ( -- override? )
+    .wiz? not if 0 exit then
+    "Override because you're a wizard?" .tell
+    read .yes? dup not if "Teleport cancelled." .tell then
+;
+: teleport
+    strip  ( remove leading and trailing spaces from the argument )
+    dup not if pop 2 alias_type ! "xxxxxxx" do-alias exit then  
+           ( if no argument, print global aliases )
+    dup "#help" stringcmp not if pop do-help exit then
+    dup "#props" stringcmp not if pop do-help exit then
+ 
+    ( check and see if this is an '#alias' call )
+    dup dup " " instr dup if 1 - strcut pop else pop then  ( string firstword )
+    dup "#alias" stringcmp not if pop 1 alias_type ! do-alias exit then
+    dup "#galias" stringcmp not if pop 2 alias_type ! do-alias exit then
+    dup "#halias" stringcmp not if pop 3 alias_type ! do-alias exit then
+    "#walias" stringcmp not if .wiz? if 4 else 1 then alias_type ! 
+       do-alias exit then
+ 
+    source-teleport-ok? not if wizard-override? not if exit then then
+ 
+    get-dest-dbref dup #-1 dbcmp if pop exit then
+    dest-teleport-ok? not if wizard-override? not if pop exit then then
+ 
+    ( destdbref )
+ 
+    leaving-messages
+    arriving-messages
+ 
+    ( me @ "J" flag? dup me_jump_ok ! not if me @ "J" set then )
+    ( dup "J" flag? dup room_jump_ok ! not if dup "J" set then )
+    dup me @ swap moveto
+    ( me_jump_ok @ not if me @ "!J" set then )
+    ( room_jump_ok @ not if "!J" set else pop then )
+  
+    pop
+;
+.
+c
+q
+@register cmd-teleport=cmd/teleport
+@register #me cmd-teleport=tmp/prog1
+@set $tmp/prog1=S
+@set $tmp/prog1=H
+@set $tmp/prog1=W3
+@set $tmp/prog1=/cost:0
+@set $tmp/prog1=/drop:The mist begins to fade away and you find yourself elsewhere.
+@set $tmp/prog1=/odrop:A mist appears and condenses into %N.
+@set $tmp/prog1=/osucc:%N fades into a mist, and is gone.
+@set $tmp/prog1=/succ:The world fades into mist.
+@action teleport;tele;tel;t;jump=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/teleport 
+@set $tmp/prog1=/_version:2.0FM$Revision: 1.1 $
+"Installation of cmd-teleport complete.
