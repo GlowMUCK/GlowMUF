@@ -1,10 +1,43 @@
-CHANGES $Date: 2001/01/22 05:28:28 $ $Revision: 1.8 $
+CHANGES $Date: 2004/02/27 18:16:24 $ $Revision: 1.9 $
+Author: Feaelin
+2004 February 27: FM 1.1
 ---------------------------------------------------------------------------
-1) Added the anti-crossworld teleport feature to cmd-teleport
-2) Added the .sort option to the list editor (in lib-editor)
-3) Added the move, copy and delete commands to lsedit
+01) cmd-teleport: Added the anti-crossworld teleport feature to cmd-teleport
+                  Adjusted to handle properly the customizable props for
+                  cmd-find.
+02) lib-editor: Added the .sort option to the list editor (in lib-editor)
+                and colorized responses. Added the .al and .ap commands,
+                essentially to display the colorized versions of the text.
+03) lib-edit: Added EDITansi_list and EDITansi_display library functions,
+              Revised format, left justify and right justify to handle ansi
+              correctly.
+04) cmd-lsedit: Colorized responses, it also inherits the changes to lib-edit
+                and lib-editor. Added the lsmove, lscopy and lsdelete commands
+05) cmd-path: Added backlink feature: Allows user to make the 'reverse' path
+              when making a path (e.g. north and south, west and east, etc.)
+06) cmd-emotion: Started adding 'far' features to cmd-emotion
+07) Added support for look programs that don't properly put "(@desc)" on the
+    stack when calling a program.  Uncommenting the $define STUPIDLOOK 1 will
+    turn this support on.
+08) lib-strings: Added support to (STRfillfield, STRleft, STRright, STRcenter)
+                 to allow them to parse strings with ^COLOR^ codes in them
+                 correctly. Credit goes to Syvel for the original correction
+                 concept.
+09) cmd-3who: now supports the /@/dark prop.
+10) cmd-find: now has more customizability in regard to what props it uses,
+              as well as the list headings.  It also now supports the /@/dark
+              prop, configurably.
+11) cmd-mv-cp: Fixed a flaw in cmd-mv-cp where it could no longer be used as a
+               library.
+12) cmd-register: Using a '$' in cmd-register names now fails, so you don't
+    end up with reg entries of $foo: foo.muf...
+13) cmd-roomcheck: fixed bug in the installer.
+14) cmd-who: fixed bug in cmd-who where ALL players were listed in the
+    "elsewhere in the game" string.  Added support for /@/dark.
+15) lib-glow: noguest uses FAIL instead of RED now.
+16) lib-stackrng: Had a conflicting definition of popn.
 
-22 December 2000: Beta Release 1
+2000 December 22: Beta Release 1
 ---------------------------------------------------------------------------
 1) Fixed issue with cmd-bbs not dealing with custom look programs properly,
    and updated documentation accordingly.
@@ -12,19 +45,19 @@ CHANGES $Date: 2001/01/22 05:28:28 $ $Revision: 1.8 $
 3) In theory, the rcs-ifying and compatibility w/ lib-glow pass is now
    complete.
 
-27 January 2000: Alpha Release 4
+2000 January 27: Alpha Release 4
 ----------------------------------------------------------------------------
 1) Documentation and fixes for cmd-setworld, cmd-teleport, and cmd-roomcheck
    Minor updates on several others.
 
-17 January 2000: Alpha Release 3
+2000 January 17: Alpha Release 3
 ---------------------------------------------------------------------------
 1) All goals same as before.  Version of FB muf that we're now current with
    is FB5.66...which had no apparent changes from FB5.64. Still have about
    half the programs to checkover for other minor fixes (documentation, 
    version numbers, etc.
 
-18 April 1999: Alpha Release 2
+1999 April 18: Alpha Release 2
 ---------------------------------------------------------------------------
 Primary goals for final release:
 1) Update all programs to any improvements in the FB5.64 versions and any
@@ -39,7 +72,7 @@ cmd-conhistory
 cmd-roomcheck
 cmd-wwwlist
 
-1 June 1998: Alpha Release of this distribution
+1998 June 1: Alpha Release of this distribution
 ---------------------------------------------------------------------------
 Original Base: Glowmuf 1.9.3 Release and FuzzBall MUF 5.61 Release
 

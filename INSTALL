@@ -1,6 +1,6 @@
-INSTALL $Date: 2004/02/12 04:39:56 $ $Revision: 1.10 $
+INSTALL $Date: 2004/02/27 18:16:17 $ $Revision: 1.11 $
 ---------------------------------------------------------------------------
-FMMUF 1.0.2 (Alpha Release)
+FMMUF 1.1
 ---------
   Warning: Some of these libs require Glow 3.0.0 or later.   You were going to
 upgrade, weren't you? 
@@ -97,6 +97,11 @@ Comments about some other programs:
 
   cmd-conhistory:
     Requires a current version of cmd-page to be installed.
+
+  cmd-roomcheck:
+    Renamed @check.  @check is a in-server command revealing who controls
+    an object.  If you prefer to have @check=@roomcheck, @permissions will do
+    the same as the inserver @check.  Requires lib-match
 
   cmd-notify:
     Requires con-caller to function.
