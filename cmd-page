@@ -2,7 +2,7 @@
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2004/08/22 15:07:19 $ $Revision: 1.4 $                     )
+( cmd-page: $Date: 2004/08/22 15:31:29 $ $Revision: 1.5 $                     )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop             )
@@ -14,6 +14,9 @@
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.5  2004/08/22 15:31:29  feaelin
+  Further work on the help header
+
   Revision 1.4  2004/08/22 15:07:19  feaelin
   Fixed bug in the Connect setup. Adjusted help.
 
@@ -1737,8 +1740,33 @@ $endif
   else pop "Noone removed." then
   tell unpriority-each
 ;
+
+: show-header ( -- )
+  me @
+  "^FOREST^MUFpage v2.5FM$Revision: 1.5 $by Foxen                                            ^YELLOW^Page1"
+  begin
+    dup "$" instr while
+    "$" STRsplit strcat
+  repeat
+  "" "Revision: " subst
+  ansi_notify
+  me @
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax              Updated $Date: 2004/08/22 15:31:29 $"
+  begin
+    dup "$" instr while
+    "$" STRsplit strcat
+  repeat
+  "" "Date: " subst
+  ansi_notify
+  me @
+  "^YELLOW^----------------------------------------------------------------------------"
+  ansi_notify
+;
   
-: show-help   prog "_help1" .showlist ;
+: show-help ( -- )
+  show-header
+  prog "_help1" .showlist
+;
 : show-help2  prog "_help2" .showlist ;
 : show-help3  prog "_help3" .showlist ;
 : show-help4  prog "_help4" .showlist ;
@@ -2642,8 +2670,8 @@ q
 @set $cmd/page=/_defs/PAGEmail:"$lib/page" match "mail" call
 @set $cmd/page=/_defs/PAGEpage:"$lib/page" match "page" call
 @set $cmd/page=/_help1#:23
-@set $cmd/page=/_help1#/1:MUFpage v2.5$Revision: 1.4 $ by Foxen                                                 Page1
-@set $cmd/page=/_help1#/2:Contributions by Artie, Feaelin & Maddax               Updated $Date: 2004/08/22 15:07:19 $
+@set $cmd/page=/_help1#/1:MUFpage v2.5FM1.5 by Foxen                                            Page1
+@set $cmd/page=/_help1#/2:Contributions by Artie, Feaelin & Maddax               Updated 2004/08/22
 @set $cmd/page=/_help1#/3: 
 @set $cmd/page=/_help1#/4:To give your location to another player:     'page <player>'
 @set $cmd/page=/_help1#/5:To send a message to another player:         'page <player> = <message>'
@@ -2665,68 +2693,71 @@ q
 @set $cmd/page=/_help1#/21:To list who you last paged and other info:   'page #who'
 @set $cmd/page=/_help1#/22:To display the next help screen:             'page #help2'
 @set $cmd/page=/_help1#/23:-- Words in <> are parameters.  Parameters in [] are optional. --
-@set $cmd/page=/_help2#:24
-@set $cmd/page=/_help2#/1:MUFpage v2.5 by Foxen, feeped by Artie & Maddax   Updated 04/18/1999  Page2
-@set $cmd/page=/_help2#/2: 
-@set $cmd/page=/_help2#/3:To test if you can page a player:          'page #ping <players>'
-@set $cmd/page=/_help2#/4:To refuse pages from specific players:     'page #ignore <players>'
-@set $cmd/page=/_help2#/5:To set the mesg all ignored players see:   'page #ignore [<plyrs>]=<mesg>'
-@set $cmd/page=/_help2#/6:To accept pages from a player again:       'page #!ignore <player>'
-@set $cmd/page=/_help2#/7:To let players page you despite haven:     'page #priority <players>'
-@set $cmd/page=/_help2#/8:To remove players from your priority list: 'page #!priority <players>'
-@set $cmd/page=/_help2#/9:To page a group of people in an alias:     'page *<aliasname> = <message>'
-@set $cmd/page=/_help2#/10:To set a personal page alias:              'page #alias <alias>=<players>'
-@set $cmd/page=/_help2#/11:To clear a personal page alias:            'page #alias <alias>='
-@set $cmd/page=/_help2#/12:To list who is in an alias:                'page #alias <alias>'
-@set $tmp/prog1=/_help2#/13:To list all your personal aliases:         'page #alias'
-@set $cmd/page=/_help2#/14:To set an alias to the players last paged: 'page &<aliasname>'
-@set $cmd/page=/_help2#/15:To make an alias that everyone can use:    'page #global <alias>=<players>'
-@set $cmd/page=/_help2#/16:To clear a global page alias:              'page #global <alias>='
-@set $cmd/page=/_help2#/17:To list all the global aliases:            'page #global'
-@set $cmd/page=/_help2#/18:To list all aliases with a player in them: 'page #lookup <playername>'
-@set $cmd/page=/_help2#/19:To see the time (useful with %w subs):     'page #time'
-@set $cmd/page=/_help2#/20:To set the max# of plyrs in a page to you: 'page #multimax <max#players>'
-@set $cmd/page=/_help2#/21:To see your multimax setting:              'page #multimax'
-@set $cmd/page=/_help2#/22:To set the your 'Sleeping' message:        'page #sleepmsg <message>'
-@set $cmd/page=/_help2#/23:To clear the your 'Sleeping' message:      'page #sleepmsg #clear'
-@set $cmd/page=/_help2#/24:To display the third help screen:          'page #help3'
-@set $cmd/page=/_help3#:23
-@set $cmd/page=/_help3#/1:MUFpage v2.5 by Foxen, feeped by Artie & Maddax   Updated 04/18/1999  Page3"
-@set $cmd/page=/_help3#/2: 
-@set $cmd/page=/_help3#/3:To haven yourself so you are unpagable:      'page #haven'"
-@set $cmd/page=/_help3#/4:To set your 'havened' message:               'page #haven <message>'"
-@set $cmd/page=/_help3#/5:To clear your 'havened' message:             'page #haven #clear'"
-@set $cmd/page=/_help3#/6:To unhaven yourself so you can be paged:     'page #!haven'"
-@set $cmd/page=/_help3#/7:To set yourself so guests can't page you:    'page #noguest'
-@set $cmd/page=/_help3#/8:To allow guests to page you again:           'page #!noguest'
-@set $cmd/page=/_help3#/9:To turn on echoing of your message:          'page #echo'"
-@set $cmd/page=/_help3#/10:To turn off echoing of your message:         'page #!echo'"
-@set $cmd/page=/_help3#/11:To be informed when a page to you fails:     'page #inform'"
-@set $cmd/page=/_help3#/12:To be turn off failed-page informing:        'page #!inform'"
-@set $cmd/page=/_help3#/13:To see another player's formatted pages:     'page #formatted'"
-@set $cmd/page=/_help3#/14:To prepend a format string to other's pages: 'page #prepend'"
-@set $cmd/page=/_help3#/15:To set your prepended format string:         'page #prepend <formatstr>'"
-@set $cmd/page=/_help3#/16:To force other's pages to a standard format: 'page #standard'"
-@set $cmd/page=/_help3#/17:To set the standard format you receive in:   'page #standard <formatstr>'"
-@set $cmd/page=/_help3#/18:To set a format that you see when paging:    'page #format <fmtname>=<fmt>'"
-@set $cmd/page=/_help3#/19:To set a format that others receive:         'page #oformat <fmtname>=<fmt>'"
-@set $cmd/page=/_help3#/20:To display the fourth help screen:           'page #help4'
-@set $cmd/page=/_help4#:15
-@set $cmd/page=/_help4#/1:MUFpage v2.5 by Foxen, feeped by Artie & Maddax   Updated 04/18/1999  Page4"
-@set $cmd/page=/_help4#/2: 
-@set $cmd/page=/_help4#/3:To mark yourself away:                       'page #away'
-@set $cmd/page=/_help4#/4:To set your away flag and message:           'page #away <message>'
-@set $cmd/page=/_help4#/5:To clear your away message:                  'page #away #clear'
-@set $cmd/page=/_help4#/6:To reset your away flag:                     'page #!away'
-@set $cmd/page=/_help4#/7:To set your idle message:                    'page #idlemsg <message>'
-@set $cmd/page=/_help4#/8:To clear your idle message:                  'page #idlemsg #clear'
-@set $cmd/page=/_help4#/9:To view what your current idle timeout is:   'page #idletime'
-@set $cmd/page=/_help4#/10:To set how long your idle timeout is:        'page #idletime <minutes>'
-@set $cmd/page=/_help4#/11:To turn off your idle messages:              'page #idletime #off'
-@set $cmd/page=/_help4#/12:To forward page-mail to another player:      'page #forward <players>'"
-@set $cmd/page=/_help4#/13:To stop forwarding page-mail:                'page #forward #'"
-@set $cmd/page=/_help4#/14:To see who page-mail to you is forwarded to: 'page #forward'"
-@set $cmd/page=/_help4#/15:To see if page-mail is waiting for a player: 'page #check [players]'"
+@set $cmd/page=/_help2#:25
+@set $cmd/page=/_help2#/1:MUFpage v2.5FM1.5 by Foxen                                            Page2
+@set $cmd/page=/_help2#/2:Contributions by Artie, Feaelin & Maddax               Updated 2004/08/22
+@set $cmd/page=/_help2#/3: 
+@set $cmd/page=/_help2#/4:To test if you can page a player:          'page #ping <players>'
+@set $cmd/page=/_help2#/5:To refuse pages from specific players:     'page #ignore <players>'
+@set $cmd/page=/_help2#/6:To set the mesg all ignored players see:   'page #ignore [<plyrs>]=<mesg>'
+@set $cmd/page=/_help2#/7:To accept pages from a player again:       'page #!ignore <player>'
+@set $cmd/page=/_help2#/8:To let players page you despite haven:     'page #priority <players>'
+@set $cmd/page=/_help2#/9:To remove players from your priority list: 'page #!priority <players>'
+@set $cmd/page=/_help2#/10:To page a group of people in an alias:     'page *<aliasname> = <message>'
+@set $cmd/page=/_help2#/11:To set a personal page alias:              'page #alias <alias>=<players>'
+@set $cmd/page=/_help2#/12:To clear a personal page alias:            'page #alias <alias>='
+@set $cmd/page=/_help2#/13:To list who is in an alias:                'page #alias <alias>'
+@set $cmd/page=/_help2#/14:To list all your personal aliases:         'page #alias'
+@set $cmd/page=/_help2#/15:To set an alias to the players last paged: 'page &<aliasname>'
+@set $cmd/page=/_help2#/16:To make an alias that everyone can use:    'page #global <alias>=<players>'
+@set $cmd/page=/_help2#/17:To clear a global page alias:              'page #global <alias>='
+@set $cmd/page=/_help2#/18:To list all the global aliases:            'page #global'
+@set $cmd/page=/_help2#/19:To list all aliases with a player in them: 'page #lookup <playername>'
+@set $cmd/page=/_help2#/20:To see the time (useful with %w subs):     'page #time'
+@set $cmd/page=/_help2#/21:To set the max# of plyrs in a page to you: 'page #multimax <max#players>'
+@set $cmd/page=/_help2#/22:To see your multimax setting:              'page #multimax'
+@set $cmd/page=/_help2#/23:To set the your 'Sleeping' message:        'page #sleepmsg <message>'
+@set $cmd/page=/_help2#/24:To clear the your 'Sleeping' message:      'page #sleepmsg #clear'
+@set $cmd/page=/_help2#/25:To display the third help screen:          'page #help3'
+@set $cmd/page=/_help3#:24
+@set $cmd/page=/_help3#/1:MUFpage v2.5FM1.5 by Foxen                                            Page3
+@set $cmd/page=/_help3#/2:Contributions by Artie, Feaelin & Maddax               Updated 2004/08/22
+@set $cmd/page=/_help3#/3: 
+@set $cmd/page=/_help3#/4:To haven yourself so you are unpagable:      'page #haven'"
+@set $cmd/page=/_help3#/5:To set your 'havened' message:               'page #haven <message>'"
+@set $cmd/page=/_help3#/6:To clear your 'havened' message:             'page #haven #clear'"
+@set $cmd/page=/_help3#/7:To unhaven yourself so you can be paged:     'page #!haven'"
+@set $cmd/page=/_help3#/8:To set yourself so guests can't page you:    'page #noguest'
+@set $cmd/page=/_help3#/9:To allow guests to page you again:           'page #!noguest'
+@set $cmd/page=/_help3#/10:To turn on echoing of your message:          'page #echo'"
+@set $cmd/page=/_help3#/11:To turn off echoing of your message:         'page #!echo'"
+@set $cmd/page=/_help3#/12:To be informed when a page to you fails:     'page #inform'"
+@set $cmd/page=/_help3#/13:To be turn off failed-page informing:        'page #!inform'"
+@set $cmd/page=/_help3#/14:To see another player's formatted pages:     'page #formatted'"
+@set $cmd/page=/_help3#/15:To prepend a format string to other's pages: 'page #prepend'"
+@set $cmd/page=/_help3#/16:To set your prepended format string:         'page #prepend <formatstr>'"
+@set $cmd/page=/_help3#/17:To force other's pages to a standard format: 'page #standard'"
+@set $cmd/page=/_help3#/18:To set the standard format you receive in:   'page #standard <formatstr>'"
+@set $cmd/page=/_help3#/19:To set a format that you see when paging:    'page #format <fmtname>=<fmt>'"
+@set $cmd/page=/_help3#/20:To set a format that others receive:         'page #oformat <fmtname>=<fmt>'"
+@set $cmd/page=/_help3#/21:To display the fourth help screen:           'page #help4'
+@set $cmd/page=/_help4#:16
+@set $cmd/page=/_help4#/1:MUFpage v2.5FM1.5 by Foxen                                            Page3
+@set $cmd/page=/_help4#/2:Contributions by Artie, Feaelin & Maddax               Updated 2004/08/22
+@set $cmd/page=/_help4#/3: 
+@set $cmd/page=/_help4#/4:To mark yourself away:                       'page #away'
+@set $cmd/page=/_help4#/5:To set your away flag and message:           'page #away <message>'
+@set $cmd/page=/_help4#/6:To clear your away message:                  'page #away #clear'
+@set $cmd/page=/_help4#/7:To reset your away flag:                     'page #!away'
+@set $cmd/page=/_help4#/8:To set your idle message:                    'page #idlemsg <message>'
+@set $cmd/page=/_help4#/9:To clear your idle message:                  'page #idlemsg #clear'
+@set $cmd/page=/_help4#/10:To view what your current idle timeout is:   'page #idletime'
+@set $cmd/page=/_help4#/11:To set how long your idle timeout is:        'page #idletime <minutes>'
+@set $cmd/page=/_help4#/12:To turn off your idle messages:              'page #idletime #off'
+@set $cmd/page=/_help4#/13:To forward page-mail to another player:      'page #forward <players>'"
+@set $cmd/page=/_help4#/14:To stop forwarding page-mail:                'page #forward #'"
+@set $cmd/page=/_help4#/15:To see who page-mail to you is forwarded to: 'page #forward'"
+@set $cmd/page=/_help4#/16:To see if page-mail is waiting for a player: 'page #check [players]'"
 @set $cmd/page=/_helpm#:19
 @set $cmd/page=/_helpm#/1:Command -- Usage -- Type 'mail ' then the command below to use it.
 @set $cmd/page=/_helpm#/2:~~~~~~~    ~~~~~
@@ -2791,5 +2822,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.4 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.5 $
 "Installation of cmd-page complete.
