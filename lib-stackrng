@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 1998/07/28 19:22:05 $ $Revision: 1.3 $
+( lib-stackrng: $Date: 2000/01/10 18:53:35 $ $Revision: 1.4 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling object -- SRNG ****                 
@@ -45,6 +45,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.4  2000/01/10 18:53:35  feaelin
+  Fixed documentation...not all lines were being listed.
+
   Revision 1.3  1998/07/28 19:22:05  glow
   Fixed _lib-version number.
 
@@ -152,7 +155,6 @@ q
 @register #me lib-stackrng=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_/de:lib-stackrng: List lines 7-41 for documentation.
 @set $tmp/prog1=/_defs/sr-catrng:"$lib/stackrng" match "catranges" call
 @set $tmp/prog1=/_defs/sr-copyrng:"$lib/stackrng" match "copyrange" call
 @set $tmp/prog1=/_defs/sr-deleterng:"$lib/stackrng" match "deleterange" call
@@ -161,6 +163,7 @@ q
 @set $tmp/prog1=/_defs/sr-insertrng:"$lib/stackrng" match "insertrange" call
 @set $tmp/prog1=/_defs/sr-poprng:popn
 @set $tmp/prog1=/_defs/sr-swaprng:"$lib/stackrng" match "swapranges" call
-@set $tmp/prog1=/_docs:@list $lib/stackrng=7-41
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
+@set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-stackrng completed
