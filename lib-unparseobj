@@ -2,7 +2,7 @@
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.1 $ $Date: 2004/04/07 00:02:18 $ )
+( lib-unparseobj: $Revision: 1.2 $ $Date: 2004/04/07 00:08:07 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Feaelin, Syvel                                               )
 ( -------------------------------------------------------------------------- )
@@ -14,8 +14,8 @@ i
 ( This library provides two publicly accessible routines:                    )
 (                                                                            )
 ( special-unparseobj [ d s1 -- s2 ]  Takes format string s1 and generates a  )
-(                                    formatted string (see format specifiers )
-(                                    below).                                 )
+(                                    formatted string: see format specifiers )
+(                                    below.                                  )
 ( color-unparseobj   [    d -- s  ]  Generates a colorized unparseobj either )
 (                                    using the default format string, or the )
 (                                    nearest format string in the environment)
@@ -41,13 +41,16 @@ i
    _prefs/unparse/<type>:<color>  WHERE <type> is one of:
                                   thing, player, exit, program, room, unknown
                                   OR builder, meeper, mucker, wizard, flag,
-                                  name
+                                  name, dbref
                                   WHERE <color> is a valid ANSI code with or
                                         without the carets.
 )
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.2  2004/04/07 00:08:07  feaelin
+  Minor fixes
+
   Revision 1.1  2004/04/07 00:02:18  feaelin
   Initial revision
 
@@ -345,6 +348,6 @@ q
 @reg lib-unparseobj=lib/unparseobj
 @set $lib/unparseobj=/_defs/color-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
 @set $lib/unparseobj=/_defs/special-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
-@set $lib/unparseobj=_lib-version:$Revision: 1.1 $
-@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-42
+@set $lib/unparseobj=_lib-version:$Revision: 1.2 $
+@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-40
 "Installation Complete.
