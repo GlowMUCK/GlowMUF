@@ -1,4 +1,4 @@
-INSTALL $Date: 2000/01/10 18:10:23 $ $Revision: 1.6 $
+INSTALL $Date: 2000/01/25 17:14:39 $ $Revision: 1.7 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.2 (Alpha Release)
 ---------
@@ -71,7 +71,8 @@ Comments about some other programs:
 
   cmd-page:
     This program requires lib-userprop.  You'll also need to use the wpsetup
-    command to setup a userpropdir for it.  Don't forget to use page #setup.
+    command to setup a userpropdir for it (wpsetup add cmd-page=p).  Don't
+    forget to use page #setup.
 
   cmd-tell:
     You need cmd-page installed beofre this program will work.
@@ -91,7 +92,11 @@ Comments about some other programs:
 
   con-guest:
     If you're not using con-caller, don't forget to set a ~connect prop
-  for this program.
+    for this program.  You will also need to set the GS string in the program
+    to whatever names you want for your guests.  Then create the guest
+    characters named xxx_Guest using all but one of the names you've chosen.
+    Then create a 'Guest' (no name_) character.  Set all of these characters
+    'G' and set their /@/id prop to 'Guest'.  All done.
 
   con-caller (con all connect):
     There is a section of code commented out.  This section is used on
@@ -99,6 +104,8 @@ Comments about some other programs:
     Since most mucks don't have the room that this uses, I commented it
     out by default.  Keep in mind this program calls several others,
     I'd look it over before using it, and see if you actually need it.
+    Programs it will need to be installed: con-guest, cmd-announce, cmd-page,
+    and con-watch.
 
 	The only one of these libraries or muf-programs I "wrote" is the
 lib-glow-standard one (which is mostly just a cut n' paste of the macros
