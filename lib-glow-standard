@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2001/02/24 21:31:53 $ $Revision: 1.16 $          )
+( lib-glow-standard: $Date: 2001/02/24 21:35:27 $ $Revision: 1.17 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,10 +50,8 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
-  Revision 1.16  2001/02/24 21:31:53  feaelin
-  Minor cleanup.
-  Fixed a recursing definition bug with $def sort blah .sort
-  definitions.
+  Revision 1.17  2001/02/24 21:35:27  feaelin
+  Incorrect public declaration.
 
   Revision 1.15  2001/02/21 17:30:37  feaelin
   Added null and nothing to the 'registered' names of the library.
@@ -232,7 +230,7 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
   depth 1 = if pop 1 then 
 ; ( ** LAST PROGRAM ** )
   
-public null
+public null-true
 public cleancommas
 public fhelp
 public pmatch
@@ -354,5 +352,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.16 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
 "Installation of lib-glow-standard completed.
