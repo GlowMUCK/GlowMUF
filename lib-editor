@@ -1,57 +1,63 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/05 01:34:02 $ $Revision: 1.12 $
-  Original Author: Foxen                                                 )
-( ---------------------------------------------------------------------- )
-( This code is hereby stated as public domain, for use in any program
-  It might be needed for, under the condition that the original author's
-  name is kept in the header, and full credit is given online in any
-  programs written with it.
-                - 6/25/1991 by Foxen                 foxen@netcom.com    )
-  
-( To use these routines from a program of yours, just do a:
-  $include $lib/editor
-  
-EDITOR takes a bunch of strings on the stack, with a count on top, and
-  returns a set of strings with the count, and a string on top containing
-  the command used to exit. [so you can have abort or end.]  The format is:
-      {strs} count -- {strs'} count' exitcmdstr
-  
-EDITORloop is more complex. it takes the strings and count [hereafter
-  to be referred to as a range], a string containing the space
-  seperated names of the commands it should return on [in addition to
-  abort and end], the position in the range that you want it to set the
-  insertion point at, and the command you want it to first execute
-  [usually ".i"].
-    It lets the user edit the range until the user enters a .command that
-  you have listed in the mask, or until they enter .end, or .abort.
-    It returns the new range, the mask, the insertion point that the user
-  was at when it returned, and the arguments that were given to the
-  command that made the routine return, and the name of the command
-  that made it return.  The format of a .command is:
-      .cmd <startline> <endline> =<argstr>
-  So, overall, the input/output of the function is:
-      {rng} mask curpos cmdstr --
-                      {rng'} mask curpos argstr startline endline exitcmd
-  
-EDITORparse takes and returns arguments identically to .sedit_loop,
-  but only executes the command you pass it without doing any more
-  editing on the range, before returning.
-  
-EDITORheader takes and returns no arguments, but prints out a standard
-  message about you entering the editor.  EDITOR calls this automatically.
-
-  ***** Stack based string range editor -- EDITOR *****
- 1  EDITOR      [ {string_range} -- {string_range'} ]
- 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --
-                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ]
- 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1     or
-                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ]
-)
-( ---------------------------------------------------------------------- )
+( lib-editor: $Date: 2004/04/16 02:03:22 $ $Revision: 1.13 $             )
+( Purpose:                                                                    )
+( Author: Foxen                                                               )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-stackrng, lib-edit                           )
+( --------------------------------------------------------------------------- )
+( This code is hereby stated as public domain, for use in any program it      )
+( might be needed for, under the condition that the original author's name is )
+( kept in the header, and full credit is given online in any programs written )
+( with it.                                                                    )
+(               - 6/25/1991 by Foxen                 foxen@netcom.com         )
+( --------------------------------------------------------------------------- )
+( EDITOR takes a bunch of strings on the stack, with a count on top, and      )
+(        returns a set of strings with the count, and a string on top         )
+(        containing the command used to exit. [so you can have abort or end.] )
+(        The format is:                                                       )
+(          {strs} count -- {strs'} count' exitcmdstr                          )
+(                                                                             )
+( EDITORloop is more complex. it takes the strings and count [hereafter to be )
+(        referred to as a range], a string containing the space seperated     )
+(        names of the commands it should return on [in addition to abort and  )
+(        end], the position in the range that you want it to set the          )
+(        insertion point at, and the command you want it to first execute     )
+(        [usually ".i"]. It lets the user edit the range until the user       )
+(        enters a .command that you have listed in the mask, or until they    )
+(        enter .end, or .abort.                                               )
+(        It returns the new range, the mask, the insertion point that the user)
+(        was at when it returned, and the arguments that were given to the    )
+(        command that made the routine return, and the name of the command    )
+(        that made it return.                                                 )
+(        The format of a .command is:                                         )
+(          .cmd <startline> <endline> =<argstr>                               )
+(        So, overall, the input/output of the function is:                    )
+(          {rng} mask curpos cmdstr --                                        )
+(               {rng'} mask curpos argstr startline endline exitcmd           )
+(                                                                             )
+( EDITORparse takes and returns arguments identically to .sedit_loop, but     )
+(        only executes the command you pass it without doing any more editing )
+(        on the range, before returning.                                      )
+(                                                                             )
+( EDITORheader takes and returns no arguments, but prints out a standard      )
+( message about the user entering the editor.  EDITOR calls this              )
+( automatically.                                                              )
+(                                                                             )
+( ***** Stack based string range editor -- EDITOR *****                       )
+( 1  EDITOR      [ {string_range} -- {string_range'} ]                        )
+( 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --                       )
+(                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ] )
+( 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1 or   )
+(                 {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ])
+( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.13  2004/04/16 02:03:22  feaelin
+  Fixed bug in EDITORargument that caused the editor to crash after being
+  passed certain combinations of "invalid line references".
+
   Revision 1.12  2004/04/05 01:34:02  feaelin
   Wizbit change.
 
@@ -140,14 +146,22 @@ $define SRNGinsert  sr-insertrng  $enddef
   
     dup not if pop swap pop exit then
   
-    dup "+" 1 strncmp not if 1 strcut swap pop atoi +
-    else dup "-" 1 strncmp not if 1 strcut swap pop atoi -
-    else dup number? if atoi swap pop
-    else pop pop pop 1 EDITORerror 0
-    then then then
+    dup "+" 1 strncmp not if
+      1 strcut swap pop atoi +
+    else
+      dup "-" 1 strncmp not if
+        1 strcut swap pop atoi -
+      else
+        dup number? if
+          atoi swap pop
+        else
+          3 popn 1 EDITORerror 0 exit
+        then
+      then
+    then
   
     (max line)
-    dup 1 < if pop pop 1
+    dup 1 < if 2 popn 1
     else
         swap 1 + over over
         > if swap then pop
@@ -189,8 +203,16 @@ $define SRNGinsert  sr-insertrng  $enddef
         4 pick 5 + 3 pick - -1 * rotate
         1 + rot 1 + rot rot 1 exit
     then
-    " " STRsplit swap 1 strcut swap pop swap
-    "=" STRsplit swap STRstrip
+    " " STRsplit swap 1 strcut swap pop
+    dup
+    "i#end#abort#h#i#l#p#al#ap#del#copy#move#find#repl#join#split#left#center#right#color#indent#format#ruler#ruler1#ruler2#ruler3#sort"
+    swap instr not if
+      dup 5 pick swap instr not if
+        pop pop 8 EDITORerror 1 exit
+      then
+    then
+    swap
+    "=" STRsplit STRstrip swap
     dup STRstrip if
         " " STRsplit STRstrip swap STRstrip
         7 pick 6 pick rot EDITORargument
@@ -620,11 +642,11 @@ q
 @register #me lib-editor=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W3
-@set $tmp/prog1=/_defs/editor:"$lib/editor" match "editor" call
-@set $tmp/prog1=/_defs/editorheader:"$lib/editor" match "editorheader" call
-@set $tmp/prog1=/_defs/editorloop:"$lib/editor" match "editorloop" call
-@set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
+@set $tmp/prog1=/_defs/EDITOR:"$lib/editor" match "editor" call
+@set $tmp/prog1=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
+@set $tmp/prog1=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
+@set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
 "Installation of lib-editor complete.
