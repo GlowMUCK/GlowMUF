@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/13 23:18:24 $ $Revision: 1.10 $                 )
+( cmd/lib-look: $Date: 2004/04/15 21:15:11 $ $Revision: 1.11 $                )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -77,6 +77,13 @@
   
 ( 
   $Log: lib-look,v $
+  Revision 1.11  2004/04/15 21:15:11  feaelin
+  New Feature: ~look props. Similar in function to ~connect/~arrive/~idle
+  props, you can now do: @set <item>=~look/<name>:<ref> and the program
+  <ref> will be executed when <item> is looked at. As you might expect, the
+  property may be set on parent rooms or #0, to have programs that are
+  executed for the entire area/muck.
+
   Revision 1.10  2004/04/13 23:18:24  feaelin
   Added support for IDESCs
 
@@ -294,7 +301,59 @@ lvar realtrig
     pop pop
   then
 ;
- 
+  
+: look-prop-handler ( d s -- )
+  over swap nextprop
+  dup "" strcmp not if pop pop exit then
+  begin
+    over over getprop
+    dup dbref? not if
+      dup string? if
+        dup "#" instr if
+          1 strcut swap pop
+        then
+        atoi dbref
+      else
+        dup int? if
+          dbref
+        then
+      then
+    then
+    dup ok? if
+      dup program? if
+        dup "LINK_OK" flag? if
+          "(Look)" swap safecall
+        else
+          pop pop pop exit
+        then
+      else
+        pop pop pop exit
+      then
+    else
+      pop pop pop exit
+    then
+    over swap nextprop dup "" strcmp not
+  until
+  pop pop
+; 
+  
+: look-prop2 ( d -- )
+  dup "~look/" nextprop "" strcmp if
+    "~look/" look-prop-handler
+  else
+    pop
+  then
+;
+  
+: look-prop ( d -- )
+  begin
+    dup look-prop2
+    location
+    dup #-1 dbcmp 
+  until
+  pop
+; PUBLIC look-prop
+  
 : str-desc ( s -- )
   striplead striptail dup
   if
@@ -353,6 +412,7 @@ lvar realtrig
     dup "/_/de" "(@Desc)" 1 parseprop
   then
   str-desc
+  dup look-prop ( handle the ~look prop )
   dup room? over me @ location dbcmp or
   if
     me @ over locked?
@@ -441,7 +501,7 @@ lvar realtrig
       pop me @ "^FAIL^I don't see that here." ansi_notify
     then
   else
-    db-desc
+    swap pop db-desc
   then
 ;
  
@@ -461,40 +521,41 @@ public cmd-look
 c
 q
 @register lib-look=lib/look
-@register #me lib-look=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=S
-@set $tmp/prog1=H
-@set $tmp/prog1=W3
-@set $tmp/prog1=/_/de:lib-look:List lines 3-60 for documentation.
-@set $tmp/prog1=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
-@set $tmp/prog1=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
-@set $tmp/prog1=/_defs/.db-desc:"$lib/look" match "db-desc" call
-@set $tmp/prog1=/_defs/.dbstr-desc:"$lib/look" match "dbstr-desc" call
-@set $tmp/prog1=/_defs/.get-contents:"$lib/look" match "get-contents" call
-@set $tmp/prog1=/_defs/.list-contents:"$lib/look" match "list-contents" call
-@set $tmp/prog1=/_defs/.long-display:"$lib/look" match "long-display" call
-@set $tmp/prog1=/_defs/.safecall:"$lib/look" match "safecall" call
-@set $tmp/prog1=/_defs/.short-display:"$lib/look" match "short-display" call
-@set $tmp/prog1=/_defs/.short-list:"$lib/look" match "short-list" call
-@set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
-@set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
-@set $tmp/prog1=/_defs/LOOKcmd-look:"$lib/look" match "cmd-look" call
-@set $tmp/prog1=/_defs/LOOKcontents-filter:"$lib/look" match "contents-filter" call
-@set $tmp/prog1=/_defs/LOOKdb-desc:"$lib/look" match "db-desc" call
-@set $tmp/prog1=/_defs/LOOKdbstr-desc:"$lib/look" match "dbstr-desc" call
-@set $tmp/prog1=/_defs/LOOKdetail-dbmatch:"$lib/look" match "detail-dbmatch" call
-@set $tmp/prog1=/_defs/LOOKdetail-desc:"$lib/look" match "detail-desc" call
-@set $tmp/prog1=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
-@set $tmp/prog1=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
-@set $tmp/prog1=/_defs/LOOKlist-details:"$lib/look" match "list-details" call
-@set $tmp/prog1=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
-@set $tmp/prog1=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
-@set $tmp/prog1=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
-@set $tmp/prog1=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
-@set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
-@set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
-@set $tmp/prog1=/_docs:@list $lib/look=1-71
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.10 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.10 $
+@register lib-look=cmd/look
+@set $lib/look=L
+@set $lib/look=S
+@set $lib/look=H
+@set $lib/look=W3
+@set $lib/look=/_/de:lib-look:List lines 3-60 for documentation.
+@set $lib/look=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
+@set $lib/look=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
+@set $lib/look=/_defs/.db-desc:"$lib/look" match "db-desc" call
+@set $lib/look=/_defs/.dbstr-desc:"$lib/look" match "dbstr-desc" call
+@set $lib/look=/_defs/.get-contents:"$lib/look" match "get-contents" call
+@set $lib/look=/_defs/.list-contents:"$lib/look" match "list-contents" call
+@set $lib/look=/_defs/.long-display:"$lib/look" match "long-display" call
+@set $lib/look=/_defs/.safecall:"$lib/look" match "safecall" call
+@set $lib/look=/_defs/.short-display:"$lib/look" match "short-display" call
+@set $lib/look=/_defs/.short-list:"$lib/look" match "short-list" call
+@set $lib/look=/_defs/.str-desc:"$lib/look" match "str-desc" call
+@set $lib/look=/_defs/.unparse:"$lib/look" match "unparse" call
+@set $lib/look=/_defs/LOOKcmd-look:"$lib/look" match "cmd-look" call
+@set $lib/look=/_defs/LOOKcontents-filter:"$lib/look" match "contents-filter" call
+@set $lib/look=/_defs/LOOKdb-desc:"$lib/look" match "db-desc" call
+@set $lib/look=/_defs/LOOKdbstr-desc:"$lib/look" match "dbstr-desc" call
+@set $lib/look=/_defs/LOOKdetail-dbmatch:"$lib/look" match "detail-dbmatch" call
+@set $lib/look=/_defs/LOOKdetail-desc:"$lib/look" match "detail-desc" call
+@set $lib/look=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
+@set $lib/look=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
+@set $lib/look=/_defs/LOOKlist-details:"$lib/look" match "list-details" call
+@set $lib/look=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
+@set $lib/look=/_defs/LOOKprop:"$lib/look" match "look-prop" call
+@set $lib/look=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
+@set $lib/look=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
+@set $lib/look=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
+@set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
+@set $lib/look=/_docs:@list $lib/look=1-71
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.11 $
+@set $lib/look=/_version:1.31FM$Revision: 1.11 $
 "Installation of lib-look complete.
