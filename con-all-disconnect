@@ -1,0 +1,187 @@
+"Beginning installation of con-all-disconnect (dis-caller)...
+@prog dis-caller
+1 99999 d
+1 i
+( dis-caller: $Date: 1999/04/17 18:04:24 $ $Revision: 1.1 $
+  Author: Andy
+  --------------------------------------------------------------------------- )
+(
+  $Log: con-all-disconnect,v $
+  Revision 1.1  1999/04/17 18:04:24  feaelin
+  Initial revision
+
+)
+( Global connect programs )
+  
+( guest    -- guest name changes )
+( announce -- @ann chat system   )
+( mail     -- show new mail      )
+( notify   -- connect notify     )
+( accept   -- ~/accept check     )
+( lasthost -- show last host     )
+( laston   -- show last connect  )
+  
+$include $lib/glowstandard
+
+$def n         me @ swap notify
+$def tellwho   #1 name
+$def CONPROP   "@/lc"
+$def DISPROP   "@/ld"
+$def OCONPROP  "_/lc"
+$def ODISPROP  "_/ld"
+$def MDISPROP  "~/ld"
+$def SWEEPWAIT 180
+$def save_contime_prop "@/ct/"
+( We start at ascii decimal 48 '0' for slightly easier reading )
+$def achars "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@"
+
+: tattle ( -- ) "Please tell " tellwho strcat " that you saw this." strcat n ;
+  
+: cleanstack ( ? -- ) depth if .debug-line tattle depth popn then ;
+    
+: daysecs ( isystime -- isecs )
+  timesplit 5 popn 3600 * swap 60 * + +
+;
+  
+: val2str ( ival -- str )
+  achars swap 64 % strcut swap pop 1 strcut pop
+;
+  
+: sec2str ( isecs -- str )
+  86400 % "" swap
+  begin over strlen 3 < while
+    ( s d )
+    dup val2str
+    ( s d s )
+    rot strcat swap
+    ( s d )
+    64 /
+  repeat pop
+;
+public sec2str
+  
+: date2str ( systime -- str )
+  timesplit 2 popn
+  ( s m h d m y )
+  -6 rotate -6 rotate -6 rotate
+  3 popn
+  ( d m y )
+  1969 - val2str
+  swap val2str strcat
+  swap val2str strcat
+;
+public date2str
+  
+: set_contime_prop ( startdate startsecs endsecs -- )
+  sec2str swap sec2str swap strcat swap
+  date2str
+  save_contime_prop swap strcat
+  me @ over getpropstr rot strcat
+  me @ rot rot setprop
+;
+  
+: store_contime ( onsecs systime -- )
+  over - swap
+  ( starttime onsecs )
+  begin
+    over daysecs
+    ( starttime onsecs firstdaysecs )
+    over +
+    ( starttime onsecs endsecs )
+    86400 >=
+  while
+    over daysecs
+    ( starttime onsecs firstdaysecs )
+    3 pick over 86399 set_contime_prop
+    ( starttime onsecs firstdaysecs )
+    86400 swap -
+    ( starttime onsecs restdaysecs )
+    swap over -
+    ( starttime restdaysecs onsecsleft )
+    rot rot + swap
+    ( nextdaytime onsecsleft )
+  repeat
+  over daysecs swap over + set_contime_prop
+;
+  
+: dis-contime ( -- )
+  me @ CONPROP getpropval
+  dup not if pop me @ OCONPROP getpropval then
+  dup if
+    systime dup rot - swap
+    over 0 > if
+      store_contime
+    else pop pop then
+  else pop then
+;
+  
+: test_contime ( s -- )
+  achars strlen 64 = not if "achars is not 64 characters!" .tell then
+  atoi systime
+  store_contime
+;
+public test_contime
+   
+  
+: dis-watch ( -- ) "Disconnect" "$con/watch" match call ;
+  
+: dis-laston ( -- )
+  me @ DISPROP systime setprop 
+  me @ MDISPROP systime setprop
+;
+
+: dis-sweep ( -- )
+  loc @ "_prefs/sweepsleepers" envpropstr swap pop .yes?
+  me @ .guest? or
+  me @ loc @ owner dbcmp not and
+  me @ getlink loc @ dbcmp not and
+  me @ location loc @ dbcmp and
+  me @ awake? not and
+  if
+    fork if exit then
+    background
+    me @ .guest? not if
+      SWEEPWAIT sleep
+    then
+    me @ location loc @ dbcmp not
+    me @ awake? or if pid kill 1000000 sleep then
+    loc @ "_prefs/sweepsleepersmsg" envpropstr swap pop
+    dup if
+      loc @ name "%l" subst
+      me @ swap pronoun_sub
+      loc @ me @ rot notify_except
+    else pop then
+    me @ #-3 moveto
+    ( Try to do the disconnect action )
+    "disconnect" match exit? if
+      me @ "disconnect" force
+    then
+    pid kill 1000000 sleep
+  then
+;
+  
+( Main connection program run daemon )
+: disconnect-main ( s -- )
+  "me" match dup location loc ! me !
+  "Disconnect" strcmp trig or if
+    "Disconnect aborted." n tattle
+    exit
+  then
+  
+  dis-watch cleanstack
+  dis-laston cleanstack
+  dis-contime cleanstack
+  dis-sweep cleanstack
+;
+.
+c
+q
+@register dis-caller=con/all-disconnect
+@register #me dis-caller=tmp/prog1
+@set #0=/~disconnect/all:$con/all-disconnect
+@set $tmp/prog1=L
+@set $tmp/prog1=S
+@set $tmp/prog1=W3
+@set $tmp/prog1=V
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of dis-caller complete.
