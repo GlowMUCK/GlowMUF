@@ -2,12 +2,15 @@
 @prog cmd-watch
 1 99999 d
 1 i
-( cmd-watch: $Date: 2000/12/22 19:12:24 $ $Revision: 1.1 $ )
+( cmd-watch: $Date: 2004/02/12 04:46:20 $ $Revision: 1.2 $ )
 ( Author: Unknown                                                             )
 ( --------------------------------------------------------------------------- )
 ( cmd-watch 2.00 -- lists logins/logouts )
 (
   $Log: cmd-watch,v $
+  Revision 1.2  2004/02/12 04:46:20  feaelin
+  Fixed bug in the installer.
+
   Revision 1.1  2000/12/22 19:12:24  feaelin
   Initial revision
 
@@ -165,6 +168,7 @@ lvar listname
 c
 q
 @register cmd-watch=cmd/watch
+@register cmd-watch=cmd/watchfor
 @register #me cmd-watch=tmp/prog1
 @set $tmp/prog1=M2
 @set $tmp/prog1=/_help#:12
@@ -184,5 +188,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/watchfor #help
-@set $tmp/prog1=_version:2.0FM$Revision: 1.1 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.2 $
 "Installation of cmd-watch complete.
