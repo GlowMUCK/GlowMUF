@@ -1,19 +1,45 @@
-CHANGES $Date: 2004/04/10 21:44:27 $ $Revision: 1.13 $
+CHANGES $Date: 2004/04/14 19:24:17 $ $Revision: 1.14 $
 Author: Feaelin
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
                   given with the color specified, or replaces previously
                   prepended color with the new color.
+                  Fixed .split and .format so that they correctly preserve
+                  colorization. Added the .ruler command. Upgraded to more
+                  easily handle @props.
 02) cmd-roomcheck:Is now more intelligent about checking desc's when
                   @tune transparent_paths is turned on.
 03) cmd-emotion:  Fixed issue where a custom look program will cause the
                   "look at description for list" feature to fail.
+                  Added emotions/socials to list the emotions/socials.
 04) lib-look:     Various changes to slowly bring it up to glow standards:
                   less dependency on macros and $lib/glow. Added MPI parsing
                   for relevant properties. Replaced notifies with ansi_notify
                   so that color is parsed appropiately. Changed to call
                   lib-unparseobj as appropiate to properly colorize or not
-                  various strings (name, name(#1PW), etc.).
+                  various strings (name, name(#1PW), etc.). Fixed issues with
+                  certain flags generating the wrong output (C on players, in
+                  particular), Added support for @detail/@object. Added library
+                  calls to follow the 'standard' format for library calls.
+                  Added additional library calls to the new @detail related
+                  words. General documentation cleanup. Support for @idesc
+                  added.
+05) cmd-teleport: Added define to allow customization of the format of the
+                  location field.
+06) cmd-who:      Changed to respect the who_hides_dark sysparm.
+07) lib-stackrng: Fixed bug in SRNGswaprng which left trash on the stack.
+08) lib-mesg:     More compatible with @propped messages (and lib-mesgbox)
+09) lib-wordwrap: New library. Pass it a string and length, and it spits back
+                  a string-range nicely word wrapped to that length.
+10) lib-unparseobj: New library. Drop in replacement for unparseobj that has
+                    fully customizable formatting and colorization.
+11) cmd-page:     Added definitions for the public words so that they can be
+                  called via library calls.
+12) cmd-spoof:    Cleaned up semi-broken output that depended on a rather
+                  clumsy loop to send the spoof to all the players in the room.
+                  Replaced this with a corrected call to ansi_notify_except.
+                  This fixes issues where puppets, zombies, vehicles, and
+                  "listeners" didn't see spoofs.
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
 01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)
@@ -136,7 +162,7 @@ Other 'Across the board' changes:
 
 Programs originally written for glow MUF 1.9.3 or earlier, MUF FB5.61 or
 earlier, or the original TinyMuck (any version), may or may not work 'as is'
-if you're this distribution of libs.  At a minimum, any program using a
+if you are using this distribution of libs. At a minimum, any program using a
 'standard macro' will require a $include $lib/glowstandard line towards the
 beginning of the program. (I generally try to put the line with any other
 $includes...). 
