@@ -2,7 +2,7 @@
 @prog lib-userprop
 1 99999 d
 1 i
-( lib-userprop: $Date: 1999/02/13 19:09:36 $ $Revision: 1.2 $
+( lib-userprop: $Date: 2000/01/22 16:22:27 $ $Revision: 1.3 $
   Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 ( WizProp-Propdir Manager by PakRat v1.1 -- $lib/userprop               
@@ -59,6 +59,9 @@ $def Wizard? .archwizard?
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-userprop,v $
+  Revision 1.3  2000/01/22 16:22:27  feaelin
+  Fixed up _docs param.
+
   Revision 1.2  1999/02/13 19:09:36  feaelin
   lib-userprop needs lib-strings.
 
@@ -471,8 +474,10 @@ q
 @set $tmp/prog1=/_defs/USetProp:"$lib/UserProp" match "WizProp-SetProp" call
 @set $tmp/prog1=/_defs/USetPropStr:"$lib/UserProp" match "WizProp-SetPropStr" call
 @set $tmp/prog1=/_defs/USetPropVal:"$lib/UserProp" match "WizProp-SetPropVal" call
+@set $tmp/prog1=/_/de:@list lines 1-56 for documentation.
+@set $tmp/prog1=/_docs:@list $lib/userprop=1-56
 @action wpsetup;wizpropsetter=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:Set up $lib/userprop propdirs for programs, Arch only.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
 "Installation of lib-userprop completed...
