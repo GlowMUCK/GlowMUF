@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1998/07/30 04:18:44 $ $Revision: 1.3 $                                       )
+( lib-glow-standard: $Date: 1998/07/30 19:19:54 $ $Revision: 1.4 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -22,7 +22,6 @@
   cleancommas -- make commafied lists prettier
   run         -- run description programs
   wrapnotify  -- do line-wrapping for notify
-  splitarg    -- split a string at first space or = sign
   pmatch      -- match a player name
   null        -- basic null program, for locks, always true                  )
 ( -------------------------------------------------------------------------- )
@@ -50,6 +49,10 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.4  1998/07/30 19:19:54  glow
+  Moved .strcutat, .splitarg, .splitfirst (all synonyms of .splitargs)
+  to lib-strings.
+
   Revision 1.3  1998/07/30 04:18:44  glow
   Cleanup related to .split/.split2
 
@@ -185,16 +188,6 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
     else call then
   else pop wrap then
 ;
- 
-: splitargs ( s -- s s )
-  dup " " instr if
-    dup "=" instr if
-      dup " " instr over "=" instr - 0 < if
-        " " split
-      else "=" split then
-    else " " split then
-  else "=" split then
-;
 
 : fhelp ( s -- )
   "he" match if "Cannot find help here." tell pop exit then
@@ -210,8 +203,6 @@ public cleancommas
 public fhelp
 public pmatch
 public run
-public split
-public splitargs
 public wrapnotify
 .
 c
@@ -292,13 +283,9 @@ q
 @set $tmp/prog1=/_defs/.showstr:( s1 ... si i -- ) begin dup while dup 1 + rotate tell 1 - repeat pop
 @set $tmp/prog1=/_defs/.sort:2 sort
 @set $tmp/prog1=/_defs/.spacecut:( s -- s' ) begin "  " "   " subst dup "   " instr not until
-@set $tmp/prog1=/_defs/.splitarg:"$lib/glowstandard" match "splitargs" call
-@set $tmp/prog1=/_defs/.splitargs:"$lib/glowstandard" match "splitargs" call
-@set $tmp/prog1=/_defs/.splitfirst:"$lib/glowstandard" match "splitargs" call
 @set $tmp/prog1=/_defs/.sps:striplead
 @set $tmp/prog1=/_defs/.stackset:( s -- s' ) dup " " instr dup not if pop pop "" else strcut swap pop then
 @set $tmp/prog1=/_defs/.strcheck:over if over strlen strcut pop stringcmp not else pop pop 0 then
-@set $tmp/prog1=/_defs/.strcutat:"$lib/glowstandard" match "split" call
 @set $tmp/prog1=/_defs/.stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
 @set $tmp/prog1=/_defs/.strip:strip
 @set $tmp/prog1=/_defs/.strip_extra:dup ";" instr dup if 1 - strcut pop else pop then
@@ -328,5 +315,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-glow-standard completed.
