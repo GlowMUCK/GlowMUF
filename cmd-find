@@ -1,0 +1,442 @@
+"Beginning installation of cmd-find...
+@prog cmd-find
+1 99999 d
+1 i
+( cmd-find: $Date: 2000/01/26 15:15:42 $ $Revision: 1.1 $ )
+( Author: PakRat                                                        )
+( --------------------------------------------------------------------- )
+( PakRat's find copyright 1993 V2.1 with new realm and help features.   )
+( This may work with an M2, but may need an M3 or W.                    )
+( Set it L, @reg it to cmd/find, @desc it to @$cmd/find -help           )
+  
+lvar ftype
+lvar showline
+lvar dept
+lvar total
+
+$include $lib/glowstandard
+$include $lib/strings
+  
+$define n        me @ swap notify $enddef
+$define a        me @ swap ansi_notify $enddef
+$define split2   " " .split2      $enddef
+$define yes?     .yes?            $enddef
+$define no?      .no?             $enddef
+$define private? .private?        $enddef
+  
+$define worldprop "~world" $enddef
+$define areaprop  "_land"  $enddef
+  
+$define typeprop  "_prefs/find/type" $enddef
+$define dndprop   "_prefs/find/dnd"  $enddef
+$define allprop   "_prefs/find/all"  $enddef
+  
+$define namename  "NAME"     $enddef
+$define worldname "WORLD"    $enddef
+$define areaname  "LAND"     $enddef
+$define roomname  "LOCATION" $enddef
+  
+$define Maxworld 10 $enddef
+$define Maxarea  14 $enddef
+$define Maxname  13 $enddef
+$define Maxroom  37 $enddef
+  
+: pad ( s d -- s' ) ( up to 80 ok )
+  swap
+  "                                                                                "
+  (00000000011111111112222222222333333333344444444445555555555666666666677777777778)
+  (12345678901234567890123456789012345678901234567890123456789012345678901234567890)
+  strcat swap strcut pop
+;
+ 
+: ShowLine0 ( s -- )
+  ( s --> *Name Area Room )
+  1 strcut swap pop
+  MaxWorld strcut swap pop
+  MaxArea strcut swap "^RED^" swap strcat swap
+  MaxRoom strcut swap "^CYAN^" swap strcat swap
+  MaxName strcut swap "^GREEN^" swap strcat swap
+  ( area room name * )
+  swap strcat " " strcat
+  rot strcat " " strcat
+  swap strcat a
+;
+  
+: ShowLine1 ( s -- )
+  ( s --> *Name World Room )
+  1 strcut swap pop
+  MaxWorld strcut swap "^PURPLE^" swap strcat swap
+  MaxArea strcut swap pop
+  MaxRoom strcut swap "^CYAN^" swap strcat swap
+  MaxName strcut swap "^GREEN^" swap strcat swap
+  ( World Room Name * )
+  swap strcat " " strcat
+  rot strcat " " strcat
+  swap strcat a
+;
+  
+: ShowLine2 ( s -- )
+  ( s --> *Name Room )
+  1 strcut swap pop
+  MaxWorld MaxArea
+  + strcut swap pop
+  MaxRoom strcut swap "^CYAN^" swap strcat swap
+  MaxName strcut swap "^GREEN^" swap strcat swap
+  ( Room Name * )
+  swap strcat " " strcat
+  swap strcat a
+;
+  
+: ShowLine3 ( s -- )
+  ( s --> *Name World Area Room )
+  1 strcut swap pop
+  MaxWorld strcut swap "^PURPLE^" swap strcat swap
+  MaxArea strcut swap "^RED^" swap strcat swap
+  MaxRoom strcut swap "^CYAN^" swap strcat swap
+  MaxName strcut swap "^GREEN^" swap strcat swap
+  ( world area room name * )
+  swap strcat " " strcat
+  4 rotate strcat " " strcat
+  rot strcat " " strcat
+  swap strcat a
+;
+  
+: ShowString ( {s} -- )
+       ftype @ 1 = if 'showline1 showline !
+  else ftype @ 2 = if 'showline2 showline !
+  else ftype @ 3 = if 'showline3 showline !
+  else 'showline0 showline !
+  then then then
+  begin dup while
+    swap ShowLine @ execute
+    1 -
+  repeat pop
+;
+ 
+: FilterWorlds ( {d} -- {d} )
+  loc @ worldprop envpropstr swap pop
+  over ( {d} s i )
+  begin dup while
+    3 over + pick location dup if
+      worldprop envpropstr swap pop
+      3 pick stringcmp if
+        3 over + rotate pop rot 1 - rot rot
+      then
+    else pop then 1 -
+  repeat pop pop
+;
+  
+: GetLines ( #d n {d} -- {s} )
+  dup ( #d n {d} n )
+  begin dup while
+    over 2 + rotate
+    dup name Maxname pad
+    over awake? if " " else "z" then strcat 
+    over "interactive" flag?
+    3 pick "Haven" flag? or
+    3 pick dndprop getpropstr yes?
+    or if "*" else " " then
+    strcat
+    over private? if
+      "" Maxworld Maxarea + pad
+      "... is private" Maxroom pad
+      strcat
+      swap strcat
+      "P" swap strcat
+    else
+      over location private? if
+        "" Maxworld Maxarea + pad
+        "... private room" Maxroom pad
+        strcat
+        swap strcat
+        "R" swap strcat
+      else
+        over location me @ over controls me @ .mage? or if 
+        unparseobj else name then
+        ( room name )
+        Maxroom pad
+        swap strcat
+        over location dup if
+          Areaprop envpropstr ( area name )
+        else "" then
+        swap pop Maxarea pad
+        swap strcat
+        over location dup if
+          Worldprop envpropstr ( world name )
+        else "" then
+        swap pop
+        Maxworld pad
+        swap strcat
+        "X" swap strcat
+      then
+    then
+    swap pop rot rot 1 - 
+  repeat 
+  pop
+;
+ 
+: SSort 3 sort ;
+ 
+: ListAwake ( d -- )
+  "" 0 3 pick location contents
+  begin dup while
+    ( d s i d )
+    dup player? not if
+      next continue
+    then
+    dup 5 pick dbcmp
+    over awake? not or if
+      next continue
+    then
+    dup private? if
+      swap 1 + swap
+      next continue
+    then
+    rot over name
+    " " swap strcat
+    "," strcat
+    strcat rot rot
+    next
+  repeat pop
+  ( d s i )
+  over over or not if
+    pop pop "^YELLOW^No one is with %o."
+    pronoun_sub a exit
+  then
+  over not over and if
+    pop pop "^YELLOW^%s has company."
+    pronoun_sub 1 strcut
+    swap toupper swap
+    strcat a exit
+  then
+  swap .cleancommas
+  dup " and " instr if
+    " are" else " is"
+  then strcat
+  " with " strcat
+  "%o" 4 rotate swap
+  pronoun_sub strcat
+  swap if
+   ", along with some other company."
+  else "." then strcat "^YELLOW^" swap strcat a
+;
+  
+: RoomInfo ( d )
+  dup awake? not if
+    "^YELLOW^%s is asleep."
+    pronoun_sub 1 strcut
+    swap toupper swap
+    strcat a exit
+  then
+  dup private? if pop exit then
+  dup location private? if pop exit then
+  ListAwake
+;
+  
+: FindDbrefList ( #d {d} )
+  ( If #d = #-1, it lists the # of players )
+  ( If #d = #-2, it lists # of players with ftype 3 )
+  ( If #d = something else, it shows who is in the room with the player. )
+  dup 2 + pick #-2 dbcmp not if
+    me @ typeprop getpropstr atoi
+  else 3 then ftype !
+  dup dup 2 +
+  -1 * rotate
+  ( #d n {d} )
+  GetLines
+  SSort
+  namename maxname pad "^FOREST^" swap strcat
+  " " strcat
+  "  " swap strcat
+  ftype @ dup
+  0 = not swap
+  2 = not and if
+    worldname maxworld pad "^VIOLET^" swap strcat strcat
+    " " strcat
+  then
+  ftype @ dup
+  1 = not swap
+  2 = not and if
+    areaname maxarea pad "^CRIMSON^" swap strcat strcat
+    " " strcat
+  then
+  roomname "^AQUA^" swap strcat strcat a
+  ShowString
+  dup 0 = if
+    pop pop
+    "^BLUE^No one findable is awake." a
+  else
+    over int 0 >= if ( we are only finding one player )
+      pop ( d ) RoomInfo
+    else
+      intostr "^BLUE^" swap strcat
+      " of " strcat
+      online dup dup 2 + -1 * rotate popn
+      swap over intostr strcat
+      " player" strcat
+      swap 1 = not if "s" strcat then
+      " found.   ^YELLOW^*=Don't disturb   z=sleeping  (find -help for help.)"
+      strcat a
+      pop
+    then
+  then
+;
+public FindDbrefList
+(
+** Types of lists find can produce: 
+0 - oldfind:  z*, Name, Area, Room
+1 - newfind:  z*, Name, World, Room
+2 - bigfind:  z*, Name, Room
+3 - fullfind: Asleep, Dnd, Name, World, Area, Room
+)
+: Find-Type (s--)
+  dup not if
+    me @ typeprop getpropstr atoi intostr
+    "Your current find listing type is " swap strcat "." strcat n
+    "Type find #help to see a list of listing types." n
+    pop exit
+  then
+  atoi intostr dup
+  me @ typeprop rot 1 addprop
+  "Your find listing type is now " swap strcat "." strcat n
+  "(If you were mean and didn't use 0-3 it will act like 0.)" n
+;
+: Find-Dnd (s--)
+  dup not if
+    me @ dndprop getpropstr yes? if "on" else "off" then
+    "Your find Do-Not-Disturb light is " swap strcat "." strcat n
+    pop exit
+  then
+  dup yes? swap "on" stringcmp not or if
+    me @ dndprop "yes" 1 addprop
+    "Your find Do-Not-Disturb light has been turned on." n
+  else
+    me @ dndprop remove_prop
+    "Your find Do-Not-Disturb light has been shut off." n
+  then
+;
+: Find-All (s--)
+  dup not if
+    me @ allprop getpropstr no? not if "on" else "off" then
+    "Your find-all switch is " swap strcat "." strcat n
+    pop exit
+  then
+  dup yes? swap "on" stringcmp not or if
+    me @ allprop remove_prop
+    "Your find-all switch has been turned on." n
+  else
+    me @ allprop "no" setprop
+    "Your find-all switch has been shut off." n
+  then
+;
+: Find-Help (--)
+  "Find 2.0 by PakRat" n
+  "~~~~~~~~~~~~~~~~~~" n
+  "Find lists information about where players are on the game." n
+  "Typing just 'find' will show all awake players.  Typing" n
+  "'find player1 player2 player3 ...' will list where each player is" n
+  "in the list.  Find protects people and rooms set '_private:yes'." n
+  " " n
+  "Find normally only lists people in the same world as you." n
+  "To find everyone on the muck, type 'find all'." n
+  " " n
+  "Find 2.0 supports 4 different listings for your tastes:" n
+  "find #type 0 -- List Player, SubWorld, and Room. (old find)" n
+  "find #type 1 -- List Player, World, and Room. (new find)" n
+  "find #type 2 -- List Player and Room only. (long room names)" n
+  "find #type 3 -- List Player, World, SubWorld, and Room. (full)" n
+  " " n
+  "find #dnd on  sets your * attribute, also set if you are haven or in" n
+  "the program editor.  find #dnd off  unsets it. (_prefs/find/dnd:yes)" n
+  " " n
+  "find #all on  sets it show just typing 'find' shows all people online." n
+  "Find #all off  unsets it. (_prefs/find/all:yes)" n
+  " " n
+  "Send comments, improvements, and bug reports to PakRat." n
+;
+  
+: Find-Setup ( s cmd )
+  dup "help" stringcmp not if pop pop Find-Help exit then
+  dup "type" stringcmp not if pop Find-Type exit then
+  dup "dnd"  stringcmp not if pop Find-Dnd exit then
+  dup "all"  stringcmp not if pop Find-All exit then
+  pop pop "Unknown option, use find -help for help." n
+;
+   
+: Find-Main ( s )
+  dup if
+    dup 1 strcut pop
+    dup "#" strcmp not
+    swap "-" strcmp not
+    or if
+      1 strcut
+      swap pop
+      split2 swap
+      ( s cmd )
+      Find-Setup
+      exit
+    then
+    striplead striptail
+    " " ", " subst
+    " " "," subst
+    begin dup "  " instr while
+      " " "  " subst
+    repeat
+    dup " " strcmp not if pop "" then
+  then
+  dup not if me @ allprop getpropstr no? not if pop "all" then then
+  dup over "all" stringcmp and if 
+    dup " " instr if
+      #-1 swap " " explode
+      ( sn ... s1 i )
+      "" over
+      begin ( sn ... s1 i "" x ) dup while
+        3 pick 3 + rotate
+        dup .pmatch dup if
+          swap pop -4 rotate
+        else
+          pop " " swap strcat
+          "," strcat rot
+          swap strcat swap
+          rot 1 - rot rot
+        then
+        1 -
+      repeat pop
+      dup if
+        .cleancommas
+        "I couldn't find " swap
+        strcat "." strcat n
+      else pop then
+      dup not if pop pop exit then
+    else
+      .pmatch dup not if 
+        pop "I don't know who that is.  Type find #help for help." n exit 
+      then
+      dup 1 ( d {d} )
+    then
+  else
+    dup if #-2 else #-1 then
+    online
+    dup 3 + rotate not if FilterWorlds then
+    ( #-1 {d} )
+  then
+  FindDbrefList
+;
+: dodebug
+  depth dept !
+  find-main
+  depth dept @ 1 - = not if .debug-line then
+;
+.
+c
+q
+@register cmd-find=cmd/find
+@register #me cmd-find=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M2
+@action where;find;locate=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/find #help
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-find complete.
