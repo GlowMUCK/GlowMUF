@@ -1,0 +1,58 @@
+"Beginning installation of macro-longdesc...
+@prog macro-longdesc
+1 99999 d
+1 i
+( macro-longdesc: $Date: 1998/08/23 21:38:42 $ $Revision: 1.1 $
+  Author: Pakrat                                                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: macro-longdesc,v $
+  Revision 1.1  1998/08/23 21:38:42  glow
+  Initial revision
+
+)
+( --------------------------------------------------------------------------- )
+ $include $lib/glowstandard
+ $include $lib/showlist
+ $define loop repeat $enddef
+
+ : main
+   trigger @ player? if trigger @ awake? if
+   trigger @ "_look_notify" getpropstr if
+   trigger @ "_look_format" getpropstr
+  dup not if pop ">> %n looked at you <<" then
+  me @ name "%n" subst
+  trigger @ swap notify
+   then then then
+  dup not if pop "_/de" then
+  trigger @ owner .arch? not if
+    dup "/" 1 strncmp if
+      "/" over strcat
+    else
+      dup
+    then
+    "/@" instr if
+      me @ "Property read-permission denied." notify
+      exit
+    then
+  then
+  trigger @ swap .showlist exit
+  1 begin
+    over over intostr strcat trigger @ swap
+    getpropstr dup
+  while
+ me @ swap striptail dup if else pop " " then notify
+    1 +
+  loop pop pop pop
+ ;
+.
+c
+q
+@register macro-longdesc=list
+@register macro-longdesc=macro/longdesc
+@register #me macro-longdesc=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M2
+@set $tmp/prog1=/_/lok:A new beginning(#0R)
+@set $tmp/prog1=_version:FM1.0
+"Installation of macro-longdesc complete.
