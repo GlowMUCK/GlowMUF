@@ -1,0 +1,173 @@
+"Beginning installation of cmd-announce...
+@prog cmd-announce
+1 99999 d
+1 i
+( cmd-announce: $Date: 1999/04/17 23:48:50 $ $Revision: 1.1 $
+  Author: Scotfox -- Later Modified by Andy/Pakrat
+  --------------------------------------------------------------------------- )  
+( 
+  $Log: cmd-announce,v $
+  Revision 1.1  1999/04/17 23:48:50  feaelin
+  Initial revision
+
+)
+( announce.muf, by Scotfox, 26-September-1993 )
+( modified by Casual and Dalles, 8-April-1994 )
+
+$include $lib/glow
+$def delay 2 (seconds)
+$def tell me @ swap ansi_notify
+$def ctell "^WHITE^" command @ strcat " " strcat swap strcat tell
+$def annban "~/ban/announce"
+$def annblock "_prefs/announce"
+$def annpre "_prefs/annprefix"
+$def annverb "_prefs/annverb"
+ 
+: setannon ( d -- )
+  annblock "yes" setprop
+;
+ 
+: setannoff ( d -- )
+  annblock "no" setprop
+;
+ 
+: setbanned ( d -- )
+  annban "yes" setprop
+;
+ 
+: annon? ( d -- i )
+  annblock getpropstr .yes?
+;
+ 
+: annbanned? ( d -- i )
+  annban getpropstr .yes?
+;
+ 
+$def pck ( s s -- s ) over swap instring if pop 1 exit then
+: pottycheck ( s -- )
+  "shit" pck
+  "fuck" pck  
+  pop 0
+;
+ 
+: abuse ( -- )
+    "^YELLOW^To prevent abuse, wait at least "
+    delay intostr strcat " seconds between announcements." strcat tell
+; 
+ 
+: announce-help
+    "  " tell
+    "<message>        ^CYAN^broadcasts your message to everyone." ctell
+    ":<pose>          ^CYAN^broadcasts your pose to everyone." ctell
+    "on               ^CYAN^lets you hear and make announcements." ctell
+    "off              ^CYAN^makes it so you don't hear any announcements." ctell
+    "who              ^CYAN^tells you who's listening right now." ctell
+    "prefix <text>    ^CYAN^sets or clears your chat prefix text (default '<*>')" ctell
+    "verb <new verb>  ^CYAN^sets or clears your char verb (default 'chat')" ctell
+    "  " tell abuse
+    "^YELLOW^You have to be listening in order to make announcements." tell
+    "^YELLOW^Abusive language is NOT allowed on public channels or areas." tell
+    "  " tell
+;
+ 
+: announce
+    .noguest
+    "me" match dup me ! location loc !
+    me @ annban getpropstr .yes? if
+      me @ setannoff
+       "^RED^You are banned from the public chat line." tell exit
+    then
+  
+    strip
+    dup "#" 1 strncmp not if 1 strcut swap pop then
+    dup "-" 1 strncmp not if 1 strcut swap pop then
+  
+    dup not over "who" stringcmp not or if
+        pop "^YELLOW^" "muckname" sysparm strcat
+        "'s public chat line.  Type '" strcat
+        command @ strcat
+        " help' for help." strcat tell
+        "^CYAN^Players listening:^GREEN^"
+        online depth rotate swap begin dup while rot
+            dup annon? over annbanned? not and
+            over .guest? not and if
+                name rot " " strcat swap strcat swap
+                else pop then
+            1 - repeat
+        pop "." strcat tell exit then
+    dup "help" stringcmp not if pop announce-help exit then strip
+    dup "on" stringcmp not if pop me @ setannon
+        "^YELLOW^You will hear announcements." tell exit then
+    dup "off" stringcmp not if pop me @ setannoff
+        "^YELLOW^You will not hear announcements." tell exit then
+    dup "prefix" stringcmp not if
+        me @ annpre remove_prop
+        "^GREEN^Chat prefix cleared." tell exit
+    then
+    dup "prefix " 7 strncmp not if
+        7 strcut swap pop
+        me @ annpre rot setprop "^GREEN^Chat prefix set." tell exit
+    then
+    dup "verb" stringcmp not if
+        me @ annverb remove_prop
+        "^GREEN^Chat verb cleared." tell exit
+    then
+    dup "verb " 5 strncmp not if
+        5 strcut swap pop
+        me @ annverb rot setprop "^GREEN^Chat verb set." tell exit
+    then
+ 
+    (Check announce-ok.)
+    me @ annon? not if pop
+        "^YELLOW^You must type '" command @ strcat
+        " on' before you can make or hear announcements." strcat
+        tell exit
+    then
+    me @ .mage? not if
+        me @ "@/lastannounce" getpropval systime delay - > if
+        pop abuse exit then
+    then
+    dup pottycheck if
+        me @ setbanned
+        me @ setannoff
+        "That kind of vulgarity is not allowed on announce." .tell
+        "You have been banned from public chat." .tell
+        prog "_potty/" me @ intostr strcat rot setprop
+        exit
+    then
+    (Construct announcement.)
+    dup ":" 1 strncmp not over ";" 1 strncmp not or if
+        1 strcut swap pop me @ name " " strcat swap strcat then
+    " ^VIOLET^" me @ name strcat " " strcat
+    me @ annverb getpropstr dup not if pop "chat" then "^^" "^" subst strcat
+    "s: \"^GREEN^" strcat
+    swap "^^" "^" subst strcat "^VIOLET^\"" strcat
+    (Announce.)
+    online begin dup while swap
+        dup annon? not over annbanned? or
+        over .guest? or
+        if pop 1 - continue then
+        over 2 + pick
+        over annpre getpropstr dup not if pop "<*>" then
+        "^^" "^" subst
+        "^CYAN^" swap strcat swap strcat
+        ansi_notify 1 - repeat
+    pop pop
+    me @ "@/lastannounce" "" systime addprop
+;
+.
+c
+q
+@register cmd-announce=cmd/announce
+@register #me cmd-announce=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+$set $tmp/prog1=/_version:FM1.0
+@action @announce;@announc;@announ;@annou;@anno;@ann;@an;announce;announc;announ;annou;anno;ann;an;+announce;+announc;+announ;+annou;+anno;+ann;+an;think;thin;thi;th;do;itn;@shout;@shou;@shou;@sho;@sh;shout;shou;sho;sh;.;chat;talk;public;gossip;gossi;goss;gos=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=Z
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/announce #help
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-announce complete.
