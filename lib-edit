@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2004/02/27 17:36:40 $ $Revision: 1.6 $
+( lib-edit: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -38,6 +38,9 @@
       Lists the given set of lines within a string range, with an int telling
       it to prepending each line with a number and a colon.  Ie:
       "8: line eight."
+
+    EDITansi_list[         {rng} ... offset nums? start end -- {rng} ...     ]
+      Replicates the functionality of EDITlist but displays in color.
   
     EDITleft    [               {rng} ... offset start end -- {rng'} ...    ]
       Left justify all the given lines within a string range.
@@ -47,6 +50,10 @@
   
     EDITright   [          {rng} ... offset cols start end -- {rng'} ...    ]
       Right justify all the given lines within a string range.
+
+    EDITcolor   [   {rng} ... offset cols start end newcol -- {rng'} ...    ]
+      Prepends or replaces previously prepended color code on each line
+      within a given string range.
   
     EDITindent  [          {rng} ... offset cols start end -- {rng'} ...    ]
       Indents all the given lines in a string range by COLS spaces.  if COLS
@@ -75,7 +82,10 @@
   
     EDITdisplay [                                    {rng} --           ]
       displays the range of strings on the stack to the user.
-  
+
+    EDITansi_display[                                {rng} --           ]
+      Replicates EDITdisplay except that it displays in color.
+
     EDITsplit   [     string splitchars rmargin wrapmargin -- {rng}     ]
       splits a string up into several lines in a range.  The criterion
       for where to split each line are as follows:  It splits at the last
@@ -89,6 +99,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.7  2004/04/01 05:39:12  feaelin
+  Added feature which allows the user to prepend each line in a range with
+  a color code. Updated documentation for recent changes.
+
   Revision 1.6  2004/02/27 17:36:40  feaelin
   Fixed format and right justify to be ansi_aware.
 
@@ -99,13 +113,13 @@
   Revision 1.4  2000/01/10 20:54:44  feaelin
   Minor documentation fixes.
 
-  Revision 1.3  1998/07/29 17:24:16  glow
+  Revision 1.3  1998/07/29 17:24:16  feaelin
   Put back in a missing 'swap' in EDITjoin.
 
-  Revision 1.2  1998/07/29 16:47:50  glow
+  Revision 1.2  1998/07/29 16:47:50  feaelin
   Cleaned up documentation.
 
-  Revision 1.1  1998/07/29 01:30:37  glow
+  Revision 1.1  1998/07/29 01:30:37  feaelin
   Initial revision
 
 )
@@ -115,7 +129,6 @@ $include $lib/stackrng
 $define SRNGextract sr-extractrng $enddef
 $define SRNGinsert  sr-insertrng  $enddef
 $define SRNGcopy    sr-copyrng    $enddef
-  
   
 : EDITforeach ( {str_rng} ... offset 'function data start end -- {str_rng'} )
               ( 'function must be addr of a [string data -- string] function)
@@ -129,7 +142,26 @@ $define SRNGcopy    sr-copyrng    $enddef
     swap 1 + swap EDITforeach
 ;
   
+: EDITcolor-func ( s newcol -- s )
+  swap dup ( preserve the string )
+  striplead "^" instr 1 = if
+    dup "^" instr strcut swap dup strlen 1 - 
+    dup 0 = if
+      pop pop ""
+    else
+      strcut pop
+    then
+    swap
+    dup "^" instr strcut 
+    swap pop rot swap strcat strcat
+  else
+    strcat
+  then
+;
   
+: EDITcolor ( {strrng} ... offset start end newcol -- {strrng'} ... )
+  'EDITcolor-func -4 rotate EDITforeach
+;
   
 : EDITsearch  ( {rng} ... offset string start -- {rng} pos )
     dup 4 pick 5 + pick > if pop pop pop 0 exit then
@@ -490,6 +522,7 @@ PUBLIC EDITdisplay
 PUBLIC EDITansi_display
 PUBLIC EDITsplit
 PUBLIC EDITformat
+PUBLIC EDITcolor
 .
 c
 q
@@ -501,6 +534,7 @@ q
 @set $tmp/prog1=/_defs/EDITansi_list:"$lib/edit" match "EDITansi_list" call
 @set $tmp/prog1=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
 @set $tmp/prog1=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
+@set $tmp/prog1=/_defs/EDITcolor:"$lib/edit" match "EDITcolor" call
 @set $tmp/prog1=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
 @set $tmp/prog1=/_defs/EDITfmt_rng:"$lib/edit" match "EDITfmt_rng" call
 @set $tmp/prog1=/_defs/EDITformat:"$lib/edit" match "EDITformat" call
@@ -518,5 +552,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
 "Installation of lib-edit complete.

@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/02/20 17:09:24 $ $Revision: 1.6 $
+( lib-editor: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,10 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.7  2004/04/01 05:39:12  feaelin
+  Added feature which allows the user to prepend each line in a range with
+  a color code. Updated documentation for recent changes.
+
   Revision 1.6  2004/02/20 17:09:24  feaelin
   Colorized the responses.  Added two listing commands that
   are idential to .l and .p, except they display in color
@@ -97,10 +101,11 @@ $define SRNGinsert  sr-insertrng  $enddef
     else dup 11 = if pop "Error: Must have a destination line reference."
     else dup 12 = if pop "Error: Columns parameter invalid."
     else dup 13 = if pop "Error: Extraneous line references ignored."
+    else dup 14 = if pop "Error: Invalid ANSI code."
     else pop "Unknown error."
     then then then then then
     then then then then then
-    then then then
+    then then then then
     "^FAIL^< ** " swap strcat " ** >^RESET^" strcat
     me @ swap ansi_notify
 ;
@@ -432,6 +437,20 @@ $define SRNGinsert  sr-insertrng  $enddef
         "^SUCC^< Centered %1 lines starting at line %2 for screenwidth %3. >"
         EDITORmesg 2 -4 rotate EDITcenter 1 exit
     then
+    dup "color" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop 3 pick "" "^" subst toupper 3 put 3 pick
+        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT" swap
+        instr not if
+          14 EDITORerror 1 exit
+        then
+        3 pick "^" swap strcat "^" strcat 3 put
+        over not if pop pop over dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 0
+        "^SUCC^< Colorized %1 lines starting at line %2. >"
+        EDITORmesg 2 -4 rotate EDITcolor 1 exit
+    then
     dup "right" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
         pop rot dup not if pop "72" then
@@ -513,8 +532,8 @@ $define SRNGinsert  sr-insertrng  $enddef
 " ^MOVE^.indent [st [en]]=cols^RESET^    Indents or undents text by cols characters"
 " ^MOVE^.format [st [en]]=cols^RESET^    Formats text nicely to cols columns."
 " ^MOVE^.sort [=method]^RESET^           Sorts all lines. Method can have: a - ascending,"
-"^NOTE^                           d - descending, i - case-insensitive,"
-"^NOTE^                           s - case-sensitive. Default is: ai."
+"                           d - descending, i - case-insensitive,"
+"                           s - case-sensitive. Default is: ai."
 "^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 "^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
@@ -563,5 +582,5 @@ q
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
 "Installation of lib-editor complete.
