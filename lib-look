@@ -1,7 +1,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/10 15:09:40 $ $Revision: 1.4 $
+( cmd/lib-look: $Date: 2004/04/10 17:24:47 $ $Revision: 1.5 $
   Originally part of the FuzzBall MUF distribution.                           )
 ( --------------------------------------------------------------------------- )
 ( Set of library routines for doing 'look' functions.
@@ -55,8 +55,8 @@
        trigger value.
   db-desc:  d --
        Does a full description of the object, including name and succ/fail
-       if the dbref given is a room, and contents.  All programs run with
-       the dbref given in 'trigger @'.  Will return the proper values for
+       if the dbref given is a room, and contents. All programs run with
+       the dbref given in 'trigger @'. Will return the proper values for
        dbref's #-1 and #-2 as well.
   cmd-look:  s --
        Does a match function, then calls db-desc with the results.  This
@@ -65,6 +65,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.5  2004/04/10 17:24:47  feaelin
+  Fixed minor issues in the std-filter function.
+
   Revision 1.4  2004/04/10 15:09:40  feaelin
   Fixed issue where if you didn't control the item, or you were set silent,
   the database item name wasn't colorized.
@@ -82,10 +85,12 @@
 
 )
 ( --------------------------------------------------------------------------- )
+$include $lib/glow
 $include $lib/strings
 $include $lib/match
 $include $lib/stackrng
 $include $lib/unparseobj
+$include $lib/case
  
 lvar sme
 lvar sloc
@@ -147,22 +152,19 @@ lvar realtrig
  
 ( Don't see rooms.  Don't see programs you can't link to. )
 : std-filter ( d -- i )
-  begin
-    0 over me @ dbcmp not
-  while
-    over program? dup
-    if
-      pop over control? 3 pick "Link_OK" flag? or not
+  dup me @ dbcmp if pop 0 exit then
+  dup room? if pop 0 exit then
+  dup player? if pop 1 exit then
+  dup dup thing? swap "z" flag? and if pop 1 exit then
+  dup program? if
+    dup control? over "Link_OK" flag? or if
+      pop 1 exit
+    else
+      pop 0 exit
     then
-    not
-  while
-    over room? not
-  while
-    over dark? not
-  while
-    pop 1 1
-  until
-  swap pop
+  then
+  dup "dark" flag? if pop 0 exit then
+  pop 1 
 ;
  
 : contents-filter ( a d -- d... i )
@@ -304,14 +306,18 @@ $else
     0
 $endif
     if
-      dup "/_/fl" "(@Fail)" 1 parseprop
+      dup "/_/fl" "(@Fail)" 1 parseprop dup
       if
         str-desc
       else
         pop
       then
-      dup "/_/ofl" "(@OFail)" 1 parseprop 
-      otell
+      dup "/_/ofl" "(@OFail)" 1 parseprop dup
+      if
+        otell
+      else
+        pop
+      then
     else
       dup "/_/sc" "(@Succ)" 1 parseprop dup
       if
@@ -319,8 +325,12 @@ $endif
       else
         pop
       then
-      dup "/_/osc" "(@OSucc)" 1 parseprop
-      otell
+      dup "/_/osc" "(@OSucc)" 1 parseprop dup
+      if
+        otell
+      else
+        pop
+      then
     then
     "^BLUE^Contents:" over list-contents
   else
@@ -376,6 +386,6 @@ q
 @set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=3-60
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.4 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.5 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.5 $
 ff"Installation of lib-look complete.
