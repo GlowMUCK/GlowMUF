@@ -2,7 +2,7 @@
 @prog cmd-getsite
 1 99999 d
 1 i
-( cmd-getsite: $Date: 2000/01/26 16:15:39 $ $Revision: 1.1 $                              )
+( cmd-getsite: $Date: 2004/02/12 04:38:17 $ $Revision: 1.2 $                              )
 ( Author: PakRat                                              )
 ( ----------------------------------------------------------- )
 ( Getsite by PakRat Copyright 1997 All Rights Reserved        )
@@ -11,6 +11,9 @@
 ( am logged into so they can get to accounts on my machine.   )
 ( 
   $Log: cmd-getsite,v $
+  Revision 1.2  2004/02/12 04:38:17  feaelin
+  Fixed minor spelling error.
+
   Revision 1.1  2000/01/26 16:15:39  feaelin
   Initial revision
 
@@ -46,7 +49,7 @@ $def n me @ swap notify
       then n
     repeat pop
     "Done." n
-  else pop "Noone can see your site information." n then
+  else pop "No one can see your site information." n then
 ;
   
 : addsite ( s -- )
@@ -110,7 +113,7 @@ q
 @register cmd-getsite=cmd/getsite
 @register #me cmd-getsite=tmp/prog1
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 @action @getsite;getsite;@site;site=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @desc $tmp/exit1=@$cmd/getsite #help
