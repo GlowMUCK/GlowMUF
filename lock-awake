@@ -1,0 +1,28 @@
+"Beginning installation of lock-awake...
+@prog lock-awake
+1 99999 d
+1 i
+( lock-awake: $Date: 1998/08/23 22:13:40 $ $Revision: 1.1 $
+  Author: Pakrat                                                              )
+( --------------------------------------------------------------------------- )
+: lock-awake
+  "me" match awake?
+;
+.
+c
+q
+@register lock-awake=lock/awake
+@register #me lock-awake=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M1
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of lock-awake complete.
+
+
+
+
+
+
+
+
+
