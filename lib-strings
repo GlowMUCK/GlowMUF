@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/04/03 15:02:27 $ $Revision: 1.16 $                 )
+( lib-strings: $Date: 2005/04/05 15:23:19 $ $Revision: 1.17 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -41,6 +41,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.17  2005/04/05 15:23:19  feaelin
+  Provided more aliases of the library words
+
   Revision 1.16  2005/04/03 15:02:27  feaelin
   Simple whitespace changes.
 
@@ -220,7 +223,23 @@ q
 @set $lib/strings=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $lib/strings=/_defs/STRstrip:strip
 @set $lib/strings=/_defs/STRsts:striptail
+@set $lib/strings=/_defs/STR-asc:"$lib/strings" match "STRasc" call
+@set $lib/strings=/_defs/STR-blank?:striplead not
+@set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
+@set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
+@set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
+@set $lib/strings=/_defs/STR-left:"$lib/strings" match "left" call
+@set $lib/strings=/_defs/STR-parse:"$lib/strings" match "STRparse" call
+@set $lib/strings=/_defs/STR-right:"$lib/strings" match "right" call
+@set $lib/strings=/_defs/STR-rsplit:"$lib/strings" match "rsplit" call
+@set $lib/strings=/_defs/STR-singlespace:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/STR-sls:striplead
+@set $lib/strings=/_defs/STR-sms:"$lib/strings" match "sms" call
+@set $lib/strings=/_defs/STR-split:"$lib/strings" match "split" call
+@set $lib/strings=/_defs/STR-splitargs:"$lib/strings" match "splitargs" call
+@set $lib/strings=/_defs/STR-strip:strip
+@set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-37
 @set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.16 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.17 $
 wh me=Installation of lib-strings complete.
