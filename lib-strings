@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1998/07/27 21:15:02 $ $Revision: 1.1 $
+( lib-strings: $Date: 1998/07/28 03:35:38 $ $Revision: 1.2 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
@@ -36,6 +36,9 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
+  Revision 1.2  1998/07/28 03:35:38  glow
+  Corrected wiz-level.
+
   Revision 1.1  1998/07/27 21:15:02  glow
   Initial revision
 
@@ -64,13 +67,11 @@ This routine is useful for parsing command line input:
     then
 ;
   
-  
 : sms ( str -- str')
     dup "  " instr if
         " " "  " subst 'sms jmp
     then
 ;
-  
   
 : fillfield (str padchar fieldwidth -- padstr)
   rot strlen - dup 1 < if pop pop "" exit then
@@ -128,7 +129,6 @@ This routine is useful for parsing command line input:
     then
     strip sms rot
 ;
-    
   
 public split
 public rsplit
@@ -146,6 +146,7 @@ q
 @register lib-strings=lib/strings
 @register #me lib-strings=tmp/prog1
 @set $tmp/prog1=L
+@set $tmp/prog1=W
 @set $tmp/prog1=/_/de:lib-strings:List lines 4-31 for documentation.
 @set $tmp/prog1=/_defs/.asc:"$lib/strings" match "STRasc" call
 @set $tmp/prog1=/_defs/.blank?:striplead not
@@ -176,4 +177,5 @@ q
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+"Installation of lib-strings complete.
