@@ -1,5 +1,9 @@
-CHANGES $Date: 2000/01/27 17:02:02 $ $Revision: 1.5 $
+CHANGES $Date: 2000/12/20 14:11:51 $ $Revision: 1.6 $
 ---------------------------------------------------------------------------
+19 December 2000:
+1) Fixed issue with cmd-bbs not dealing with custom look programs properly,
+   and updated documentation accordingly.
+
 27 January 2000: Alpha Release 4
 1) Documentation and fixes for cmd-setworld, cmd-teleport, and cmd-roomcheck
    Minor updates on several others.

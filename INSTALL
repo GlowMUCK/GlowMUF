@@ -1,4 +1,4 @@
-INSTALL $Date: 2000/01/25 17:14:39 $ $Revision: 1.7 $
+INSTALL $Date: 2000/12/20 14:11:51 $ $Revision: 1.8 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.2 (Alpha Release)
 ---------
@@ -63,6 +63,9 @@ Comments about some other programs:
     This program requires that you have con-bbsindex installed to function
     correctly.
    
+  con-bbsindex:
+    Requires /_bbs/boardname:boardroomref to be set on #0 to function properly.
+
   cmd-enterdesc:
     This program requires cmd-lsedit.
 
