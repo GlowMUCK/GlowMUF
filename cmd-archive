@@ -2,11 +2,14 @@
 @prog cmd-archive
 1 99999 d
 1 i
-( cmd-archive: $Date: 1999/04/18 00:02:45 $ $Revision: 1.1 $
+( cmd-archive: $Date: 2005/01/14 16:32:03 $ $Revision: 1.2 $
   Author: ????
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-archive,v $
+  Revision 1.2  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  1999/04/18 00:02:45  feaelin
   Initial revision
 
@@ -24,17 +27,18 @@ $include $lib/match
 $include $lib/edit
   
 : show-help
-"Syntax: @archive <object>[=1acefgilop]"
-" @archive <object>=1    Archive only that object."
-" @archive <object>=a    Archive all, regardless of owner.  (wizards only)."
-" @archive <object>=c    Don't archive contents."
-" @archive <object>=e    Don't archive objects not in this room's environment."
-" @archive <object>=f    Don't archive floater child rooms unless linked to."
-" @archive <object>=g    Include exits linked to programs if wizard owned."
-" @archive <object>=i    Don't archive globally registered objects."
-" @archive <object>=l    Don't follow links or droptos in archiving."
-" @archive <object>=o    Archive everything you own. (New feature!)"
-" @archive <object>=p    Don't archive programs."
+"Syntax: @archive <database item>[=1acefgilop]"
+" @archive <database item>=1  Archive only that object."
+" @archive <database item>=a  Archive all, regardless of owner.(W1+)."
+" @archive <database item>=c  Don't archive contents."
+" @archive <database item>=e  Don't archive objects not in this room's "
+"                             environment."
+" @archive <database item>=f  Don't archive floater child rooms unless linked"
+" @archive <database item>=g  Include exits linked to programs if wizard owned."
+" @archive <database item>=i  Don't archive globally registered objects."
+" @archive <database item>=l  Don't follow links or droptos in archiving."
+" @archive <database item>=o  Archive everything you own. (New feature!)"
+" @archive <database item>=p  Don't archive programs."
 "NOTE: Turn off your client's wordwrap before logging an @archive output."
 "Also, remove the 'X lines displayed.' line listed at the end of programs."
 13 EDITdisplay
@@ -490,5 +494,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/archive 
-@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:FM$Revision: 1.2 $
 "Installation of cmd-archive complete.

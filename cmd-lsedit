@@ -2,11 +2,14 @@
 @prog cmd-lsedit
 1 99999 d
 1 i
-( cmd-lsedit: $Date: 2004/09/23 15:10:25 $ $Revision: 1.4 $
+( cmd-lsedit: $Date: 2005/01/14 16:32:13 $ $Revision: 1.5 $
   Author:
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-lsedit,v $
+  Revision 1.5  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.4  2004/09/23 15:10:25  feaelin
   Corrected bug where it would allow you to enter the editor without actually
   specifying a list.
@@ -88,19 +91,19 @@ $def LMGRdeleterange lmgr-deleterange
 
 : do-copy
   swap
-  "^INFO^Enter the destination object or '.' if you are copying to the same object."
+  "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
   .atell read
   dup "." stringcmp not if 
     pop 2 pick
   else
     strip
     dup not if
-      "^FAIL^Invalid object." .atell
+      "^FAIL^Invalid database item." .atell
       depth popn exit
     then
     match dup not if
       pop
-      "^FAIL^I don't know what object you mean." .atell
+      "^FAIL^I don't know what database item you mean." .atell
       depth popn exit
     else 
       dup #-2 dbcmp if
@@ -138,19 +141,19 @@ $def LMGRdeleterange lmgr-deleterange
 
 : do-move
   swap
-  "^INFO^Enter the destination object or '.' if you are copying to the same object."
+  "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
   .atell read
   dup "." stringcmp not if 
     pop 2 pick
   else
     strip
     dup not if
-      "^FAIL^Invalid object." .atell
+      "^FAIL^Invalid database item." .atell
       depth popn exit
     then
     match dup not if
       pop
-      "^FAIL^I don't know what object you mean." .atell
+      "^FAIL^I don't know what database item you mean." .atell
       depth popn exit
     else 
       dup #-2 dbcmp if
@@ -188,10 +191,10 @@ $def LMGRdeleterange lmgr-deleterange
 
 : show-help
   "Usage:" .atell
-  "lsedit <object>=<listname>     - Edit <listname>" .atell
-  "lsdel <object>=<listname>      - Delete <listname>" .atell
-  "lscopy <object>=<listname>     - Copy <listname>" .atell
-  "lsmove <object>=<listname>     - Move <listname>" .atell
+  "lsedit <database item>=<listname>     - Edit <listname>" .atell
+  "lsdel <database item>=<listname>      - Delete <listname>" .atell
+  "lscopy <database item>=<listname>     - Copy <listname>" .atell
+  "lsmove <database item>=<listname>     - Move <listname>" .atell
   "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." .atell
 ; 
 
@@ -216,12 +219,12 @@ $def LMGRdeleterange lmgr-deleterange
   then
   swap strip
   dup not if
-    "^FAIL^You must specify an object.  Syntax: " command @ strcat 
+    "^FAIL^You must specify a database item.  Syntax: " command @ strcat 
     " <database item>=<listname>." .atell
     pop pop exit
   then
   match dup not if pop
-    "^FAIL^I don't know what object you mean.  Syntax: " command @ strcat 
+    "^FAIL^I don't know what database item you mean.  Syntax: " command @ strcat 
     " <database item>=<listname>." .atell
     pop exit
   else dup #-2 dbcmp if pop
@@ -261,5 +264,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/lsedit #help
-@set $tmp/prog1=_version:FM$Revision: 1.4 $
+@set $tmp/prog1=_version:FM$Revision: 1.5 $
 "Installation of cmd-lsedit complete.

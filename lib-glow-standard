@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-glow-standard...
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2004/09/05 13:29:13 $ $Revision: 1.22 $          )
+( lib-glow-standard: $Date: 2005/01/14 16:32:13 $ $Revision: 1.23 $          )
 ( Author: Various                                                            )
 ( Contributors: Feaelin, Various                                             )
 ( Dependencies: None                                                         )
@@ -36,13 +36,13 @@ wh me=Beginning installation of lib-glow-standard...
 (   sets a property, or removes it if the string is null.                    )
 (                                                                            )
 ( envprop [startdbref propname -- stringval]                                 )
-(   searches down the environment tree from the given object, looking for    )
+(   searches down the environment tree from the given db-item, looking for   )
 (   a property with the given name.  Returns it's value, or a null string    )
 (   if it wasn't found.                                                      )
 (                                                                            ) 
 ( envsearch [startdbref propname -- locationdbref]                           )
 (   Also searches down the envtree for the given property, but returns the   )
-(   dbref of the object it was found on instead of the string value. Returns )
+(   dbref of the db-item it was found on instead of the string value. Returns)
 (   #-1 if it cannot find the property.                                      )
 (                                                                            )
 ( locate-prop [startdbref propname -- locationdbref]                         )
@@ -53,6 +53,9 @@ wh me=Beginning installation of lib-glow-standard...
   
 (
   $Log: lib-glow-standard,v $
+  Revision 1.23  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.22  2004/09/05 13:29:13  feaelin
   Corrected flaw where guest? was checking against truemage instead of mage
 
@@ -371,5 +374,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-48 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-48
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.22 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.23 $
 wh me=Installation of lib-glow-standard completed.

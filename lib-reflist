@@ -2,11 +2,11 @@
 @prog lib-reflist
 1 99999 d
 1 i
-( lib-reflist: $Date: 2000/01/10 21:34:22 $ $Revision: 1.2 $
+( lib-reflist: $Date: 2005/01/14 16:32:13 $ $Revision: 1.3 $
   Originally from FuzzBall MUF Distribution                                 )
 ( ------------------------------------------------------------------------- )
 ( DBref list manager -- REF
-  A reflist is a property on an object that contains a string with
+  A reflist is a property on an database item that contains a string with
   a series of space and # delimited dbrefs in it.  ie:
     reflist:#1234 #9364 #21 #6466 #37
   A reflist only will contain one copy of any one dbref within it.
@@ -31,7 +31,7 @@
     Returns whether or not the given dbref is in the dbreflist.
   
   REF-list  [objref reflistname -- liststr]
-    Returns a comma delimited string with the names of all the objects
+    Returns a comma delimited string with the names of all the database items
     in the given reflist.
   
   REF-allrefs [objref reflistname -- refx...ref1 refcount]
@@ -47,13 +47,16 @@
 
   REF-editlist  [players? objref reflistname -- ]  
     Enters the user into an interactive editor that lets them add and remove
-    objects from the given reflist.  'players?' is an integer boolean value,
+    database items from the given reflist.  'players?' is an integer boolean value,
     where if it is true, the list only lets you add players to it.  Otherwise
-    it lets you add regular objects to it.
+    it lets you add regular database items to it.
 )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-reflist,v $
+  Revision 1.3  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.2  2000/01/10 21:34:22  feaelin
   Documentation update.
 
@@ -148,7 +151,7 @@ $include $lib/match
     "these instructions again."
     strcat strcat strcat strcat .tell
   else
-    "To add an object, enter its name or dbref.  To remove an object, enter"
+    "To add a database item, enter its name or dbref.  To remove a database item, enter"
     "its name or dbref with a ! in front of it.  ie: '!button'.  To display"
     "the list, enter '*' on a line by itself.  To clear the list, enter"
     "'#clear'.  To finish editing and exit, enter '.' on a line by itself."
@@ -159,7 +162,7 @@ $include $lib/match
 
 : REF-editlist  (players? objref reflistname -- )
   3 pick REF-editlist-help
-  "The object list currently contains:" .tell
+  "The database item list currently contains:" .tell
   over over REF-list .tell
   begin
     read
@@ -169,12 +172,12 @@ $include $lib/match
     then
     dup "#list" stringcmp not
     over "*" strcmp not or if
-      pop "The object list currently contains:" .tell
+      pop "The database item list currently contains:" .tell
       over over REF-list .tell continue
     then
     dup "#clear" stringcmp not if
       pop over over remove_prop
-      "Object list cleared." .tell continue
+      "database item list cleared." .tell continue
     then
     dup "#help" stringcmp not if
       pop 3 pick REF-editlist-help
@@ -191,7 +194,7 @@ $include $lib/match
         REF-delete "Removed." .tell
       else
         pop pop pop
-        "Not in object list." .tell
+        "Not in database item list." .tell
       then
     else
       REF-add "Added." .tell
@@ -230,5 +233,5 @@ q
 @set $tmp/prog1=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
 @set $tmp/prog1=/_/de:lib-reflist: List lines 3-45 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/reflist=3-45
-@set $tmp/prog1=_lib-version:FM$Revision: 1.2 $
+@set $tmp/prog1=_lib-version:FM$Revision: 1.3 $
 "Installation of lib-reflist complete.

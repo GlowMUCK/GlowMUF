@@ -2,11 +2,14 @@
 @prog cmd-enterdesc
 1 99999 d
 1 i
-( cmd-enterdesc: $Date: 2000/01/25 17:20:35 $ $Revision: 1.1 $
+( cmd-enterdesc: $Date: 2005/01/14 16:32:13 $ $Revision: 1.2 $
   Author:
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-enterdesc,v $
+  Revision 1.2  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  2000/01/25 17:20:35  feaelin
   Initial revision
 
@@ -16,14 +19,14 @@ $include $lib/glow
 
 : enterdesc ( s -- )
   .strip dup not if
-    pop "Usage: enterdesc <object> -- set multi-line description for object"
+    pop "Usage: enterdesc <database item> -- set multi-line description for the database item"
     .tell
   exit then
   dup match dup ok? not if
     pop pop "I don't see that here." .tell
   exit then
   me @ over controls not if
-    pop pop "You don't control that object." .tell
+    pop pop "You don't control that database item." .tell
   exit then
   "@$list _desc" setdesc
   "=_desc" strcat "$cmd/lsedit" match call
@@ -39,5 +42,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/enterdesc
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-enterdesc complete.

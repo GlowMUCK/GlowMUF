@@ -2,11 +2,14 @@ aa"Beginning installation of cmd-emotion...
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2004/04/12 02:18:00 $ $Revision: 1.5 $
+( cmd-emotion: $Date: 2005/01/14 16:32:03 $ $Revision: 1.6 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.6  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.5  2004/04/12 02:18:00  feaelin
   Fixed bugs in the newly added 'socials' and 'emotions' commands
 
@@ -132,7 +135,7 @@ then
 " " n
 "* The List and Setup commands will accept male, female, or a player's name." n
 " " n
-"* Setup and list can take an @objectname to set/show emotions for it." n
+"* Setup and list can take an @databaseitemname to set/show emotions for it." n
 "  '" command @ strcat
 " -setup @here male' would set this room's responses for guys." strcat n
 " " n
@@ -544,6 +547,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.5 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.6 $
 aa"Installation of cmd-emotion complete.
 aa"Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.

@@ -2,10 +2,10 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2004/03/26 03:16:32 $ $Revision: 1.9 $
+( lib-stackrng: $Date: 2005/01/14 16:32:13 $ $Revision: 1.10 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
-( ***** Stack based range handling object -- SRNG ****                 
+( ***** Stack based range handling -- SRNG ****                 
          offset is how many stack items are between range and parms    
          pos is the position within the range you wish to deal with.   
          num is the number of range items to deal with.                
@@ -45,6 +45,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.10  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.9  2004/03/26 03:16:32  feaelin
   Fixed bug with 'swaprange' where it didn't finish
   properly.
@@ -191,5 +194,5 @@ q
 @set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
 @set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
 @set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
 "Installation of lib-stackrng completed

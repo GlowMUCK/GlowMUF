@@ -2,27 +2,26 @@
 @prog cmd-change
 1 99999 d
 1 i
-( cmd-change: $Date: 1999/04/18 17:59:14 $ $Revision: 1.1 $
-  Author: ???
-  --------------------------------------------------------------------------- )
+( cmd-change: $Date: 2005/01/14 16:32:03 $ $Revision: 1.2 $                   )
+( Author: Tygryss                                                             )
+( --------------------------------------------------------------------------- )
+( cmd-change                                                                  )
+(   This is a program that will let you replace errors in a message           )
+(   or property so that you can fix up typo's without having to               )
+(   retype the entire thing.                                                  )
+(                                                                             )
+( Usage:  change <database item>=<prop>:/<old>/<new>      or                  )
+(         change <database item>=<mesg>;/<old>/<new>                          ) 
+( --------------------------------------------------------------------------- )  
 (
   $Log: cmd-change,v $
+  Revision 1.2  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  1999/04/18 17:59:14  feaelin
   Initial revision
-
-  Revision 1.1  1999/04/18 17:41:42  feaelin
-  Initial revision
-
 )
 
-( cmd-change                                                         )
-(   This is a program that will let you replace errors in a message  )
-(   or property so that you can fix up typo's without having to      )
-(   retype the entire thing.                                         )
-(                                                                    )
-( Usage:  change <object>=<prop>:/<old>/<new>      or                )
-(         change <object>=<mesg>;/<old>/<new>                        )
-  
 $include $lib/strings
 $include $lib/glow
 
@@ -50,8 +49,8 @@ $include $lib/glow
     "Desc: Lets you replace some text in a message or property with" .tell
     "       new text.  Useful for fixing typos in a long message." .tell
     " " .tell
-    "Syntax: change <object>=<propname>:/<old>/<new>   or" .tell
-    "        change <object>=<mesgtype>;/<old>/<new>" .tell
+    "Syntax: change <database item>=<propname>:/<old>/<new>   or" .tell
+    "        change <database item>=<mesgtype>;/<old>/<new>" .tell
     " " .tell
     "<mesgtype> can be name/desc/succ/osucc/fail/ofail/drop/odrop" .tell
     "The first character after the : or ; is the delimiter character," .tell
@@ -186,5 +185,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/change 
-@set $tmp/prog1=_version:1.02FM$Revision: 1.1 $
+@set $tmp/prog1=_version:1.02FM$Revision: 1.2 $
 "Installation of cmd-change complete.

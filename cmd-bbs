@@ -2,7 +2,7 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2004/03/11 20:57:41 $ $Revision: 1.8 $                      )
+( cmd-bbs: $Date: 2005/01/14 16:32:03 $ $Revision: 1.9 $                      )
 ( Author: Garth Minette                                                       )
 ( Mods & Fixes By: Feaelin Moilar AKA Iain E. Davis                           )
 (                  Wixenstyx AKA Jennifer A. Boeyink                          )
@@ -26,8 +26,8 @@
 ( @set here=_expire:7   -- Messages expire in 7 days unless protected )
 ( @set here=_cmdprefix: -- Replaces 'bb' with the prefix in dialogs )
  
-( Or, you can set some other object _storehere:yes, and then set that object )
-( with the above props )
+( Or, you can set some other database item _storehere:yes, and then set that )
+( database item with the properties above.                                   )
  
 ( Wizstuff...)
 ( @set here=~bbswiz:yes -- Board is public to Mages+ )
@@ -41,11 +41,14 @@
 ( You can set _bbsuse but not _bbs to keep a bbs from being in a mirror )
 ( You can set _bbspub but not _bbs to make a bbs library only, storage room )
  
-( @desc an object with @dbref or @$cmd/bbs to allow a 'look' at the board to )
-( list the messages on the board.                                            )
- 
+( @desc a database item with @dbref or @$cmd/bbs to allow a 'look' at the    )
+( board to list the messages on the board.                                   )
+( -------------------------------------------------------------------------- ) 
 ( 
   $Log: cmd-bbs,v $
+  Revision 1.9  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.8  2004/03/11 20:57:41  feaelin
   Incorporated color changes by Wixenstyx
   Applied bugfixes that Wixenstyx found
@@ -628,5 +631,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $tmp/prog1=_version:0.80FM$Revision: 1.8 $
+@set $tmp/prog1=_version:0.80FM$Revision: 1.9 $
 "Installation of cmd-bbs complete.

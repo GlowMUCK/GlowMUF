@@ -2,7 +2,7 @@
 @prog lib-mesg
 1 99999 d
 1 i
-( lib-mesg: $Date: 2004/03/26 03:18:15 $ $Revision: 1.3 $
+( lib-mesg: $Date: 2005/01/14 16:32:13 $ $Revision: 1.4 $
   Originally in the FuzzBall MUF Distribution                                 )
 ( --------------------------------------------------------------------------- )
 ( **** Message Object -- MSG- ****
@@ -21,7 +21,7 @@
   
     MSG-create  [{strrange} infostr base dbref -- ]
       Create a new message with the given items and info string on
-      the given object with the given name.
+      the given database item with the given name.
   
     MSG-count   [base dbref -- count]
       Returns how many items are in the given message.
@@ -63,6 +63,9 @@ $def SLASHED_LISTS
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-mesg,v $
+  Revision 1.4  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.3  2004/03/26 03:18:15  feaelin
   Upgraded wizprop so you can store messages in @ props.
 
@@ -252,5 +255,5 @@ q
 @set $tmp/prog1=/_defs/MSG-setinfo:"$lib/mesg" match "MSG-setinfo" call
 @set $tmp/prog1=/_defs/MSG-setitem:"$lib/mesg" match "MSG-setitem" call
 @set $tmp/prog1=/_docs:@list $lib/mesg=3-53
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-mesg complete.

@@ -1,4 +1,4 @@
-CHANGES $Date: 2005/01/11 15:53:44 $ $Revision: 1.18 $
+CHANGES $Date: 2005/01/14 16:32:02 $ $Revision: 1.19 $
 Author: Feaelin
 -------------------------------------------------------------------------------
 I try to keep all the changes on a by program basis, so that you can install
@@ -12,14 +12,16 @@ and compare it to the version shown by @register.
                   lib-editor. Revised front end so p #mail <name> <name>...
                   worked correctly. Added back in the #changes support and the
                   "page has upgraded warning.
+02) lib-editor,   Using period without any other text after it, or using period
+    lib-edit,      and a space no longer results in the program failing.
+    cmd-lsedit
 
 -------------------------------------------------------------------------------
 2004 May 08: FM 1.0.2
 -------------------------------------------------------------------------------
-01) lib-edit &
-    lib-editor:   Added a .color command that prepends the range of lines 
-                  given with the color specified, or replaces previously
-                  prepended color with the new color.
+01) lib-edit,     Added a .color command that prepends the range of lines 
+    lib-editor    given with the color specified, or replaces previously
+    cmd-lsedit    prepended color with the new color.
                   Fixed .split and .format so that they correctly preserve
                   colorization. Added the .ruler command. Upgraded to more
                   easily handle @props.

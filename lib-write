@@ -2,7 +2,7 @@
 @prog lib-write
 1 99999 d
 1 i
-( lib-write: $Date: 1998/08/23 21:12:40 $ $Revision: 1.1 $
+( lib-write: $Date: 2005/01/14 16:32:13 $ $Revision: 1.2 $
   Author: Merlin <of Chaos> <Earl Miles>                                     )
 ( -------------------------------------------------------------------------- )
 ( MUF-Editor v 2.0
@@ -15,6 +15,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-write,v $
+  Revision 1.2  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  1998/08/23 21:12:40  glow
   Initial revision
 
@@ -105,7 +108,7 @@ $def prgm prog
 : copyrange ( d s i i d s i -- ) ( This is the word which copies a range )
   0 copyrangeloop                ( of text from one place to another )
 ;                                ( It's *very* flexible. )
-: deleterange ( d s i i -- ) ( object, string, from, to.  And decrement )
+: deleterange ( d s i i -- ) ( db-item, string, from, to.  And decrement )
                              ( the lines counter to be nice. )
   over over > if
     pop pop
@@ -308,5 +311,5 @@ q
 @register #me lib-write=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-write complete.

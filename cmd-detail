@@ -2,11 +2,14 @@
 @prog cmd-detail
 1 99999 d
 1 i
-( cmd-detail: $Date: 1999/04/19 13:58:13 $ $Revision: 1.1 $
+( cmd-detail: $Date: 2005/01/14 16:32:03 $ $Revision: 1.2 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-detail,v $
+  Revision 1.2  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  1999/04/19 13:58:13  feaelin
   Initial revision
 
@@ -47,16 +50,16 @@ lvar ddesc
 ;
   
 : do-help ( -- )
-"Usage: @detail obj=name=description -- Make hidden detail on something." n
-"       @object obj=name=description -- Make visible object on something." n
+"Usage: @detail dbi=name=description -- Make hidden detail on something." n
+"       @object dbi=name=description -- Make visible object on something." n
 " " n
-"       @detail #show obj=name -- Turn a hidden detail into an object." n
-"       @object #hide obj=name -- Turn an object into a hidden detail." n
-"       @detail #name obj=name=newname -- Fix the name of a detail." n
-"       @detail #desc obj=name=newdesc -- Change the desc of a detail." n
-"       @detail #nuke obj=name         -- Delete a detail." n
+"       @detail #show dbi=name -- Turn a hidden detail into an object." n
+"       @object #hide dbi=name -- Turn an object into a hidden detail." n
+"       @detail #name dbi=name=newname -- Fix the name of a detail." n
+"       @detail #desc dbi=name=newdesc -- Change the desc of a detail." n
+"       @detail #nuke dbi=name         -- Delete a detail." n
 " " n
-"'obj' can be anything you own, including 'me' and 'here'." n
+"'dbi' can be anything you own, including 'me' and 'here'." n
 "The 'name' is an exit delimited name such as: My blue sign;sign;blue" n
 "The description can by anything, including @1234 and @$prog programs." n
 " " n
@@ -188,5 +191,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/detail
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-detail complete.

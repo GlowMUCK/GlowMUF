@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/08/04 18:50:53 $ $Revision: 1.20 $                )
+( cmd/lib-look: $Date: 2005/01/14 16:32:13 $ $Revision: 1.21 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -24,15 +24,15 @@ wh me=Beginning installation of lib-look...
 (      prevent reinvention of the wheel...                                    )
 ( LOOKcontents-filter:  a d -- d... i                                         )
 (      Takes the address of a 'filter' routine and a dbref, and returns a     )
-(      range on the stack of the filtered contents of the object.  The first  )
+(      range on the stack of the filtered contents of the db-item. The first  )
 (      item to print is the bottom of the stack range.  The filter should     )
 (      be  d -- i; it takes a dbref and returns a true/false value to say     )
 (      whether or not the dbref should be put into the list.                  )
 ( LOOKget-contents:  d -- d... i                                              )
 (      Takes a dbref, and returns the list of its contents, filtered through  )
 (      the standard filter which acts like the server's contents list:        )
-(      Dark rooms don't list anything unless the room or the objects are      )
-(      yours, dark objects not owned by you don't show, and you don't show.   )
+(      Dark rooms don't list anything unless the room or the db-items are     )
+(      yours, dark db-items not owned by you don't show, and you don't show.  )
 (      This list has the first element in the contents at the bottom of the   )
 (      stack.                                                                 )
 ( LOOKlong-display:  d... i --                                                )
@@ -40,7 +40,7 @@ wh me=Beginning installation of lib-look...
 (      All elements on separate lines, using unparse.  The bottom element is  )
 (      printed first.                                                         )
 ( LOOKlist-objects:  d --                                                     )
-(      Lists all the 'objects' that are setup by the @object/@detail commands )
+(      Lists all the 'db-items' that are setup by the @object/@detail commands)
 (      Parallels long-display.                                                )
 ( LOOKdetail-dbmatch: d s -- s                                                )
 (      Searches for a detail or object created by @object/@detail and returns )
@@ -71,7 +71,7 @@ wh me=Beginning installation of lib-look...
 (      Runs str-desc, using the value d on the stack as the effective         )
 (      trigger value. Parses MPI as appropiate.                               )
 ( LOOKdb-desc:  d --                                                          )
-(      Does a full description of the object, including name and succ/fail    )
+(      Does a full description of the db-item, including name and succ/fail   )
 (      if the dbref given is a room, and contents. All programs run with      )
 (      the dbref given in 'trigger @'. Will return the proper values for      )
 (      dbref's #-1 and #-2 as well. Parses MPI as appropiate.                 )
@@ -81,6 +81,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.21  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.20  2004/08/04 18:50:53  feaelin
   Missed part of the calls when checking for #0.
 
@@ -615,6 +618,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.20 $
-@set $lib/look=/_version:1.31FM$Revision: 1.20 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.21 $
+@set $lib/look=/_version:1.31FM$Revision: 1.21 $
 wh me=Installation of lib-look complete.

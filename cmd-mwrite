@@ -2,11 +2,14 @@
 @prog cmd-mwrite
 1 99999 d
 1 i
-( cmd-mwrite: $Date: 2000/12/21 20:37:17 $ $Revision: 1.1 $                                               )
+( cmd-mwrite: $Date: 2005/01/14 16:32:13 $ $Revision: 1.2 $                                               )
 ( Author: Unknown                                                             )
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-mwrite,v $
+  Revision 1.2  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
   Revision 1.1  2000/12/21 20:37:17  feaelin
   Initial revision
 
@@ -20,11 +23,11 @@ $include $lib/glowstandard
  : safe? dup "_" 1 strncmp over "." 1 strncmp and over "~" 1 strncmp and
    swap "@" 1 strncmp and not ; 
  : controls? (d d -- i) over swap owner dbcmp if pop 1 exit then wizard? if
-  "Warning: You do _NOT_ control this object." note 1 exit then 0 ;
+  "Warning: You do _NOT_ control this database item." note 1 exit then 0 ;
  
  : help
    "Write -- a multi-line description maker" note
-   "Usage: write objectname (or `me', or `here' if you own the room)" note
+   "Usage: write databaseitemname (or `me', or `here' if you own the room)" note
    " " note
    "   After typing the above line you are asked for a 'property' to" note
    "store the text in.  This is simply a unique name that write uses" note
@@ -36,7 +39,7 @@ $include $lib/glowstandard
    "_desc/ _desc1/ _desc137/ _mydesc/ _freudianslip/ _My_ExGirlFriend/" note
    " " note
    "   After a successful write/edit session, you are asked if you wish" note
-   "to set the object's (or person's) description to show the saved text." note
+   "to set the database item's (or person's) description to show the saved text." note
    "Answering yes will set the command to show it for the @desc." note
    "Answering no will tell you what to do if you wish to set it later." note
    " " note
@@ -106,5 +109,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/mwrite
-@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:FM$Revision: 1.2 $
 "Installation of cmd-mwrite complete.
