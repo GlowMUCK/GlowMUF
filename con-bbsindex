@@ -2,17 +2,19 @@
 @prog con-bbsindex
 1 99999 d
 1 i
-( con-bbsindex: $Date: 2004/03/10 06:19:28 $ $Revision: 1.2 $
+( con-bbsindex: $Date: 2004/03/26 03:06:43 $ $Revision: 1.3 $
   Author: Andy
   --------------------------------------------------------------------------- )
 (
   $Log: con-bbsindex,v $
+  Revision 1.3  2004/03/26 03:06:43  feaelin
+  cleanup
+
   Revision 1.2  2004/03/10 06:19:28  feaelin
   Minor changes to accomadate the customization changes of cmd-bbs.
-
+  
   Revision 1.1  1999/04/17 18:12:16  feaelin
   Initial revision
-
 )
 ( $bbs index system to show new messages )
 
@@ -91,6 +93,6 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=V
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
 @set #0=/~connect/bbsindex:$con/bbsindex
 "Installation of con-bbsindex complete.
