@@ -2,7 +2,7 @@
 @prog cmd-showexits
 1 99999 d
 1 i
-( cmd-showexits: $Date: 2000/12/22 17:21:49 $ $Revision: 1.1 $ )
+( cmd-showexits: $Date: 2000/12/22 17:23:13 $ $Revision: 1.2 $                )
 ( Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 ( Exit shower by PakRat Copyright 1993 All rights reserved.                   )
@@ -14,6 +14,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-showexits,v $
+  Revision 1.2  2000/12/22 17:23:13  feaelin
+  *** empty log message ***
+
   Revision 1.1  2000/12/22 17:21:49  feaelin
   Initial revision
 
@@ -111,5 +114,5 @@ q
 @set $tmp/prog1=/_desc/8:@set here=_BigExits:yes  shows exits and rooms they go to
 @set $tmp/prog1=/_desc/9:@set here=_SignPost:yes  shows a signpost for north,east, south, and west.
 @set $tmp/prog1=/_desc/lines:14
-@set $tmp/prog1=/_version:FM1.0
+@set $tmp/prog1=/_version:FM$Revision: 1.2 $
 "Installation of cmd-showexits complete.
