@@ -2,7 +2,7 @@
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 1998/08/22 18:51:47 $ $Revision: 1.1 $
+( lib-match: $Date: 1998/08/22 18:57:08 $ $Revision: 1.2 $
   Originally taken from the FuzzBall MUF distribution.                        )
 ( --------------------------------------------------------------------------- )
 ( Matching library
@@ -67,6 +67,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.2  1998/08/22 18:57:08  glow
+  Added .controls from fbmuf.
+
   Revision 1.1  1998/08/22 18:51:47  glow
   Initial revision
 
@@ -209,5 +212,5 @@ q
 @set $tmp/prog1=/_defs/.table_match:"$lib/match" match "table_match" call
 @set $tmp/prog1=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $tmp/prog1=/_docs:@list $lib/match=3-68
-@set $tmp/prog1=/_lib-version:FM1.0
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-match completed.
