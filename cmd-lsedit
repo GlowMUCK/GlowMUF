@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-lsedit...
 @prog cmd-lsedit
 1 99999 d
 1 i
-( cmd-lsedit: $Date: 2005/04/05 23:32:55 $ $Revision: 1.7 $                   )
+( cmd-lsedit: $Date: 2005/04/05 23:50:12 $ $Revision: 1.8 $                   )
 ( Purpose: Front end for lib-editor as an actual text editor                  )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -10,6 +10,9 @@ wh me=Beginning installation of cmd-lsedit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-lsedit,v $
+  Revision 1.8  2005/04/05 23:50:12  feaelin
+  Whoops. Missed a macro that was in lib-glow-standard
+
   Revision 1.7  2005/04/05 23:32:55  feaelin
   Corrected library calls according to the new standard.
 
@@ -207,7 +210,11 @@ $include $lib/mv-cp
 ; 
  
 : cmd-lsedit
-  .noguest
+  "me" match
+  "guest" flag? if
+    me @ "^FAIL^This command is unavailable to guests." ansi_notify
+    pop exit
+  then
   dup "#help" stringcmp not if show-help exit then
   "me" match me !
   "=" STR-split strip swap strip
@@ -272,5 +279,5 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/lsedit #help
 @set $cmd/lsedit=/_/de:Type 'lsedit #help' for help
-@set $cmd/lsedit=_version:FM$Revision: 1.7 $
+@set $cmd/lsedit=_version:FM$Revision: 1.8 $
 wh me=Installation of cmd-lsedit complete.
