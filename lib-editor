@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/04/05 19:50:50 $ $Revision: 1.20 $             )
+( lib-editor: $Date: 2005/04/05 21:04:46 $ $Revision: 1.21 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.21  2005/04/05 21:04:46  feaelin
+  Corrected misspelled library calls
+
   Revision 1.20  2005/04/05 19:50:50  feaelin
   Revised library word names and library calls to reflect standards change.
 
@@ -305,7 +308,7 @@ $include $lib/edit
         over over 0
         "^SUCC^< deleting %2 lines starting at line %1  (Now current line) >"
         EDITORmesg
-        2 swap rot SRNG-delete
+        2 swap rot SRNG-deleterng
         1 exit
     then
     dup "l" stringcmp not if
@@ -586,7 +589,7 @@ $include $lib/edit
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
         0 0 0 "^INFO^< Edit aborted. >"
         EDITORmesg
-        pop pop pop pop pop pop SRNG-pop
+        pop pop pop pop pop pop SRNG-poprng
         0 "" 1 "" 1 1 "abort" 0 exit
     then
     dup tolower "h" 1 strncmp not if
@@ -670,5 +673,5 @@ q
 @set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
 @set $lib/editor=/_docs:@list $lib/editor=1-51
 @set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
-@set $lib/editor=/_lib-version:FM$Revision: 1.20 $
+@set $lib/editor=/_lib-version:FM$Revision: 1.21 $
 wh me=Installation of lib-editor complete.

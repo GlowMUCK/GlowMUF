@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/04/05 16:22:57 $ $Revision: 1.13 $                    )
+( lib-edit: $Date: 2005/04/05 21:01:48 $ $Revision: 1.14 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -93,6 +93,9 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.14  2005/04/05 21:01:48  feaelin
+  Corrected misspelled library calls
+
   Revision 1.13  2005/04/05 16:22:57  feaelin
   Fixed library calls to lib-strings and lib-stackrng
 
@@ -197,17 +200,17 @@ $include $lib/stackrng
     else
         3 pick 3 pick >= if pop pop pop pop exit then
     then
-    over - 1 + swap 4 pick 2 + rot rot SRNG-extract
+    over - 1 + swap 4 pick 2 + rot rot SRNG-extractrng
     ( {rng'} ... offset dest {subrng} )
     dup 3 + rotate over 3 + rotate
     ( {rng'} ... {rng2} offset dest )
-    SRNG-insert
+    SRNG-insertrng
 ;
  
 : EDITcopy    ( {rng} ... offset dest start end -- {rng'} )
-    over - 1 + swap 4 pick 2 + rot rot SRNG-copy
+    over - 1 + swap 4 pick 2 + rot rot SRNG-copyrng
     dup 3 + rotate over 3 + rotate
-    SRNG-insert
+    SRNG-insertrng
 ;
   
 (
@@ -359,7 +362,7 @@ $endif
         dup 3 + dup rotate pop dup rotate pop
         dup rotate pop dup rotate pop pop exit
     then
-    dup 4 + 1 1 SRNG-extract pop
+    dup 4 + 1 1 SRNG-extractrng pop
     ( {rng} splitchars rmargin wrapmargin {rng2} string )
     dup STR-blank? not if
         over 6 + dup pick swap dup pick swap 1 - pick
@@ -388,12 +391,12 @@ $endif
 : EDITfmt_rng ( {str_rng} ... offset cols start end -- {str_rng'} ... )
     over - 1 + over swap
     ({rng} ... off cols start start cnt )
-    5 pick 3 + swap rot SRNG-extract
+    5 pick 3 + swap rot SRNG-extractrng
     ({rng'} ... off cols start {srng})
     "- " over 4 + rotate dup 20 - EDITformat
     ({rng'} ... off start {srng})
     dup 3 + rotate over 3 + rotate
-    SRNG-insert
+    SRNG-insertrng
 ;
  
 : EDITshuffle-innerloop ( {rng} shuffles loop -- {rng'} )
@@ -516,10 +519,10 @@ $endif
 : EDITjoin_rng ( {str_rng} ... offset start end -- {str_rng'} ... )
     over - 1 + over
     ({rng} ... off start cnt start )
-    4 pick 2 + rot rot SRNG-extract
+    4 pick 2 + rot rot SRNG-extractrng
     ({rng'} ... off start {srng})
     EDITjoin 1 4 rotate 4 rotate
-    SRNG-insert
+    SRNG-insertrng
 ;
  
 PUBLIC EDITsearch
@@ -591,5 +594,5 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.13 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.14 $
 wh me=Installation of lib-edit complete.
