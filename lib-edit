@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2004/02/20 17:08:44 $ $Revision: 1.5 $
+( lib-edit: $Date: 2004/02/27 17:36:40 $ $Revision: 1.6 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -89,6 +89,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.6  2004/02/27 17:36:40  feaelin
+  Fixed format and right justify to be ansi_aware.
+
   Revision 1.5  2004/02/20 17:08:44  feaelin
   Added ansi versions of EDITdisplay and EDITlist,
   EDITansi_display and EIDTansi_list respectively.
@@ -255,17 +258,17 @@ $endif
 : EDITsplit-splitloop (string splitchars last -- string string)
     over not if
         swap pop
-        dup not if pop dup strlen then
-        strcut exit
+        dup not if pop dup ansi_strlen then
+        ansi_strcut exit
     then
-    swap 1 strcut rot rot 4 pick swap rinstr
+    swap 1 ansi_strcut rot rot 4 pick dup rot rinstr 0 ansi_offset
     over over < if swap then pop
     EDITsplit-splitloop
 ;
   
 : EDITsplit-split (string splitchars rmargin wrapmargin --
                    excess splitchars rmargin wrapmargin string)
-    4 rotate 3 pick strcut swap 3 pick strcut
+    4 rotate 3 pick ansi_strcut swap 3 pick ansi_strcut
     (splitchars rmargin wrapmargin excess str wrap)
     6 pick 0 EDITsplit-splitloop
     rot rot strcat rot rot swap strcat 
@@ -274,7 +277,7 @@ $endif
 ;
   
 : EDITsplit-loop ({rng} string splitchars rmargin wrapwargin -- {rng})
-    4 pick strlen 3 pick < if
+    4 pick ansi_strlen 3 pick < if
         pop pop pop
         dup if swap 1 +
         else pop
@@ -414,7 +417,7 @@ $endif
   
   
 : EDITcenter-func (string cols -- string )
-    swap STRstrip dup strlen
+    swap STRstrip dup ansi_strlen
     dup 4 pick >= if
         pop swap pop exit
     then
@@ -430,7 +433,7 @@ $endif
   
   
 : EDITright-func (string cols -- string )
-    swap STRstrip dup strlen
+    swap STRstrip dup ansi_strlen
     dup 4 pick >= if
         pop swap pop exit
     then
@@ -515,5 +518,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
 "Installation of lib-edit complete.
