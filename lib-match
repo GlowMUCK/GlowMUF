@@ -1,8 +1,8 @@
-"Begining installation of lib-match...
+wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/03/21 01:31:43 $ $Revision: 1.7 $                    )
+( lib-match: $Date: 2005/03/23 17:25:08 $ $Revision: 1.8 $                    )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -71,6 +71,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.8  2005/03/23 17:25:08  feaelin
+  Updated documentation strings.
+
   Revision 1.7  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -224,7 +227,7 @@ q
 @set $tmp/prog1=/_defs/MATCHstd_table_match:"$lib/match" match "std_table_match" call
 @set $tmp/prog1=/_defs/MATCHtable_match:"$lib/match" match "table_match" call
 @set $tmp/prog1=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
-@set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
-@set $tmp/prog1=/_docs:@list $lib/match=3-62
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
-"Installation of lib-match completed.
+@set $tmp/prog1=/_/de:lib-match: List lines 8-66 to see documentation.
+@set $tmp/prog1=/_docs:@list $lib/match=8-66
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+wh me=Installation of lib-match completed.
