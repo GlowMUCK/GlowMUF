@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 1998/07/29 04:18:47 $ $Revision: 1.1 $
+( lib-editor: $Date: 1998/07/29 17:54:23 $ $Revision: 1.2 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -41,20 +41,29 @@ EDITORparse takes and returns arguments identically to .sedit_loop,
   
 EDITORheader takes and returns no arguments, but prints out a standard
   message about you entering the editor.  EDITOR calls this automatically.
+
+  ***** Stack based string range editor -- EDITOR *****
+ 1  EDITOR      [ {string_range} -- {string_range'} ]
+ 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ]
+ 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1     or
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ]
 )
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.2  1998/07/29 17:54:23  glow
+  Cleaned up documentation.
+
   Revision 1.1  1998/07/29 04:18:47  glow
   Initial revision
 
 )  
 ( ---------------------------------------------------------------------- )
 $include $lib/strings
-  
-  
-  
 $include $lib/stackrng
+$include $lib/edit
+
 $define SRNGcat     sr-catrng     $enddef
 $define SRNGpop     sr-poprng     $enddef
 $define SRNGextract sr-extractrng $enddef
@@ -62,16 +71,6 @@ $define SRNGswap    sr-swaprng    $enddef
 $define SRNGcopy    sr-copyrng    $enddef
 $define SRNGdelete  sr-deleterng  $enddef
 $define SRNGinsert  sr-insertrng  $enddef
-  
-$include $lib/edit
-  
-( ***** Stack based string range editor -- EDITOR *****
- 1  EDITOR      [ {string_range} -- {string_range'} ]
- 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --
-                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ]
- 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1     or
-                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ]
-)
   
 : EDITORerror ( errnum -- )
     dup       1 = if pop "Invalid line reference."
@@ -93,7 +92,6 @@ $include $lib/edit
     "< ** " swap strcat " ** >" strcat
     me @ swap notify
 ;
-  
   
 : EDITORargument ( endline currentline string -- linenum )
     dup "$" 1 strncmp not if
@@ -122,14 +120,12 @@ $include $lib/edit
     then
 ;
   
-  
 : EDITORmesg  (int1 int2 int3 string -- )
     swap intostr "%3" subst
     swap intostr "%2" subst
     swap intostr "%1" subst
     me @ swap notify
 ;
-  
   
 : EDITORparse ( {str_rng} mask currline cmdstr --
                 {str_rng'} mask currline arg1 arg2 exitcmd 1   or
@@ -493,11 +489,11 @@ q
 @register #me lib-editor=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_/de:lib-editor:List lines 1-50 for documentation
+@set $tmp/prog1=/_/de:lib-editor:List lines 7-37 for documentation
 @set $tmp/prog1=/_defs/editor:"$lib/editor" match "editor" call
 @set $tmp/prog1=/_defs/editorheader:"$lib/editor" match "editorheader" call
 @set $tmp/prog1=/_defs/editorloop:"$lib/editor" match "editorloop" call
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
-@set $tmp/prog1=/_docs:@list $lib/editor=1-50
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_docs:@list $lib/editor=7-37
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-editor complete.
