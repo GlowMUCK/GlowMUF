@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.13 $ $Date: 2005/04/05 21:18:32 $              )
+( lib-unparseobj: $Revision: 1.14 $ $Date: 2005/04/05 21:23:13 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors: Syvel                                                         )
 ( Dependencies: lib-case                                                      )
@@ -22,7 +22,7 @@ i
 (   Generates a colorized unparseobj either using the default format string,  )
 (   or the nearest format string in the environment                           )
 (                                                                             )
-( UPOcolor-query:  s1 s2 -- s                                                 )
+( UPO-color-query:  s1 s2 -- s                                                )
 (   Takes string 's1' looks up color 's2' and prepends the appropiate color   )
 (   code                                                                      )
 (                                                                             )
@@ -86,6 +86,10 @@ i
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.14  2005/04/05 21:23:13  feaelin
+  It is kindof annoying to have to make another commit for a single character
+  typo in the documentation...unfortunately, it was a critical one.
+
   Revision 1.13  2005/04/05 21:18:32  feaelin
   Brought library calls in line with the new standard. Tidied documentation
 
@@ -333,7 +337,7 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:$Revision: 1.13 $
+@set $lib/unparseobj=/_lib-version:$Revision: 1.14 $
 @set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-72 for documentation.
 @set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-72
 wh me=Installation Complete.
