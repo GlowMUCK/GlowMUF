@@ -1,4 +1,4 @@
-CHANGES $Date: 2004/04/02 18:39:07 $ $Revision: 1.12 $
+CHANGES $Date: 2004/04/10 21:44:27 $ $Revision: 1.13 $
 Author: Feaelin
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
@@ -6,6 +6,14 @@ Author: Feaelin
                   prepended color with the new color.
 02) cmd-roomcheck:Is now more intelligent about checking desc's when
                   @tune transparent_paths is turned on.
+03) cmd-emotion:  Fixed issue where a custom look program will cause the
+                  "look at description for list" feature to fail.
+04) lib-look:     Various changes to slowly bring it up to glow standards:
+                  less dependency on macros and $lib/glow. Added MPI parsing
+                  for relevant properties. Replaced notifies with ansi_notify
+                  so that color is parsed appropiately. Changed to call
+                  lib-unparseobj as appropiate to properly colorize or not
+                  various strings (name, name(#1PW), etc.).
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
 01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)

@@ -1,4 +1,4 @@
-INSTALL $Date: 2004/04/05 01:32:41 $ $Revision: 1.13 $
+INSTALL $Date: 2004/04/10 21:44:27 $ $Revision: 1.14 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.1
 -----------
@@ -43,10 +43,11 @@ lib-editor
 lib-match
 lib-mesg
 lib-mesgbox
+lib-case
+lib-unparseobj
 lib-look
 lib-reflist
 lib-index
-lib-case
 lib-mpi
 lib-connects
 lib-showlist
