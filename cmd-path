@@ -1,0 +1,876 @@
+"Beginning installation of cmd-path...
+@prog cmd-path
+1 99999 d
+1 i
+( cmd-path: $Date: 1999/04/18 20:48:21 $ $Revision: 1.1 $
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-path,v $
+  Revision 1.1  1999/04/18 20:48:21  feaelin
+  Initial revision
+
+)
+
+( cmd-@path by Pakrat Copyright 1995 All rights reserved.               )
+(                                                                       )
+( @path is an exit dbref replacer to save space and allow a cleaner     )
+( setup for exit maintenance.                                           )
+(                                                                       )
+( For all desc/succ/fail/drop/osucc/ofail/odrop messages you can use    )
+( these substitutions:                                                  )
+(                                                                       )
+(       %pathfrom       Name of path typed to move.                     )
+(       %pathto         Complement of that path name [north=south,etc]  )
+(       %roomfrom       Name of source room for path.                   )
+(       %roomto         Name of room path leads to.                     )
+(       %ownerfrom      Name of owner of room path is in.               )
+(       %ownerto        Name of ownerof room path leads to.             )
+(       %verb           'walk' or _pathverb property on room.           )
+(       %overb          'walks' or _opathverb property on room.         )
+(                                                                       )
+(       You can @pdesc @pname @psucc etc. the 'all' path to set         )
+(       default messages for all directions in a room.  The 'num'       )
+(       path works for any number paths, checked via muf number? prim   )
+(                                                                       )
+( *** SETUP ***                                                         )
+(                                                                       )
+( Make an action called '@psetup' in your parent room and link it to    )
+( this program.  Then type @psetup for instructions.                    )
+(                                                                       )
+( This program must be at least Mucker level 3 and set to use PakRat's  )
+( lib-Userprop program.                                                 )
+(                                                                       )
+( This program also needs a slight server mod where 'look_simple' needs )
+( to be passed the 'name' from do_look_at and use that instead of       )
+( the '{@desc}' it uses.  This is what the 'command' variable is set to )
+( when looking at an exit and running a program in it's @desc.  All     )
+( mods needed to do this are in src/look.c only!                        )
+(                                                                       )
+( *** Public Functions *** for use in other programs                    )
+(   Note: Much of @path's functionality can be found by calling it      )
+(         with a command line argument and setting the verb name.       )
+( path-match   [ droom spath -- sfullpath ]                             )
+( path-getlink [ droom spath -- dlink ]                                 )
+( path-locked? [ droom spath -- ilocked ]                               )
+( path-list    [ droom       -- pathlist ]                              )
+
+$include $lib/glow
+$include $lib/strings  
+$include $lib/UserProp
+  
+$def debug? 1 ( 0 = no stack checking, 1 = stack checking )
+$def split .split2
+$def cleancommas .cleancommas
+$def runprop .run
+$def yes? .yes?
+$def firstname .firstname
+$def strip striplead striptail
+$def controls? controls
+$def private? "_private" \getpropstr yes?
+$def dark? dup "D" flag? swap "_dark" \getpropstr yes? or
+$def okobj? dup room? swap program? or
+  
+$def privilege? uprivilege?
+$def getpropstr ugetpropstr
+$def envpropstr uenvpropstr swap pop
+$def setpropstr usetpropstr
+$def getpropval ugetpropval
+$def setpropval usetpropval
+$def getprop    ugetprop
+$def setprop    usetprop
+$def removeprop uremove_prop
+$def nextprop   unextprop
+$def propdir?   upropdir?
+  
+$def NOWAY  "^RED^You can't go that way."
+$def NOPERM "^RED^Permission denied."
+$def NODEST "^YELLOW^I don't know where that is."
+$def NOPATH "^YELLOW^That path does not exist here."
+$define TITLE
+  "@path exit simulator v1.0 by PakRat -- Type '@phelp' for help." n
+  "~~~~~~~~~~~~~~~~~~~~" n $enddef
+  
+$def n plr @ swap notify
+$def a plr @ swap ansi_notify
+$def cmp cmd @ strcmp not
+$def cst key ! cmd-set exit
+$define get-set-prop key @ swap \getprop src @ dir @
+  4 rotate 4 rotate path-set-dir-prop $enddef
+  
+$def path-succ "sc" key ! path-mesg
+$def path-fail "fl" key ! path-mesg
+$def path-drop "dr" key ! path-mesg
+  
+lvar odepth ( starting depth )
+lvar cdepth ( call depth )
+lvar cmd ( command name )
+lvar arg ( command line )
+lvar plr ( 'me' dbref   )
+lvar src ( 'from' room  )
+lvar dst ( 'to' room    )
+lvar dir ( "nwse" str   )
+lvar key ( propname     )
+lvar val ( prop value   )
+lvar num ( random num   )
+  
+lvar pathfrom
+lvar pathto
+lvar pathroomfrom
+lvar pathroomto
+lvar pathownfrom
+lvar pathownto
+  
+lvar rundepth
+  
+: run ( ... s -- ... )
+  depth rundepth !
+  runprop
+  begin depth rundepth @ >= while
+    pop
+  repeat
+;
+  
+: match2 ( s -- d )
+  strip dup "#" 1 strncmp if
+    match
+  else
+    1 strcut swap pop
+    dup "0" strcmp if
+      atoi dbref
+    else pop #0 then
+  then
+;
+  
+$ifdef NOSORTPRIM
+: ssort .sort ;
+$else
+: ssort 2 sort ;
+$endif
+  
+$def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
+  
+: dir-prop ( s -- s ) tolower
+  dup ";" instring dup if 1 - strcut else pop "" then swap
+  "o" "out"   trysub  "i" "in"    trysub
+  "n" "north" trysub  "s" "south" trysub
+  "w" "west"  trysub  "e" "east"  trysub
+  "u" "up"    trysub  "d" "down"  trysub
+  "nw" "northwest" trysub "sw" "southwest" trysub
+  "ne" "northeast" trysub "se" "southeast" trysub
+  swap strcat
+;
+  
+: dir-n ( s -- s ) tolower
+  dup ";" instring dup if 1 - strcut then pop
+  dup "u"  strcmp if dup "d"  strcmp if
+  dup "i"  strcmp if dup "o"  strcmp if
+  else pop "out"  then else pop "in" then
+  else pop "down" then else pop "up" then
+;
+  
+: dir-name ( s -- s ) tolower
+  dup ";" instring dup if 1 - strcut then pop
+  dup "n"  strcmp if dup "s"  strcmp if
+  dup "e"  strcmp if dup "w"  strcmp if
+  dup "u"  strcmp if dup "d"  strcmp if
+  dup "i"  strcmp if dup "o"  strcmp if
+  dup "nw" strcmp if dup "sw" strcmp if
+  dup "ne" strcmp if dup "se" strcmp if
+  
+  else pop "southeast" then else pop "northeast" then
+  else pop "southwest" then else pop "northwest" then
+  else pop "out"       then else pop "in"        then
+  else pop "down"      then else pop "up"        then
+  else pop "west"      then else pop "east"      then
+  else pop "south"     then else pop "north"     then
+;
+  
+: dir-names ( s -- s ) tolower
+  dup ";" instring dup if 1 - strcut then pop
+  dup "n"  strcmp if dup "s"  strcmp if
+  dup "e"  strcmp if dup "w"  strcmp if
+  dup "u"  strcmp if dup "d"  strcmp if
+  dup "i"  strcmp if dup "o"  strcmp if
+  dup "nw" strcmp if dup "sw" strcmp if
+  dup "ne" strcmp if dup "se" strcmp if
+  dup
+  else pop "southeast" "northwest" then else pop "northeast" "southwest" then
+  else pop "southwest" "northeast" then else pop "northwest" "southeast" then
+  else pop "outside"   "inside"    then else pop "inside"    "outside"   then
+  else pop "down"      "up"        then else pop "up"        "down"      then
+  else pop "west"      "east"      then else pop "east"      "west"      then
+  else pop "south"     "north"     then else pop "north"     "south"     then
+;
+  
+: low-name ( s -- s )
+  dup " " instr if
+    " " split swap
+    dup "a" stringcmp
+    over "an" stringcmp and
+    over "the" stringcmp and
+    over "that" stringcmp and
+    not if tolower then
+    " " strcat swap strcat
+  then
+;
+  
+: high-name ( s -- s )
+  1 strcut swap toupper swap strcat
+;
+  
+: path-get-dir-link ( d-obj s-dir -- d-dst )
+  over over getprop
+  dup not if
+    pop dir-prop getprop
+  else swap pop swap pop then
+  dup dbref? if dup okobj? not if pop #-1 then else pop #-1 then
+;
+  
+: path-getlink ( d s -- d )
+  path-get-dir-link
+; public path-getlink
+  
+: path-match ( d s -- s )
+  ";" strcat ";" swap strcat
+  "/" begin 3 pick swap nextprop dup while
+    dup 1 strcut swap pop ";" strcat ";" swap strcat
+    3 pick instring if break then
+  repeat swap pop swap pop
+; public path-match
+  
+: path-set-dir-link ( d-obj s-dir d-dst -- )
+  dup okobj? if setpropval else pop pop pop then
+;
+  
+: path-get-dir-prop ( d-obj s-dir s-key -- s-val )
+  dup if "/" swap strcat strcat getpropstr else pop pop pop "" then
+;
+  
+: path-env-dir-prop ( d-obj s-dir s-key -- s-val )
+  dup if "/" swap strcat strcat envpropstr else pop pop pop "" then
+;
+  
+: path-set-dir-prop ( d-obj s-dir s-key s-val )
+  over if rot "/" strcat rot strcat swap setpropstr
+  else pop pop pop pop then
+;
+  
+: path-test-lock ( -- i )
+  src @ dir @ "/lok" strcat getprop
+  dup lock? if plr @ swap testlock else pop 1 then
+  plr @ .guest? if
+    src @ dir @ path-get-dir-link dup room? if
+      "GUEST" flag? not if
+        plr @ "Guests aren't allowed there." notify
+        pop 0
+      then
+    else pop then
+  then
+;
+  
+: path-locked? ( d s -- i )
+  "me" match plr !
+  dir ! src !
+  src @ dir @ path-get-dir-link
+  room? if
+    path-test-lock
+  else
+    plr @ "Unlinked path." notify 0
+  then
+; public path-locked?
+ 
+: room-name ( d -- s )
+  dup okobj? not if pop "*NOTHING*" else
+  plr @ over controls? over "L" flag? or if
+    unparseobj
+  else
+    dup private? if
+      pop "a private place"
+    else name then
+  then low-name then
+;
+  
+: path-strs ( -- )
+  dir @ dir-names pathto ! pathfrom !
+  src @ room-name pathroomfrom !
+  dst @ room-name pathroomto   !
+  src @ owner name pathownfrom !
+  dst @ owner name pathownto   !
+;
+  
+: path-subst ( s -- s )
+  pathfrom     @ "%pathfrom"  subst
+  pathto       @ "%pathto"    subst
+  pathroomfrom @ "%roomfrom"  subst
+  pathroomto   @ "%roomto"    subst
+  pathownfrom  @ "%ownerfrom" subst
+  pathownto    @ "%ownerto"   subst
+  src @ "_pathverb" \envpropstr swap pop
+  dup not if pop "walk" then
+  "%verb" subst
+  src @ "_opathverb" \envpropstr swap pop
+  dup not if pop "walks" then
+  "%overb" subst
+;
+  
+: replace? ( s -- i )
+  dup if
+    "Current setting: " swap strcat n
+    "Change this? (y/n)" n read yes?
+  else pop 1 then
+;
+  
+: path-mesg ( s-default-mesg -- )
+  src @ dir @ key @
+  dst @ program? if path-get-dir-prop else
+    path-env-dir-prop
+    dup not if
+      dir @ dup ";" instring dup if 1 - strcut then
+      pop number? if
+        pop src @ "num" key @ path-env-dir-prop
+      then
+    then
+    dup not if pop src @ "all" key @ path-env-dir-prop then
+  then
+  dup if swap then pop
+  dup if path-subst plr @ swap pronoun_sub run else pop then
+  src @ dir @ "o" key @ strcat
+  dst @ program? if path-get-dir-prop else
+    path-env-dir-prop
+    dup not if
+      dir @ dup ";" instring dup if 1 - strcut then
+      pop number? if
+        pop src @ "num" "o" key @ strcat path-env-dir-prop
+      then
+    then
+    dup not if pop src @ "all" "o" key @ strcat path-env-dir-prop then
+  then
+  dup if
+    plr @ name " " strcat swap strcat
+    plr @ dup location swap rot path-subst plr @ swap pronoun_sub notify_except
+  else pop then
+;
+  
+: cmd-help ( -- )
+  TITLE
+  "Commands:" n
+  "@path    dir=#room=name     -- Create a path from direction dir to #room" n
+  "@pshow   dir (or blank)     -- Examine a path or show paths in room" n
+  "@plock   dir=lock           -- Lock a path" n
+  "@punlock dir                -- Unlock a path" n
+  "@pjunk   dir                -- Remove a path" n
+  "@pdup    olddir=newdir      -- Copy a path as is to a new path" n
+  "@pcopy   exitname=dir       -- Copy a real exit into a path" n
+  " " n
+  "Use @succ here=@$cmd/path ... to show paths in a room." n
+  " " n
+  "@pname   dir=Path Name      -- Give a path a name" n
+  "@pdesc   dir=description... -- Describe a path" n
+  "Use @pdesc dir=@$transparent description... to see the room looked to." n
+  " " n
+  "@psucc @posucc @pfail @pofail @pdrop @podrop all work as you would" n
+  "expect them to, except that they are for paths and not other things." n
+  "@pdark and @plight will hide/show a path in the obvious path lister." n
+  " " n
+  "In parent rooms you can use these commands on an 'all' path to make" n
+  "settings for all directions." n
+;
+  
+: cmd-path ( -- )
+  arg @ "=" split "=" split
+  strip rot strip rot strip rot
+  3 pick 3 pick and if
+    rot dup key ! dir-prop dir !
+    swap match2 dst !
+    val !
+  
+    dst @ okobj? if
+      plr @ src @ controls? plr @ dst @ controls?
+      dst @ "L" flag? or and if
+        src @ dir @ dst @ path-set-dir-link
+        src @ dir @ "na" val @ path-set-dir-prop
+        "Path linked from " src @ unparseobj strcat
+        " to " strcat dst @ unparseobj strcat
+        "." strcat n
+      else NOPERM a then
+    else NODEST a then
+  else
+    pop pop pop TITLE
+    "dir   -- north, south, east, west, up, down, in, out," n
+    "         nw, sw, ne, se, or a number from 1 to 10" n
+    "dbref -- Dbref # of room to make a path to" n
+    "name  -- optional name for exit listers (not required)" n
+    " " n "@path dir=#dbref=name" n
+  then
+;
+  
+: cmd-set ( -- )
+  arg @ "=" split strip swap strip
+  dir-prop dir ! val !
+  dir @ if
+    plr @ src @ controls? if
+      src @ dir @ path-get-dir-link okobj?
+      dir @ "all" stringcmp not or
+      dir @ "num" stringcmp not or if
+        src @ dir @ key @ path-get-dir-prop dup if
+          dup replace? not if pop "Not changed." n exit then
+        then
+        src @ dir @ key @ val @ path-set-dir-prop
+        if "Changed." else "Set." then
+        val @ not if pop "Cleared." then n
+      else NOPATH a then
+    else NOPERM a then
+  else
+    TITLE
+    command @ tolower " path=new setting -- change to new setting" strcat n
+    command @ tolower " path=            -- clear setting" strcat n
+  then
+;
+  
+: cmd-show ( -- )
+  arg @ dir-prop dir !
+  dir @ if
+    plr @ src @ controls? if
+      src @ dir @ path-get-dir-link dst !
+      dir @ "all" stringcmp not
+      dir @ "num" stringcmp not or
+      dst @ okobj? or if
+        "Path: " dir @ strcat n
+        "Name: " src @ dir @ "na" path-get-dir-prop
+        dup not if pop "<none>" then strcat n
+        "Desc: " src @ dir @ "de" path-get-dir-prop
+        dup not if pop "<none>" then strcat n
+        dir @ "all" stringcmp
+        dir @ "num" stringcmp and if
+          "Destination: " dst @ plr @ over controls? over "L" flag?
+          or if unparseobj else room-name then strcat n
+          "Lock: " src @ dir @ "/lok" strcat getprop
+          dup lock? if prettylock else pop
+          "*UNLOCKED*" then strcat n
+        then
+        "Owner: " src @ owner plr @ over controls? if
+        unparseobj else name then strcat n
+        "Location: " src @ plr @ over controls? over "L" flag?
+        or if unparseobj else room-name then strcat n
+        "Succ: " src @ dir @ "sc" path-get-dir-prop
+        dup if strcat n else pop pop then
+        "Osucc: " src @ dir @ "osc" path-get-dir-prop
+        dup if strcat n else pop pop then
+        "Fail: " src @ dir @ "fl" path-get-dir-prop
+        dup if strcat n else pop pop then
+        "Ofail: " src @ dir @ "ofl" path-get-dir-prop
+        dup if strcat n else pop pop then
+        "Drop: " src @ dir @ "dr" path-get-dir-prop
+        dup if strcat n else pop pop then
+        "Odrop: " src @ dir @ "odr" path-get-dir-prop
+        dup if strcat n else pop pop then
+      else NOPATH a then
+    else NOPERM a then
+  else
+    TITLE
+    command @ tolower " path -- show info on path" strcat n
+    plr @ src @ controls? if
+      "" "/" dir !
+      begin src @ dir @ nextprop dup dir ! while
+        src @ dir @ path-get-dir-link okobj?
+        dir @ 1 strcut swap pop
+        dup "all" stringcmp not
+        swap "num" stringcmp not or or if
+          dir @ strcat
+        else
+          src @ dir @ src @ path-set-dir-link
+          "Bad path fixed and relinked to here." n
+          "Type @pshow again to see it." n
+        then
+      repeat
+      " " "/" subst
+      begin dup "  " instr while " " "  " subst repeat
+      "Paths in this room: " swap dup not if pop "<none>" then
+      strcat n
+    then
+  then
+;
+  
+: cmd-lock ( -- )
+  arg @ "=" split strip swap strip
+  dup if
+    dir-prop dir ! val !
+    plr @ src @ controls? if
+      src @ dir @ path-get-dir-link okobj? if
+        val @ if
+          val @ parselock val !
+          val @ lock? if
+            src @ dir @ "/lok" strcat val @
+            setprop "Locked." n
+          then
+        else
+          src @ dir @ "/lok" strcat removeprop "Unlocked." n
+        then
+      else NOPATH a then
+    else NOPERM a then
+  else
+    pop pop TITLE
+    command @ tolower " path=lock -- set the lock for a path" strcat n
+    command @ tolower " path=     -- clear the lock for a path" strcat n
+  then
+;
+  
+: cmd-copy ( -- )
+  arg @ if
+  arg @ match2 key !
+  plr @ src @ controls? if
+  key @ exit? if
+  plr @ key @ controls? if
+  key @ location src @ dbcmp if
+  key @ getlink dst !
+  dst @ okobj? if
+    "Attempting to clone exit '" key @ unparseobj "'."
+    strcat strcat n " " n
+    "n s e w nw sw ne se up down in out 1 2 3 4 5 6 7 8 9 10"
+    n "Please type a cardinal direction for this exit:" n
+    read strip dir-prop dir ! "Excellent!" n " " n
+    "Type a . (period) to use the exit's name up to the first ; (semicolon)"
+    n "Please enter a name for this new path: (or a period)" n
+    read strip val !
+    val @ "." strcmp not if
+      key @ firstname val !
+    then
+    "Wonderful!" n " " n
+    dir @ "all" stringcmp
+    dir @ "num" stringcmp and if
+      src @ dir @ dst @ path-set-dir-link
+      "lok" "_/lok" get-set-prop
+    then
+    src @ dir @ "na" val @ path-set-dir-prop
+      "de"  "_/de" get-set-prop
+      "sc"  "_/sc" get-set-prop
+      "osc" "_/osc" get-set-prop
+      "fl"  "_/fl" get-set-prop
+      "ofl" "_/ofl" get-set-prop
+      "dr"  "_/dr" get-set-prop
+      "odr" "_/odr" get-set-prop
+      "Copying props... Done!" n " " n
+      "To check out the new path use @pshow pathname." n
+      "You can describe various messages with commands like" n
+      "@pname, @pdesc, @psucc, @posucc, @plock etc." n
+      "To delete a path use @pjunk pathname." n
+    else "That exit is not linked to a room.  Try @linking it first." n
+    then
+    else "That exit is attached to this room." n
+      "To clone it here, use @attach exitname=here first." n          
+    then
+    else "You don't own that exit, have the owner @chown it to you" n
+         "before cloning it so you can @recycle it when done." n
+    then
+    else "I can't find that exit here.  Please be more specific." n then
+    else NOPERM a then
+  else
+    TITLE
+    command @ tolower " exitname -- clone an exit into a path" strcat n
+    "Once the command says it is done, you may @recycle the exit." n
+  then
+;
+  
+: cmd-dup ( -- )
+  arg @ "=" split strip swap strip
+  dir-prop "/" strcat dir ! dir-prop key !
+  dir @ key @ and if
+    plr @ src @ controls? if
+      src @ dir @ path-get-dir-link okobj?
+      dir @ "all/" stringcmp not or if
+        src @ key @ path-get-dir-link okobj? not if
+          src @ dir @ path-get-dir-link dst !
+          dst @ okobj? not if src @ dst ! then
+  
+          begin src @ dir @ nextprop dup dir ! while
+            src @ dir @ getprop
+            src @ key @ "/" strcat dir @
+            dup "/" instr strcut swap pop
+            strcat rot setprop
+          repeat
+          key @ "all" stringcmp
+          key @ "num" stringcmp and if
+            src @ key @ dst @ path-set-dir-link
+          else
+            src @ key @ "/lok" strcat removeprop
+          then
+          "Duped." n
+        else "That path already exists." n
+          "To overwrite it, please do @pjunk newpath first." n
+        then
+      else NOPATH a then
+    else NOPERM a then
+  else
+    TITLE
+    command @ tolower " oldpath=newpath -- duplicate one path into another"
+    strcat n
+  then
+;
+  
+: cmd-junk ( -- )
+  arg @ dir-prop dir !
+  dir @ if
+    plr @ src @ controls? if
+      src @ dir @ removeprop
+      "Path removed." n
+    else NOPERM a then
+  else
+    TITLE
+    command @ tolower " path -- remove path from room" strcat n
+  then
+;
+  
+: cmd-setup ( -- )
+  arg @ not arg @ "help" instring or if
+"@path setup -- @psetup -- Help Screen" n
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" n
+"To change the '@psetup' exit dbref to the full @path command structure" n
+"and path directions, type '@psetup full'.  This will rename '@psetup'" n
+"to the 8 cardinal and several other directions, 0-10, and several support" n
+"commands like @pdesc, @plink, @phelp, etc." n
+" " n
+"To create new path names in your parent room if @path is installed already," n
+"use @psetup name1;name2;name3 etc." n
+  exit then
+  
+  trig owner plr @ dbcmp not if "Permission denied." n exit then
+  
+  arg @ "feep" stringcmp not if
+    "@path;@phelp;@pshow;@pex;@pstat;@pjunk;"
+    "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
+    "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
+    "@plock;@punlock" strcat
+  else arg @ "full" stringcmp if arg @ else
+    "@path;o;n;s;e;w;u;d;nw;sw;ne;se;1;2;3;4;5;6;7;8;9;10;"
+    "north;south;east;west;up;down;in;out;" strcat
+    "northwest;northeast;southwest;southeast;" strcat
+    "@phelp;@pshow;@pex;@pstat;@pjunk;" strcat
+    "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
+    "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
+    "@plock;@punlock" strcat
+  then then trig swap setname
+  trig "@" prog intostr strcat " look" strcat setdesc
+  trig "" setsucc trig "" setosucc
+  trig "" setfail trig "" setofail
+  trig "" setdrop trig "" setodrop
+  "@path setup finished." n
+;
+  
+: path-obvious-exits ( -- )
+  trig src !
+  src @ room? not if exit then
+  arg @ run
+  0 arg !
+  src @ "_NoExits" \getpropstr yes? if exit then
+  0 num ! 0 key ! "" val !
+  src @ dst !
+  "/"   dir !
+  src @ "_BigExits" \envpropstr swap pop yes? if 1 key ! then
+  key @ if
+    src @ "_NoDestRooms" \envpropstr swap pop yes? if 1 num ! then
+  else
+    src @ "_PrependExits" \envpropstr swap pop yes? if 1 num ! then
+  then
+  dir @ if
+    begin dst @ dir @ nextprop dup dir ! while
+      dst @ dir @ 1 strcut swap pop path-get-dir-link okobj? if
+        dst @ dir @ "d" path-get-dir-prop yes? not if
+          dst @ dir @ "na" path-get-dir-prop
+          dup if ( has name )
+            low-name "^CYAN^" swap strcat num @ if
+              "^YELLOW^<" dir @ 1 strcut swap pop toupper
+              dup "I" strcmp not if pop "IN" then
+              dup ";" instring dup if 1 - strcut then pop
+              strcat "> " strcat swap strcat
+            else
+              " ^YELLOW^<" strcat dir @ 1 strcut swap pop toupper
+              dup "I" strcmp not if pop "IN" then
+              dup ";" instring dup if 1 - strcut then pop
+              strcat ">" strcat
+            then
+          else pop ( no name )
+            dir @ 1 strcut swap pop dir-name "^CYAN^" swap strcat
+          then
+          key @ if
+            arg @ 0 = if
+              1 arg ! src @ "_ExitsCalled" \envpropstr swap pop
+              dup not if pop "Paths:" then "^GREEN^" swap strcat a
+            then
+            high-name "  " swap strcat num @ not if
+              "^GREEN^ to ^CYAN^" strcat dst @ dir @ path-get-dir-link
+              room-name strcat
+            then a
+          else ", " strcat val @ swap strcat val ! then
+        then
+      else
+        dir @ 1 strcut swap pop
+        dup "all" stringcmp
+        swap "num" stringcmp and if
+          dst @ dir @ dst @ path-set-dir-link
+          "Bad path fixed and relinked to here." n
+        then
+      then
+    repeat
+  then
+  src @ exits dir !
+  dir @ if
+    begin
+      dir @ getlink okobj? if
+        dir @ dark? not if
+          "^CYAN^" dir @ firstname strcat key @ if
+            arg @ 0 = if
+              1 arg ! src @ "_ExitsCalled" \envpropstr swap pop
+              dup not if pop "Paths:" then "^GREEN^" swap strcat a
+            then
+            high-name "  " swap strcat "^GREEN^ to ^CYAN^" strcat
+            dir @ getlink room-name strcat a
+          else low-name ", " strcat val @ swap strcat val ! then
+        then
+      then
+      dir @ next dup dir !
+    while repeat
+  then
+  
+  key @ not val @ and if
+    src @ "_ExitsCalled" \envpropstr swap pop
+    dup not if pop src @ "exitlist_start" \envpropstr swap pop then
+  
+    dup not if pop "[ Obvious exits: " then "^GREEN^" swap strcat
+    val @ dup strlen 2 - strcut pop ", " explode ssort
+    begin dup 1 > while
+      swap rot "^GREEN^, " strcat swap strcat swap
+    1 - repeat pop "^GREEN^, " strcat cleancommas strcat
+  
+    src @ "_ExitsEnd" \envpropstr swap pop
+    dup not if pop src @ "exitlist_end" \envpropstr swap pop then
+    dup not if pop " ]" then "^GREEN^" swap strcat strcat a
+  then
+;
+  
+: path-list ( d -- s )
+  dup room? not if pop "" exit then
+  dst !
+  "" val !
+  "/"   dir !
+  begin dst @ dir @ nextprop dup dir ! while
+    dst @ dir @ 1 strcut swap pop path-get-dir-link okobj? if
+      dir @ 1 strcut swap pop dir-name
+      " | " strcat val @ swap strcat val !
+    then
+  repeat val @
+  dup if dup strlen 3 - strcut pop then
+; public path-list
+  
+: path-main ( s -- ) strip
+  strip arg ! command @ strip tolower cmd !
+  "me" match dup plr ! location src !
+  
+  privilege? not if
+    "@path is not set up right with $lib/userprop. Cannot run." n exit
+  then
+  
+  command @ "(@" 2 strncmp not if path-obvious-exits exit then
+  
+  cmd @ 2 strcut pop "@p" strcmp if
+  ( Path )
+    cmd @ dir-prop dir !
+    src @ dir @ path-get-dir-link dst !
+    dst @ okobj? if
+      path-strs
+      path-test-lock if
+        arg @ "look" stringcmp not if
+          ( src @ dir @ "na" path-get-dir-prop dup if n else pop then )
+          src @ dir @ "de" path-get-dir-prop
+          dup "@$trans" instring 1 = if
+            " " split swap pop path-subst run 1
+          else
+            dup if path-subst run 0 else pop 1 then
+          then
+          dup dst @ program? and if
+            pop "You see nothing special." n
+          else
+            if
+              "In that direction you see " dst @ room-name low-name
+              strcat "." strcat n dst @ private? dst @ dark? or not if
+                dst @ trigger ! dst @ "_/de" \getpropstr
+                dst @ swap "(@Desc)" 1 parsempi run
+              then
+            then
+          then
+        else
+          "" path-succ 
+          dst @ program? if
+            dir @ command !
+            depth cdepth !
+            arg @ dst @ call
+            depth cdepth @ - dup 0 > if popn else pop then
+          else
+            plr @ dst @ moveto
+          then
+          src @ dst @ src ! "" path-drop src !
+        then
+      else NOWAY path-fail then
+    else
+      dir @ "all" stringcmp
+      dir @ "num" stringcmp and if
+        src @ dir @ removeprop
+      then
+      src @ dst ! path-strs NOWAY path-fail
+    then
+  else
+  ( @command )  cmd @ 2 strcut swap pop cmd !
+  
+     "ath" cmp if cmd-path exit then
+    "lock" cmp if cmd-lock exit then
+  "unlock" cmp if cmd-lock exit then
+      "ex" cmp if cmd-show exit then
+   "clone" cmp if cmd-copy exit then
+    "copy" cmp if cmd-copy exit then
+     "dup" cmp if cmd-dup  exit then
+    "show" cmp if cmd-show exit then
+    "stat" cmp if cmd-show exit then
+    "junk" cmp if cmd-junk exit then
+    "help" cmp if cmd-help exit then
+  
+    "name" cmp if  "na" cst then
+    "desc" cmp if  "de" cst then
+    "succ" cmp if  "sc" cst then
+   "osucc" cmp if "osc" cst then
+    "fail" cmp if  "fl" cst then
+   "ofail" cmp if "ofl" cst then
+    "drop" cmp if  "dr" cst then
+   "odrop" cmp if "odr" cst then
+  
+   "setup" cmp if cmd-setup exit then
+  
+  arg @ "=" split pop arg !
+  "dark" cmp if arg @ "=yes" strcat arg ! "d" cst then
+  "light" cmp if "d" cst then
+  
+  TITLE "Unknown @path command, type '@phelp' for help." n
+  then
+;
+  
+: path-debug ( s -- )
+  depth odepth !
+  path-main
+  debug? if depth odepth @ 1 - = not if
+    depth "@Path: Bad Stack depth: " swap intostr strcat n
+    plr @ prog owner dbcmp if .debug-line then
+  then then
+;
+.
+c
+q
+@register cmd-path=cmd/path
+@register cmd-path=mud/succ
+@register #me cmd-path=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@action o;n;s;e;w;u;d;nw;sw;ne;se;1;2;3;4;5;6;7;8;9;10;north;south;east;west;up;down;in;out;northwest;northeast;southwest;southeast;@phelp;@pshow;@pex;@pstat;@pjunk;@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;@plock;@punlock=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=/_/de:@$cmd/path
+"Installation of cmd-path complete.
