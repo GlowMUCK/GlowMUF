@@ -2,7 +2,7 @@
 @prog lib-reflist
 1 99999 d
 1 i
-( lib-reflist: $Date: 2005/01/14 16:32:13 $ $Revision: 1.3 $
+( lib-reflist: $Date: 2005/01/15 06:35:18 $ $Revision: 1.4 $
   Originally from FuzzBall MUF Distribution                                 )
 ( ------------------------------------------------------------------------- )
 ( DBref list manager -- REF
@@ -54,6 +54,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-reflist,v $
+  Revision 1.4  2005/01/15 06:35:18  feaelin
+  Fixed the problem where programs relying on lib-reflist were expecting
+  non feni'd and non-colorized output.
+
   Revision 1.3  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database item/object/thing
 
@@ -124,7 +128,7 @@ $include $lib/match
 ;
 
 : REF-list  (objref reflistname -- liststr)
-  REF-allrefs .short-list
+  REF-allrefs LOOKshort-list-n
 ;
 
 : REF-filter (a d s -- dx...d1 i)
@@ -233,5 +237,5 @@ q
 @set $tmp/prog1=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
 @set $tmp/prog1=/_/de:lib-reflist: List lines 3-45 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/reflist=3-45
-@set $tmp/prog1=_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=_lib-version:FM$Revision: 1.4 $
 "Installation of lib-reflist complete.

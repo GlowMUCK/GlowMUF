@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/01/14 16:32:13 $ $Revision: 1.21 $                )
+( cmd/lib-look: $Date: 2005/01/15 06:35:18 $ $Revision: 1.22 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.22  2005/01/15 06:35:18  feaelin
+  Fixed the problem where programs relying on lib-reflist were expecting
+  non feni'd and non-colorized output.
+
   Revision 1.21  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database item/object/thing
 
@@ -323,6 +327,28 @@ lvar realtrig
   then
 ;
  
+: short-list-n ( d... i -- s )
+  dup 3 <
+  if
+    1 - dup 2 + rotate name over
+    if
+      " " strcat
+    then
+  else
+    ""
+    begin
+      over 1 >
+    while
+      swap 1 - swap over 3 + rotate name
+      "^WHITE^, " strcat strcat
+    repeat
+  then
+  swap
+  if
+    "^WHITE^and " strcat swap name strcat
+  then
+;
+  
 : short-display ( d... i -- )
   short-list dup
   if
@@ -571,6 +597,7 @@ public contents-filter
 public get-contents
 public long-display
 public short-list
+public short-list-n
 public short-display
 public list-contents
 public str-desc
@@ -613,11 +640,11 @@ q
 @set $lib/look=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
 @set $lib/look=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
 @set $lib/look=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@set $lib/look=/_defs/LOOKshort-list-n:"$lib/look" match "short-list-n" call
 @set $lib/look=/_defs/LOOKstd-filter:"$lib/look" match "std-filter" call
-
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.21 $
-@set $lib/look=/_version:1.31FM$Revision: 1.21 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.22 $
+@set $lib/look=/_version:1.31FM$Revision: 1.22 $
 wh me=Installation of lib-look complete.
