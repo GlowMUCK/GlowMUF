@@ -1,4 +1,4 @@
-CHANGES $Date: 2004/04/22 17:25:53 $ $Revision: 1.15 $
+CHANGES $Date: 2004/04/22 17:27:29 $ $Revision: 1.16 $
 Author: Feaelin
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
@@ -27,6 +27,8 @@ Author: Feaelin
                   New Feature: ~look props. If a ~look/something:ref prop is
                   set anywhere in the environment, the program 'ref' will be
                   called by lib-look, with (Look) on top of the stack.
+                  Added support for Wixenstyx's FENI library. If it exists on
+                  the server, lib-look will use it.
 05) cmd-teleport: Added define to allow customization of the format of the
                   location field.
 06) cmd-who:      Changed to respect the who_hides_dark sysparm.
