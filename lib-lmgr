@@ -2,7 +2,7 @@
 @prog lib-lmgr
 1 99999 d
 1 i
-( lib-lmgr: $Date: 1998/07/29 01:25:09 $ $Revision: 1.1 $
+( lib-lmgr: $Date: 1998/07/29 16:30:37 $ $Revision: 1.2 $
   Originally from Fuzzball MUF distribution                                    )
 ( ---------------------------------------------------------------------------- )
 ( ***** List Manager Object - LMGR *****  Version 1.2
@@ -59,6 +59,9 @@
 ( ---------------------------------------------------------------------------- )
 (
   $Log: lib-lmgr,v $
+  Revision 1.2  1998/07/29 16:30:37  glow
+  *** empty log message ***
+
   Revision 1.1  1998/07/29 01:25:09  glow
   Initial revision
 
@@ -431,5 +434,5 @@ q
 @set $tmp/prog1=/_defs/lmgr-putrange:"$lib/lmgr" match "lmgr-putrange" call
 @set $tmp/prog1=/_defs/lmgr-setcount:"$lib/lmgr" match "lmgr-setcount" call
 @set $tmp/prog1=/_docs:@list $lib/lmgr=4-54
-@set $tmp/prog1=/_lib-version:1.2FM1.0
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.2 $
 "Installation of lib-lmgr complete.
