@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.11 $ $Date: 2005/03/21 01:31:43 $              )
+( lib-unparseobj: $Revision: 1.12 $ $Date: 2005/04/04 23:04:18 $             )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Syvel                                                        )
 ( Dependencies: lib-case                                                     )
@@ -83,46 +83,48 @@ i
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.12  2005/04/04 23:04:18  feaelin
+  Removed extraneous include of lib-glow-standard.
+  Updated documentation
+
   Revision 1.11  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.10  2004/04/23 02:38:44  feaelin
   Installer now flags the program link_ok
-
+ 
   Revision 1.9  2004/04/22 01:41:27  feaelin
   Added support for lib-feni, if it exists on the muck that lib-unparseobj
   is on.
-
+ 
   Revision 1.8  2004/04/12 15:47:57  feaelin
   Documentation cleanup.
-  
+ 
   Revision 1.7  2004/04/10 15:54:10  feaelin
   Fixed bugs related to the builder, guest, and meeper flags
-  
+ 
   Revision 1.6  2004/04/10 15:19:21  feaelin
   Fixed bug in public library call of UPOspecial-unparseobj
   Fixed bug in formatting that caused names with parentheses
   in them be colorized to the paren color.
-  
+ 
   Revision 1.5  2004/04/10 15:12:29  feaelin
   Streamlined the color-query code. Made the word public for
   handy use in other programs, e.g., @detail.
   Made the documentation clearer and more detailed.
-  
+ 
   Revision 1.4  2004/04/08 03:01:20  feaelin
   database item names are now different colors
-  
+ 
   Revision 1.3  2004/04/07 03:48:43  feaelin
   Added %/ and fixed the // error.
-  
+ 
   Revision 1.2  2004/04/07 00:08:07  feaelin
   Minor fixes
 )
 ( -------------------------------------------------------------------------- )
-  
 $include $lib/case
-$include $lib/glow
-  
+ 
 ( color selection handling )
 : color-query (s s -- s )
   ( string-to-color prefprop -- resultstring )
@@ -140,7 +142,7 @@ $include $lib/glow
   then
   swap strcat
 ; PUBLIC color-query
-  
+ 
 : name-color ( s d -- s )
   case
     exit? when "" "exit" color-query end
@@ -153,7 +155,7 @@ $include $lib/glow
   endcase
   swap strcat
 ;
-  
+ 
 : feni-name ( d -- s )
   ( We should check depth and use checkargs? )
   "$lib/feni" match program? if
@@ -162,7 +164,7 @@ $include $lib/glow
     name
   then
 ;
-  
+ 
 ( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
 : b-flag ( d -- s )
   dup "b" flag? swap player? and if
@@ -171,7 +173,7 @@ $include $lib/glow
     ""
   then
 ;
-  
+ 
 : g-flag ( d -- s )
   dup "guest" flag? if 
     "G" "guest" color-query
@@ -179,7 +181,7 @@ $include $lib/glow
     ""
   then
 ;
-  
+ 
 : m-flag ( s d -- s )
   dup "meeper" flag? swap player? and if 
     "M" "meeper" color-query
@@ -187,7 +189,7 @@ $include $lib/glow
     ""
   then
 ;
-  
+ 
 : parse_mlevel ( d -- s )
   mlevel
   case
@@ -202,7 +204,7 @@ $include $lib/glow
     8 = when "W5" "wizard" color-query end
   endcase
 ;
-  
+ 
 : parse_type ( d -- s )
   case
     exit? when "E" "exit" color-query end
@@ -213,7 +215,7 @@ $include $lib/glow
     default "?" "unknown" color-query end
   endcase
 ;
-  
+ 
 : parse_flags ( d -- s )
   ""
   over "a" flag? if "A" strcat then
@@ -235,7 +237,7 @@ $include $lib/glow
   over "z" flag? if "Z" strcat then
   swap pop "flag" color-query
 ;
-  
+ 
 : do-slashes
   dup "%/" instr dup if
     1 + strcut
@@ -252,7 +254,7 @@ $include $lib/glow
     pop
   then
 ;
-  
+ 
 : special-unparseobj ( d s -- s )
   "%T" "%O" subst
   "%t" "%o" subst
@@ -287,7 +289,7 @@ $include $lib/glow
   do-slashes
   swap pop
 ; PUBLIC special-unparseobj
-  
+ 
 : color-unparseobj ( d -- s )
   dup "/_prefs/unparse/format" envpropstr swap pop
   dup "" strcmp not if
@@ -322,6 +324,7 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.11 $
-@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-72
+@set $lib/unparseobj=/_lib-version:$Revision: 1.12 $
+@set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-72 for documentation.
+@set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-72
 wh me=Installation Complete.
