@@ -15,5 +15,5 @@ q
 @register #me lock-wizard=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M1
-@set $tmp/prog1=_version:FM1.0
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of lock-wizard complete.
