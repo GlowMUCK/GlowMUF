@@ -2,7 +2,7 @@
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2004/04/13 17:19:23 $ $Revision: 1.3 $                     )
+( cmd-page: $Date: 2004/08/22 15:07:19 $ $Revision: 1.4 $                     )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop             )
@@ -14,6 +14,9 @@
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.4  2004/08/22 15:07:19  feaelin
+  Fixed bug in the Connect setup. Adjusted help.
+
   Revision 1.3  2004/04/13 17:19:23  feaelin
   Added the appropiate _defs/ props so that you can make library calls to
   $cmd/page.
@@ -2608,7 +2611,7 @@ public check
   me @ .guest? not if
     depth 1 = if
       dup string? if
-        dup "Connect" strcmp not if me @ check exit then
+        dup "Connect" strcmp not if me @ check pop exit then
       then
     then
   then
@@ -2638,29 +2641,30 @@ q
 @set $cmd/page=/_defs/PAGEcheck:"$lib/page" match "check" call
 @set $cmd/page=/_defs/PAGEmail:"$lib/page" match "mail" call
 @set $cmd/page=/_defs/PAGEpage:"$lib/page" match "page" call
-@set $cmd/page=/_help1#:22
-@set $cmd/page=/_help1#/1:MUFpage v2.5 by Foxen, feeped by Artie & Maddax   Updated 04/18/1999  Page1
-@set $cmd/page=/_help1#/2: 
-@set $cmd/page=/_help1#/3:To give your location to another player:     'page <player>'
-@set $cmd/page=/_help1#/4:To send a message to another player:         'page <player> = <message>'
-@set $cmd/page=/_help1#/5:To send a pose style page to a player:       'page <player> = :<pose>'
-@set $cmd/page=/_help1#/6:To page multiple people:                     'page <plyr> <plyr> [= <msg>]'
-@set $cmd/page=/_help1#/7:To send another mesg to the last players:    'page = <message>'
-@set $cmd/page=/_help1#/8:To send your loc to the last players paged:  'page'
-@set $cmd/page=/_help1#/9:To send a message in a different format:     'page !<fmt> <plyrs> = <msg>'
-@set $cmd/page=/_help1#/10:To reply to a page sent to you:              'page #r [= <message>]'
-@set $cmd/page=/_help1#/11:To reply to all the people in a multi-page:  'page #R [= <message>]'
-@set $cmd/page=/_help1#/12:To leave a page-mail message for someone:    'page #mail <players>=<mesg>'
-@set $cmd/page=/_help1#/13:To leave a multi-line message for someone:   'page #mail to <players>'
-@set $cmd/page=/_help1#/14:To list page-mail messages left for you:     'page #mail'
-@set $cmd/page=/_help1#/15:To read page-mail messages left for you:     'page #mail read'
-@set $cmd/page=/_help1#/16:To list old saved page-mail messages:        'page #old'
-@set $cmd/page=/_help1#/17:To read old saved page-mail messages:        'page #old <msgnumber>'
-@set $cmd/page=/_help1#/18:To delete old saved page-mail messages:      'page #del <msgnumber>'
-@set $cmd/page=/_help1#/19:To erase a message you sent to a player:     'page #erase <players>'
-@set $cmd/page=/_help1#/20:To list who you last paged and other info:   'page #who'
-@set $cmd/page=/_help1#/21:To display the next help screen:             'page #help2'
-@set $cmd/page=/_help1#/22:-- Words in <> are parameters.  Parameters in [] are optional. --
+@set $cmd/page=/_help1#:23
+@set $cmd/page=/_help1#/1:MUFpage v2.5$Revision: 1.4 $ by Foxen                                                 Page1
+@set $cmd/page=/_help1#/2:Contributions by Artie, Feaelin & Maddax               Updated $Date: 2004/08/22 15:07:19 $
+@set $cmd/page=/_help1#/3: 
+@set $cmd/page=/_help1#/4:To give your location to another player:     'page <player>'
+@set $cmd/page=/_help1#/5:To send a message to another player:         'page <player> = <message>'
+@set $cmd/page=/_help1#/6:To send a pose style page to a player:       'page <player> = :<pose>'
+@set $cmd/page=/_help1#/7:To page multiple people:                     'page <plyr> <plyr> [= <msg>]'
+@set $cmd/page=/_help1#/8:To send another mesg to the last players:    'page = <message>'
+@set $cmd/page=/_help1#/9:To send your loc to the last players paged:  'page'
+@set $cmd/page=/_help1#/10:To send a message in a different format:     'page !<fmt> <plyrs> = <msg>'
+@set $cmd/page=/_help1#/11:To reply to a page sent to you:              'page #r [= <message>]'
+@set $cmd/page=/_help1#/12:To reply to all the people in a multi-page:  'page #R [= <message>]'
+@set $cmd/page=/_help1#/13:To leave a page-mail message for someone:    'page #mail <players>=<mesg>'
+@set $cmd/page=/_help1#/14:To leave a multi-line message for someone:   'page #mail to <players>'
+@set $cmd/page=/_help1#/15:To list page-mail messages left for you:     'page #mail'
+@set $cmd/page=/_help1#/16:To read page-mail messages left for you:     'page #mail read'
+@set $cmd/page=/_help1#/17:To list old saved page-mail messages:        'page #old'
+@set $cmd/page=/_help1#/18:To read old saved page-mail messages:        'page #old <msgnumber>'
+@set $cmd/page=/_help1#/19:To delete old saved page-mail messages:      'page #del <msgnumber>'
+@set $cmd/page=/_help1#/20:To erase a message you sent to a player:     'page #erase <players>'
+@set $cmd/page=/_help1#/21:To list who you last paged and other info:   'page #who'
+@set $cmd/page=/_help1#/22:To display the next help screen:             'page #help2'
+@set $cmd/page=/_help1#/23:-- Words in <> are parameters.  Parameters in [] are optional. --
 @set $cmd/page=/_help2#:24
 @set $cmd/page=/_help2#/1:MUFpage v2.5 by Foxen, feeped by Artie & Maddax   Updated 04/18/1999  Page2
 @set $cmd/page=/_help2#/2: 
@@ -2787,5 +2791,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.3 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.4 $
 "Installation of cmd-page complete.
