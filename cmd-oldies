@@ -1,0 +1,73 @@
+"Beginning installation of cmd-oldprecious...
+@prog cmd-oldprecious
+1 99999 d
+1 i
+( cmd-oldprecious: $Date: 2000/12/21 21:13:46 $ $Revision: 1.1 $                                          )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-oldies,v $
+  Revision 1.1  2000/12/21 21:13:46  feaelin
+  Initial revision
+
+)
+
+$include $lib/glowstandard
+
+lvar days lvar prec lvar cnt
+: main
+  0 cnt !
+  "me" match .mage? not if "Permission denied." .tell exit then
+    dup "!" 1 strncmp not if 1 strcut swap pop 0 else 1 then prec !
+    dup if
+        atoi days !
+    else
+        "Old'n'precious, list precious players older than 'n' days." .tell
+        "Use a ! before 'n' to list non-precious abandoned chars." .tell
+        pop 90 days !
+    then
+    "Listing " prec @ if "" else "non-" then strcat
+    "precious characters older than " days @ intostr strcat strcat
+    " days old." strcat .tell
+    background
+    2
+    begin
+    dup dbtop intostr atoi < while
+        dup dbref
+        dup ok? if
+            dup player? if
+                dup .truemage? not if
+                    dup "@/precious" getpropstr prec @ not if not then if
+                        dup timestamps
+                        pop
+                        swap pop
+                        swap pop
+                        systime
+                        days @ 24 * 3600 * -
+                        over > if
+                            cnt @ 1 + cnt !
+                            over unparseobj over
+                            " idle since %m/%d/%y"
+                            swap timefmt strcat .tell
+                            1 sleep
+                        then
+                        pop
+                    then
+                then
+            then
+        then
+        pop
+        1 +
+    repeat
+    "Total: " cnt @ intostr strcat .tell
+;
+.
+c
+q
+@register cmd-oldprecious=cmd/oldies
+@register #me cmd-oldprecious=tmp/prog1
+@set $tmp/prog1=W3
+@action oldies;oldprecious=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=/_/de:List old precious players.  Mage+
+@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of cmd-oldies complete.
