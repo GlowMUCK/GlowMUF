@@ -2,7 +2,7 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2005/01/14 16:32:03 $ $Revision: 1.9 $                      )
+( cmd-bbs: $Date: 2005/01/15 15:36:46 $ $Revision: 1.10 $                      )
 ( Author: Garth Minette                                                       )
 ( Mods & Fixes By: Feaelin Moilar AKA Iain E. Davis                           )
 (                  Wixenstyx AKA Jennifer A. Boeyink                          )
@@ -46,6 +46,9 @@
 ( -------------------------------------------------------------------------- ) 
 ( 
   $Log: cmd-bbs,v $
+  Revision 1.10  2005/01/15 15:36:46  feaelin
+  More colorization
+
   Revision 1.9  2005/01/14 16:32:03  feaelin
   Broad sweep to clear up terminology usage in regards to database item/object/thing
 
@@ -408,7 +411,7 @@ lvar theboard lvar bbsindexprog
   
     swap pop get-day swap MBRDreparseinfo
     -4 rotate MBOX-setmesg
-    "Message edited." mytell 0 (no error)
+    "^SUCC^Message edited." mytell 0 (no error)
 ;
   
 : MBRDnext (parmstr base dbref -- err)
@@ -631,5 +634,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $tmp/prog1=_version:0.80FM$Revision: 1.9 $
+@set $tmp/prog1=_version:0.80FM$Revision: 1.10 $
 "Installation of cmd-bbs complete.
