@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/01/15 06:35:18 $ $Revision: 1.22 $                )
+( cmd/lib-look: $Date: 2005/03/21 01:31:43 $ $Revision: 1.23 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.23  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.22  2005/01/15 06:35:18  feaelin
   Fixed the problem where programs relying on lib-reflist were expecting
   non feni'd and non-colorized output.
@@ -163,9 +166,6 @@ wh me=Beginning installation of lib-look...
   
   Revision 1.2  2004/03/26 03:21:18  feaelin
   Reduced macro/library dependence.
-  
-  Revision 1.1  1998/08/23 15:47:21  glow
-  Initial revision
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/strings
@@ -645,6 +645,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.22 $
-@set $lib/look=/_version:1.31FM$Revision: 1.22 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.23 $
+@set $lib/look=/_version:1.31FM$Revision: 1.23 $
 wh me=Installation of lib-look complete.

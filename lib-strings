@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2004/08/06 14:12:22 $ $Revision: 1.13 $                 )
+( lib-strings: $Date: 2005/03/21 01:31:43 $ $Revision: 1.14 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -41,6 +41,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.14  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.13  2004/08/06 14:12:22  feaelin
   Minor documentation corrections.
 
@@ -69,9 +72,6 @@ wh me=Beginning installation of lib-strings...
   
   Revision 1.2  1998/07/28 03:35:38  feaelin
   Corrected wiz-level.
-  
-  Revision 1.1  1998/07/27 21:15:02  feaelin
-  Initial revision
 )  
 ( --------------------------------------------------------------------------- )
 : split ( s si -- s s )
@@ -218,5 +218,5 @@ q
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=1-37
 @set $tmp/prog1=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
 wh me=Installation of lib-strings complete.

@@ -2,7 +2,7 @@
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/01/14 16:32:13 $ $Revision: 1.6 $                    )
+( lib-match: $Date: 2005/03/21 01:31:43 $ $Revision: 1.7 $                    )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -71,8 +71,12 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.7  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.6  2005/01/14 16:32:13  feaelin
-  Broad sweep to clear up terminology usage in regards to database item/object/thing
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
 
   Revision 1.5  2004/08/04 14:12:21  feaelin
   Updated header documentation. Updated library entries to add the new
@@ -81,15 +85,11 @@
   Revision 1.4  2000/01/10 21:23:33  feaelin
   Fixed .controls backward compatibility
 
-  Revision 1.3  1998/08/22 19:03:51  glow
-  Oops. Remember why I had already taken .controls out of lib-match.
+  Revision 1.3  1998/08/22 19:03:51  feaelin
+  Oops. Remembered why I had already taken .controls out of lib-match.
 
-  Revision 1.2  1998/08/22 18:57:08  glow
+  Revision 1.2  1998/08/22 18:57:08  feaelin
   Added .controls from fbmuf.
-
-  Revision 1.1  1998/08/22 18:51:47  glow
-  Initial revision
-
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/stackrng
@@ -226,5 +226,5 @@ q
 @set $tmp/prog1=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
 @set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
 @set $tmp/prog1=/_docs:@list $lib/match=3-62
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
 "Installation of lib-match completed.

@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/01/18 16:23:46 $ $Revision: 1.9 $
+( lib-edit: $Date: 2005/03/21 01:31:42 $ $Revision: 1.10 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -99,6 +99,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.10  2005/03/21 01:31:42  feaelin
+  General maintenance and documentation updates
+
   Revision 1.9  2005/01/18 16:23:46  feaelin
   Corrected problem that would crash the editor when formatting lines with
   ANSI codes in them.
@@ -125,10 +128,6 @@
 
   Revision 1.2  1998/07/29 16:47:50  feaelin
   Cleaned up documentation.
-
-  Revision 1.1  1998/07/29 01:30:37  feaelin
-  Initial revision
-
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/glow
@@ -584,5 +583,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
 "Installation of lib-edit complete.

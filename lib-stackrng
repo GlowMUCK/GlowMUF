@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2005/01/14 16:32:13 $ $Revision: 1.10 $
+( lib-stackrng: $Date: 2005/03/21 01:31:43 $ $Revision: 1.11 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling -- SRNG ****                 
@@ -45,6 +45,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.11  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.10  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database item/object/thing
 
@@ -69,15 +72,12 @@
   Revision 1.4  2000/01/10 18:53:35  feaelin
   Fixed documentation...not all lines were being listed.
 
-  Revision 1.3  1998/07/28 19:22:05  glow
+  Revision 1.3  1998/07/28 19:22:05  feaelin
   Fixed _lib-version number.
 
-  Revision 1.2  1998/07/28 19:21:11  glow
+  Revision 1.2  1998/07/28 19:21:11  feaelin
   Removed popoffn and replaced the definition of sr-poprng with it simply
   calling the inserver 'popn'.
-
-  Revision 1.1  1998/07/28 19:18:38  glow
-  Initial revision
 )
 ( --------------------------------------------------------------------------- )
   
@@ -194,5 +194,5 @@ q
 @set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
 @set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
 @set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
 "Installation of lib-stackrng completed

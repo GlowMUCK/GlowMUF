@@ -2,7 +2,7 @@
 @prog lib-mesg
 1 99999 d
 1 i
-( lib-mesg: $Date: 2005/01/14 16:32:13 $ $Revision: 1.4 $
+( lib-mesg: $Date: 2005/03/21 01:31:43 $ $Revision: 1.5 $
   Originally in the FuzzBall MUF Distribution                                 )
 ( --------------------------------------------------------------------------- )
 ( **** Message Object -- MSG- ****
@@ -63,18 +63,18 @@ $def SLASHED_LISTS
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-mesg,v $
+  Revision 1.5  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.4  2005/01/14 16:32:13  feaelin
-  Broad sweep to clear up terminology usage in regards to database item/object/thing
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
 
   Revision 1.3  2004/03/26 03:18:15  feaelin
   Upgraded wizprop so you can store messages in @ props.
 
-  Revision 1.2  1998/08/22 19:36:27  glow
+  Revision 1.2  1998/08/22 19:36:27  feaelin
   Finished RCS-ifying.
-
-  Revision 1.1  1998/08/22 19:32:02  glow
-  Initial revision
-
 )
 $include $lib/glowstandard
 $include $lib/lmgr
@@ -255,5 +255,5 @@ q
 @set $tmp/prog1=/_defs/MSG-setinfo:"$lib/mesg" match "MSG-setinfo" call
 @set $tmp/prog1=/_defs/MSG-setitem:"$lib/mesg" match "MSG-setitem" call
 @set $tmp/prog1=/_docs:@list $lib/mesg=3-53
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
 "Installation of lib-mesg complete.

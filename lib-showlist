@@ -2,15 +2,19 @@
 @prog lib-showlist
 1 99999 d
 1 i
-( showlist:  d s -- : $Date: 2005/01/14 16:32:13 $ $Revision: 1.5 $           )
+( showlist:  d s -- : $Date: 2005/03/21 01:31:43 $ $Revision: 1.6 $           )
 ( Originally from the glowmuf distribution                                    )
 ( --------------------------------------------------------------------------- )
 ( showlist d s --         Lists list 's' on database item 'd' to player.      )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-showlist,v $
+  Revision 1.6  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.5  2005/01/14 16:32:13  feaelin
-  Broad sweep to clear up terminology usage in regards to database item/object/thing
+  Broad sweep to clear up terminology usage in regards to
+  database item/object/thing
 
   Revision 1.4  2000/01/11 15:55:44  feaelin
   I really hate parentheses.
@@ -20,10 +24,6 @@
 
   Revision 1.2  1999/02/13 16:37:36  feaelin
   *sigh* Darn nested parentheses.
-
-  Revision 1.1  1998/08/23 17:18:20  glow
-  Initial revision
-
 ) 
 $define n me @ swap notify $enddef
 
@@ -106,5 +106,5 @@ q
 @set $tmp/prog1=/_defs/showlist:( d s -- ) "$lib/showlist" match call
 @set $tmp/prog1=/_/de:lib-showlist: @list $lib/showlist=1-5 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/showlist=1-5 
-@set $tmp/prog1=_lib-version:FM$Revision: 1.5 $
+@set $tmp/prog1=_lib-version:FM$Revision: 1.6 $
 "Installation of lib-showlist complete.

@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/03/14 02:55:28 $ $Revision: 1.17 $             )
+( lib-editor: $Date: 2005/03/21 01:31:43 $ $Revision: 1.18 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.18  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.17  2005/03/14 02:55:28  feaelin
   Changed the 'in the editor' say/pose to use the default colors.
 
@@ -107,11 +110,8 @@ wh me=Installing lib-editor...
   Revision 1.3  2000/01/10 21:03:38  feaelin
   Documentation cleanup.
   
-  Revision 1.2  1998/07/29 17:54:23  glow
+  Revision 1.2  1998/07/29 17:54:23  feaelin
   Cleaned up documentation.
-  
-  Revision 1.1  1998/07/29 04:18:47  glow
-  Initial revision
 )  
 ( ---------------------------------------------------------------------- )
 $include $lib/strings
@@ -670,5 +670,5 @@ q
 @set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.18 $
 wh me=Installation of lib-editor complete.

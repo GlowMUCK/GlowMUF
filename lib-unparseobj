@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.10 $ $Date: 2004/04/23 02:38:44 $              )
+( lib-unparseobj: $Revision: 1.11 $ $Date: 2005/03/21 01:31:43 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Syvel                                                        )
 ( Dependencies: lib-case                                                     )
@@ -83,6 +83,9 @@ i
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.11  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
   Revision 1.10  2004/04/23 02:38:44  feaelin
   Installer now flags the program link_ok
 
@@ -114,9 +117,6 @@ i
   
   Revision 1.2  2004/04/07 00:08:07  feaelin
   Minor fixes
-  
-  Revision 1.1  2004/04/07 00:02:18  feaelin
-  Initial revision
 )
 ( -------------------------------------------------------------------------- )
   
@@ -322,6 +322,6 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.10 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.11 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-72
 wh me=Installation Complete.
