@@ -1,0 +1,88 @@
+"Beginning installation of cmd-poll...
+@prog cmd-poll
+1 99999 d
+1 i
+( cmd-poll: $Date: 2000/12/22 16:55:37 $ $Revision: 1.1 $ )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-poll,v $
+  Revision 1.1  2000/12/22 16:55:37  feaelin
+  Initial revision
+
+)
+
+$include $lib/glowstandard
+
+$def TIME_LIMIT 60
+: checkwiz .mage? ;
+: change_poll
+  #0 "~who/poll" rot setprop
+  #0 "~who/pollby" me @ intostr setprop
+  #0 "~who/polllast" systime intostr setprop
+;
+: get_annmsg
+  prog "_pollmsg" getpropstr dup not if pop
+    "[!] %N has changed the poll%wizards!  Type WHO to see what it is now."
+  then
+;
+: display_pollchange
+  online begin dup while
+    swap
+    get_annmsg
+    " to '" 4 pick 4 + pick strcat "'" strcat
+    3 pick checkwiz if
+      "%wizards" subst
+    else pop "" "%wizards" subst then
+    me @ swap pronoun_sub
+    notify
+    1 -
+  repeat pop
+;
+: log_poll
+  prog "_poll/" systime intostr strcat
+  rot " by " me @ unparseobj strcat strcat
+  setprop
+;
+: main
+  .noguest
+  dup not if
+    "The current poll is '" #0 "~who/poll" getpropstr strcat "' set by " strcat
+    #0 "~who/pollby" getpropstr atoi dbref name strcat "." strcat .tell
+    exit
+  then
+  me @ .mage? not if
+    #0 "~who/polllast" getpropstr atoi systime swap - TIME_LIMIT 60 * < if
+        "Sorry, the poll can only be changed every "
+        TIME_LIMIT intostr strcat  " minutes." strcat .tell
+      exit
+    then
+  else
+    dup 1 strcut pop "#" strcmp not if
+      pop "Poll changes:" .tell
+      prog "_poll/" nextprop begin dup while
+        prog over getpropstr over dup "/" rinstr strcut swap pop atoi
+        "%a %D %r" swap timefmt ": " strcat swap strcat .tell
+      prog swap nextprop repeat pop
+      "Done." .tell
+      exit
+    then
+  then
+  display_pollchange
+  dup log_poll
+  change_poll
+;
+.
+c
+q
+@register cmd-poll=cmd/poll
+@register #me cmd-poll=tmp/prog1
+@set $tmp/prog1=S
+@set $tmp/prog1=W2
+@action @poll;poll=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=D
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:'@poll [string]' sets the poll message at the top of the WHO list.  @poll without any arguments shows the current poll.
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-poll complete.
