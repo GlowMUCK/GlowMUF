@@ -1,8 +1,8 @@
-"Beginning installation of lib-unparseobj...
+wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.8 $ $Date: 2004/04/12 15:47:57 $              )
+( lib-unparseobj: $Revision: 1.9 $ $Date: 2004/04/22 01:41:27 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Syvel                                                        )
 ( Dependencies: lib-case                                                     )
@@ -37,6 +37,7 @@ i
 ( %Q %q %P[%D%T%/%F%/%B%M%L] 'One[#1P/CI/BMW4]                               )
 (                            Except the brackets are actually parentheses,   )
 (                            but I can't include parentheses in a comment.   )
+(                            ** THIS IS THE DEFAULT                          )
 ( %X %x %T%/%F%/%B%M%L       'P/CI/BMW4'                                     )
 ( %Y %y %F%/%B%M%L           'CI/BMW4'                                       )
 ( %Z %z %/%B%M%L             '/BMW4'                                         )
@@ -46,6 +47,11 @@ i
 ( the Builder flag is set, while %b produces 'b'. To insert a slash          )
 ( intelligently, just use %/.                                                )
 (                                                                            )
+( lib-unparseobj will attempt to use the FENI-name library call if there is  )
+( $lib/feni library and will call the FENI-name word in place of a normal    )
+( call to 'name'. It calls FENI-name with two dbrefs on the stack            )
+( [me @ database-item-dbref], which it expects the word to destroy.          )
+(                                                                            ) 
 (  This lib supports the following props:                                    )
 (  _prefs/unparse/format:       Format for full unparseobj                   )
 (  _prefs/unparse/nocolor?:     'yes' to disable smart colorization.         )
@@ -67,6 +73,7 @@ i
 (       mucker:^RED^     -- The color of the "mucker" flags.                 )
 (       paren:^GREY^     -- The color of the parentheses.                    )
 (       player:^GREEN^   -- The color of the player name and type flag.      )
+(       sleeper:^FOREST^ -- The color of the sleeper name and type flag.     )
 (       program:^RED^    -- The color of the program name and type flag.     )
 (       room:^CYAN^      -- The color of the room name and type flag.        )
 (       slash:^GREY^     -- The color of the slash.                          )
@@ -74,12 +81,15 @@ i
 (       unknown:^GLOOM^  -- The color of garbage obj and type flag           )
 (       wizard:^PURPLE^  -- The color of the "wizard" flags.                 )
 ( -------------------------------------------------------------------------- )
-  
 (
   $Log: lib-unparseobj,v $
+  Revision 1.9  2004/04/22 01:41:27  feaelin
+  Added support for lib-feni, if it exists on the muck that lib-unparseobj
+  is on.
+
   Revision 1.8  2004/04/12 15:47:57  feaelin
   Documentation cleanup.
-
+  
   Revision 1.7  2004/04/10 15:54:10  feaelin
   Fixed bugs related to the builder, guest, and meeper flags
   
@@ -104,11 +114,11 @@ i
   
   Revision 1.1  2004/04/07 00:02:18  feaelin
   Initial revision
-  
 )
 ( -------------------------------------------------------------------------- )
   
 $include $lib/case
+$include $lib/glow
   
 ( color selection handling )
 : color-query (s s -- s )
@@ -132,12 +142,22 @@ $include $lib/case
   case
     exit? when "" "exit" color-query end
     program? when "" "program" color-query end
-    player? when "" "player" color-query end
+    dup player? if awake? when "" "player" color-query end then
+    dup player? if awake? not when "" "sleeper" color-query end then
     room? when "" "room" color-query end
     thing? when "" "thing" color-query end
     default "" "unknown" color-query end
   endcase
   swap strcat
+;
+  
+: feni-name ( d -- s )
+  ( We should check depth and use checkargs? )
+  "$lib/feni" match program? if
+    me @ swap "$lib/feni" match "FENI-Name" call
+  else
+    name
+  then
 ;
   
 ( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
@@ -243,7 +263,7 @@ $include $lib/case
   "%f%/%b%m%l" "%y" subst
   "%/%B%M%L" "%Z" subst
   "%/%b%m%l" "%z" subst
-  swap dup name dup 4 pick swap 4 pick name-color "%P" subst 3 put
+  swap dup feni-name dup 4 pick swap 4 pick name-color "%P" subst 3 put
   1 strcut swap dup toupper 3 pick strcat 4 pick name-color -3 rotate
   tolower swap strcat 3 pick name-color
   4 rotate swap "%n" subst
@@ -291,12 +311,13 @@ q
 @set $lib/unparseobj=/_colors/mucker:^RED^
 @set $lib/unparseobj=/_colors/paren:^GREY^
 @set $lib/unparseobj=/_colors/player:^GREEN^
+@set $lib/unparseobj=/_colors/sleeper:^FOREST^
 @set $lib/unparseobj=/_colors/program:^RED^
 @set $lib/unparseobj=/_colors/room:^CYAN^
 @set $lib/unparseobj=/_colors/slash:^GREY^
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.8 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.9 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-72
-"Installation Complete.
+wh me=Installation Complete.
