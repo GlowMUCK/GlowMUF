@@ -2,11 +2,15 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2001/02/21 21:37:24 $ $Revision: 1.6 $
+( cmd-path: $Date: 2001/02/26 20:12:58 $ $Revision: 1.7 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.7  2001/02/26 20:12:58  feaelin
+  New backlinking code had a bug in it that would cause the program underflow if
+  there wasn't any backlink specified.
+
   Revision 1.6  2001/02/21 21:37:24  feaelin
   Revised stupidlook support.  The program name will need to have 'look'
   in it somewhere for the program to work nicely.
@@ -115,7 +119,7 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.6 $ $Date: 2001/02/21 21:37:24 $"
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.7 $ $Date: 2001/02/26 20:12:58 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -490,7 +494,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
         else NOPERM a then
       else NODEST a then
     else
-      pop pop pop cmd-path-help
+      depth popn cmd-path-help
     then
     2 = if
       ( Back link )
@@ -507,10 +511,10 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
         else NOPERM a then
       else NODEST a then
     else
-      pop cmd-path-help
+      depth popn
     then
   else
-    popn cmd-path-help
+    depth popn cmd-path-help
   then
 ;
   
@@ -1011,7 +1015,7 @@ q
 @set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
 @set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
-@set $tmp/prog1=_version:FM$Revision: 1.6 $
+@set $tmp/prog1=_version:FM$Revision: 1.7 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
