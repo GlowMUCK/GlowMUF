@@ -2,7 +2,7 @@
 @prog cmd-spoof
 1 99999 d
 1 i
-( cmd-spoof: $Date: 2000/12/22 17:53:10 $ $Revision: 1.1 $                                                )
+( cmd-spoof: $Date: 2004/04/14 05:22:50 $ $Revision: 1.2 $                                                )
 ( Author: Mystique@Anime                                                      )
 ( --------------------------------------------------------------------------- )
 ( New Spoof by Mystique@AnimeMUCK February 26, 1994.  Use but no abuse!       )
@@ -15,6 +15,11 @@
 )
 (
   $Log: cmd-spoof,v $
+  Revision 1.2  2004/04/14 05:22:50  feaelin
+  Cleaned up actual spoof so that it used ansi_notify_except instead of
+  mucking about with looping through the room occupants.  This means listners
+  and zombies and vehicles can hear it now.
+
   Revision 1.1  2000/12/22 17:53:10  feaelin
   Initial revision
 
@@ -30,7 +35,7 @@ var header    (Contains seat header, if any.)
 $include $lib/strings
 $include $lib/glowstandard
 $define wiztoo? me @ .mage? or $enddef
-$define t me @ swap notify $enddef
+$define t me @ swap ansi_notify $enddef
 $define strc2 strcat strcat $enddef
 $define FAIL 0 $enddef
 $define PASS 1 $enddef
@@ -169,32 +174,11 @@ nmatch not me @ spoof-always getpropstr .yes? or parens !
 ( "_prefs/spoof_parens:yes" room @ spoof-block room @ spoof-notify )
 far @ not if "{At *} " seatname @ "*" subst else "" then header !
 getcontents dup ok?
-loc @ spoof-block getpropstr .yes? if "You can't spoof here!" t pop pop exit 
-then
+loc @ spoof-block getpropstr .yes? if "You can't spoof here!" t pop pop exit then
 loc @ spoof-notify getpropstr .yes? note !
 if
-multinotify #0 dbcmp not
-if
- loc @ loc @ 4 pick parens @ if "( | )" swap "|" subst then multinotify call
-then
-begin
- dup player? if dup awake? over spoof-ignore getpropstr .yes? not and else 0 
-then
- if
-  wiz_see? over dup me @ dbcmp not swap loc @ owner dbcmp note @ and and or
-  if
-   dup header @ "[" strcat me @ name "]: " 6 pick strc2 strcat notify
-  else
-   dup spoof-parens getpropstr .yes? parens @ or 3 pick swap
-   if
-    over spoof-custom getpropstr dup " | " instr 1 > not if pop "( | )" then
-    swap "|" subst
-   then
-   over swap header @ swap strcat notify
-  then
- then
- getnext dup ok? not
-until
+ loc @ loc @ 4 pick parens @ if "( | )" swap "|" subst then
+ loc @ #-1 rot ansi_notify_except
 then
 pop pop
 ;
@@ -273,5 +257,5 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/spoof #help
 @set $tmp/exit1=/_/fl:Spoof is being worked on, please be patient.
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-spoof complete.
