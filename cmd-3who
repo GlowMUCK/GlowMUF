@@ -1,0 +1,128 @@
+"Beginning installation of cmd-3who...
+@prog cmd-3who
+1 99999 d
+1 i
+( cmd-3who: $Date: 1999/04/17 23:42:43 $ $Revision: 1.1 $
+  Author: ???
+  --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-3who,v $
+  Revision 1.1  1999/04/17 23:42:43  feaelin
+  Initial revision
+
+)
+
+  
+$def .atell me @ swap ansi_notify
+  
+: stimestr (i -- s)
+    dup 86400 > if
+        86400 / intostr "d" strcat 
+    else dup 3600 > if
+            3600 / intostr "h" strcat
+        else dup 60 > if
+                60 / intostr "m" strcat
+            else
+                intostr "s" strcat
+            then
+        then
+    then
+    "    " swap strcat
+    dup strlen 4 - strcut swap pop
+;
+  
+  
+: mtimestr (i -- s)
+    "" over 86400 > if
+        over 86400 / intostr "d " strcat strcat
+        swap 86400 % swap
+    then
+    over 3600 / intostr
+    "00" swap strcat
+    dup strlen 2 - strcut
+    swap pop strcat ":" strcat
+    swap 3600 % 60 / intostr
+    "00" swap strcat
+    dup strlen 2 - strcut
+    swap pop strcat
+;
+  
+  
+: collate-entry (i -- s)
+    dup condbref name
+    over contime mtimestr
+    over strlen over strlen +
+    dup 19 < if
+        "                   " (19 spaces)
+        swap strcut swap pop
+    else
+        19 - rot dup strlen rot -
+        strcut pop swap ""
+    then
+    swap "^PURPLE^" swap strcat strcat strcat
+    "^GREEN^" swap strcat
+    swap conidle stimestr "^YELLOW^" swap strcat strcat
+;
+  
+  
+  
+: get-namelist  ( -- {s})
+    0 concount
+    begin
+        dup 0 > while
+        dup collate-entry
+        rot 1 + rot
+        1 -
+    repeat
+    pop
+;
+  
+  
+lvar col
+: show-namelist ({s} -- )
+    begin
+        dup 3 >= while
+        swap "   " strcat
+        over 3 / 3 pick 3 % 2 + 3 / +
+        dup col ! 2 +
+        rotate strcat "   " strcat
+        over 3 / 3 pick 3 % 1 +
+        3 / + col @ + 1 +
+        rotate strcat
+        .atell 3 -
+    repeat
+    dup if
+        ""
+        begin
+            over 0 > while
+            rot strcat "   " strcat
+            swap 1 - swap
+        repeat
+        .atell
+    then
+    pop
+;
+  
+  
+: show-who
+    preempt
+    "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
+    "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat .atell
+    get-namelist
+    show-namelist
+    concount intostr "^BLUE^" swap strcat
+    " players are connected."
+    strcat .atell
+;
+.
+c
+q
+@register cmd-3who=cmd/3who
+@register #me cmd-3who=tmp/prog1
+@set $tmp/prog1=W
+@action 3who;who3;3w=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:Same as the WHO list of everyone connected, except in three columns.
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-3who complete.
