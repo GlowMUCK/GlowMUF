@@ -2,7 +2,7 @@
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.3 $ $Date: 2004/04/07 03:48:43 $              )
+( lib-unparseobj: $Revision: 1.4 $ $Date: 2004/04/08 03:01:20 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Feaelin, Syvel                                               )
 ( -------------------------------------------------------------------------- )
@@ -21,6 +21,7 @@ i
 (                                    nearest format string in the environment)
 ( Format Specifiers:                                                         
     %N    Name of Object.      'One'
+    %P    Name of Object       'One' [No upper or lower adjustment]
     %D    DBref of Object.     '#1'
     %T    Type Flag.           'P'    [also %o for back-compatibility]
     %F    General Flags        'CT'
@@ -42,13 +43,16 @@ i
    _prefs/unparse/<type>:<color>  WHERE <type> is one of:
                                   thing, player, exit, program, room, unknown
                                   OR builder, meeper, mucker, wizard, flag,
-                                  name, dbref
+                                  name, dbref, slash
                                   WHERE <color> is a valid ANSI code with or
                                         without the carets.
 )
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.4  2004/04/08 03:01:20  feaelin
+  database item names are now different colors
+
   Revision 1.3  2004/04/07 03:48:43  feaelin
   Added %/ and fixed the // error.
 
@@ -64,168 +68,190 @@ i
 $include $lib/case
  
 ( color selection handling )
-: NAMECOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: SLASHCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
-    pop "" exit
+    pop ""
   else
-    "_prefs/unparse/name" envpropstr swap pop
+    me @ "_prefs/unparse/slash" envpropstr swap pop
     dup "" strcmp not if
-      pop "^AQUA^"
+      pop "^GREY^"
     then 
   then
   swap strcat
 ;
-: EXITCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: EXITCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/exit" envpropstr swap pop
+    me @ "_prefs/unparse/exit" envpropstr swap pop
     dup "" strcmp not if
       pop "^BLUE^"
     then 
   then
   swap strcat
 ;
-: FILECOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: FILECOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/program" envpropstr swap pop
+    me @ "_prefs/unparse/program" envpropstr swap pop
     dup "" strcmp not if
       pop "^RED^"
     then 
   then
   swap strcat
 ;
-: PLAYERCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: PLAYERCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/player" envpropstr swap pop
+    me @ "_prefs/unparse/player" envpropstr swap pop
     dup "" strcmp not if
       pop "^GREEN^"
     then 
   then
   swap strcat
 ;
-: ROOMCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: ROOMCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/room" envpropstr swap pop
+    me @ "_prefs/unparse/room" envpropstr swap pop
     dup "" strcmp not if
       pop "^CYAN^"
     then 
   then
   swap strcat
 ;
-: THINGCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: THINGCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/thing" envpropstr swap pop
+    me @ "_prefs/unparse/thing" envpropstr swap pop
     dup "" strcmp not if
       pop "^PURPLE^"
     then 
   then
   swap strcat
 ;
-: UNKNOWNCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: UNKNOWNCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/unknown" envpropstr swap pop
+    me @ "_prefs/unparse/unknown" envpropstr swap pop
     dup "" strcmp not if
       pop "^GLOOM^"
     then 
   then
   swap strcat
 ;
-: GUESTCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: NAMECOLOR ( s d -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/guest" envpropstr swap pop
+    me @ "_prefs/unparse/name" envpropstr swap pop
+    dup "" strcmp not if
+      pop
+      case
+        exit? when "" EXITCOLOR end
+        program? when "" FILECOLOR end
+        player? when "" PLAYERCOLOR end
+        room? when "" ROOMCOLOR end
+        thing? when "" THINGCOLOR end
+        default "" UNKNOWNCOLOR end
+      endcase
+    else
+      pop
+    then 
+  then
+  swap strcat
+;
+: GUESTCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    me @ "_prefs/unparse/guest" envpropstr swap pop
     dup "" strcmp not if
       pop "^GLOOM^"
     then 
   then
   swap strcat
 ;
-: BUILDERCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: BUILDERCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/builder" envpropstr swap pop
+    me @ "_prefs/unparse/builder" envpropstr swap pop
     dup "" strcmp not if
       pop "^GREEN^"
     then 
   then
   swap strcat
 ;
-: MEEPERCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: MEEPERCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/meeper" envpropstr swap pop
+    me @ "_prefs/unparse/meeper" envpropstr swap pop
     dup "" strcmp not if
       pop "^CYAN^"
     then 
   then
   swap strcat
 ;
-: MLEVCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: MLEVCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/mucker" envpropstr swap pop
+    me @ "_prefs/unparse/mucker" envpropstr swap pop
     dup "" strcmp not if
       pop "^RED^"
     then 
   then
   swap strcat
 ;
-: WLEVCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: WLEVCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/room" envpropstr swap pop
+    me @ "_prefs/unparse/room" envpropstr swap pop
     dup "" strcmp not if
       pop "^PURPLE^"
     then 
   then
   swap strcat
 ;
-: FLAGCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: FLAGCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/flag" envpropstr swap pop
+    me @ "_prefs/unparse/flag" envpropstr swap pop
     dup "" strcmp not if
       pop "^AQUA^"
     then 
   then
   swap strcat
 ;
-: DBREFCOLOR ( s d -- s )
-  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+: DBREFCOLOR ( s -- s )
+  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
   "y" instring if
     pop ""
   else
-    "_prefs/unparse/dbref" envpropstr swap pop
+    me @ "_prefs/unparse/dbref" envpropstr swap pop
     dup "" strcmp not if
       pop "^FOREST^"
     then 
@@ -235,10 +261,10 @@ $include $lib/case
 
 ( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
 : b-flag ( s d -- s )
-  dup "b" flag? if 
-    "B" swap BUILDERCOLOR
+  "b" flag? if 
+    "B" BUILDERCOLOR
   else 
-    "" swap pop
+    ""
   then
 ;
 
@@ -251,40 +277,37 @@ $include $lib/case
 ;
  
 : m-flag ( s d -- s )
-  dup "meeper" flag? if 
-    "M" swap MEEPERCOLOR
+  "meeper" flag? if 
+    "M" MEEPERCOLOR
   else
-    "" swap pop
+    ""
   then
 ;
  
 : parse_mlevel ( d -- s )
-  dup mlevel
+  mlevel
   case
-    0 = when "" swap pop exit end
-    1 = when "M1" over MLEVCOLOR end
-    2 = when "M2" over MLEVCOLOR end
-    3 = when "M3" over MLEVCOLOR end
-    4 = when "W1" over WLEVCOLOR end
-    5 = when "W2" over WLEVCOLOR end
-    6 = when "W3" over WLEVCOLOR end
-    7 = when "W4" over WLEVCOLOR end
-    8 = when "W5" over WLEVCOLOR end
+    0 = when "" end
+    1 = when "M1" MLEVCOLOR end
+    2 = when "M2" MLEVCOLOR end
+    3 = when "M3" MLEVCOLOR end
+    4 = when "W1" WLEVCOLOR end
+    5 = when "W2" WLEVCOLOR end
+    6 = when "W3" WLEVCOLOR end
+    7 = when "W4" WLEVCOLOR end
+    8 = when "W5" WLEVCOLOR end
   endcase
-  swap pop
 ;
  
 : parse_type ( d -- s )
-  dup
   case
-    exit? when "E" over EXITCOLOR end
-    program? when "F" over FILECOLOR end
-    player? when "P" over PLAYERCOLOR end
-    room? when "R" over ROOMCOLOR end
-    thing? when "T" over THINGCOLOR end
-    default "?" over UNKNOWNCOLOR end
+    exit? when "E"  EXITCOLOR end
+    program? when "F" FILECOLOR end
+    player? when "P" PLAYERCOLOR end
+    room? when "R" ROOMCOLOR end
+    thing? when "T" THINGCOLOR end
+    default "?" UNKNOWNCOLOR end
   endcase
-  swap pop
 ;
  
 : parse_flags ( d -- s )
@@ -306,7 +329,7 @@ $include $lib/case
   over "v" flag? if "V" strcat then
   over "x" flag? if "X" strcat then
   over "z" flag? if "Z" strcat then
-  swap FLAGCOLOR
+  swap pop FLAGCOLOR
 ;
  
 : do-slashes
@@ -335,11 +358,12 @@ $include $lib/case
   "%f%/%b%m%l" "%y" subst
   "%/%B%M%L" "%Z" subst
   "%/%b%m%l" "%z" subst swap
-  dup name 1 strcut swap dup toupper 3 pick strcat 4 pick NAMECOLOR -3 rotate
+  dup name dup 4 pick swap "%P" subst 3 put
+  1 strcut swap dup toupper 3 pick strcat 4 pick NAMECOLOR -3 rotate
   tolower swap strcat 3 pick NAMECOLOR
   4 rotate swap "%n" subst
   swap "%N" subst
-  "#" 3 pick DBREFCOLOR 3 pick int intostr strcat dup rot swap "%D" subst
+  "#" DBREFCOLOR 3 pick int intostr strcat dup rot swap "%D" subst
   swap "%d" subst
   over parse_type dup tolower -3 rotate toupper "%T" subst
   swap "%t" subst
@@ -351,13 +375,17 @@ $include $lib/case
   swap "%m" subst
   over parse_mlevel dup tolower -3 rotate toupper "%L" subst
   swap "%l" subst
+  "%/" SLASHCOLOR "%/" subst
   do-slashes
+  "(" SLASHCOLOR "(" subst
+  ")" SLASHCOLOR ")" subst
+  swap pop
 ; PUBLIC special-unparseobj
 
 : color-unparseobj ( d -- s )
   dup "/_prefs/unparse/format" envpropstr swap pop
   dup "" strcmp not if
-    pop "%N(%D%T%/%F%Z)"
+    pop "%P(%D%T%/%F%Z)"
   then
   special-unparseobj
 ; PUBLIC color-unparseobj
@@ -367,6 +395,6 @@ q
 @reg lib-unparseobj=lib/unparseobj
 @set $lib/unparseobj=/_defs/color-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
 @set $lib/unparseobj=/_defs/special-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
-@set $lib/unparseobj=_lib-version:$Revision: 1.3 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.4 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-40
 "Installation Complete.
