@@ -2,11 +2,11 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/04/04 15:14:30 $ $Revision: 1.10 $                    )
+( lib-match: $Date: 2005/04/04 16:11:50 $ $Revision: 1.11 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
-( Dependencies: lib-glow-standard, lib-stackrng                               )
+( Dependencies: lib-stackrng                                                  )
 ( --------------------------------------------------------------------------- )
 ( Matching library MATCH                                                      )
 ( MATCHpmatch: playername -- playerdbref                                      )
@@ -64,6 +64,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.11  2005/04/04 16:11:50  feaelin
+  Documentation Update
+
   Revision 1.10  2005/04/04 15:14:30  feaelin
   Forgot the _defs entry for pmatch.
 
@@ -233,5 +236,5 @@ q
 @set $lib/match=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-55
-@set $lib/match=/_lib-version:FM$Revision: 1.10 $
+@set $lib/match=/_lib-version:FM$Revision: 1.11 $
 wh me=Installation of lib-match completed.
