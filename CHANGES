@@ -1,9 +1,11 @@
+CHANGES $Date: 1998/07/25 18:25:35 $ $Revision: 1.1 $
+---------------------------------------------------------------------------
 25 July 1998: Beta Release of this distribution
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 Included a sample database of the programs arranged per the admin-guide
 
 1 June 1998: Alpha Release of this distribution
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 Original Base: Glowmuf 1.9.3 Release and FuzzBall MUF 5.61 Release
 
 With this initial release I have four objectives in mind:
