@@ -2,11 +2,15 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2001/02/21 17:40:29 $ $Revision: 1.5 $
+( cmd-path: $Date: 2001/02/21 21:37:24 $ $Revision: 1.6 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.6  2001/02/21 21:37:24  feaelin
+  Revised stupidlook support.  The program name will need to have 'look'
+  in it somewhere for the program to work nicely.
+
   Revision 1.5  2001/02/21 17:40:29  feaelin
   Added support for 'broken' look programs which fail to put @desc in
   parentheses on the stack before callingn programs.  defining STUPIDLOOK
@@ -111,7 +115,7 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.5 $ $Date: 2001/02/21 17:40:29 $"
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.6 $ $Date: 2001/02/21 21:37:24 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -435,8 +439,6 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   "@pjunk   dir                -- Remove a path" n
   "@pdup    olddir=newdir      -- Copy a path as is to a new path" n
   "@pcopy   exitname=dir       -- Copy a real exit into a path" n
-(  "@xdig" n )
-(  "@excavate (same as @xdig)" n )
   " " n
   "Use @succ here=@$cmd/path ... to show paths in a room." n
   " " n
@@ -750,7 +752,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     "@path;@phelp;@pshow;@pex;@pstat;@pjunk;"
     "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
     "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
-    "@plock;@punlock;@xdig;@excavate" strcat
+    "@plock;@punlock" strcat
   else arg @ "full" stringcmp if arg @ else
     "@path;o;n;s;e;w;u;d;nw;sw;ne;se;1;2;3;4;5;6;7;8;9;10;"
     "north;south;east;west;up;down;in;out;" strcat
@@ -758,7 +760,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     "@phelp;@pshow;@pex;@pstat;@pjunk;" strcat
     "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
     "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
-    "@plock;@punlock;@xdig;@excavate" strcat
+    "@plock;@punlock" strcat
   then then trig swap setname
   trig "@" prog intostr strcat " look" strcat setdesc
   trig "" setsucc trig "" setosucc
@@ -885,7 +887,11 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   then
 
 $ifdef STUPIDLOOK
-  caller program? if path-obvious-exits exit then
+  caller dup program? if
+    name "look" instr if
+      path-obvious-exits exit
+    then
+  then
 $else
   cmd @ "(@" 2 strncmp not if path-obvious-exits exit then
 $endif
@@ -1005,7 +1011,7 @@ q
 @set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
 @set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
-@set $tmp/prog1=_version:FM$Revision: 1.5 $
+@set $tmp/prog1=_version:FM$Revision: 1.6 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
