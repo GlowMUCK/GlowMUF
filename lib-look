@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/11 19:58:28 $ $Revision: 1.7 $                 )
+( cmd/lib-look: $Date: 2004/04/12 14:57:51 $ $Revision: 1.8 $                 )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -77,6 +77,10 @@
   
 ( 
   $Log: lib-look,v $
+  Revision 1.8  2004/04/12 14:57:51  feaelin
+  Fixed issue where obvious things like 'me' and 'here' didn't match correctly
+  in cmd-look. Changed failed messages to use the FAIL color code.
+
   Revision 1.7  2004/04/11 19:58:28  feaelin
   Changed detail-desc in preparation for adding functionality to match
   details against players and things in the room.
@@ -325,11 +329,11 @@ lvar realtrig
 : db-desc ( d -- )
   dup #-1 dbcmp
   if
-    pop "I don't see that here." tell exit
+    pop "^FAIL^I don't see that here." tell exit
   then
   dup #-2 dbcmp
   if
-    pop "I don't know which one you mean!" tell exit
+    pop "^FAIL^I don't know which one you mean!" tell exit
   then
   dup trigger @ realtrig ! trigger !
   dup room?
@@ -415,7 +419,7 @@ $endif
   "(@Desc)" 1 parsempi
   dup "" strcmp if
     str-desc
-    pop pop 1 exit
+    pop 1 exit
   then
   pop 0 exit
 ; PUBLIC detail-desc
@@ -423,10 +427,16 @@ $endif
 : cmd-look ( s -- )
   dup not
   if
-    pop "here" match db-desc exit
+    pop "here"
   then
-  dup detail-desc if exit then
-  match db-desc
+  dup match dup
+  #-1 dbcmp if
+    pop detail-desc not if
+      pop me @ "^FAIL^I don't see that here." ansi_notify
+    then
+  else
+    db-desc
+  then
 ;
  
 public safecall
@@ -479,6 +489,6 @@ q
 @set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=1-71
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.7 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.7 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.8 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.8 $
 "Installation of lib-look complete.
