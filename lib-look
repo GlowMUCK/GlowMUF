@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/15 21:15:11 $ $Revision: 1.11 $                )
+( cmd/lib-look: $Date: 2004/04/20 21:55:45 $ $Revision: 1.12 $                )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -17,6 +17,10 @@
 ( LOOKunparse:  d -- s                                                        )
 (      Takes a dbref, and returns either just its name, or the name plus      )
 (      flags, depending on the permissions of me @.                           )
+( LOOKstd-filter: d -- i                                                      )
+(      A typical filter for LOOKcontents-filter. If you need all the normal   )
+(      filtering plus more, you can call this inside of your own filter to    )
+(      prevent reinvention of the wheel...                                    )
 ( LOOKcontents-filter:  a d -- d... i                                         )
 (      Takes the address of a 'filter' routine and a dbref, and returns a     )
 (      range on the stack of the filtered contents of the object.  The first  )
@@ -77,6 +81,10 @@
   
 ( 
   $Log: lib-look,v $
+  Revision 1.12  2004/04/20 21:55:45  feaelin
+  Made the standard filter [LOOKstd-filter] public so extended filters can be
+  written without having to recreate the functionality of std-filter.
+
   Revision 1.11  2004/04/15 21:15:11  feaelin
   New Feature: ~look props. Similar in function to ~connect/~arrive/~idle
   props, you can now do: @set <item>=~look/<name>:<ref> and the program
@@ -553,9 +561,11 @@ q
 @set $lib/look=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
 @set $lib/look=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
 @set $lib/look=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@set $lib/look=/_defs/LOOKstd-filter:"$lib/look" match "std-filter" call
+
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-71
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.11 $
-@set $lib/look=/_version:1.31FM$Revision: 1.11 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.12 $
+@set $lib/look=/_version:1.31FM$Revision: 1.12 $
 "Installation of lib-look complete.
