@@ -1,0 +1,22 @@
+"Beginning installation of lock-mpi...
+@prog lock-mpi
+1 99999 d
+1 i
+( lock-mpi: $Date: 1999/02/21 01:15:53 $$Revision: 1.1 $
+  --------------------------------------------------------------------------- )
+: lock-mpi ( s -- )
+  trig dup room? not if location then
+  trigger !
+  trigger @ "meeper" flag? not if "" exit then
+  trigger @ "_mpi" "(lock-mpi)" 1 parseprop
+;
+.
+c
+q
+@register lock-mpi=lock/mpi
+@register #me lock-mpi=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W2
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of lock-mpi complete.

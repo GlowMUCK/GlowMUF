@@ -1,0 +1,18 @@
+"Beginning installation of lock-meeper...
+@prog lock-meeper
+1 99999 d
+1 i
+( lock-meeper: $Date: 1999/02/21 01:12:03 $$Revision: 1.1 $
+  --------------------------------------------------------------------------- )
+: lock-meeper ( s -- )
+  "me" match "meeper" flag?
+;
+.
+c
+q
+@register lock-meeper=lock/meeper
+@register #me lock-meeper=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M1
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of lock-meeper complete.
