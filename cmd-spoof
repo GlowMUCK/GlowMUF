@@ -1,0 +1,277 @@
+"Beginning installation of cmd-spoof...
+@prog cmd-spoof
+1 99999 d
+1 i
+( cmd-spoof: $Date: 2000/12/22 17:53:10 $ $Revision: 1.1 $                                                )
+( Author: Mystique@Anime                                                      )
+( --------------------------------------------------------------------------- )
+( New Spoof by Mystique@AnimeMUCK February 26, 1994.  Use but no abuse!       )
+(
+  Additions made for a #modes command and acceptances for the "seated-at"
+  property to go along with the usage of seats.
+ 
+  With the updates of this Spoof, NON FB5 server mucks will require M2W for
+  this spoof, otherwise, M3 for FB5.  *M3* will NOT work 100% on !FB5 mucks.
+)
+(
+  $Log: cmd-spoof,v $
+  Revision 1.1  2000/12/22 17:53:10  feaelin
+  Initial revision
+
+)
+var matchstr  (Match string, to match the codes from.)
+var parens    (Tells whether or not the Parens are required.)
+var note      (Tells the routine to show the player's name for the owner.)
+var seated    (If string has stuff in it, then take next dbref from it.)
+var far       (If 1, you're not seated.)
+var seatname  (Seatname for the spoof record.)
+var header    (Contains seat header, if any.)
+
+$include $lib/strings
+$include $lib/glowstandard
+$define wiztoo? me @ .mage? or $enddef
+$define t me @ swap notify $enddef
+$define strc2 strcat strcat $enddef
+$define FAIL 0 $enddef
+$define PASS 1 $enddef
+$define spoof-show "_prefs/spoof_show" $enddef
+$define spoof-block "_prefs/spoof_block" $enddef
+$define spoof-notify "_prefs/spoof_notify" $enddef
+$define spoof-ignore "_prefs/spoof_ignore" $enddef
+$define spoof-always "_prefs/spoof_always" $enddef
+$define spoof-parens "_prefs/spoof_parens" $enddef
+$define spoof-custom "_prefs/spoof_custom" $enddef
+$define sitting "seated-at" $enddef
+$define sitters "sitters" $enddef
+$define seat "seatname" $enddef
+$define multinotify #0 $enddef ( if #0, no multi notifier )
+
+
+: help ( -- )
+  " " t
+  "\"spoof <text>\" echoes text to everyone in the room.  If the first" t
+  "word of the text is someone's name, then the entire text will be" t
+  "echoed in parentheses.  All options are listed below." t
+  " " t
+  "   Command                         What it does" t
+  "  ~~~~~~~~~                       ~~~~~~~~~~~~~~" t
+  "spoof #parens    --  Forces all spoofs you see into parentheses." t
+  "spoof #!parens   --  Removes the #parens setting." t
+  loc @ owner me @ dbcmp wiztoo? if
+    "spoof #block     --  Prevents all spoofing in that room." t
+    "spoof #!block    --  Removes the spoof #block setting." t
+    "spoof #notify    --  Sets that room to tell the owner who is spoofing." t
+    "spoof #!notify   --  Removes the #notify setting." t
+  then
+  "spoof #custom <> --  `#custom paren paren'  to set or `#custom'  to reset." t
+  "spoof #always    --  Set all of your spoofs to show up within parens." t
+  "spoof #!always   --  Removes the #always setting." t
+  "spoof #ignore    --  You'll not see any spoofs.  (You can't spoof either.)" t
+  "spoof #!ignore   --  Removes the #ignore setting." t
+  far @ not if
+    "spoof #far <msg> --  Spoofs <msg> to the room, while seated." t
+  then
+  me @ .mage? if
+    "spoof #show     W--  Hides spoofers' identities from a wizard." t
+    "spoof #!show    W--  Reveals spoofers' identities for a wizard." t
+  then
+  "spoof #modes     --  Shows you all of your settings." t
+  " " t
+  "Lazy people can type the first letter of the option (spoof #p) instead" t
+  "of typing the full thing (spoof #parens)." t
+  " " t
+;
+
+: setmode ( s d s -- s )
+  getpropstr .yes? if "On " else "Off" then "*" subst
+;
+
+: modes ( -- )
+  " " t
+  "Parens: *" me @ spoof-parens setmode t
+  loc @ owner me @ dbcmp wiztoo? if
+    " Block: *" loc @ spoof-block setmode t
+    "Notify: *" loc @ spoof-notify setmode t
+  then
+  "Always: *" me @ spoof-always setmode t
+  "Ignore: *" me @ spoof-ignore setmode t
+  me @ .mage? if
+    "  Show: *" me @ spoof-show setmode t
+  then
+  "Custom: *" me @ spoof-custom getpropstr dup " | " instr 1 > not if pop "( | ) <Default>" then "`msg'" "|" subst "*" subst t
+  " " t
+;
+
+: nmatch ( s -- s i )
+ "\"<>/|=+-_)(*&^%$#@`~[{]} ';:,.?!" matchstr !
+ dup strlen not if FAIL exit then
+ begin
+ matchstr @ strlen not if PASS break then
+ dup " " strcat matchstr @ 1 strcut matchstr ! instr dup
+ if
+  over swap 1 - strcut pop (string cuts and gets name)
+  dup .pmatch dup #-1 dbcmp
+  if
+   pop pop (this is fine, allow it to pass.)
+  else
+   dup me @ dbcmp not swap name rot stringcmp not and
+   if FAIL exit then (fails only if full name is spelled.)
+  then
+ else
+  pop (gets rid of duplicate and continues.)
+ then
+ repeat
+;
+
+: wiz_see? ( i -- i i )
+  dup .mage? dup not if exit then pop
+  dup spoof-show getpropstr .yes?
+;
+
+: seated?
+  "" seated ! 1 far ! me @ sitting getpropstr dup "-" instr dup if
+    1 - strcut 
+  else
+    pop ""
+  then
+  swap atoi
+  dbref dup ok? not if
+    pop pop exit 
+  then 
+  dup location loc @ dbcmp not dup far ! if
+    pop pop exit
+  then
+  dup seat 4 pick strcat getpropstr seatname ! sitters rot strcat
+  getpropstr dup not if
+    1 far ! pop me @ sitting remove_prop exit
+  then
+  dup seated ! me @ intostr " " strcat instring not if 1 far ! then
+;
+
+: getnext
+  far @ if
+    next
+  else
+    pop seated @ dup not if pop #-1 exit then strip " " strcat dup " " instr 
+    strcut seated ! strip "" "#" subst atoi dbref dup location loc @ dbcmp 
+    not if 
+      getnext
+    then
+  then
+;
+
+: getcontents
+  far @ if loc @ contents else 0 getnext then
+;
+
+: do_spoof ( s -- )
+nmatch not me @ spoof-always getpropstr .yes? or parens !
+( "_prefs/spoof_parens:yes" room @ spoof-block room @ spoof-notify )
+far @ not if "{At *} " seatname @ "*" subst else "" then header !
+getcontents dup ok?
+loc @ spoof-block getpropstr .yes? if "You can't spoof here!" t pop pop exit 
+then
+loc @ spoof-notify getpropstr .yes? note !
+if
+multinotify #0 dbcmp not
+if
+ loc @ loc @ 4 pick parens @ if "( | )" swap "|" subst then multinotify call
+then
+begin
+ dup player? if dup awake? over spoof-ignore getpropstr .yes? not and else 0 
+then
+ if
+  wiz_see? over dup me @ dbcmp not swap loc @ owner dbcmp note @ and and or
+  if
+   dup header @ "[" strcat me @ name "]: " 6 pick strc2 strcat notify
+  else
+   dup spoof-parens getpropstr .yes? parens @ or 3 pick swap
+   if
+    over spoof-custom getpropstr dup " | " instr 1 > not if pop "( | )" then
+    swap "|" subst
+   then
+   over swap header @ swap strcat notify
+  then
+ then
+ getnext dup ok? not
+until
+then
+pop pop
+;
+
+: setprp ( i s s -- )
+  dup not if pop remove_prop exit then 0 addprop
+;
+
+: cmd? ( s s1 -- s i )
+  over dup " " instr dup if
+    1 - strcut
+  then
+  pop dup not if
+    pop pop 0 exit
+  then
+  instring 1 =
+;
+
+: custom_parens ( s -- )
+"!" "|" subst dup " " instr dup if strcut swap pop else pop pop "" then
+dup if " " explode dup 2 > if begin pop depth 3 < until depth then
+2 = not if "I need both parens, not just one." t pop exit else swap then else 
+"" then
+" | " swap strc2 me @ spoof-custom rot dup " | " stringcmp
+if
+ "Parens As: |" over "|" strc2
+else
+ pop "" "Parens As: Default |( | )|"
+then t setprp
+;
+: main ( s -- )
+( additions by codemage to track down frauds )
+"me" match dup me ! location loc !
+caller program? if
+    prog "~" caller intostr strcat getpropval 1 +
+    prog "~" caller intostr strcat "/" me @ intostr strcat strcat "" 4 pick addprop
+    prog "~" caller intostr strcat "" 4 rotate addprop
+then
+( end additions)
+seated? dup not if help pop exit then
+"#help" cmd? if help pop exit then
+"#parens" cmd? if me @ spoof-parens "yes" setprp "Spoof Parens default: On" t 
+exit then
+"#!parens" cmd? if me @ spoof-parens "" setprp "Spoof Parens default: Off" t 
+exit then
+"#custom" cmd? if custom_parens exit then
+"#always" cmd? if me @ spoof-always "yes" setprp "Spoof Always Paren: On" t 
+exit then
+"#!always" cmd? if me @ spoof-always "" setprp "Spoof Always Paren: Off" t 
+exit then
+"#ignore" cmd? if me @ spoof-ignore "yes" setprp "Spoof Ignore: On" t exit then
+"#!ignore" cmd? if me @ spoof-ignore "" setprp "Spoof Ignore: Off" t exit then
+"#modes" cmd? if modes exit then
+"#far" cmd? if dup " " instr strcut swap pop 1 far ! then
+me @ .mage? if
+"#show" cmd? if me @ spoof-show "yes" setprp "Spoof Always Show: On" t exit then
+"#!show" cmd? if me @ spoof-show "" setprp "Spoof Always Show: Off" t exit then
+then me @ loc @ owner dbcmp wiztoo? if
+"#block" cmd? if loc @ spoof-block "yes" setprp "Spoof Block: On" t exit then
+"#!block" cmd? if loc @ spoof-block "" setprp "Spoof Block: Off" t exit then
+"#notify" cmd? if loc @ spoof-notify "yes" setprp "Spoof Notify: On" t exit 
+then
+"#!notify" cmd? if loc @ spoof-notify "" setprp "Spoof Notify: Off" t exit then
+then dup "#" instr 1 = if pop "I don't think that worked." t exit then
+me @ spoof-ignore getpropstr .yes? if pop "Not while you're ignoring others." 
+t exit then strip dup if do_spoof then
+;
+.
+c
+q
+@register cmd-spoof=cmd/spoof
+@register #me cmd-spoof=tmp/prog1
+@set $tmp/prog1=W2
+@action spoof;spoo;spo;sp;@emit=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/spoof #help
+@set $tmp/exit1=/_/fl:Spoof is being worked on, please be patient.
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-spoof complete.
