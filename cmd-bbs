@@ -2,7 +2,7 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2000/12/19 20:18:49 $ $Revision: 1.5 $
+( cmd-bbs: $Date: 2000/12/19 20:23:26 $ $Revision: 1.6 $
   Author: Garth Minette
   --------------------------------------------------------------------------- )
 ( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette )
@@ -39,8 +39,15 @@
 
 ( 
   $Log: cmd-bbs,v $
+  Revision 1.6  2000/12/19 20:23:26  feaelin
+  General cleanup.
+
   Revision 1.5  2000/12/19 20:18:49  feaelin
   Documentation fixes.
+
+  Revision 1.4  2000/12/19 20:16:42  feaelin
+  Fixed an issue where a custom look would not properly trigger
+  the 'bbread' event when looking at a bulletin board object.
 
 )
 
@@ -590,5 +597,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $tmp/prog1=_version:FM$Revision: 1.5 $
+@set $tmp/prog1=_version:0.80FM$Revision: 1.6 $
 "Installation of cmd-bbs complete.
