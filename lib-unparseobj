@@ -2,7 +2,7 @@
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.6 $ $Date: 2004/04/10 15:19:21 $              )
+( lib-unparseobj: $Revision: 1.7 $ $Date: 2004/04/10 15:54:10 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Feaelin, Syvel                                               )
 ( -------------------------------------------------------------------------- )
@@ -77,11 +77,14 @@ i
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.7  2004/04/10 15:54:10  feaelin
+  Fixed bugs related to the builder, guest, and meeper flags
+
   Revision 1.6  2004/04/10 15:19:21  feaelin
   Fixed bug in public library call of UPOspecial-unparseobj
   Fixed bug in formatting that caused names with parentheses
   in them be colorized to the paren color.
-
+  
   Revision 1.5  2004/04/10 15:12:29  feaelin
   Streamlined the color-query code. Made the word public for
   handy use in other programs, e.g., @detail.
@@ -136,7 +139,7 @@ $include $lib/case
   
 ( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
 : b-flag ( s d -- s )
-  "b" flag? if 
+  dup "b" flag? swap player? and if
     "B" "builder" color-query
   else 
     ""
@@ -144,7 +147,7 @@ $include $lib/case
 ;
   
 : g-flag ( s d -- s )
-  "g" flag? if 
+  dup "guest" flag? if 
     "G" "guest" color-query
   else 
     ""
@@ -152,7 +155,7 @@ $include $lib/case
 ;
   
 : m-flag ( s d -- s )
-  "meeper" flag? if 
+  dup "meeper" flag? swap player? and if 
     "M" "meeper" color-query
   else
     ""
@@ -191,7 +194,7 @@ $include $lib/case
   over "b" flag? if over player? not if "B" strcat then then
   over "c" flag? if "C" strcat then
   over "d" flag? if "D" strcat then
-  over "guest" flag? if over player? not if "G" strcat then then
+  over "guest" flag? if "G" "guest" color-query strcat then
   over "h" flag? if "H" strcat then
   over "idle" flag? if "I" strcat then
   over "j" flag? if "J" strcat then
@@ -291,6 +294,6 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.6 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.7 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-68
 "Installation Complete.
