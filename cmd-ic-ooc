@@ -1,0 +1,33 @@
+"Beginning installation of cmd-ic-ooc...
+@prog cmd-ic-ooc
+1 99999 d
+1 i
+( cmd-ic-ooc: $Date: 2000/01/27 19:35:38 $ $Revision: 1.1 $
+( Version 1.0 by Feaelin Moilar                                        )
+( A quick and dirty for setting the new in_character flag. )
+$include $lib/glowstandard
+
+: ic 
+  "^GREEN^You slip in to character." .wrap
+  me @ "in_character" set
+;
+ 
+: ooc
+  "^GREEN^You slip out of character." .wrap
+  me @ "!in_character" set
+;
+ 
+: main
+  command @ "ic" instr if ic exit then
+  command @ "ooc" instr if ooc exit then
+;
+.
+c
+q
+@register #me cmd-ic-ooc=tmp/prog1
+@set $tmp/prog1=M3
+@set $tmp/prog1=/_/de:A scroll containing a spell called cmd-ic-ooc
+@action ic;ooc=#0=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of cmd-ic-ooc complete.
