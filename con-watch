@@ -2,13 +2,13 @@
 @prog con-watch
 1 99999 d
 1 i
-( con-announce: $Date: 1999/04/17 20:55:25 $ $Revision: 1.1 $
+( con-announce: $Date: 1999/04/17 21:00:24 $ $Revision: 1.2 $
   Author: ???
   --------------------------------------------------------------------------- )
 (
   $Log: con-watch,v $
-  Revision 1.1  1999/04/17 20:55:25  feaelin
-  Initial revision
+  Revision 1.2  1999/04/17 21:00:24  feaelin
+  Ooops. Watch that spacing.
 
 )
 ( CON-Announce 2.00 -- announces logins/logouts to interested players. )
@@ -69,7 +69,7 @@ lvar idle?
   
 : name_in_strlist? (s sList -- bool) in_strlist? ;
   
-: get-time ( -- s) "%l:%M%p" systime timefmt strip tolower;
+: get_time ( -- s) "%l:%M%p" systime timefmt strip tolower ;
   
 : do_format_subs (d -- s)
   dup announce_fmt_prop getpropstr  (get the announce format)
@@ -175,5 +175,5 @@ q
 @set $tmp/prog1=V
 @set $tmp/prog1=W3
 @set $tmp/prog1=/_docs:@list $con/announce=1-42
-@set $tmp/prog1=_version:2.0FM$Revision: 1.1 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.2 $
 "Installation of con-watch complete.
