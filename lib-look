@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/20 21:55:45 $ $Revision: 1.12 $                )
+( cmd/lib-look: $Date: 2004/04/20 22:05:52 $ $Revision: 1.13 $                )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -78,37 +78,40 @@
 (      Does a match function, then calls db-desc with the results.  This      )
 (      will simulate the usual 'look' command.                                )
 ( --------------------------------------------------------------------------- )
-  
 ( 
   $Log: lib-look,v $
+  Revision 1.13  2004/04/20 22:05:52  feaelin
+  Okay. This time, I REALLY made std-filter public. And fixed the docs up
+  properly.
+
   Revision 1.12  2004/04/20 21:55:45  feaelin
   Made the standard filter [LOOKstd-filter] public so extended filters can be
   written without having to recreate the functionality of std-filter.
-
+  
   Revision 1.11  2004/04/15 21:15:11  feaelin
   New Feature: ~look props. Similar in function to ~connect/~arrive/~idle
   props, you can now do: @set <item>=~look/<name>:<ref> and the program
   <ref> will be executed when <item> is looked at. As you might expect, the
   property may be set on parent rooms or #0, to have programs that are
   executed for the entire area/muck.
-
+  
   Revision 1.10  2004/04/13 23:18:24  feaelin
   Added support for IDESCs
-
+  
   Revision 1.9  2004/04/12 15:50:55  feaelin
   Fixed bug in look that caused it to display dbrefs & flags for players that
   had 'color' turned on.
-
+  
   Revision 1.8  2004/04/12 14:57:51  feaelin
   Fixed issue where obvious things like 'me' and 'here' didn't match correctly
   in cmd-look. Changed failed messages to use the FAIL color code.
-
+  
   Revision 1.7  2004/04/11 19:58:28  feaelin
   Changed detail-desc in preparation for adding functionality to match
   details against players and things in the room.
   Cleaned up the docs so that they display correctly for the MUF editor's
   'view' command.
-
+  
   Revision 1.6  2004/04/11 18:46:00  feaelin
   Added the library calls LOOKxxx, to be more inline with the standard.
   Added support for @object/@detail details. Correspondingly added some
@@ -211,7 +214,7 @@ lvar realtrig
   then
   dup "dark" flag? if pop 0 exit then
   pop 1 
-;
+; PUBLIC std-filter
  
 : contents-filter ( a d -- d... i )
   contents 0 rot rot
@@ -565,7 +568,7 @@ q
 
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
-@set $lib/look=/_docs:@list $lib/look=1-71
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.12 $
-@set $lib/look=/_version:1.31FM$Revision: 1.12 $
+@set $lib/look=/_docs:@list $lib/look=1-76
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.13 $
+@set $lib/look=/_version:1.31FM$Revision: 1.13 $
 "Installation of lib-look complete.
