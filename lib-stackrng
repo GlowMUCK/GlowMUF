@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2001/02/23 16:18:39 $ $Revision: 1.5 $
+( lib-stackrng: $Date: 2004/03/01 16:58:26 $ $Revision: 1.6 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling object -- SRNG ****                 
@@ -45,6 +45,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.6  2004/03/01 16:58:26  feaelin
+  Added SRNGxxx entries, so future uses can be more obvious.
+
   Revision 1.5  2001/02/23 16:18:39  feaelin
   Fixed incompatibility problem with older versions that have been upgraded
   Required adding a 'removal' of a definition to insure that a conflict
@@ -169,7 +172,15 @@ q
 @set $tmp/prog1=/_defs/sr-insertrng:"$lib/stackrng" match "insertrange" call
 @set $tmp/prog1=/_defs/sr-poprng:popn
 @set $tmp/prog1=/_defs/sr-swaprng:"$lib/stackrng" match "swapranges" call
+@set $tmp/prog1=/_defs/SRNGcatrng:"$lib/stackrng" match "catranges" call
+@set $tmp/prog1=/_defs/SRNGcopyrng:"$lib/stackrng" match "copyrange" call
+@set $tmp/prog1=/_defs/SRNGdeleterng:"$lib/stackrng" match "deleterange" call
+@set $tmp/prog1=/_defs/SRNGextractrng:"$lib/stackrng" match "extractrange" call
+@set $tmp/prog1=/_defs/SRNGfilterrng:"$lib/stackrng" match "filterrange" call
+@set $tmp/prog1=/_defs/SRNGinsertrng:"$lib/stackrng" match "insertrange" call
+@set $tmp/prog1=/_defs/SRNGpoprng:popn
+@set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
 @set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
 @set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
 "Installation of lib-stackrng completed
