@@ -1,0 +1,92 @@
+"Beginning installation of cmd-ansi...
+@prog cmd-ansi
+1 99999 d
+1 i
+( cmd-ansi: $Date: 1999/04/18 00:17:49 $ $Revision: 1.1 $
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-ansi,v $
+  Revision 1.1  1999/04/18 00:17:49  feaelin
+  Initial revision
+
+)
+
+$include $lib/glow
+
+$def a me @ swap ansi_notify
+$def n me @ swap notify
+  
+: do-help ( -- )
+  "color on  -- turn on color" n
+  "color off -- turn off color" n
+  "colors    -- show color combinations" n
+;
+  
+: show-colors ( -- )
+  me @ "C" flag? if
+" " n
+"Ansi Colors are available by ^COLOR^ or ^MODE^ (^ ^ is the same as ^NORMAL^)" n
+" " n
+"^NORMAL^Normal^ ^   ^FLASH^Flash^ ^    ^INVERT^Invert^ ^   Beep    Cls" a
+" " n
+"^BLACK^^BGRAY^Black^ ^    ^CRIMSON^Crimson^ ^  ^FOREST^Forest^ ^   ^BROWN^Brown^ ^"
+a
+"^NAVY^Navy^ ^     ^VIOLET^Violet^ ^   ^AQUA^Aqua^ ^     ^GRAY^Gray^ ^" a
+" " n
+"^GLOOM^Gloom^ ^    ^RED^Red^ ^      ^GREEN^Green^ ^    ^YELLOW^Yellow^ ^" a
+"^BLUE^Blue^ ^     ^PURPLE^Purple^ ^   ^CYAN^Cyan^ ^     ^WHITE^White^ ^" a
+" " n
+"^BBLACK^BBlack^ ^   ^BRED^BRed^ ^     ^BGREEN^BGreen^ ^   ^BBROWN^BBrown^ ^" a
+"^BBLUE^BBLue^ ^    ^BPURPLE^BPurple^ ^  ^BCYAN^BCyan^ ^    ^BLACK^^BGRAY^BGray^ ^"
+a
+" " n
+"^SUCC^Succ^ ^     ^FAIL^Fail^ ^     ^INFO^Info^ ^     ^NOTE^Note^ ^    ^MOVE^Move^ ^"
+a
+  else
+    "You are color blind." n
+  then
+;
+  
+: ansi ( s -- )
+  "me" match dup location loc ! me !
+  command @ "colors" stringcmp not if pop show-colors exit then
+  
+  dup if
+    dup "help" stringcmp not if pop do-help exit then
+    dup "on" stringcmp not swap .yes? or if
+      me @ "C" set
+      " " n
+      "For linewrap try: @wrap 80" n
+      "For wordwrap in some programs try: @set me=_prefs/linewrap:yes" n
+      " " n
+      "^BLUE^Ansi color turned ^GREEN^^FLASH^on^ ^^BLUE^! "
+      "^YELLOW^You will now see in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ " strcat
+      "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!" strcat a
+    else
+      me @ "!C" set
+      " " n
+      "Ansi color turned off. Living in a monochrome world again. *sigh*" n
+    then
+  else pop
+    me @ "C" flag? if
+      "^AQUA^You are seeing in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ "
+      "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!  'ansi help' for help."
+      strcat a
+    else
+      "You are living in a monochrome world.  'ansi help' for help." n
+    then
+  then
+;
+.
+c
+q
+@register cmd-ansi=cmd/ansi
+@set $cmd/ansi=V
+@set $cmd/ansi=M3
+@set $cmd/ansi=_version:FM$Revision: 1.1 $
+@action color;ansi;colors;@ansi=here=tmp/exit1
+@link $tmp/exit1=$cmd/ansi
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:Type 'color on' to turn color on.  'color off' turns it off.  'colors' lists available colors.
+"Installation of cmd-ansi complete.
