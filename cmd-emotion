@@ -2,11 +2,14 @@ wh me=Beginning installation of cmd-emotion...
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2005/03/07 14:40:34 $ $Revision: 1.7 $
+( cmd-emotion: $Date: 2005/03/07 15:25:45 $ $Revision: 1.8 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.8  2005/03/07 15:25:45  feaelin
+  Fixed problem where prior fix introduced bug that caused 'remove verb' to fail.
+
   Revision 1.7  2005/03/07 14:40:34  feaelin
   Fixed the issues where the 'socials' command would report various crazy
   variants of the words 'emotions' and 'socials' as part of the list.
@@ -376,7 +379,7 @@ $def LiORes "o" swap resdir listemotion
     "" ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc" subst
     SortStr
        ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc"
-    strcat setname pop
+    strcat trig swap setname pop
     "Social verb removed." n
   else
     pop "Usage: " command @ strcat
@@ -552,6 +555,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.7 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.8 $
 wh me=Installation of cmd-emotion complete.
 wh me=Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
