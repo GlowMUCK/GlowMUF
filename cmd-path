@@ -2,11 +2,14 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 1999/04/18 20:48:21 $ $Revision: 1.1 $
+( cmd-path: $Date: 2000/02/11 19:56:55 $ $Revision: 1.2 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.2  2000/02/11 19:56:55  feaelin
+  Several new library functions.
+
   Revision 1.1  1999/04/18 20:48:21  feaelin
   Initial revision
 
@@ -351,7 +354,39 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     plr @ dup location swap rot path-subst plr @ swap pronoun_sub notify_except
   else pop then
 ;
-  
+ 
+: path-get-desc ( d s -- )
+  dir-prop "de" path-get-dir-prop
+; public path-get-desc
+ 
+: path-get-succ ( d s -- )
+  dir-prop "sc" path-get-dir-prop
+; public path-get-succ
+
+: path-get-osucc ( d s -- )
+  dir-prop "osc" path-get-dir-prop 
+; public path-get-osucc
+ 
+: path-get-fail ( d s -- )
+  dir-prop "fl" path-get-dir-prop
+; public path-get-fail
+
+: path-get-ofail ( d s -- )
+  dir-prop "ofl" path-get-dir-prop 
+; public path-get-ofail
+ 
+: path-get-drop ( d s -- )
+  dir-prop "dr" path-get-dir-prop
+; public path-get-drop
+ 
+: path-get-odrop ( d s -- )
+  dir-prop "odr" path-get-dir-prop 
+; public path-get-odrop
+
+: path-get-lock ( d s -- )
+  dir-prop "lok" path-get-dir-prop
+; public path-get-lock
+
 : cmd-help ( -- )
   TITLE
   "Commands:" n
@@ -771,7 +806,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   then
   
   command @ "(@" 2 strncmp not if path-obvious-exits exit then
-  
+
   cmd @ 2 strcut pop "@p" strcmp if
   ( Path )
     cmd @ dir-prop dir !
@@ -869,8 +904,21 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=V
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
-@action o;n;s;e;w;u;d;nw;sw;ne;se;1;2;3;4;5;6;7;8;9;10;north;south;east;west;up;down;in;out;northwest;northeast;southwest;southeast;@phelp;@pshow;@pex;@pstat;@pjunk;@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;@plock;@punlock=here=tmp/exit1
+@register cmd-path=lib/path
+@set $tmp/prog1=/_defs/PATHlist:"$lib/path" match "path-list" call
+@set $tmp/prog1=/_defs/PATHgetlink:"$lib/path" match "path-getlink" call
+@set $tmp/prog1=/_defs/PATHlocked?:"$lib/path" match "path-locked?" call
+@set $tmp/prog1=/_defs/PATHgetdesc:"$lib/path" match "path-get-desc" call
+@set $tmp/prog1=/_defs/PATHgetlockstr:"$lib/path" match "path-get-lock" call
+@set $tmp/prog1=/_defs/PATHgetsucc:"$lib/path" match "path-get-succ" call
+@set $tmp/prog1=/_defs/PATHgetosucc:"$lib/path" match "path-get-osucc" call
+@set $tmp/prog1=/_defs/PATHgetfail:"$lib/path" match "path-get-fail" call
+@set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
+@set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
+@set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
 "Installation of cmd-path complete.
