@@ -1,6 +1,6 @@
-INSTALL $Date: 1999/04/18 21:04:20 $ $Revision: 1.5 $
+INSTALL $Date: 2000/01/10 18:10:23 $ $Revision: 1.6 $
 ---------------------------------------------------------------------------
-FMMUF 1.0.1 (Beta Release)
+FMMUF 1.0.2 (Alpha Release)
 ---------
   Warning: Some of these libs require Glow 3.0.0 or later.   You were going to
 upgrade, weren't you? 
