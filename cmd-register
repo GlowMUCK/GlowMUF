@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1998/07/27 21:12:30 $ $Revision: 1.8 $
+( cmd-register $Date: 1999/04/16 19:55:55 $ $Revision: 1.9 $
   Original Author: Unknown                              
   Updated for Glowmuck by: Andy
   Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
@@ -10,11 +10,14 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.9  1999/04/16 19:55:55  feaelin
+   Changed the priority of the exit to M3.
+
    Revision 1.8  1998/07/27 21:12:30  glow
    Fixed annoying bug with updating the Revision string used for comparing.
 
    Revision 1.7  1998/07/27 21:07:41  glow
-   Fixed strip-rcs to handle a null $Revision: 1.8 $
+   Fixed strip-rcs to handle a null $Revision: 1.9 $
 
    Revision 1.6  1998/07/27 19:40:20  glow
    During earlier changes, messed up the wiz-level.  It's now corrected.
@@ -243,8 +246,8 @@ q
 @set cmd-register=W2
 @action @register;@registe;@regist;@regis;@regi;@reg=here=tmp/exit1
 @link $tmp/exit1=cmd-register
-@set $tmp/exit1=M1
+@set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.8 $
+@set $cmd/register=_version:FM$Revision: 1.9 $
 "Installation of cmd-register finished.
