@@ -1,0 +1,135 @@
+"Beginning installation of cmd-whois...
+@program cmd-whois
+1 99999 d
+1 i
+( cmd-whois: $Date: 2000/12/22 18:40:17 $ $Revision: 1.1 $ )
+( Authors: Scotfox, Casual                                                    )
+( --------------------------------------------------------------------------- )
+( whois.muf, by Scotfox, 20-July-1993 )
+( modified by Casual, 5-Mar-1994 )
+
+( 
+  $Log: cmd-whois,v $
+  Revision 1.1  2000/12/22 18:40:17  feaelin
+  Initial revision
+
+)
+
+$include $lib/glowstandard
+$include $lib/strings
+
+$def MARK "[!] "
+
+: whois-help
+    "Syntax:" .tell
+    "  whois <player> -- Find out who someone is." .tell
+    "  whois #hide    -- Hide your description from being whoised." .tell
+    "  whois #show    -- Allow your description to be seen again." .tell
+    " " .tell
+    "Properties:" .tell
+    "  _private:yes                to make yourself private." .tell
+    "  _prefs/whois_ok:no          to make yourself un-whois-able." .tell
+    "  _prefs/whois_ok:yes         to be whois-able, despite privacy." .tell
+    "  _prefs/whois_notify:no      to turn off notification messages." .tell
+    "  _prefs/whois_showdesc:yes   to let others see your description." .tell
+    "@idesc me=Will use this instead of your normal description for whois!"
+    .tell " " .tell
+    "Whois will also show up to 10 lines in your '_whois/' propdir. For" .tell
+    "example, you can '@set me=_whois/wearing:bluejeans', and everyone" .tell
+    "will see you're wearing bluejeans when they whois you." .tell
+;
+: whois-hide ( -- )
+    me @ "_prefs/whois_showdesc" "no" setprop
+    "Your description is now hidden from being whoised." .tell
+;
+: whois-show ( -- )
+    me @ "_prefs/whois_showdesc" remove_prop
+    "Your description can now be seen using whois." .tell
+;
+: do-desc  ( descstr -- )
+  dup not if "[ No description ]" .tell exit then  ( No desc. )
+  .run exit
+  dup 1 strcut swap "@" strcmp if pop .tell exit then  ( Normal desc. )
+  swap pop " " .strcutat  ( Find program dbref. )
+  (Perhaps make special provisions for no-parameter programs?)
+  swap dup atoi dup if dbref swap pop call exit then  ( Prog dbref. )
+  pop .wizmatch dup ok? if call else pop .tell then
+;
+: timestring ( seconds -- timestring )
+  60 / dup 60 % swap 60 /  ( minutes hours )
+  dup 0 > if intostr " hours " strcat else pop "" then  ( minutes hourstr )
+  swap intostr " minutes" strcat strcat
+;
+: idle-time  ( playerdbref -- idlestring )
+  timestamps pop swap pop swap pop  ( lastused )
+  systime swap -  ( idlesecs )
+  dup 120 > if timestring else pop "" then
+;
+: do-notify ( d -- )
+  dup MARK me @ name strcat " is curious about who you are." strcat notify
+;
+: do-sex-and-awake  ( d -- d )
+    dup name 
+    " (sex: " strcat over "sex" getpropstr dup not if pop "not set" then
+    strcat ") " strcat
+    "is " strcat over awake? if
+        "awake" strcat over idle-time dup if
+            ", idle " swap strcat strcat else pop then
+        else "asleep" strcat then
+    "." strcat .tell
+;
+: do-showdesc
+    ( playerdbref )
+    dup "_prefs/whois_showdesc" getpropstr .no? not if
+        dup "_/ide" getpropstr dup not if pop dup desc then
+        "!!!" swap  ( put a marker there )
+        do-desc
+        begin  ( take off everything above the marker )
+            dup string? not if pop continue then
+            "!!!" strcmp while repeat then
+;
+: do-whois-propdir
+    ( playerdbref )
+    0 "_whois/"
+    begin 3 pick swap nextprop dup while  ( playerdbref count propname )
+(        dup "_whois/showdesc" strcmp not if continue then )
+        3 pick over getpropstr  ( playerdbref count propname propstr )
+        over 7 strcut swap pop ": " strcat swap strcat .tell
+        swap 1 + dup 10 = if break else swap then
+    repeat pop pop
+;
+: whois
+  dup not if whois-help exit then
+  .noguest
+  dup "#" 1 strncmp not if tolower
+    "#he" 3 strncmp not if whois-help exit then
+    "#hi" 3 strncmp not if whois-hide exit then
+    "#sh" 3 strncmp not if whois-show exit then
+    whois-help
+  else
+    .pmatch dup trigger !
+    dup not if pop "I don't know who that is." .tell exit then
+    dup "_private" getpropstr .yes? if
+        dup "_prefs/whois_ok" getpropstr .yes? not if
+            "That player is private." .tell exit then then
+    dup "_prefs/whois_ok" getpropstr .no? if
+        "That player does not wish to be whois'd." .tell exit then
+    do-showdesc
+    dup "_prefs/whois_notify" getpropstr .no? not if do-notify then
+    do-sex-and-awake
+    do-whois-propdir
+    " " .tell
+  then
+;
+.
+c
+q
+@register cmd-whois=cmd/whois
+@register #me cmd-whois=tmp/prog1
+@set $tmp/prog1=M2
+@action whois;finger;pinfo=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/whois
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-whois complete.
