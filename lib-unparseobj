@@ -1,0 +1,350 @@
+"Beginning installation of lib-unparseobj...
+@prog lib-unparseobj
+1 10000 d
+i
+( lib-unparseobj: $Revision: 1.1 $ $Date: 2004/04/07 00:02:18 $ )
+( Author: Feaelin Moilar AKA Iain E. Davis                                   )
+( Contributors: Feaelin, Syvel                                               )
+( -------------------------------------------------------------------------- )
+( Inspired By Syvel's glow-color-unparseobj                                  )
+( Dedicated to Syvel...Syvel contributed extensively to the FB/Glow          )
+( community. If you ever see her, give her the appreciation she deserves.    )
+( Thank you, Syvel!                                                          )
+( -------------------------------------------------------------------------- )
+( This library provides two publicly accessible routines:                    )
+(                                                                            )
+( special-unparseobj [ d s1 -- s2 ]  Takes format string s1 and generates a  )
+(                                    formatted string (see format specifiers )
+(                                    below).                                 )
+( color-unparseobj   [    d -- s  ]  Generates a colorized unparseobj either )
+(                                    using the default format string, or the )
+(                                    nearest format string in the environment)
+( Format Specifiers:                                                         
+    %N    Name of Object.      'One'
+    %D    DBref of Object.     '#1'
+    %T    Type Flag.           'P'    [also %o for back-compatibility]
+    %F    General Flags        'CT'
+    %B    Builder Flag         'B'
+    %L    Mucker Level Flag    'W4'
+    %M    Meeper Flag          'M'
+    %X    %T/%F/%B%M%L         'P/CI/BMW4'
+    %Y    %F/%B%M%L            'CI/BMW4'
+    %Z    /%B%M%L              '/BMW4'
+
+   Syvel's version prepended forward slashes on /.  I prefer to use the 
+   pronoun substitution model, which means %B would produce 'B' if the
+   Builder flag is set, while %b produces 'b'.
+
+   This lib supports the following props:
+   _prefs/unparse/format:       Format for unparseobj
+   _prefs/unparse/nocolor?:     'yes' to disable smart colorization.
+   _prefs/unparse/<type>:<color>  WHERE <type> is one of:
+                                  thing, player, exit, program, room, unknown
+                                  OR builder, meeper, mucker, wizard, flag,
+                                  name
+                                  WHERE <color> is a valid ANSI code with or
+                                        without the carets.
+)
+( -------------------------------------------------------------------------- )
+(
+  $Log: lib-unparseobj,v $
+  Revision 1.1  2004/04/07 00:02:18  feaelin
+  Initial revision
+
+)
+( -------------------------------------------------------------------------- )
+ 
+$include $lib/case
+ 
+( color selection handling )
+: NAMECOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/name" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^AQUA^"
+    then 
+  then
+  swap strcat
+;
+: EXITCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/exit" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^BLUE^"
+    then 
+  then
+  swap strcat
+;
+: FILECOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/program" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^RED^"
+    then 
+  then
+  swap strcat
+;
+: PLAYERCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/player" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^GREEN^"
+    then 
+  then
+  swap strcat
+;
+: ROOMCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/room" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^CYAN^"
+    then 
+  then
+  swap strcat
+;
+: THINGCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/thing" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^PURPLE^"
+    then 
+  then
+  swap strcat
+;
+: UNKNOWNCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/unknown" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^GLOOM^"
+    then 
+  then
+  swap strcat
+;
+: GUESTCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/guest" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^GLOOM^"
+    then 
+  then
+  swap strcat
+;
+: BUILDERCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/builder" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^GREEN^"
+    then 
+  then
+  swap strcat
+;
+: MEEPERCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/meeper" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^CYAN^"
+    then 
+  then
+  swap strcat
+;
+: MLEVCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/mucker" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^RED^"
+    then 
+  then
+  swap strcat
+;
+: WLEVCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/room" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^PURPLE^"
+    then 
+  then
+  swap strcat
+;
+: FLAGCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/flag" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^AQUA^"
+    then 
+  then
+  swap strcat
+;
+: DBREFCOLOR ( s d -- s )
+  dup "_prefs/unparse/nocolor?" envpropstr swap pop
+  "y" instring if
+    pop ""
+  else
+    "_prefs/unparse/dbref" envpropstr swap pop
+    dup "" strcmp not if
+      pop "^FOREST^"
+    then 
+  then
+  swap strcat
+;
+
+( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
+: b-flag ( s d -- s )
+  dup "b" flag? if 
+    "B" swap BUILDERCOLOR
+  else 
+    ""
+  then
+;
+
+: g-flag ( s d -- s )
+  dup "g" flag? if 
+    "G" swap GUESTCOLOR
+  else 
+    ""
+  then
+;
+ 
+: m-flag ( s d -- s )
+  dup "meeper" flag? if 
+    "M" swap MEEPERCOLOR
+  else
+    ""
+  then
+;
+ 
+: parse_mlevel ( d -- s )
+  dup mlevel
+  case
+    0 = when "" exit end
+    1 = when "M1" over MLEVCOLOR end
+    2 = when "M2" over MLEVCOLOR end
+    3 = when "M3" over MLEVCOLOR end
+    4 = when "W1" over WLEVCOLOR end
+    5 = when "W2" over WLEVCOLOR end
+    6 = when "W3" over WLEVCOLOR end
+    7 = when "W4" over WLEVCOLOR end
+    8 = when "W5" over WLEVCOLOR end
+  endcase
+  swap pop
+;
+ 
+: parse_type ( d -- s )
+  dup
+  case
+    exit? when "E" over EXITCOLOR end
+    program? when "F" over FILECOLOR end
+    player? when "P" over PLAYERCOLOR end
+    room? when "R" over ROOMCOLOR end
+    thing? when "T" over THINGCOLOR end
+    default "?" over UNKNOWNCOLOR end
+  endcase
+  swap pop
+;
+ 
+: parse_flags ( d -- s )
+  ""
+  over "a" flag? if "A" strcat then
+  over "b" flag? if over player? not if "B" strcat then then
+  over "c" flag? if "C" strcat then
+  over "d" flag? if "D" strcat then
+  over "guest" flag? if over player? not if "G" strcat then then
+  over "h" flag? if "H" strcat then
+  over "idle" flag? if "I" strcat then
+  over "j" flag? if "J" strcat then
+  over "k" flag? if "K" strcat then
+  over "l" flag? if "L" strcat then
+  over "meeper" flag? if over player? not if "M" strcat then then
+  over "q" flag? if "Q" strcat then
+  over "s" flag? if "S" strcat then
+  over "tinkerproof" flag? if "T" strcat then
+  over "v" flag? if "V" strcat then
+  over "x" flag? if "X" strcat then
+  over "z" flag? if "Z" strcat then
+  swap FLAGCOLOR
+;
+
+: special-unparseobj ( d s -- s )
+  "%T^GREY^/%F^GREY^/%B%M%L" "%X" subst
+  "%t^GREY^/%f^GREY^/%b%m%l" "%x" subst
+  "%F^GREY^/%B%M%L" "%Y" subst
+  "%f^GREY^/%b%m%l" "%y" subst
+  "^GREY^/%B%M%L" "%Z" subst
+  "^GREY^/%b%m%l" "%z" subst swap
+  dup name 1 strcut swap dup toupper 3 pick strcat 4 pick NAMECOLOR -3 rotate
+  tolower swap strcat 3 pick NAMECOLOR
+  4 rotate swap "%n" subst
+  swap "%N" subst
+  "#" 3 pick DBREFCOLOR 3 pick int intostr strcat dup rot swap "%D" subst
+  swap "%d" subst
+  over parse_type dup tolower -3 rotate toupper "%T" subst
+  swap "%t" subst
+  over parse_flags dup tolower -3 rotate toupper "%F" subst
+  swap "%f" subst
+  over b-flag dup tolower -3 rotate toupper "%B" subst
+  swap "%b" subst
+  over m-flag dup tolower -3 rotate toupper "%M" subst
+  swap "%m" subst
+  over parse_mlevel dup tolower -3 rotate toupper "%L" subst
+  swap "%l" subst
+; PUBLIC special-unparseobj
+
+: color-unparseobj ( d -- s )
+  dup "/_prefs/unparse/format" envpropstr swap pop
+  dup "" strcmp not if
+    pop "%N(%D%T^GREY^/%F%Z)"
+  then
+  special-unparseobj
+; PUBLIC color-unparseobj
+
+: main ( -- ) ( for testing )
+  pop me @ color-unparseobj
+  ansi_notify
+;
+.
+c
+q
+@reg lib-unparseobj=lib/unparseobj
+@set $lib/unparseobj=/_defs/color-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
+@set $lib/unparseobj=/_defs/special-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
+@set $lib/unparseobj=_lib-version:$Revision: 1.1 $
+@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-42
+"Installation Complete.
