@@ -2,11 +2,16 @@
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2000/12/25 05:55:22 $ $Revision: 1.3 $
+( cmd-emotion: $Date: 2004/04/08 13:35:38 $ $Revision: 1.4 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.4  2004/04/08 13:35:38  feaelin
+  Fixed issue where custom look programs weren't able to 'look emotion' to
+  see a list of possible emotions. Added feature so you can type 'socials'
+  or 'emotions' to see the list as well.
+
   Revision 1.3  2000/12/25 05:55:22  feaelin
   Added 'hug #far' type feature.
 
@@ -36,8 +41,10 @@
 ( @desc hug=@$cmd/emotion -help         Add a decent description        )
   
 ( More setup can be done to customize responses of actions.             )
-lvar thing lvar dept
+lvar thing
+lvar dept
 lvar far
+lvar alt-trigger
 $include $lib/glow
 $include $lib/strings
 
@@ -336,7 +343,8 @@ $def LiORes "o" swap resdir listemotion
  
 : showall (--)
   "Known socials: "
-  trig name ", " ";" subst
+  alt-trigger @ name dup "soc;" instr 3 + strcut swap pop
+  ", " ";" subst
   .cleancommas
   "." strcat strcat n
 ;
@@ -392,10 +400,14 @@ $def LiORes "o" swap resdir listemotion
  
 : Emotion-Main (s --)
   trig exit? not if pop exit then
+  trigger @ alt-trigger ! ( for custom-look programs, and only for -all )
   trig trigger !
   command @ tolower command !
   "me" match dup me ! location loc !
-  
+ 
+  command @ "soc" instr if pop showall exit then
+  command @ "emoti" instr if pop showall exit then
+
   striplead striptail
   dup 1 strcut pop "!" strcmp not if
     " " .split2 swap
@@ -522,6 +534,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.3 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.4 $
 "Installation of cmd-emotion complete.
 "Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
