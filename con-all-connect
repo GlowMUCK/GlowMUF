@@ -2,16 +2,16 @@
 @prog con-caller
 1 99999 d
 1 i
-( con-caller: $Date: 1999/04/17 14:29:54 $ $Revision: 1.1 $
+( con-caller: $Date: 1999/04/17 14:32:17 $ $Revision: 1.2 $
   Author: Andy
   --------------------------------------------------------------------------- )
 (
   $Log: con-all-connect,v $
-  Revision 1.1  1999/04/17 14:29:54  feaelin
-  Initial revision
+  Revision 1.2  1999/04/17 14:32:17  feaelin
+  Brought in line with glow 3.1.0
 
 )
-  ---------------------------------------------------------------------------
+( --------------------------------------------------------------------------- )
 ( Global connect programs )
   
 ( guest    -- guest name changes )
@@ -167,5 +167,5 @@ q
 @set $tmp/prog1=S
 @set $tmp/prog1=W3
 @set $tmp/prog1=V
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of con-caller complete.
