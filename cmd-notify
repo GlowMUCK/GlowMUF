@@ -1,0 +1,94 @@
+"Beginning installation of cmd-notify...
+@prog cmd-notify
+1 99999 d
+1 i
+( cmd-notify: $Date: 2000/12/21 20:54:24 $ $Revision: 1.1 $                                               )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$include $lib/strings
+
+$def split2 .split2
+$def n me @ swap notify
+$def yes .yes?
+$def same stringcmp not
+$def hidepref "_prefs/nonotify"
+$def notipref "_prefs/notify"
+  
+: do-help ( -- )
+  "Connect notifier by PakRat" n
+  "~~~~~~~~~~~~~~~~" n
+  "notify #on   -- Notify all connects and disconnects." n
+  "notify #off  -- Turn off connection notification." n
+  "notify #cin  -- Only notify if people in your @cin list connect." n
+  "  " n
+  "notify #hide -- Don't tell anyone when you connect." n
+  "notify #show -- Let people know when you connect." n
+  "  " n
+  
+  me @ hidepref getpropstr yes if
+    "You are currently hidden from connection notification." n
+  then
+  me @ notipref getpropstr yes if
+    "You recieve all connection notifications." n
+  else
+    me @ notipref getpropstr "cin" same if
+      "You only receive connection notifications of those on your @cin list." n
+    else
+      "You have connection notification turned off." n
+    then
+  then
+;
+  
+: do-on ( -- )
+  me @ notipref "yes" setprop
+  "You now see all player connections." n
+;
+  
+: do-off ( -- )
+  me @ notipref remove_prop
+  "You no longer see any player connections." n
+;
+  
+: do-cin ( -- )
+  me @ notipref "cin" setprop
+  "You now only see connections of people on your @cin list." n
+;
+  
+: do-show ( -- )
+  me @ hidepref remove_prop
+  "Everyone can see your connections now." n
+;
+  
+: do-hide ( -- )
+  me @ hidepref "yes" setprop
+  "No one can see you connect now." n
+;
+  
+: con-main ( s -- )
+  "me" match dup me ! location loc !
+  
+  .noguest
+  dup 1 strcut pop "#" strcmp not if
+    1 strcut swap pop " " split2 swap
+    ( arg verb )
+    dup "help" same if pop pop do-help exit then
+    dup "on" same if pop pop do-on exit then
+    dup "off" same if pop pop do-off exit then
+    dup "cin" same if pop pop do-cin exit then
+    dup "show" same if pop pop do-show exit then
+    dup "hide" same if pop pop do-hide exit then
+  else pop do-help then
+;
+.
+c
+q
+@register cmd-notify=cmd/notify
+@register #me cmd-notify=tmp/prog1
+@set $tmp/prog1=M2
+@action notify=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/notify #help
+@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of cmd-notify complete.
