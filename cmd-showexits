@@ -1,0 +1,115 @@
+"Beginning installation of cmd-showexits...
+@prog cmd-showexits
+1 99999 d
+1 i
+( cmd-showexits: $Date: 2000/12/22 17:21:49 $ $Revision: 1.1 $ )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+( Exit shower by PakRat Copyright 1993 All rights reserved.                   )
+( For signpost, in the room type @set here=_signpost:yes, then set the        )
+( _north, _west, _east, and _south properties on the room to the names        )
+( For exits and the rooms they go to, type @set here=_BigExits:yes            )
+( To set what exits are called, type @set here=_ExitsCalled:etc...            )
+( To hide all exits, set room dark or @set here=_NoExits:yes                  )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-showexits,v $
+  Revision 1.1  2000/12/22 17:21:49  feaelin
+  Initial revision
+
+)
+
+$include $lib/glowstandard
+
+ : gname ( sp -- sn i ) loc @ swap getpropstr dup strlen dup 14 < and ;
+ : doubleloop 1 - swap over strcut " " swap strcat strcat swap
+   dup 1 > if doubleloop else pop then ;
+ : double dup strlen dup if doubleloop else pop then ;
+ : addspaces "         " swap strcut pop swap over strcat strcat ;
+ : stretch ( s -- s ) double dup strlen 2 / 12 swap - addspaces ; 
+ : top  me @ "                   _" notify ;
+ : topr me @ "     _____________|_|____________" notify ;
+ : botr me @ "     ~~~~~~~~~~~~~|~|~~~~~~~~~~~~" notify ;
+ : topl me @ "      ____________|_|_____________" notify ;
+ : botl me @ "      ~~~~~~~~~~~~|~|~~~~~~~~~~~~~" notify ;
+ : bare me @ "                  | |" notify ;
+ : grass me @ "|||||||||||||||||||||||||||||||||||||||" notify ;
+ : dop ( sn sb se -- ) rot stretch swap strcat strcat me @ swap notify ;
+ : pn "     > " " > N" dop ;
+ : ps "   S < " " <" dop ;
+ : pe "     > " " > E" dop ;
+ : pw "   W < " " <" dop ;
+ : crossroads top
+   "_north" gname if topr pn botr else pop then
+   "_south" gname if topl ps botl else pop then
+   "_east" gname if topr pe botr else pop then
+   "_west" gname if topl pw botl else pop then
+   bare bare bare grass .run
+ ;
+( End of Crossroads.muf, start of SimpleExits.muf )
+ : SimpExitLoop ( s d -- s )
+   dup .dark? not over getlink ok? and if
+    dup .firstname rot swap strcat ", " strcat swap then
+   next dup #-1 dbcmp not if SimpExitLoop else pop then
+ ;
+ : SimpExits ( -- ? ) ( Tell exits then continue @desc chain )
+   loc @ exits dup #-1 dbcmp not if
+    loc @ "_ExitsCalled" envpropstr swap pop dup not if pop "Exits:" then
+    " " strcat
+    swap SimpExitLoop .CleanCommas .wrap
+   else pop then
+ ;
+( End of SimpleExits.muf, start of main exit shower ) 
+ : OExitLoop
+   dup .dark? not over getlink ok? and if
+   dup .firstname " to " strcat over getlink
+   dup .private? over room? and if pop "a private room" else
+   .firstname
+   dup "a " 2 strncmp not if 2 strcut swap pop "a " swap strcat then
+   dup "the " 4 strncmp not if 4 strcut swap pop "the " swap strcat then
+   then
+   strcat "  " swap strcat .tell-me
+   then
+   next dup #-1 dbcmp not if OExitLoop else pop then
+ ;
+ : BigExits ( -- )
+   loc @ exits dup #-1 dbcmp not if
+    loc @ "_ExitsCalled" envpropstr swap pop dup not if 
+     pop "Exits:" 
+    then 
+    .tell-me OExitLoop 
+   else pop then
+ ;
+ : OExits ( s -- ? ) ( Tell exits then continue @desc chain )
+   trigger @ .control? not if trigger @ .dark? else 0 then
+   if .run exit then
+   loc @ "_SignPost" getpropstr     if crossroads exit then
+   .run
+   loc @ "_BigExits" getpropstr     if BigExits   exit then
+   loc @ "_NoExits"  getpropstr not if SimpExits       then
+ ;
+.
+c
+q
+@register cmd-showexits=cmd/exits
+@register #me cmd-showexits=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M3
+@set $tmp/prog1=/_/de:@$list _desc/
+@set $tmp/prog1=/_desc/1:Welcome to a new obvious exit lister by PakRat!
+@set $tmp/prog1=/_desc/10:     * Type @set here=_north:NorthExitName etc for the 4 exit names.
+@set $tmp/prog1=/_desc/11:@set here=_NoExits:yes   Will shut off all exit listings and just show the
+@set $tmp/prog1=/_desc/12:@succ message you put after the @$ShowExits.
+@set $tmp/prog1=/_desc/13: 
+@set $tmp/prog1=/_desc/14:Send any comments questions or bugs to Artie.  Enjoy!
+@set $tmp/prog1=/_desc/2: 
+@set $tmp/prog1=/_desc/3:To use it type @succ here=@$ShowExits
+@set $tmp/prog1=/_desc/4:You can put a small something after that to be shown just before the exits
+@set $tmp/prog1=/_desc/5:are listed, ie @succ here=@$ShowExits Enter 3 letters to take that path.
+@set $tmp/prog1=/_desc/6: 
+@set $tmp/prog1=/_desc/7:ShowExits has a few options as well.
+@set $tmp/prog1=/_desc/8:@set here=_BigExits:yes  shows exits and rooms they go to
+@set $tmp/prog1=/_desc/9:@set here=_SignPost:yes  shows a signpost for north,east, south, and west.
+@set $tmp/prog1=/_desc/lines:14
+@set $tmp/prog1=/_version:FM1.0
+"Installation of cmd-showexits complete.
