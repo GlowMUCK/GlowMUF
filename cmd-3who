@@ -2,11 +2,14 @@
 @prog cmd-3who
 1 99999 d
 1 i
-( cmd-3who: $Date: 1999/04/17 23:42:43 $ $Revision: 1.1 $
+( cmd-3who: $Date: 2003/01/24 17:05:07 $ $Revision: 1.2 $
   Author: ???
   --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-3who,v $
+  Revision 1.2  2003/01/24 17:05:07  feaelin
+  Modified so it recognizes the /@/dark prop
+
   Revision 1.1  1999/04/17 23:42:43  feaelin
   Initial revision
 
@@ -49,7 +52,10 @@ $def .atell me @ swap ansi_notify
   
   
 : collate-entry (i -- s)
-    dup condbref name
+    dup condbref 
+    dup "/@/dark" getpropstr 
+    "yes" strcmp not if pop pop 0 exit then
+    name
     over contime mtimestr
     over strlen over strlen +
     dup 19 < if
@@ -62,6 +68,7 @@ $def .atell me @ swap ansi_notify
     swap "^PURPLE^" swap strcat strcat strcat
     "^GREEN^" swap strcat
     swap conidle stimestr "^YELLOW^" swap strcat strcat
+    1
 ;
   
   
@@ -71,7 +78,7 @@ $def .atell me @ swap ansi_notify
     begin
         dup 0 > while
         dup collate-entry
-        rot 1 + rot
+        if rot 1 + rot then
         1 -
     repeat
     pop
@@ -119,10 +126,10 @@ c
 q
 @register cmd-3who=cmd/3who
 @register #me cmd-3who=tmp/prog1
-@set $tmp/prog1=W
+@set $tmp/prog1=W3
 @action 3who;who3;3w=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Same as the WHO list of everyone connected, except in three columns.
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-3who complete.
