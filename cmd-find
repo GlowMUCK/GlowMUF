@@ -2,7 +2,7 @@
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2004/02/23 05:14:18 $ $Revision: 1.5 $               )
+( cmd-find: $Date: 2004/02/23 05:29:30 $ $Revision: 1.6 $               )
 ( Author: PakRat                                                        )
 ( Mods By: Regabyr AKA Jennifer Boeyink                                 ) 
 ( --------------------------------------------------------------------- )
@@ -26,14 +26,18 @@
 ( players set private will not be shown at all on the find list.        )
 (                                                                       )
 ( You can set "_hidewizards?" to yes on the program itself, and all     )
-( wizards will not be shown at all on the find list.
+( wizards will not be shown on the find list unless they set the        )
+( _prefs/find/showme? prop to yes.
 (                                                                       )
 ( --------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
+  Revision 1.6  2004/02/23 05:29:30  feaelin
+  Updated hidewizards feature with 'showme?' prop
+
   Revision 1.5  2004/02/23 05:14:18  feaelin
   Added 'hidewizards' feature
-
+  
   Revision 1.4  2004/02/23 05:04:44  feaelin
   Fixed bugs in the dark support.
   Added "hideprivate" feature.
@@ -117,7 +121,8 @@ lvar step
       over private? or over location private? or
     then
     prog "_hidewizards?" getpropstr yes? if 
-      over "truemage" flag? or
+      over dup "truemage" flag? swap
+      "_prefs/find/showme?" getpropstr yes? not and or
     then
     if
       pop step @ 1 - step !
@@ -421,7 +426,7 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0FM" "$Revision: 1.5 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  "Find 2.0FM" "$Revision: 1.6 $" 11 strcut swap pop dup strlen 1 - strcut pop
   " by PakRat" strcat strcat n
   "~~~~~~~~~~~~~~~~~~" n
   "Find lists information about where players are on the game." n
@@ -526,9 +531,9 @@ q
 @register #me cmd-find=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W3
-@action where;find;locate=here=tmp/exit1
+@action find;findall;fin;fi;fa;where;whereis;@where;@whereis;locate=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $tmp/prog1=_version:2.0FM$Revision: 1.5 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.6 $
 "Installation of cmd-find complete.
