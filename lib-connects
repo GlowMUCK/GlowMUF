@@ -1,0 +1,79 @@
+"Beginning installation of lib-connects...
+@prog lib-connects
+1 99999 d
+1 i
+( lib-connects: $Date: 1998/08/23 16:48:30 $ $Revision: 1.1 $
+  Originally from the Glowmuck MUF distribution
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-connects,v $
+  Revision 1.1  1998/08/23 16:48:30  glow
+  Initial revision
+
+)
+( --------------------------------------------------------------------------- )
+: findconn (a d -- i)
+  0 swap concount
+  begin
+    dup while
+    dup condbref 3 pick dbcmp if
+      3 pick if
+ 3 pick over 6 pick execute if
+   dup 3 put
+ then
+      else
+ dup 3 put
+      then
+    then
+    1 -
+  repeat
+  pop pop swap pop
+;
+  
+: leastidle-comp conidle swap conidle < ;
+: leastidle
+  (returns the number of the least idle connection for the given player)
+  'leastidle-comp swap findconn
+;
+: mostidle-comp conidle swap conidle > ;
+: mostidle
+  (returns the number of the most idle connection for the given player)
+  'mostidle-comp swap findconn
+;
+: firstconn (d -- i)
+  1 begin
+    dup concount <= while
+    dup condbref 3 pick dbcmp if swap pop exit then
+    1 +
+  repeat
+  pop pop 0
+;
+: lastconn (d -- i)
+  concount begin
+    dup while
+    dup condbref 3 pick dbcmp if swap pop exit then
+    1 -
+  repeat
+  pop pop 0
+;
+public findconn
+public leastidle
+public mostidle
+public firstconn
+public lastconn
+.
+c
+q
+@register lib-connects=cmd/look
+@register lib-connects=lib/connects
+@register #me lib-connects=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M3
+@set $tmp/prog1=/_defs/conn-findconn:"$lib/connects" match "findconn" call
+@set $tmp/prog1=/_defs/conn-firstconn:"$lib/connects" match "firstconn" call
+@set $tmp/prog1=/_defs/conn-lastconn:"$lib/connects" match "lastconn" call
+@set $tmp/prog1=/_defs/conn-leastidle:"$lib/connects" match "leastidle" call
+@set $tmp/prog1=/_defs/conn-mostidle:"$lib/connects" match "mostidle" call
+@set $tmp/prog1=/_docs:@list $lib/connects=1-29
+@set $tmp/prog1=/_lib-version:FM1.0
+"Installation of lib-connects completed.
