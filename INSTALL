@@ -1,4 +1,4 @@
-INSTALL $Date: 1999/02/13 19:10:02 $ $Revision: 1.2 $
+INSTALL $Date: 1999/04/17 16:31:04 $ $Revision: 1.3 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.1 (Beta Release)
 ---------
@@ -93,7 +93,8 @@ Comments about some other programs:
     There is a section of code commented out.  This section is used on
     legacy to make sure folks have read all the new user and policy info.
     Since most mucks don't have the room that this uses, I commented it
-    out by default.
+    out by default.  Keep in mind this program calls several others,
+    I'd look it over before using it, and see if you actually need it.
 
 	The only one of these libraries or muf-programs I "wrote" is the
 lib-glow-standard one (which is mostly just a cut n' paste of the macros
