@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1999/02/13 19:06:17 $ $Revision: 1.8 $
+( lib-strings: $Date: 2000/01/27 16:57:13 $ $Revision: 1.9 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
@@ -13,31 +13,32 @@ These routines deal with spaces in strings.
  STRstrip     [       str -- str'          ]  strip lead and trail spaces
  STRsms       [       str -- str'          ]  strips out mult. internal spaces
   
-These two are routines to split a string on a substring, non-inclusive.
- STRsplit     [ str delim -- prestr postr  ]  splits str on first delim. nonincl.
- STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim. nonincl.
+These two are routines to split a string on a substring, non-inclusively.
+ STRsplit     [ str delim -- prestr postr  ]  splits str on first delim.
+ STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim.
  STRsplitargs [       str -- str str       ]  split a string at first space or
                                               = sign
   
 The following are useful for formatting strings into fields.
- STRfillfield [ str char width -- padstr   ] return padding string to width chars
+ STRfillfield [ str char width -- padstr   ]  return padding string to width
+                                              chars
  STRcenter    [ str width -- str'          ]  center a string in a field.
- STRleft      [ str width -- str'          ]  pad string w/ spaces to width chars
- STRright     [ str width -- str'          ]  right justify string to width chars
-  
-The following are case insensitive versions of instr and rinstr:
- instring     [  str str2 -- position      ]  find str2 in str and return pos
- rinstring    [  str str2 -- position      ]  find last str2 in str & return pos
-  
+ STRleft      [ str width -- str'          ]  pad string w/ spaces to width
+                                              chars
+ STRright     [ str width -- str'          ]  right justify string to width
+                                              chars
 These convert between ascii integers and string character.
  STRasc       [      char -- i             ]  convert character to ASCII number
  STRchar      [         i -- char          ]  convert number to character
   
 This routine is useful for parsing command line input:
- STRparse     [       str -- str1 str2 str3 ] " #X Y  y = Z"  ->  "X" "Y y" " Z"
+ STRparse     [      str -- str1 str2 str3 ] " #X Y  y = Z"  ->  "X" "Y y" " Z"
 )
 (
   $Log: lib-strings,v $
+  Revision 1.9  2000/01/27 16:57:13  feaelin
+  *** empty log message ***
+
   Revision 1.8  1999/02/13 19:06:17  feaelin
   Fixed .split2 entry
 
@@ -172,7 +173,6 @@ q
 @register #me lib-strings=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W
-@set $tmp/prog1=/_/de:lib-strings:List lines 4-31 for documentation.
 @set $tmp/prog1=/_defs/.asc:"$lib/strings" match "STRasc" call
 @set $tmp/prog1=/_defs/.blank?:striplead not
 @set $tmp/prog1=/_defs/.center:"$lib/strings" match "center" call
@@ -207,6 +207,7 @@ q
 @set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
-@set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@set $tmp/prog1=/_docs:@list $lib/strings=1-31
+@set $tmp/prog1=/_/de:lib-strings:List lines 1-31 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
 "Installation of lib-strings complete.
