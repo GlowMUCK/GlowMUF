@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-stackrng...
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2005/04/03 15:43:46 $ $Revision: 1.12 $                )
+( lib-stackrng: $Date: 2005/04/05 15:38:24 $ $Revision: 1.13 $                )
 ( Purpose: Stack manipulation of an entire range                              )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -17,35 +17,39 @@ wh me=Beginning installation of lib-stackrng...
 ( A 'range' is defines as a set of related items on the stack with an integer )
 ( 'count' of them on the top. For example: "bat" "cat" "dog" 3                )
 (                                                                             )
-( SRNGextractrng [     {rng} ... offset num pos -- {rng'} ... {subrng} ]      )
-(     pulls a subrange out of a range buried in the stack, removing them.     )
+( SRNG-extractrng: {range} ... offset num pos -- {range'} ... {subrng}        )
+(   pulls a subrange out of a range buried in the stack, removing them.       )
 (                                                                             )
-( SRNGcopyrng    [     {rng} ... offset num pos -- {rng} ... {rng}     ]      )
-(     copies a subrange out of a range buried in the stack.                   )
+( SRNG-copyrng: {range} ... offset num pos -- {range} ... {range}             )
+(   copies a subrange out of a range buried in the stack.                     )
 (                                                                             )
-( SRNGdeleterng  [     {rng} ... offset num pos -- {rng'}              ]      )
-(     deletes a subrange from a range buried on the stack.                    )
+( SRNG-deleterng: {range} ... offset num pos -- {range'}                      )
+(   deletes a subrange from a range buried on the stack.                      )
 (                                                                             )
-( SRNGinsertrng  [ {rng1} ... {rng2} offset pos -- {rng}               ]      )
-(     inserts a subrange into the middle of a buried range on the stack.      )
+( SRNG-insertrng: {range1} ... {range2} offset pos -- {range}                 )
+(   inserts a subrange into the middle of a buried range on the stack.        )
 (                                                                             )
-( SRNGfilterrng  [               {rng} funcaddr -- {rng'} {filtrdrng}  ]      )
-(    Takes the given range and tests each item with the given filter function )
-(    address.  The function takes a single data value and returns an integer. )
-(    If the integer is non-zero, it pulls that data item out of the range and )
-(    puts it into the filtered range. The data items can be of any type.      )
+( SRNG-filterrng: {range} funcaddr -- {range'} {filtrdrange}                  )
+(   Takes the given range and tests each item with the given filter function  )
+(   address. The function takes a single data value and returns an integer.   )
+(   If the integer is non-zero, it pulls that data item out of the range and  )
+(   puts it into the filtered range. The data items can be of any type.       )
 (                                                                             )
-( SRNGcatrng     [                {rng1} {rng2} -- {rng}               ]      )
-(     concatenates two ranges into one range.                                 )
+( SRNG-catrng: {range1} {range2} -- {range}                                   )
+(   concatenates two ranges into one range.                                   )
 (                                                                             )
-( SRNGpoprng     [                        {rng} --                     ]      )
-(     removes a range from the stack.                                         )
+( SRNG-poprng: {range} --                                                     )
+(   removes a range from the stack.                                           )
 (                                                                             )
-( SRNGswaprng    [                {rng1} {rng2} -- {rng2} {rng1}       ]      )
-(     takes two ranges on the stack and swaps them.                           )
+( SRNG-swaprng: {range1} {range2} -- {range2} {range1}                        )
+(   takes two ranges on the stack and swaps them.                             )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.13  2005/04/05 15:38:24  feaelin
+  Added aliases for library words to make the library use the new
+  word-name standard.
+
   Revision 1.12  2005/04/03 15:43:46  feaelin
   Documentation cleanup, whitespace fixes, script updated.
 
@@ -195,7 +199,15 @@ q
 @set $lib/stackrng=/_defs/SRNGinsertrng:"$lib/stackrng" match "insertrange" call
 @set $lib/stackrng=/_defs/SRNGpoprng:popn
 @set $lib/stackrng=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
+@set $lib/stackrng=/_defs/SRNG-catrng:"$lib/stackrng" match "catranges" call
+@set $lib/stackrng=/_defs/SRNG-copyrng:"$lib/stackrng" match "copyrange" call
+@set $lib/stackrng=/_defs/SRNG-deleterng:"$lib/stackrng" match "deleterange" call
+@set $lib/stackrng=/_defs/SRNG-extractrng:"$lib/stackrng" match "extractrange" call
+@set $lib/stackrng=/_defs/SRNG-filterrng:"$lib/stackrng" match "filterrange" call
+@set $lib/stackrng=/_defs/SRNG-insertrng:"$lib/stackrng" match "insertrange" call
+@set $lib/stackrng=/_defs/SRNG-poprng:popn
+@set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
 @set $lib/stackrng=/_docs:@list $lib/stackrng=1-42
 @set $lib/stackrng=/_/de:lib-stackrng: List lines 1-42 for documentation.
-@set $lib/stackrng=/_lib-version:FM$Revision: 1.12 $
+@set $lib/stackrng=/_lib-version:FM$Revision: 1.13 $
 wh me=Installation of lib-stackrng completed
