@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-mv-cp...
 @prog cmd-mv-cp
 1 99999 d
 1 i
-( cmd-mv-cp: $Date: 2005/04/05 23:09:43 $ $Revision: 1.4 $                    )
+( cmd-mv-cp: $Date: 2005/04/06 00:03:07 $ $Revision: 1.5 $                    )
 ( Purpose: Provides a facility for copying and moving properties/proptrees    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -35,6 +35,9 @@ wh me=Beginning installation of cmd-mv-cp...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-mv-cp,v $
+  Revision 1.5  2005/04/06 00:03:07  feaelin
+  Fixed issues where 'help cp' and 'help mv' did not work.
+
   Revision 1.4  2005/04/05 23:09:43  feaelin
   Documented library words
   Added library word aliases to fit the new standard
@@ -226,13 +229,10 @@ q
 @set $lib/mv-cp=/_defs/MVCP-move-prop:"$lib/mv-cp" match "mv-prop" call
 @action mv;cp=here=tmp/exit1
 @link $tmp/exit1=$lib/mv-cp
-@set $tmp/exit1=D
-@set $tmp/exit1=M1
-@set $tmp/exit1=L
-@set $tmp/exit1=/_/fl:Permission denied.
-@set $tmp/exit1=/_/de:@list lines 1-31 for documentation.
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/mv-cp #help
 @set $tmp/prog1=/_/de:@list lines 1-31 for documentation.
 @set $lib/mv-cp=/_docs:@list $lib/mv-cp=1-31
-@set $lib/mv-cp=/_version:FM$Revision: 1.4 $
-@set $lib/mv-cp=/_lib-version:FM$Revision: 1.4 $
+@set $lib/mv-cp=/_version:FM$Revision: 1.5 $
+@set $lib/mv-cp=/_lib-version:FM$Revision: 1.5 $
 wh me=Installation of cmd-mv-cp complete.
