@@ -1,4 +1,4 @@
-CHANGES $Date: 2004/04/14 19:24:17 $ $Revision: 1.14 $
+CHANGES $Date: 2004/04/22 17:25:53 $ $Revision: 1.15 $
 Author: Feaelin
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
@@ -24,6 +24,9 @@ Author: Feaelin
                   Added additional library calls to the new @detail related
                   words. General documentation cleanup. Support for @idesc
                   added.
+                  New Feature: ~look props. If a ~look/something:ref prop is
+                  set anywhere in the environment, the program 'ref' will be
+                  called by lib-look, with (Look) on top of the stack.
 05) cmd-teleport: Added define to allow customization of the format of the
                   location field.
 06) cmd-who:      Changed to respect the who_hides_dark sysparm.
@@ -40,6 +43,7 @@ Author: Feaelin
                   Replaced this with a corrected call to ansi_notify_except.
                   This fixes issues where puppets, zombies, vehicles, and
                   "listeners" didn't see spoofs.
+13) cmd-register: Documentation update.
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
 01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)

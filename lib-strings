@@ -1,74 +1,74 @@
-"Beginning installation of lib-strings...
+wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2001/02/22 20:46:31 $ $Revision: 1.11 $
-  Originally included in the FuzzBall MUF archive.                            )
-( --------------------------------------------------------------------------  )
-( Contributors: Syvel, Feaelin                                                )
-( --------------------------------------------------------------------------  )
-( 
-These routines deal with spaces in strings.
- STRblank?    [       str -- bool          ]  true if str null or only spaces
- STRsls       [       str -- str'          ]  strip leading spaces
- STRsts       [       str -- str'          ]  strip trailing spaces
- STRstrip     [       str -- str'          ]  strip lead and trail spaces
- STRsms       [       str -- str'          ]  strips out mult. internal spaces
-  
-These two are routines to split a string on a substring, non-inclusively.
- STRsplit     [ str delim -- prestr postr  ]  splits str on first delim.
- STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim.
- STRsplitargs [       str -- str str       ]  split a string at first space or
-                                              = sign
-  
-The following are useful for formatting strings into fields.  As of revision
- 1.10, they are aware of Glow-ansi-codes, and should pad correctly strings
- containing them. 
- STRfillfield [ str char width -- padstr   ]  return padding string to width
-                                              chars
- STRcenter    [ str width -- str'          ]  center a string in a field.
- STRleft      [ str width -- str'          ]  pad string w/ spaces to width
-                                              chars
- STRright     [ str width -- str'          ]  right justify string to width
-                                              chars
-These convert between ascii integers and string character.
- STRasc       [      char -- i             ]  convert character to ASCII number
- STRchar      [         i -- char          ]  convert number to character
-  
-This routine is useful for parsing command line input:
- STRparse     [      str -- str1 str2 str3 ] " #X Y  y = Z"  ->  "X" "Y y" " Z"
-)
+( lib-strings: $Date: 2004/04/22 17:25:53 $ $Revision: 1.12 $                )
+( Purpose: Replicate and enhance the inserver look routine                    )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( These routines deal with spaces in strings.                                 )
+( STRblank?    [       str -- bool          ]  true if str null or only spaces)
+( STRsls       [       str -- str'          ]  strip leading spaces           )
+( STRsts       [       str -- str'          ]  strip trailing spaces          )
+( STRstrip     [       str -- str'          ]  strip lead and trail spaces    )
+( STRsms       [       str -- str'          ]  strips mult. internal spaces   )
+(                                                                             )
+( These two are routines to split a string on a substring, non-inclusively.   )
+( STRsplit     [ str delim -- prestr postr  ]  splits str on first delim.     )
+( STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim.      )
+( STRsplitargs [       str -- str str       ]  split a string at first space  )
+(                                              or = sign                      )
+(                                                                             )
+( The following are useful for formatting strings into fields. As of revision )
+( 1.10, they are aware of Glow-ansi-codes, and should pad correctly strings   )
+( containing them.                                                            )
+( STRfillfield [ str char width -- padstr   ]  return padding string to width )
+(                                              chars                          )
+( STRcenter    [ str width -- str'          ]  center a string in a field.    )
+( STRleft      [ str width -- str'          ]  pad string w/ spaces to width  )
+(                                              chars                          )
+( STRright     [ str width -- str'          ]  right justify string to width  )
+(                                              chars                          )
+( These convert between ascii integers and string character.                  )
+( STRasc       [      char -- i             ]  convert character to ASCII     )
+(                                              number                         )
+( STRchar      [         i -- char          ]  convert number to character    )
+(                                                                             )
+( This routine is useful for parsing command line input:                      )
+( STRparse     [      str -- str1 str2 str3 ] " #X Y  y = Z" -> "X" "Y y" " Z")
+( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.12  2004/04/22 17:25:53  feaelin
+  Documentation Cleanup
+
   Revision 1.11  2001/02/22 20:46:31  feaelin
   Documentation correction.
-
+  
   Revision 1.10  2001/02/22 20:39:56  feaelin
   Added support to STRfillfield, STRcenter STRleft, STRright to detect
   and handle correctly strings with ANSI codes in them.  Credit goes to
   Syvel for the original concept for this correction.
-
+  
   Revision 1.8  1999/02/13 19:06:17  feaelin
   Fixed .split2 entry
-
+  
   Revision 1.6  1998/07/30 19:20:41  glow
   Added synonyms of .split: .splitarg, .splitargs, .splitfirst, .strcutat.
-
-  Revision 1.5  1998/07/30 19:15:22  glow
-  *** empty log message ***
-
+  
   Revision 1.4  1998/07/30 19:14:48  glow
   Added STRsplitargs/.splitargs
-
+  
   Revision 1.3  1998/07/30 04:11:20  glow
   Updated STRsplit
-
+  
   Revision 1.2  1998/07/28 03:35:38  glow
   Corrected wiz-level.
-
+  
   Revision 1.1  1998/07/27 21:15:02  glow
   Initial revision
-
 )  
 ( --------------------------------------------------------------------------- )
 : split ( s si -- s s )
@@ -213,7 +213,7 @@ q
 @set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
-@set $tmp/prog1=/_docs:@list $lib/strings=1-35
-@set $tmp/prog1=/_/de:lib-strings: List lines 1-35 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
-"Installation of lib-strings complete.
+@set $tmp/prog1=/_docs:@list $lib/strings=1-37
+@set $tmp/prog1=/_/de:lib-strings: List lines 1-37 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
+wh me=Installation of lib-strings complete.
