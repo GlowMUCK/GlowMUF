@@ -1,0 +1,102 @@
+"Beginning installation of con-guest...
+@prog con-guest
+1 99999 d
+1 i
+( con-guest: $Date: 1999/04/17 20:38:44 $ $Revision: 1.1 $
+  Author: PakRat/Andy
+  --------------------------------------------------------------------------- )
+(
+  $Log: con-guest,v $
+  Revision 1.1  1999/04/17 20:38:44  feaelin
+  Initial revision
+
+)
+( PakRat's More interesting Multi-Guest system Copyright 1996 )
+
+$include $lib/glow
+$include $lib/strings
+ 
+$def GuestPW "yes"
+$def n me @ swap notify
+  
+lvar guest lvar newname
+  
+: GS ( -- s )
+  "#0Bard#1Peasant#2Hero#3Serf#4Rogue#5Knight#6Knave#7Noble#8Pauper#"
+;
+  
+: num-color ( i s )
+  intostr "#" swap strcat
+  GS swap instring dup if
+    1 + GS swap strcut swap pop
+    dup "#" instring 1 - strcut pop
+  else pop "" then
+;
+  
+: Rand-Guest ( -- d ) ( #-1 means we couldn't find one )
+  0 begin
+    random 9 % num-color "_Guest" strcat .pmatch dup guest !
+    dup if awake? not else pop 0 then if pop exit then
+  1 + dup 30 < while repeat pop #-1 guest !
+;
+  
+: main ( s -- )
+  "me" match dup location loc ! me !
+  me @ name "Guest" stringcmp if pop exit then
+  
+  trig if pop "MultiGuest given bad trigger." n exit then
+  "Connect" strcmp if "MultiGuest is for connection only." n exit then
+  
+  "" newname ! #-1 guest !
+    
+  me @ awake? 1 > if
+    "More than one person is using Guest, please page a wizard for help." n
+    exit
+  then
+  
+  Rand-Guest guest @ player? not if
+    "Random guest selection failed, staying with Guest." n exit
+  then
+  
+  guest @ "@/id" getpropstr "Guest" stringcmp
+  guest @ "G" flag? not or if
+    "Please tell a wizard that guests are messed up." n exit
+    (Not a real Guest Character)
+  then
+  
+  guest @ name newname !
+  
+  guest @ "Guest" systime intostr dup strlen 8 - strcut swap pop strcat
+  " " strcat GuestPW strcat setname
+ 
+  me @ newname @ " " strcat GuestPW strcat setname
+ 
+  me @ name "Guest" stringcmp if
+    me @ "@/lockout-msg" "Please use 'connect guest' to use a guest."
+    setprop
+  then
+  
+  guest @ "Guest " GuestPW strcat setname
+  
+  guest @ name "Guest" stringcmp not if
+    guest @ "@/lockout-msg" remove_prop
+  then
+  
+  me @ "!C" set
+  me @ "_/do" "I'm exploring the realms as a " newname @ "_" .split
+  me @ "_prefs" remove_prop
+  pop tolower strcat "!" strcat setprop
+  " " n
+  "      -[===-  You are now exploring the realms as " newname @ strcat
+  ".  -===]-" strcat n
+  " " n
+;
+.
+c
+q
+@register con-guest=con/guest
+@register #me con-guest=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=W3
+@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of con-guest complete.
