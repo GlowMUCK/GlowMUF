@@ -1,0 +1,165 @@
+"Beginning installation of cmd-setworld...
+@prog cmd-setworld
+1 99999 d
+1 i
+( cmd-setworld: $Date: 2000/01/27 16:10:08 $ $Revision: 1.1 $                                             )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+( World Setter by PakRat v 1.1 all rights reserved                     )
+( This program maintains a 'written' list of public worlds in                 )
+( the form of 'World Name, desc, #dbref' and from this sets a                 )
+( room to that world at a player's request.                                   )
+( Ie: 'setw red' would set the room to Red World if it's defined.             )
+( *** SETUP ***                                                               )
+( @reg #program=cmd/setworld                                                  )
+( @set $cmd/setworld=2                                                        )
+( @set $cmd/setworld=L                                                        )
+( @action @setworld;setworld;@setw;setw=#0                                    )
+( @link @setworld=$cmd/setworld                                               )
+( @desc @setworld=@setworld help                                              )
+( Macros                                                                      )
+ 
+$def WPROP "_world#/"
+$def LPROP "_land#/"
+$def WREF  #0
+$def LREF  loc @ "~world" envpropstr pop
+$def n ( s -- ) me @ swap notify
+$def controlroom? ( -- i ) me @ loc @ controls
+lvar land
+ 
+( Title and help screens )
+ 
+: Usage ( -- )
+  " " n
+  "Usage: SetLand (or SetWorld)    -- Show a list of lands or worlds" n
+  "       SetLand  Name of Land    -- Sets this room to that land" n
+  "       setl Name                -- Only need first part of name" n
+  "       SetWorld Name of World   -- Sets this room to that world" n
+  " " n
+  " The list of lands will change depending on the world you are in, so" n
+  " it is often easier to move to a world then to a land in that world." n
+  " " n
+;
+: title ( -- )
+  "Land and World Setter by PakRat -- type 'SetWorld help' for help" n
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~" n
+;
+: help-screen ( -- ) title
+  "  This program is used to set the parent room of rooms you own." n
+  "A parent room contains special settings and new commands that" n
+  "add more features to your room.  Parent rooms are often referred" n
+  "to as 'worlds'.  Joining a world basically means you are adding" n
+  "the commands of that world's parent room to your room or rooms." n
+  "You will need to set each of your rooms to the world you want" n
+  "by typing setw worldname in each of your rooms, or by putting" n
+  "each of your rooms into a parent room of their own and setting" n
+  "that parent room's world to another one." n
+  " " n
+  "  Because of how this command works, you need only specify enough" n
+  "of the world name to make it unique from all others in the list" n
+  "that is shown when you just type 'setw' with no world name." n
+  "Thus if no other world begins with R, you could just type setw R" n
+  "and your room would be parented to Red World.  It's that easy!" n
+  usage
+; 
+( )
+( List management routines )
+( )
+: limatch-loop ( n s -- s )
+  land @ if LREF LPROP else WREF WPROP then
+  4 pick intostr strcat getpropstr dup if
+    ( n s gs )
+    over over over strlen rot tolower rot tolower rot strncmp if
+      pop swap 1 + swap limatch-loop
+    else
+      swap pop swap pop
+    then
+  else
+    pop pop pop ""
+  then
+;
+: limatch ( s -- s )
+  1 swap limatch-loop
+;
+: listlist-loop ( n -- )
+  land @ if LREF LPROP else WREF WPROP then
+  3 pick intostr strcat getpropstr dup if
+    n 1 + listlist-loop
+  else
+    pop pop
+  then
+;
+: listlist ( -- )
+  land @ if " -~-_-~- Known Lands -~-_-~-"
+  else " -~-_-~- Known Worlds -~-_-~-" then n
+  1 listlist-loop
+  " " n
+  "If you wish to add a land you have created, mail the world manager." n
+;
+: props-check?
+  land @ if LREF LPROP 6 strcut pop else WREF WPROP 7 strcut pop then
+  2 pick #-1 dbcmp if
+    me @ "^FAIL^_land property has not been setup, or that world has not been setup correctly, or an invalid room was specified." ansi_notify
+    0
+  else
+    getpropstr "" strcmp not if
+      me @ 
+      land @ if
+        "^FAIL^_land property has not been setup, or that world has not been completely setup."
+      else
+        "^FAIL^_world property has not been setup on room #" WREF int intostr
+        strcat "." strcat
+      then
+      ansi_notify
+      0
+    else
+      1
+    then
+  then        
+;
+
+: SetWorld-Main ( s -- )
+  command @ "w" instring if 0 else 1 then land !
+  dup if
+    dup "help" stringcmp not if pop help-screen exit then
+    props-check? not if depth popn exit then
+    controlroom? if
+      limatch dup if ( s ) ( No list error checking for simplicy )
+        ( This next line will crash if a line isn't set up right )
+        dup ", " instr 1 - strcut dup "#" instr strcut swap pop atoi dbref
+        ( Name_of_World d )
+        dup "ABODE" flag? if
+          loc @ swap moveto
+          "This room is now part of " swap strcat "." strcat n
+        else pop pop
+          "That area's room isn't a parent room.  Please tell a manager." n
+        then
+      else
+        land @ if "I don't know about that land."
+        else "I don't know about that world." then n pop
+      then
+    else
+      "You do not control this room." n
+    then
+  else
+    pop
+    props-check? not if depth popn exit then
+    title listlist
+  then
+;
+( Coding by PakRat )
+( Inspiration, Scotfox for wanting more globals ;)
+( Hi's to everyone, even those who hate and despise me if there are any. )
+( Who knows, maybe I might get some friends out of it? :)
+.
+c
+q
+@register cmd-setworld=cmd/setworld
+@register #me cmd-setworld=tmp/prog1
+@set $tmp/prog1=W3
+@action @setland;@setworld;setland;setworld;setl;setw=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$cmd/setworld help
+@set $tmp/prog1=/_version:1.1FM$Revision: 1.1 $
+"Installation of cmd-setworld complete.
