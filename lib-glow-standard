@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1999/04/18 19:08:32 $ $Revision: 1.10 $                                       )
+( lib-glow-standard: $Date: 2000/01/10 18:17:04 $ $Revision: 1.11 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -13,8 +13,9 @@
   functions in this library begin with a period.  I know that this will
   cause a little confusion on mucks that are still using macros, but it's
   necessary to make it clear that it's these functions are not local to the
-  program using them.  Okay, therez three exceptions, deal with it:
-  for, endfor, xor.  They are all defined both with periods and without..    )
+  program using them.  Okay, there are four exceptions, deal with it:
+  for, endfor, stringncmp, xor. They are all defined both with periods and
+  without. )
 ( -------------------------------------------------------------------------- )
 ( Many macros taken from:
   PakRat's Macro Package A [macro-macro]
@@ -49,6 +50,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.11  2000/01/10 18:17:04  feaelin
+  Updated docs and fixed the _docs property.
+
   Revision 1.10  1999/04/18 19:08:32  feaelin
   Added alias for stringncmp
 
@@ -336,5 +340,6 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@set $tmp/prog!=/_docs:@list $lib/glow=1-46
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
 "Installation of lib-glow-standard completed.
