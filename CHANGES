@@ -1,9 +1,11 @@
-CHANGES $Date: 2004/04/01 23:24:02 $ $Revision: 1.11 $
+CHANGES $Date: 2004/04/02 18:39:07 $ $Revision: 1.12 $
 Author: Feaelin
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
                   given with the color specified, or replaces previously
                   prepended color with the new color.
+02) cmd-roomcheck:Is now more intelligent about checking desc's when
+                  @tune transparent_paths is turned on.
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
 01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)
