@@ -2,11 +2,14 @@
 @prog cmd-lsedit
 1 99999 d
 1 i
-( cmd-lsedit: $Date: 2001/01/22 05:27:18 $ $Revision: 1.2 $
+( cmd-lsedit: $Date: 2004/02/20 17:10:09 $ $Revision: 1.3 $
   Author:
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-lsedit,v $
+  Revision 1.3  2004/02/20 17:10:09  feaelin
+  Colorized the responses.
+
   Revision 1.2  2001/01/22 05:27:18  feaelin
   Added lscopy and lsmove commands
 
@@ -50,11 +53,11 @@ $def LMGRdeleterange lmgr-deleterange
         1 rot rot LMGRputrange
         4 pick 4 pick LMGRgetlist
         dup 3 + rotate over 3 + rotate
-        "< List saved. >" .atell
+        "^SUCC^< List saved. >" .atell
         "" lsedit-loop exit
     then
     dup "abort" stringcmp not if
-        "< list not saved. >" .atell
+        "^INFO^< list not saved. >" .atell
         pop pop pop pop pop pop pop pop pop exit
     then
     dup "end" stringcmp not if
@@ -62,7 +65,7 @@ $def LMGRdeleterange lmgr-deleterange
         dup 3 + rotate over 3 + rotate
         over over LMGRdeletelist
         1 rot rot LMGRputrange
-        "< list saved. >" .atell exit
+        "^SUCC^< list saved. >" .atell exit
     then
 ;
 
@@ -232,12 +235,12 @@ $def LMGRdeleterange lmgr-deleterange
   command @ "lscp" stringcmp not if do-copy exit then
   command @ "lsmove" stringcmp not if do-move exit then
   command @ "lsmv" stringcmp not if do-move exit then
-  "<    Welcome to the list editor.  You can get help by entering '.h'     >"
-  .tell
-  "< '.end' will exit and save the list.  '.abort' will abort any changes. >"
-  .tell
-  "<    To save changes to the list, and continue editing, use '.save'     >"
-  .tell
+  "^NOTE^<    Welcome to the list editor.  You can get help by entering '.h'     >^RESET^"
+  .atell
+  "^NOTE^< '.end' will exit and save the list.  '.abort' will abort any changes. >^RESET^"
+  .atell
+  "^NOTE^<    To save changes to the list, and continue editing, use '.save'     >^RESET^"
+  .atell
   over over LMGRgetlist
   "save" 1 ".i $" lsedit-loop
 ;
@@ -253,5 +256,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/lsedit #help
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
 "Installation of cmd-lsedit complete.
