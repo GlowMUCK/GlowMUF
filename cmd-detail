@@ -1,0 +1,192 @@
+"Beginning installation of cmd-detail...
+@prog cmd-detail
+1 99999 d
+1 i
+( cmd-detail: $Date: 1999/04/19 13:58:13 $ $Revision: 1.1 $
+  Author: Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-detail,v $
+  Revision 1.1  1999/04/19 13:58:13  feaelin
+  Initial revision
+
+)
+( @detail/@object by PakRat CopyRight 1995 All Rights Reserved )
+  
+$include $lib/glow
+$include $lib/strings
+
+$def split2 .split2
+$def cmp stringcmp not
+$def n me @ swap notify
+$def setpropstr dup if setprop else pop remove_prop then
+  
+lvar show
+lvar obj
+lvar dname
+lvar ddesc
+  
+: do-match ( s -- d )
+  dup not if pop #-1 else
+    match
+    dup ok? not if pop #-1 else
+      me @ over .controls not if pop #-1 then
+    then
+  then
+;
+  
+: do-findprop ( s -- s )
+  dup not if pop "" exit then
+  ";" swap strcat ";" strcat
+  show @ if "/_obj/" else "/_det/" then
+  begin obj @ swap nextprop dup while
+    dup 6 strcut swap pop
+    ";" swap strcat ";" strcat
+    3 pick instring if swap pop exit then
+  repeat pop pop ""
+;
+  
+: do-help ( -- )
+"Usage: @detail obj=name=description -- Make hidden detail on something." n
+"       @object obj=name=description -- Make visible object on something." n
+" " n
+"       @detail #show obj=name -- Turn a hidden detail into an object." n
+"       @object #hide obj=name -- Turn an object into a hidden detail." n
+"       @detail #name obj=name=newname -- Fix the name of a detail." n
+"       @detail #desc obj=name=newdesc -- Change the desc of a detail." n
+"       @detail #nuke obj=name         -- Delete a detail." n
+" " n
+"'obj' can be anything you own, including 'me' and 'here'." n
+"The 'name' is an exit delimited name such as: My blue sign;sign;blue" n
+"The description can by anything, including @1234 and @$prog programs." n
+" " n
+"The #xxxx options only need to match one name for to change it." n
+"All #name and #desc work for both @detail and @object." n
+;
+  
+: do-show ( -- )
+  obj @ ok? not if "I don't see that here." n exit then
+  show @ not if
+    ddesc @ "=" split2 ddesc ! dname !
+    dname @ do-findprop
+    dup if
+      obj @ over getpropstr
+      obj @ 3 pick remove_prop
+      swap 6 strcut swap pop "/_obj/" swap strcat
+      obj @ swap rot setpropstr
+      "Revealed." n
+    else "I don't see that detail there." n pop then
+  else "Objects are already visible!  Try '@detail #show detail'" n then
+;
+  
+: do-hide ( -- )
+  obj @ ok? not if "I don't see that here." n exit then
+  show @ if
+    ddesc @ "=" split2 ddesc ! dname !
+    dname @ do-findprop
+    dup if
+      obj @ over getpropstr
+      obj @ 3 pick remove_prop
+      swap 6 strcut swap pop "/_det/" swap strcat
+      obj @ swap rot setpropstr
+      "Hidden." n
+    else "I don't see that object there." n pop then
+  else "Details are already hidden!  Try '@object #hide object'" n then
+;
+  
+: do-name ( -- )
+  obj @ ok? not if "I don't see that here." n exit then
+  ddesc @ "=" split2 ddesc ! dname !
+  ddesc @ not if "Rename it to what?" n exit then
+  dname @ do-findprop
+  dup if
+    obj @ over getpropstr
+    obj @ rot remove_prop
+    obj @ show @ if "/_obj/" else "/_det/" then
+    ddesc @ strcat rot setpropstr
+    "Renamed." n
+  else "I don't see that there." n pop then
+;
+  
+: do-nuke ( -- )
+  obj @ ok? not if "I don't see that here." n exit then
+  ddesc @ "=" split2 ddesc ! dname !
+  dname @ do-findprop
+  dup if
+      obj @ swap remove_prop
+      "Nuked." n
+  else "I don't see that there." n pop then
+;
+  
+: do-desc ( -- )
+  obj @ ok? not if "I don't see that here." n exit then
+  ddesc @ "=" split2 ddesc ! dname !
+  ddesc @ not if "Describe it as what?" n exit then
+  dname @ do-findprop
+  dup if
+    obj @ swap ddesc @ setpropstr
+    "Description changed." n
+  else "I don't see that there." n pop then
+;
+  
+: main ( s -- )
+  "me" match dup me ! location loc !
+  
+  command @ "obj" instring if 1 else 0 then show !
+  
+  dup not if do-help pop exit then
+  
+  dup 1 strcut pop "#" strcmp not if
+    " " split2 "=" split2 ddesc !
+    do-match obj !
+    1 strcut swap pop dname !
+    dname @ "help" cmp if do-help else
+    dname @ "show" cmp if do-show else
+    dname @ "hide" cmp if do-hide else
+    dname @ "name" cmp if do-name else
+    dname @ "desc" cmp if do-desc else
+    dname @ "nuke" cmp if do-nuke else
+    show @ if
+      "I'm not sure what you want to do.  Try '@object #help' for help."
+    else
+      "I'm not sure what you want to do.  Try '@detail #help' for help."
+    then n
+    then then then then then then
+  else
+    "=" split2 swap do-match obj !
+    "=" split2 ddesc ! dname !
+    obj @ ok? if
+    dname @ if
+    ddesc @ if
+      obj @ show @ if "_obj/" else "_det/" then
+      dname @ strcat ddesc @ setpropstr
+      "Created." n
+    else "You forgot the description." n then
+    else "Call it what?" n then
+    else "I don't see that here." n then
+  then
+;
+  
+: debug (s--)
+  .noguest
+  main
+  prog "D" flag? not if
+    depth 0 > if
+      "Please tell PakRat you saw this line, you should not have." n
+      .debug-line
+    then
+  then
+;
+.
+c
+q
+@register cmd-detail=cmd/detail
+@register #me cmd-detail=tmp/prog1
+@set $tmp/prog1=W2
+@set $tmp/prog1=V
+@action @detail;@object;@det;@obj=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/detail
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-detail complete.
