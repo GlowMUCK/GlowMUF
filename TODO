@@ -1,5 +1,0 @@
-* Libraries should be changed to have a more consistent interface, e.g.
-  all should use the format lib-strings uses: STRblank?, etc.
-* lib-mesgbox: MBOX-insmesg: Fails to insert correctly. Instead it replaces the
-               message that it is supposed to be inserting in front of.
-* lib-editor: I've been thinking spellcheck would be a nice thing to have.
