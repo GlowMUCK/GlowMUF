@@ -1,7 +1,7 @@
 @prog lib-mesgbox
 1 99999 d
 1 i
-( lib-mesgbox: $Date: 1998/08/22 19:43:57 $ $Revision: 1.1 $
+( lib-mesgbox: $Date: 1998/08/22 19:44:24 $ $Revision: 1.2 $
   Originally from FuzzBall MUF Distribution                                   )
 ( --------------------------------------------------------------------------- )
 ( **** Message Box Object -- MBOX- ****
@@ -67,6 +67,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-mesgbox,v $
+  Revision 1.2  1998/08/22 19:44:24  glow
+  Finished RCS-ifying.
+
   Revision 1.1  1998/08/22 19:43:57  glow
   Initial revision
 
@@ -220,5 +223,5 @@ q
 @set $tmp/prog1=/_defs/MBOX-setinfo:"$lib/mesgbox" match "MBOX-setinfo" call
 @set $tmp/prog1=/_defs/MBOX-setmesg:"$lib/mesgbox" match "MBOX-setmesg" call
 @set $tmp/prog1=/_docs:@list $lib/mesgbox=3-60
-@set $tmp/prog1=/_version:1.2FM1.0
+@set $tmp/prog1=/_version:1.2FM$Revision: 1.2 $
 "Installation of lib-mesgbox complete.
