@@ -4,17 +4,20 @@
 i
 ( lib-wordwrap By Iain E. Davis AKA Feaelin                                  )
 ( With Thanks to Andy's original wrapnotify code                             )
-( $Revision: 1.1 $ $Date: 2004/01/20 03:24:28 $                              )
+( $Revision: 1.2 $ $Date: 2004/04/10 20:34:55 $                              )
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-wordwrap,v $
+  Revision 1.2  2004/04/10 20:34:55  feaelin
+  Fixed variable used as a global var when it should be used lvar.
+
   Revision 1.1  2004/01/20 03:24:28  feaelin
   Initial revision
 
 )
 ( -------------------------------------------------------------------------- )
 
-var line_count
+lvar line_count
 
 : last-color ( s -- s )
   "\\~" "\\^" subst
@@ -63,7 +66,7 @@ public wordwrap
 c
 q
 @set lib-wordwrap.muf=W3
-@set lib-wordwrap.muf=_version:$Revision: 1.1 $
+@set lib-wordwrap.muf=_lib-version:$Revision: 1.2 $
 @set lib-wordwrap.muf=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
 @register lib-wordwrap.muf=lib/wordwrap
 "Installation completed.
