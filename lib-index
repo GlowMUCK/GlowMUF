@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-index...
 @prog lib-index
 1 99999 d
 1 i
-( lib-index: $Date: 2005/03/21 01:31:43 $ $Revision: 1.5 $
+( lib-index: $Date: 2005/04/04 15:03:34 $ $Revision: 1.6 $
   Originally taken from the FuzzBall MUF distribution.
   Author: ErmaFelna                                                           )
 ( --------------------------------------------------------------------------- )
@@ -110,6 +110,9 @@ wh me=Beginning installation of lib-index...
 ( --------------------------------------------------------------------------- )
 (
  $Log: lib-index,v $
+ Revision 1.6  2005/04/04 15:03:34  feaelin
+ Replaced .controls macro call with a primitive call to controls
+
  Revision 1.5  2005/03/21 01:31:43  feaelin
  General maintenance and documentation updates
 
@@ -190,11 +193,11 @@ $include $lib/stackrng
 ;
  
 : editcheck ( dbref index name value -- " " " " noerror? )
-  me @ 5 pick .controls
+  me @ 5 pick controls
   if
     1 exit
   then
-  trig owner 5 pick .controls trig "_public" getpropstr and
+  trig owner 5 pick controls trig "_public" getpropstr and
   if
     3 pick 1 strcut "_.@" swap instr
     if
@@ -770,5 +773,5 @@ q
 @set $tmp/prog1=/_defs/.std-index-value:"$lib/index" match "std-index-value" call
 @set $tmp/prog1=/_defs/.std-index-write:"$lib/index" match "std-index-write" call
 @set $tmp/prog1=/_docs:@list $lib/index=5-109
-@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.5 $
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.6 $
 wh me=Installation of lib-index complete.
