@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/05/19 18:50:10 $ $Revision: 1.18 $                )
+( cmd/lib-look: $Date: 2004/08/04 18:41:15 $ $Revision: 1.19 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.19  2004/08/04 18:41:15  feaelin
+  Fix so that if you have an @ sign in your desc it doesn't try to use it
+  to call #0 as a program.
+
   Revision 1.18  2004/05/19 18:50:10  feaelin
   Removed erroneous striplead and striptail, which would mess carefully spaced
   descriptions and lsedit lists.
@@ -369,7 +373,7 @@ lvar realtrig
         then
       then
     then
-    dup ok? if
+    dup ok? over #0 dbcmp not and if
       dup program? if
         dup "LINK_OK" flag? if
           "(Look)" swap safecall
@@ -608,6 +612,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.18 $
-@set $lib/look=/_version:1.31FM$Revision: 1.18 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.19 $
+@set $lib/look=/_version:1.31FM$Revision: 1.19 $
 wh me=Installation of lib-look complete.
