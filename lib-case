@@ -2,7 +2,7 @@
 @prog lib-case
 1 99999 d
 1 i
-( lib-case: $Date: 1999/02/13 16:35:17 $ $Revision: 1.3 $
+( lib-case: $Date: 2000/02/11 15:10:47 $ $Revision: 1.4 $
   Originally from FuzzBall MUF distribution                                   )
 ( --------------------------------------------------------------------------- )
 (  Okay, here's an evil idea for you programmers:
@@ -56,6 +56,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-case,v $
+  Revision 1.4  2000/02/11 15:10:47  feaelin
+  Wasn't properly set link_ok.
+
   Revision 1.3  1999/02/13 16:35:17  feaelin
   Make that two.
 
@@ -72,6 +75,7 @@ c
 q
 @register lib-case=lib/case
 @register #me lib-case=tmp/prog1
+@set $mp/prog1=L
 @set $tmp/prog1=/_/de:lib-case: List lines 1-50 for documentation.
 @set $tmp/prog1=/_defs/case:begin dup
 @set $tmp/prog1=/_defs/default:pop 1 if
@@ -79,5 +83,5 @@ q
 @set $tmp/prog1=/_defs/endcase:pop pop 1 until
 @set $tmp/prog1=/_defs/when:if pop
 @set $tmp/prog1=/_docs:@list $lib/case=1-50
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-case completed.
