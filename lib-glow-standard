@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2000/01/10 18:23:21 $ $Revision: 1.13 $          )
+( lib-glow-standard: $Date: 2000/01/10 18:42:07 $ $Revision: 1.14 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,6 +50,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.14  2000/01/10 18:42:07  feaelin
+  Finished fixing up documentation...for now.
+
   Revision 1.13  2000/01/10 18:23:21  feaelin
   Updated documentation and added the _docs property.
 
@@ -340,6 +343,7 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
+@set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
 "Installation of lib-glow-standard completed.
