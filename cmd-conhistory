@@ -1,0 +1,426 @@
+"Beginning installation of cmd-conhistory...
+@prog cmd-conhistory
+1 99999 d
+1 i
+( cmd-conhistory: $Date: 1999/04/18 21:00:32 $ $Revision: 1.1 $
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-conhistory,v $
+  Revision 1.1  1999/04/18 21:00:32  feaelin
+  Initial revision
+
+)
+( New Global @ConHistory by PakRat -- stores disconnects and connects on the )
+( connection system programs, this way people can't be shown as online )
+( when they were actually just swept to another room. )
+  
+$def BLOCKPROP "_prefs/block/last-on"
+$def CONPROP  "@/lc"
+$def OCONPROP "_/lc"
+$def save_contime_prop  "@/ct/"
+$def achars "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@"
+$def a me @ swap ansi_notify
+$def abs dup 0 < if -1 * then
+$def dupn begin dup while over swap 1 - repeat pop
+  
+lvar listtype
+lvar startdate
+lvar enddate
+lvar startstartdate
+lvar startenddate
+lvar contime
+  
+: ConHist-Title
+  "  " .tell
+  "^YELLOW^Connect-History: ^BLUE^Muck Local Time (CST)" a
+  "^RED^~~~~~~~~~~~~~~~" a
+;
+  
+: ConHist-Help
+  ConHist-Title
+  "^BROWN^Usage: ^YELLOW^@conhist names    ^AQUA^-- ^CYAN^Shows when player last connected" a
+  "^YELLOW^       @conhist #help    ^AQUA^-- ^CYAN^Shows help screen" a
+  "^YELLOW^       @conhist #block   ^AQUA^-- ^CYAN^Blocks others from seeing your @conhist" a
+  "^YELLOW^       @conhist #unblock ^AQUA^-- ^CYAN^Restores it so others can see it" a
+  "  " .tell
+  "^BROWN^Modifiers: (Use within name list to affect output)" a
+  "^YELLOW^       @value ^AQUA^-- ^CYAN^Specify output type (1, 2, or 3)" a
+  "^YELLOW^       -value ^AQUA^-- ^CYAN^Specify days to list (default 7)" a
+  "^YELLOW^       +value ^AQUA^-- ^CYAN^Specify days ago (default 0)" a
+  "  " .tell
+  "^BROWN^Example: (names can include muf-page aliases)" a
+  "^YELLOW^       @conhist -31 @3 wizzes ^AQUA^-- ^CYAN^Last month's wizard connect time totals" a
+;
+  
+: ConHist-Block ( -- )
+  me @ BLOCKPROP "yes" 0 addprop
+  "^GREEN^Only you and wizards can see your ConHist information now." a
+;
+  
+: ConHist-Unblock ( -- )
+  me @ BLOCKPROP remove_prop
+  "^GREEN^Anyone can now see your ConHist information now." a
+;
+  
+: AddNum ( s i s i -- s i )
+  dup intostr rot strcat swap ( s i s i )
+  dup 1 = not if swap "s" strcat swap then
+  0 = if pop "" then ( s i s )
+  dup if ", " strcat then
+  rot swap strcat swap
+;  
+  
+: Tell-Time ( i -- s ) 
+  "" swap ( s i )
+  dup 2419200 / " moon" swap AddNum 2419200 %
+  dup 86400 /  " day" swap AddNum 86400 % 
+  over "moon" instr not if
+    dup  3600 / " hour" swap AddNum  3600 %
+    over "day" instr not if
+      dup    60 /  " min" swap AddNum    60 %
+      over "hour" instr not if
+        dup " sec" swap AddNum
+      then
+    then
+  then
+  pop 
+  .cleancommas
+;
+  
+: str2val ( str -- ival )
+  achars swap instr dup if 1 - then
+;
+  
+: val2str ( ival -- str )
+  achars swap 64 % strcut swap pop 1 strcut pop
+;
+  
+: str2sec ( str -- isecs )
+  0 swap
+  ( d s )
+  begin dup while
+    1 strcut rot rot
+    ( srest d s )
+    str2val swap 64 * + swap
+    ( d s )
+  repeat pop
+;
+public str2sec
+  
+: date2str ( systime -- str )
+  timesplit 2 popn
+  ( s m h d m y )
+  -6 rotate -6 rotate -6 rotate
+  3 popn
+  ( d m y )
+  1969 - val2str
+  swap val2str strcat
+  swap val2str strcat
+;
+public date2str
+  
+: str2date ( str -- d m y )
+  1 strcut swap str2val 1969 + swap
+  1 strcut swap str2val swap
+  str2val swap rot
+;
+public str2date
+  
+: shortdate ( d m y -- str )
+  1900 - intostr "/" swap strcat rot
+  intostr dup strlen 2 < if "/0" else "/" then swap strcat swap strcat swap
+  intostr dup strlen 2 < if " " else "" then swap strcat swap strcat
+;
+  
+: daysecs ( isystime -- isecs )
+  timesplit 5 popn 3600 * swap 60 * + +
+;
+  
+: hhoursecs ( idaytime -- isecs )
+  1800 / 1800 *
+;
+  
+: shorttime ( isecs -- str )
+  dup 3600 /
+  dup intostr
+  swap 10 < if " " swap strcat then
+  ":" strcat
+  swap 3600 %
+  dup 60 /
+  dup intostr
+  swap 10 < if "0" swap strcat then
+  ":" strcat
+  rot swap strcat
+  swap 60 %
+  dup intostr
+  swap 10 < if "0" swap strcat then
+  strcat
+;
+  
+: listtime ( 6cs -- )
+  3 strcut swap
+  str2sec dup shorttime rot
+  str2sec dup shorttime rot swap
+  "^AQUA^ to ^CYAN^" swap strcat strcat
+  "    ^AQUA^From ^CYAN^" swap strcat
+  "^AQUA^ for ^CYAN^" strcat
+  rot rot swap - dup contime @ + contime ! Tell-Time strcat
+  listtype @ 1 = if a else pop then
+;
+  
+: display-list ( d -- )
+  startdate @ date2str
+  dup save_contime_prop swap strcat 3 pick swap getpropstr swap
+  over listtype @ 1 = and if
+    str2date shortdate ":" strcat "  " swap strcat "^BLUE^" swap strcat a
+  else pop then
+  ( ref timestring )
+  begin dup while
+    6 strcut swap listtime
+  repeat pop
+  pop
+;
+  
+: dump-stack ( -- )
+  "  " .tell
+  depth "** Depth: " swap intostr strcat .tell
+  depth "Stack: "
+  begin over while
+    over intostr "]" strcat strcat
+    over 2 + pick
+    dup string? not if intostr then strcat
+    "  " strcat
+    swap 1 - swap
+  repeat .tell pop
+;
+public dump-stack
+  
+: graph-line ( s -- s i )
+  0 47 dupn
+  49 rotate 0 swap
+  ( 0*48 i s )
+  begin dup while
+    6 strcut swap
+    ( 0*48 i sleft sset )
+    3 strcut
+    ( 0*48 i sleft sstart send )
+    str2sec swap str2sec swap over -
+    ( 0*48 i sleft istart icount )
+    dup 0 >= if ( Positive time on )
+      4 rotate over + -4 rotate ( Add to total )
+      ( 0*48 i sleft istart icount )
+      begin dup 1800 > while
+        ( 0*48 i sleft istart icount )
+        over hhoursecs
+        ( 0*48 i sleft istart icount firsthhourstart )
+        3 pick swap - 1800 swap -
+        ( 0*48 i sleft istart icount ihhoursecs )
+          3 pick 1800 /
+          ( 0*48 i sleft istart icount ihhoursecs )
+          7 + dup rotate
+          ( 0*48 i sleft istart icount ihhour irotback itally )
+          3 pick + 1 + swap 1 - -1 * rotate
+        ( 0*48 i sleft istart icount ihhoursecs )
+        swap over -
+        ( 0*48 i sleft istart ihhoursecs icountleft )
+        rot rot + swap
+        ( 0*48 i sleft istartleft icountleft )
+      repeat
+      over 1800 / 6 + dup rotate
+      3 pick + 1 + swap 1 - -1 * rotate
+    then
+    pop pop
+  repeat pop ( no more sets )
+  ( Now render the string )
+  ( 0*48 i )
+  -49 rotate
+  48 ""
+  ( i 0*48 n s )
+  begin over while
+    swap 1 - swap
+    rot
+    dup 1800 >= if "@"
+    else dup 1200 >= if "*"
+    else dup 600 >= if "+"
+    else dup 0 > if "-"
+    else " " then then then then
+    swap pop strcat
+  repeat swap pop swap
+;
+  
+: display-graph ( s -- )
+  startdate @ date2str
+  dup str2date shortdate
+  " %a" startdate @ timefmt strcat
+  " ^AQUA^" swap strcat " ^BLUE^#^CYAN^" strcat
+  swap save_contime_prop swap strcat 3 pick swap getpropstr
+  ( datestr timestring )
+  graph-line rot rot
+  12 strcut 12 strcut 12 strcut
+  "^BLUE^|^CYAN^" swap strcat strcat
+  "^BLUE^#^CYAN^" swap strcat strcat
+  "^BLUE^|^CYAN^" swap strcat strcat
+  strcat
+  "^BLUE^#" strcat swap
+  dup 0 > if
+    contime @ over + contime !
+    shorttime " ^CYAN^" swap strcat strcat
+  else pop then
+  a ( ref ) pop
+;
+  
+: agostr ( i -- s )
+  dup if
+    dup abs intostr " day" strcat
+    over abs 1 = not if "s" strcat then
+    swap 0 > if " ago" else " into the future" then strcat
+  else pop "today" then
+;
+  
+: ConHist-Check ( d -- )
+  0 contime !
+  dup BLOCKPROP getpropstr .yes? if
+    dup me @ dbcmp me @ .mage? or not if
+      name " wishes to keep their connection history private."
+      strcat "^RED^" swap strcat a
+      exit
+    then
+  then
+  dup name "'s connections from " strcat
+  systime dup daysecs - startdate @ - 86400 / agostr strcat
+  " to " strcat
+  systime dup daysecs - enddate @ - 86400 / agostr strcat
+  ":" strcat "^AQUA^" swap strcat a
+  dup awake? if
+    dup CONPROP getpropval
+    dup not if pop dup OCONPROP getpropval then
+    dup if
+      systime swap -
+      dup 0 >= if
+        tell-time
+        "  Currently connected for " swap strcat ". ^BROWN^(Not included.)" strcat
+        "^YELLOW^" swap strcat a
+      else pop then
+    else pop then
+  then
+  begin startdate @ enddate @ <= while
+    listtype @ 1 = listtype @ 2 = or if ( List )
+      dup display-list
+    else listtype @ 0 = if ( Graph )
+      dup display-graph
+    then then
+    startdate @ 86400 + startdate !
+  repeat
+  listtype @ 0 = if ( Graph )
+    ( Footer )
+    "^BLUE^~~~~~~~~~~~~~~#~~~~dawn~~~~|~~day~time~~#"
+    "~after~noon~|~night~time~#~~~~~~~~~~" strcat a
+    "^BLUE^              #^YELLOW^1 2 3 4 5 6 ^BLUE^|^YELLOW^7 8 9 1 1 1 ^BLUE^#"
+    "^YELLOW^1 2 3 4 5 6 ^BLUE^|^YELLOW^7 8 9 1 1 1 ^BLUE^#" strcat a
+    "^BLUE^              #       ^RED^A M^YELLOW^         0 1 2 ^BLUE^#"
+    "       ^RED^P M^YELLOW^         0 1 2 ^BLUE^#" strcat a
+  then
+  contime @ 0 > if
+    "  ^AQUA^Connect time tally: ^CYAN^"
+    contime @ tell-time strcat a
+  then
+  "  " .tell
+  pop
+;
+  
+: aliasmatch ( s -- {d} )
+  "$cmd/page" match dup if
+    0 "" 4 rotate 4 rotate "get-playerdbrefs" call pop
+  else
+    .pmatch dup if 1 else pop 0 then
+  then
+;
+  
+: ConHist-Main ( s -- )
+  0 listtype !
+  systime dup daysecs - dup startenddate !
+  86400 7 * - startstartdate !
+  dup if
+    .noguest
+    dup "#" 1 strncmp not if
+      1 strcut swap pop ( com )
+      dup "help" stringcmp not if
+        pop ConHist-Help exit
+      else dup "block" stringcmp not if
+        pop ConHist-Block exit
+      else dup "unblock" stringcmp not if
+        pop ConHist-UnBlock exit
+      then then then
+    then    
+    
+    ConHist-Title
+    " " "," subst
+    striplead striptail
+    begin 
+      dup "  " instr
+    while 
+      " " "  " subst 
+    repeat
+    
+    " " explode ""
+    ( s1 s2 ... si i failstr )
+    begin over while
+      swap 1 - swap 
+      rot
+      dup "+" 1 strncmp not if
+        ( Specify end date offset / end )
+        1 strcut swap pop atoi 86400 *
+        startenddate @ over - startenddate !
+        startstartdate @ swap - startstartdate !
+      else dup "-" 1 strncmp not if
+        ( Specify start date offset / count )
+        1 strcut swap pop atoi abs dup if 1 - then
+        1000 % 86400 *
+        systime dup daysecs - swap - startstartdate !
+      else dup "@" 1 strncmp not if
+        ( Specify list mode )
+        1 strcut swap pop atoi
+        dup if 1 - then
+        listtype !
+      else
+        dup aliasmatch dup if
+          begin dup while
+            1 - swap
+            startstartdate @ startdate !
+            startenddate @ enddate !
+            ConHist-Check
+          repeat pop pop
+        else
+          pop
+          " " swap strcat 
+          "," strcat strcat
+        then
+      then then then
+    repeat
+    swap pop
+    dup if 
+      .cleancommas
+      dup " and " instr if " are." else " is." then strcat
+      "^RED^I don't know who " swap strcat a
+    else
+      pop
+    then
+  else
+  .noguest
+    pop ConHist-Help
+  then
+;
+.
+c
+q
+@register cmd-conhistory=cmd/conhistory
+@register #me cmd-conhistory=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@action @conhistory;@conhist;@ch;conhistory;conhist;ch=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=/_/de:@$cmd/conhistory #help
+"Installation of cmd-conhistory complete.
