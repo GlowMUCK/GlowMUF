@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1999/04/18 04:10:45 $ $Revision: 1.9 $                                       )
+( lib-glow-standard: $Date: 1999/04/18 19:08:32 $ $Revision: 1.10 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -49,6 +49,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.10  1999/04/18 19:08:32  feaelin
+  Added alias for stringncmp
+
   Revision 1.9  1999/04/18 04:10:45  feaelin
   Added alias for .setpropstr
 
@@ -304,6 +307,7 @@ q
 @set $tmp/prog1=/_defs/.stackset:( s -- s' ) dup " " instr dup not if pop pop "" else strcut swap pop then
 @set $tmp/prog1=/_defs/.strcheck:over if over strlen strcut pop stringcmp not else pop pop 0 then
 @set $tmp/prog1=/_defs/.stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
+@set $tmp/prog1=/_defs/stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
 @set $tmp/prog1=/_defs/.strip:strip
 @set $tmp/prog1=/_defs/.strip_extra:dup ";" instr dup if 1 - strcut pop else pop then
 @set $tmp/prog1=/_defs/.stripspaces:strip
@@ -332,5 +336,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
 "Installation of lib-glow-standard completed.
