@@ -2,7 +2,7 @@
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.5 $ $Date: 2004/04/10 15:12:29 $              )
+( lib-unparseobj: $Revision: 1.6 $ $Date: 2004/04/10 15:19:21 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Feaelin, Syvel                                               )
 ( -------------------------------------------------------------------------- )
@@ -77,11 +77,16 @@ i
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.6  2004/04/10 15:19:21  feaelin
+  Fixed bug in public library call of UPOspecial-unparseobj
+  Fixed bug in formatting that caused names with parentheses
+  in them be colorized to the paren color.
+
   Revision 1.5  2004/04/10 15:12:29  feaelin
   Streamlined the color-query code. Made the word public for
   handy use in other programs, e.g., @detail.
   Made the documentation clearer and more detailed.
-
+  
   Revision 1.4  2004/04/08 03:01:20  feaelin
   database item names are now different colors
   
@@ -224,6 +229,8 @@ $include $lib/case
   "%t" "%o" subst
   "%P(%D%T%/%F%/%B%M%L)" "%Q" subst
   "%p(%d%t%/%f%/%b%m%l)" "%q" subst
+  "(" "paren" color-query "(" subst
+  ")" "paren" color-query ")" subst
   "%T%/%F%/%B%M%L" "%X" subst
   "%t%/%f%/%b%m%l" "%x" subst
   "%F%/%B%M%L" "%Y" subst
@@ -249,8 +256,6 @@ $include $lib/case
   swap "%l" subst
   "%/" "slash" color-query "%/" subst
   do-slashes
-  "(" "paren" color-query "(" subst
-  ")" "paren" color-query ")" subst
   swap pop
 ; PUBLIC special-unparseobj
   
@@ -267,10 +272,10 @@ q
 @reg lib-unparseobj=lib/unparseobj
 @set $lib/unparseobj=/_defs/UPOcolor-query:"$lib/unparseobj" match "color-query" call
 @set $lib/unparseobj=/_defs/UPOcolor-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
-@set $lib/unparseobj=/_defs/UPOspecial-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
+@set $lib/unparseobj=/_defs/UPOspecial-unparseobj:"$lib/unparseobj" match "special-unparseobj" call
 @set $lib/unparseobj=/_defs/color-query:"$lib/unparseobj" match "color-query" call
 @set $lib/unparseobj=/_defs/color-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
-@set $lib/unparseobj=/_defs/special-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
+@set $lib/unparseobj=/_defs/special-unparseobj:"$lib/unparseobj" match "special-unparseobj" call
 @set $lib/unparseobj=/_colors/builder:^GREEN^
 @set $lib/unparseobj=/_colors/dbref:^FOREST^
 @set $lib/unparseobj=/_colors/exit:^BLUE^
@@ -286,6 +291,6 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.5 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.6 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-68
 "Installation Complete.
