@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1999/12/29 23:20:40 $ $Revision: 1.12 $                 )
+( cmd-register $Date: 2000/01/10 16:56:46 $ $Revision: 1.13 $                 )
 ( Original Author: Unknown, presumably Foxen                                  )
 ( Updated for Glowmuck by: Andy & Feaelin                                     )
 ( --------------------------------------------------------------------------- )
@@ -79,6 +79,7 @@ lvar regprop
   else
     pop pop
   then
+  "^ ^" swap strcat
 ;
 
 : list-props ( d s -- )
@@ -102,15 +103,15 @@ lvar regprop
         dup unparseobj
 	over "_version" getpropstr
         dup if strip-rcs
-          "     Ver. " swap strcat strcat
+          "     ^INFO^Ver. " swap strcat strcat
         else pop
         then
         swap "_lib-version" getpropstr
         dup if strip-rcs
-          "     Lib.ver. " swap strcat strcat
+          "     ^INFO^Lib.ver. " swap strcat strcat
         else pop
         then
-      else pop "<garbage>"
+      else pop "^RED^<garbage>^ ^"
       then
       over ": " strcat swap strcat
       regprop @ strlen strcut swap pop
@@ -120,7 +121,7 @@ lvar regprop
     over over propdir? if
       dup regprop @ strlen strcut swap pop
       "    " swap strcat
-      "/ (directory)" strcat tell
+      "/ (^SUCC^directory^ ^)" strcat tell
     then
     over swap nextprop
   repeat
@@ -174,7 +175,7 @@ lvar regprop
     unparseobj me @ swap 
     "^INFO^Are you sure you want to delete the registry entry: '^NOTE^"
     5 pick strcat "^INFO^' which is pointing to: '^NOTE^" strcat swap strcat 
-    "^INFO^'?" strcat
+    "^INFO^' (yes/no)?" strcat
     ansi_notify
     read tolower dup "y" strcmp not if
        pop me @ "^INFO^Please type either 'yes' or 'no' entirely." ansi_notify
@@ -275,6 +276,10 @@ lvar regprop
 
 ( 
    $Log: cmd-register,v $
+   Revision 1.13  2000/01/10 16:56:46  feaelin
+   Added support for @view/_docs.  Made #del prompts a littl
+   easier to understand.  Added some color to the output.
+
    Revision 1.12  1999/12/29 23:20:40  feaelin
    New Feature! You can now remove registry entries with @reg #del <object>=<name>
 
@@ -295,7 +300,7 @@ lvar regprop
    Fixed strip-rcs to handle a null revision string.
 
    Revision 1.6  1998/07/27 19:40:20
-   During earlier changes, messed up the wiz-level.  It's now corrected.
+   During earlier changes, messed up the wiz-m-level.  It's now corrected.
 
    Revision 1.5  1998/07/27 02:35:25
    Made strip-rcs actually work.
@@ -321,5 +326,6 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.12 $
+@set $cmd/register=_version:FM$Revision: 1.13 $
+@set $cmd/register=_docs:@register #help
 "Installation of cmd-register finished.
