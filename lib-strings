@@ -2,10 +2,12 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2000/01/27 16:57:13 $ $Revision: 1.9 $
-  Originally included in the FuzzBall MUF archive.                           )
-( -------------------------------------------------------------------------- )
-( ***** Misc String routines -- STR *****
+( lib-strings: $Date: 2001/02/22 20:39:56 $ $Revision: 1.10 $
+  Originally included in the FuzzBall MUF archive.                            )
+( --------------------------------------------------------------------------  )
+( Contributors: Syvel, Feaelin                                                )
+( --------------------------------------------------------------------------  )
+( 
 These routines deal with spaces in strings.
  STRblank?    [       str -- bool          ]  true if str null or only spaces
  STRsls       [       str -- str'          ]  strip leading spaces
@@ -19,7 +21,9 @@ These two are routines to split a string on a substring, non-inclusively.
  STRsplitargs [       str -- str str       ]  split a string at first space or
                                               = sign
   
-The following are useful for formatting strings into fields.
+The following are useful for formatting strings into fields.  As of revision
+ 1.10, they are aware of Glow-ansi-codes, and should pad correctly strings
+ containing them. 
  STRfillfield [ str char width -- padstr   ]  return padding string to width
                                               chars
  STRcenter    [ str width -- str'          ]  center a string in a field.
@@ -36,14 +40,13 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
-  Revision 1.9  2000/01/27 16:57:13  feaelin
-  *** empty log message ***
+  Revision 1.10  2001/02/22 20:39:56  feaelin
+  Added support to STRfillfield, STRcenter STRleft, STRright to detect
+  and handle correctly strings with ANSI codes in them.  Credit goes to
+  Syvel for the original concept for this correction.
 
   Revision 1.8  1999/02/13 19:06:17  feaelin
   Fixed .split2 entry
-
-  Revision 1.7  1998/07/30 19:25:37  glow
-  *** empty log message ***
 
   Revision 1.6  1998/07/30 19:20:41  glow
   Added synonyms of .split: .splitarg, .splitargs, .splitfirst, .strcutat.
@@ -99,9 +102,9 @@ This routine is useful for parsing command line input:
 ;
   
 : fillfield (str padchar fieldwidth -- padstr)
-  rot strlen - dup 1 < if pop pop "" exit then
+  rot ansi_strlen - dup 1 < if pop pop "" exit then
   swap over begin swap dup strcat swap 2 / dup not until pop
-  swap strcut pop
+  swap ansi_strcut pop
 ;
   
 : left (str fieldwidth -- str')
@@ -114,7 +117,7 @@ This routine is useful for parsing command line input:
   
 : center (str fieldwidth -- str')
   over " " rot fillfield
-  dup strlen 2 / strcut
+  dup ansi_strlen 2 / ansi_strcut
   rot swap strcat strcat
 ;
   
@@ -207,7 +210,7 @@ q
 @set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
-@set $tmp/prog1=/_docs:@list $lib/strings=1-31
-@set $tmp/prog1=/_/de:lib-strings:List lines 1-31 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@set $tmp/prog1=/_docs:@list $lib/strings=1-33
+@set $tmp/prog1=/_/de:lib-strings:List lines 1-33 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
 "Installation of lib-strings complete.
