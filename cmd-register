@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1998/07/27 02:30:41 $ $Revision: 1.4 $
+( cmd-register $Date: 1998/07/27 02:35:25 $ $Revision: 1.5 $
   Original Author: Unknown                              
   Updated for Glowmuck by: Andy
   Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
@@ -10,8 +10,11 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.5  1998/07/27 02:35:25  glow
+   Hmm. Smilies in comments are a bad idea.
+
    Revision 1.4  1998/07/27 02:30:41  glow
-   Made strip-rcs actually work. :)
+   Made strip-rcs actually work.
 
    Revision 1.3  1998/07/27 01:50:50  glow
    Added a rcs-info stripper to make the version number show up nicely.
@@ -230,5 +233,5 @@ q
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.4 $
+@set $cmd/register=_version:FM$Revision: 1.5 $
 "Installation of cmd-register finished.
