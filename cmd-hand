@@ -2,7 +2,7 @@
 @prog cmd-hand
 1 99999 d
 1 i
-( cmd-hand: $Date: 2000/01/27 19:47:16 $ $Revision: 1.1 $                                                 )
+( cmd-hand: $Date: 2004/03/26 03:19:21 $ $Revision: 1.2 $                     )
 ( --------------------------------------------------------------------------- )
 ( Hand Program                                Priss                   10-25-92
                                               Lisa Richardson
@@ -13,6 +13,9 @@ provided that they are _hand_ok:yes and are awake.
 )
 (
   $Log: cmd-hand,v $
+  Revision 1.2  2004/03/26 03:19:21  feaelin
+  Doc cleanup
+
   Revision 1.1  2000/01/27 19:47:16  feaelin
   Initial revision
 
@@ -70,5 +73,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/hand 
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-hand complete.

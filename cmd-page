@@ -2,13 +2,20 @@
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 1999/04/18 22:04:50 $ $Revision: 1.1 $
+( cmd-page: $Date: 2004/03/26 03:19:50 $ $Revision: 1.2 $
   --------------------------------------------------------------------------- )
+( Coding: Pak, Artie & Co. -- Original MufPage by Foxen                       )
+( Hi's to everyone who doesn't hate me! :-> -- makes it simple doesn't it?    )
+( Here is what I added: Idle time is now dependent on idletime sysparm.  This )
+( is to create a consistant idletime throughout the muck.                     )
+(                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.2  2004/03/26 03:19:50  feaelin
+  Doc cleanup
+
   Revision 1.1  1999/04/18 22:04:50  feaelin
   Initial revision
-
 )
 lvar dept
 $include $lib/glow
@@ -2610,11 +2617,6 @@ public check
     .debug-line
   then
 ;
-( Coding: Pak, Artie & Co. -- Original MufPage by Foxen )
-( Hi's to everyone who doesn't hate me! :-> -- makes it simple doesn't it? )
-( You twit!  Here is what I added: Idle time is now dependent on idletime
-    sysparm.  This is to create a consistant idletime throughout the muck 
-                                                            ~Maddax)
 .
 c
 q
@@ -2774,5 +2776,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $tmp/prog1=/_version:2.5FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:2.5FM$Revision: 1.2 $
 "Installation of cmd-page complete.
