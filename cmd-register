@@ -2,13 +2,17 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2004/03/26 03:03:30 $ $Revision: 1.16 $                 )
-( Original Author: Unknown, presumably Foxen                                  )
-( Updated for Glowmuck by: Andy & Feaelin                                     )
+( cmd-register $Date: 2004/04/14 21:08:41 $ $Revision: 1.17 $                 )
+( Purpose: Handle registration of database items for virtual references       )
+( Author: Unknown                                                             )
+( Contributors: Andy & Feaelin                                                )
+( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
-(
 ( 
    $Log: cmd-register,v $
+   Revision 1.17  2004/04/14 21:08:41  feaelin
+   Updated cmd-register's documentation.
+
    Revision 1.16  2004/03/26 03:03:30  feaelin
    Further rcs-log fixes.
 
@@ -25,7 +29,7 @@
   
    Revision 1.12  1999/12/29 23:20:40  feaelin
    New Feature! You can now remove registry entries with
-   @reg #del <object>=<name>
+   @reg #del <database item>=<name>
   
    Revision 1.11  1999/12/21 17:59:20  feaelin
    Cleaned up the log and header comments.
@@ -70,30 +74,30 @@ lvar regobj
 lvar regprop
 
 : do-help
-  "The @register program is used to make objects, particularly programs," tell
+  "The @register program is used to make database items, particularly programs," tell
   "globally available to all users.  Basic syntax:" tell
   " " tell
-  "  @reg                        - to list globally registered programs." tell
-  "  @reg <propdir>              - to list globally registered programs" tell
+  "  @reg                        - to list globally registered items." tell
+  "  @reg <propdir>              - to list globally registered items" tell
   "                                in a particular propdir." tell
-  "  @reg <object> = <name>        to register <object> as <name>." tell
-  "  @reg #del <object> = <name> - to remove entry <name> on <object>." tell
+  "  @reg <item> = <name>        to register <item> as <name>." tell
+  "  @reg #del <item> = <name> - to remove entry <name> on <item>." tell
   " " tell
   "By default, registrations are made on #0 in _reg or the specified" tell
   "subpropdir of _reg." tell
   " " tell
   "Of course, only wizards have permission to change #0, but mortal" tell
-  "players can still store registrations on themselves or other objects" tell
+  "players can still store registrations on themselves or other items" tell
   "which they own, using the following options:" tell
   "  #me                         - makes the registration on the user." tell
-  "  #prop <targobj>:<prop>      - makes the registration on <targobj>" tell
+  "  #prop <targetitem>:<prop>   - makes the registration on <targetitem>" tell
   "                                in propdir <prop>" tell
   "Type '@reg #help2' for examples." tell
 ;
 
 : do-help-2
   "Example:  @reg #12345 = sample" tell
-  "This registers object #12345 as '_reg/sample' on #0, so that players" tell
+  "This registers database item #12345 as '_reg/sample' on #0, so that players" tell
   "can refer to it as '$sample' instead of '#12345'." tell
   " " tell
   "Example:  @reg lib-reflist = lib/reflist" tell
@@ -101,12 +105,12 @@ lvar regprop
   "so that coders can use '$include $lib/reflist' in their programs." tell
   " " tell
   "Example:  @reg #me #20645 = pet" tell
-  "This registers object #20645 as '_reg/pet' on the user.  The user" tell
+  "This registers database item #20645 as '_reg/pet' on the user.  The user" tell
   "may now refer to #20645 as '$pet'.  Since the registration is not" tell
   "on #0, only the user may use this reference." tell
   " " tell
   "Example:  @reg #prop #9876:_arrive #12345=sample" tell
-  "This registers object #12345 as '_arrive/sample' on #9876.  Notice" tell
+  "This registers database item #12345 as '_arrive/sample' on #9876.  Notice" tell
   "that it is not registered as '_reg/_arrive/sample'.  The #prop" tell
   "option does not include '_reg' automatically." tell
 ;
@@ -197,13 +201,13 @@ lvar regprop
   striplead dup tolower "#del" 3 strncmp not if
     " " split swap pop
     dup "=" instr dup not if
-      me @ "^FAIL^Please specify both object and registry entry to remove."
+      me @ "^FAIL^Please specify both database item and registry entry to remove."
       ansi_notify
       depth popn exit
     then
     1 - strcut 1 strcut swap pop swap match
     dup dup #-1 dbcmp swap ok? not or if
-      me @ "^FAIL^Remove a registry entry from what object?" ansi_notify
+      me @ "^FAIL^Remove a registry entry from what database item?" ansi_notify
       depth popn exit
     then
     dup #-2 dbcmp if
@@ -265,11 +269,11 @@ lvar regprop
       swap dup not if pop "me" then
       dup "@" strcmp not if pop "#0" then
       match dup not if
-        me @ "^FAIL^I don't see that target object here." ansi_notify
+        me @ "^FAIL^I don't see that target database item here." ansi_notify
         pop pop pop exit
       then
       dup #-2 dbcmp if
-        me @ "^FAIL^I don't know which target object you mean." ansi_notify
+        me @ "^FAIL^I don't know which target database item you mean." ansi_notify
         pop pop pop exit
       then
       me @ over owner dbcmp
@@ -298,7 +302,7 @@ lvar regprop
       "You need to specify a value to set with @reg #prop" tell
       pop exit
     then
-    "^SUCC^Registered objects on "
+    "^SUCC^Registered database items on "
     regobj @ unparseobj strcat
     ":" strcat tell
     regobj @ regprop @ rot strcat list-props
@@ -306,12 +310,11 @@ lvar regprop
   then
   "=" split strip swap strip
   match dup not if
-    "^FAIL^I don't see that object here." tell pop exit
+    "^FAIL^I don't see that database item here." tell pop exit
   then
   dup #-2 dbcmp if
-    "^FAIL^I don't know which object you mean." tell pop exit
+    "^FAIL^I don't know which database item you mean." tell pop exit
   then
-  
   swap
   " " split if
     pop pop "^FAIL^You cannot have spaces in the registration name." tell exit
@@ -343,6 +346,6 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.16 $
+@set $cmd/register=_version:FM$Revision: 1.17 $
 @set $cmd/register=_docs:@register #help
 "Installation of cmd-register finished.
