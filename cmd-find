@@ -2,17 +2,34 @@
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2001/01/15 15:17:27 $ $Revision: 1.2 $ )
+( cmd-find: $Date: 2004/02/14 15:41:51 $ $Revision: 1.3 $               )
 ( Author: PakRat                                                        )
+( Mods By: Regabyr AKA Jennifer Boeyink                                 ) 
 ( --------------------------------------------------------------------- )
 ( PakRat's find copyright 1993 V2.1 with new realm and help features.   )
-( This may work with an M2, but may need an M3 or W.                    )
+( This requires a W3 to work, since it requires @ prop access.          )
 ( Set it L, @reg it to cmd/find, @desc it to @$cmd/find -help           )
+
+( To customize the headings, set the _namename, _worldname, _landname,  )
+( _areaname, and _roomname props, on the program itself.                )
+
+( To customize the world and land props, set the _prefs/find/worldprop  )
+( and _prefs/find/landprop properties on #0                             )
+
+( Set the ~world prop and the _land prop as appropiate on parent rooms  )
+( or set their customized equivalents as appropiate                     )
+( I recommend setting ~world and _land prop on #0 to something like     )
+( *FLOATING* or *PARENTLESS* to more easily detect rooms that haven't   )
+( been parented at all.                                                 )
+( --------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
-  Revision 1.2  2001/01/15 15:17:27  feaelin
-  *** empty log message ***
+  Revision 1.3  2004/02/14 15:41:51  feaelin
+  Added dark support.
+  Added customizable headers by adjusting props on the program.
+  Added customizable props by adjusting props on #0
 
+  Revision 1.2  2001/01/15 15:17:27  feaelin
 )
 lvar ftype
 lvar showline
@@ -29,23 +46,69 @@ $define yes?     .yes?            $enddef
 $define no?      .no?             $enddef
 $define private? .private?        $enddef
   
-( if you change the worldprop you should also change it in cmd-teleport )
-$define worldprop "~world" $enddef
-$define areaprop  "_land"  $enddef
-  
 $define typeprop  "_prefs/find/type" $enddef
 $define dndprop   "_prefs/find/dnd"  $enddef
 $define allprop   "_prefs/find/all"  $enddef
-  
-$define namename  "NAME"     $enddef
-$define worldname "WORLD"    $enddef
-$define areaname  "LAND"     $enddef
-$define roomname  "LOCATION" $enddef
   
 $define Maxworld 10 $enddef
 $define Maxarea  14 $enddef
 $define Maxname  13 $enddef
 $define Maxroom  37 $enddef
+
+: worldprop
+  #0 "_prefs/find/worldprop" getpropstr dup STRblank? if
+    pop "~world"
+  then
+;
+
+: areaprop
+  #0 "_prefs/find/landprop" getpropstr dup STRblank? if
+    pop "_land"
+  then
+;
+
+: namename
+  prog "_namename" getpropstr dup STRblank? if
+    pop "NAME"
+  then
+;
+
+: worldname
+  prog "_worldname" getpropstr dup STRblank? if
+    pop "WORLD"
+  then
+;
+
+: areaname
+  prog "_areaname" getpropstr dup STRblank? if
+    pop "AREA"
+  then
+;
+
+: roomname
+  prog "_roomname" getpropstr dup STRblank? if
+    pop "LOCATION"
+  then
+;
+
+lvar step
+
+: FilterDark ( dn......d1 n - dn........d1 n )
+  ( runs through an 'online' list and removes anyone set 'd' or @/dark:y )
+  dup step !
+  begin
+    dup while ( dn .... d1 n )
+    dup 1 + ( dn .. d1 n n' )
+    rotate ( dn-1....d1 n dn )
+    dup "@/dark" getpropstr "y" instring  ( dn-1...d1 n dn b )
+    over "dark" flag? or if
+      pop step @ 1 - step !
+    else
+      swap ( dn-1 .... d1 dn n )
+    then 1 -
+  repeat pop
+  step @ ( dn....d1 n )
+;
   
 : pad ( s d -- s' ) ( up to 80 ok )
   swap
@@ -194,6 +257,9 @@ $define Maxroom  37 $enddef
     over awake? not or if
       next continue
     then
+    dup "@/dark" getpropstr "y" instr if
+      next continue
+    then
     dup private? if
       swap 1 + swap
       next continue
@@ -277,7 +343,7 @@ $define Maxroom  37 $enddef
     else
       intostr "^BLUE^" swap strcat
       " of " strcat
-      online dup dup 2 + -1 * rotate popn
+      online FilterDark dup dup 2 + -1 * rotate popn
       swap over intostr strcat
       " player" strcat
       swap 1 = not if "s" strcat then
@@ -336,7 +402,8 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0 by PakRat" n
+  "Find 2.0FM" "$Revision: 1.3 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  " by PakRat" strcat strcat n
   "~~~~~~~~~~~~~~~~~~" n
   "Find lists information about where players are on the game." n
   "Typing just 'find' will show all awake players.  Typing" n
@@ -346,7 +413,7 @@ public FindDbrefList
   "Find normally only lists people in the same world as you." n
   "To find everyone on the muck, type 'find all'." n
   " " n
-  "Find 2.0 supports 4 different listings for your tastes:" n
+  "Find supports 4 different listings for your tastes:" n
   "find #type 0 -- List Player, SubWorld, and Room. (old find)" n
   "find #type 1 -- List Player, World, and Room. (new find)" n
   "find #type 2 -- List Player and Room only. (long room names)" n
@@ -422,7 +489,7 @@ public FindDbrefList
     then
   else
     dup if #-2 else #-1 then
-    online
+    online FilterDark
     dup 3 + rotate not if FilterWorlds then
     ( #-1 {d} )
   then
@@ -444,5 +511,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.3 $
 "Installation of cmd-find complete.
