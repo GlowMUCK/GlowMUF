@@ -2,40 +2,45 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1998/07/30 04:11:20 $ $Revision: 1.3 $
+( lib-strings: $Date: 1998/07/30 19:14:48 $ $Revision: 1.4 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
 These routines deal with spaces in strings.
- STRblank?   [       str -- bool         ]  true if str null or only spaces
- STRsls      [       str -- str'         ]  strip leading spaces
- STRsts      [       str -- str'         ]  strip trailing spaces
- STRstrip    [       str -- str'         ]  strip lead and trail spaces
- STRsms      [       str -- str'         ]  strips out mult. internal spaces
+ STRblank?    [       str -- bool          ]  true if str null or only spaces
+ STRsls       [       str -- str'          ]  strip leading spaces
+ STRsts       [       str -- str'          ]  strip trailing spaces
+ STRstrip     [       str -- str'          ]  strip lead and trail spaces
+ STRsms       [       str -- str'          ]  strips out mult. internal spaces
   
 These two are routines to split a string on a substring, non-inclusive.
- STRsplit    [ str delim -- prestr postr ]  splits str on first delim. nonincl.
- STRrsplit   [ str delim -- prestr postr ]  splits str on last delim. nonincl.
+ STRsplit     [ str delim -- prestr postr  ]  splits str on first delim. nonincl.
+ STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim. nonincl.
+ STRsplitargs [       str -- str str       ]  split a string at first space or
+                                              = sign
   
 The following are useful for formatting strings into fields.
- STRfillfield [str char width -- padstr  ] return padding string to width chars
- STRcenter   [ str width -- str'         ]  center a string in a field.
- STRleft     [ str width -- str'         ]  pad string w/ spaces to width chars
- STRright    [ str width -- str'         ]  right justify string to width chars
+ STRfillfield [ str char width -- padstr   ] return padding string to width chars
+ STRcenter    [ str width -- str'          ]  center a string in a field.
+ STRleft      [ str width -- str'          ]  pad string w/ spaces to width chars
+ STRright     [ str width -- str'          ]  right justify string to width chars
   
 The following are case insensitive versions of instr and rinstr:
- instring    [  str str2 -- position     ]  find str2 in str and return pos
- rinstring   [  str str2 -- position     ]  find last str2 in str & return pos
+ instring     [  str str2 -- position      ]  find str2 in str and return pos
+ rinstring    [  str str2 -- position      ]  find last str2 in str & return pos
   
 These convert between ascii integers and string character.
- STRasc      [      char -- i            ]  convert character to ASCII number
- STRchar     [         i -- char         ]  convert number to character
+ STRasc       [      char -- i             ]  convert character to ASCII number
+ STRchar      [         i -- char          ]  convert number to character
   
 This routine is useful for parsing command line input:
- STRparse    [       str -- str1 str2 str3] " #X Y  y = Z"  ->  "X" "Y y" " Z"
+ STRparse     [       str -- str1 str2 str3 ] " #X Y  y = Z"  ->  "X" "Y y" " Z"
 )
 (
   $Log: lib-strings,v $
+  Revision 1.4  1998/07/30 19:14:48  glow
+  Added STRsplitargs (.splitargs)
+
   Revision 1.3  1998/07/30 04:11:20  glow
   Updated STRsplit
 
@@ -51,6 +56,16 @@ This routine is useful for parsing command line input:
    over over instr dup if
       rot swap 1 - strcut rot strlen strcut swap pop
    else pop pop "" then
+;
+
+: splitargs ( s -- s s )
+  dup " " instr if
+    dup "=" instr if
+      dup " " instr over "=" instr - 0 < if
+        " " split
+      else "=" split then
+    else " " split then
+  else "=" split then
 ;
 
 : rsplit
@@ -157,6 +172,7 @@ q
 @set $tmp/prog1=/_defs/.singlespace:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.sms:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.split:"$lib/strings" match "split" call
+@set $tmp/prog1=/_defs/.splitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/.stripspaces:strip
 @set $tmp/prog1=/_defs/STRasc:"$lib/strings" match "STRasc" call
 @set $tmp/prog1=/_defs/STRblank?:striplead not
@@ -171,8 +187,9 @@ q
 @set $tmp/prog1=/_defs/STRsls:striplead
 @set $tmp/prog1=/_defs/STRsms:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/STRsplit:"$lib/strings" match "split" call
+@set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-strings complete.
