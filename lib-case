@@ -2,8 +2,8 @@
 @prog lib-case
 1 99999 d
 1 i
-( lib-case: $Date: 1999/02/13 16:33:02 $ $Revision: 1.2 $
-  Originally from FuzzBall MUF distribution
+( lib-case: $Date: 1999/02/13 16:35:17 $ $Revision: 1.3 $
+  Originally from FuzzBall MUF distribution                                   )
 ( --------------------------------------------------------------------------- )
 (  Okay, here's an evil idea for you programmers:
   Fringe came up with a truly demented way to get case statements using just
@@ -56,6 +56,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-case,v $
+  Revision 1.3  1999/02/13 16:35:17  feaelin
+  Make that two.
+
   Revision 1.2  1999/02/13 16:33:02  feaelin
   Ooops. missing paren.
 
@@ -76,5 +79,5 @@ q
 @set $tmp/prog1=/_defs/endcase:pop pop 1 until
 @set $tmp/prog1=/_defs/when:if pop
 @set $tmp/prog1=/_docs:@list $lib/case=1-50
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
 "Installation of lib-case completed.
