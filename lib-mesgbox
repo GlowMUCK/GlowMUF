@@ -1,84 +1,88 @@
 @prog lib-mesgbox
 1 99999 d
 1 i
-( lib-mesgbox: $Date: 2004/03/26 03:23:07 $ $Revision: 1.4 $
-  Originally from FuzzBall MUF Distribution                                   )
+( lib-mesgbox: $Date: 2004/04/17 17:47:08 $ $Revision: 1.5 $                  )
+( Purpose: Handles a collection of messages created by lib-mesg               )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-mesg                                                      )
 ( --------------------------------------------------------------------------- )
-( **** Message Box Object -- MBOX- ****
-    MBOX-badref?  [refnum base dbref -- bad?]
-      Returns whether or not the given message number exists.
-  
-    MBOX-ref2prop [refnum base dbref -- mbase dbref]
-      Returns the name and dbref of the specific message number in the given
-      message box.
-  
-    MBOX-ref2num  [refnum base dbref -- msgnum]
-      Returns the absolute message number of a message referred to by the
-      given reference number.  See MBOX-num2ref for an explanation of those
-      terms.
-
-    MBOX-num2ref  [msgnum base dbref -- refnum]
-      Returns the reference number of the message that has the given absolute
-      message number.  The reference number is the position number of the
-      message in the message list.  The absolute message number is the number
-      that the message was given when it was created.  The absolute reference
-      number of a message will never change.  If the message with the given
-      message number no longer exists, then the reference to the first message
-      after the given message number is returned.
-
-    MBOX-create   [base dbref -- ]
-      Creates a new message box with no messages in it.
-  
-    MBOX-count    [base dbref -- count]
-      Returns the number of messages contained in the given message box.
-  
-    MBOX-destroy  [base dbref -- ]
-      Destroys the message box and all of it's contents.
-  
-    MBOX-append   [{strrange} infostr base dbref -- refnum]
-      Creates a new message with the given message items and info string
-      and appends it at the end of the message box. Returns the message's
-      number.
-  
-    MBOX-insmesg  [{strrange} infostr refnum base dbref -- refnum]
-      Creates a new message with the given message items and info string
-      and inserts it before the given message number in the message box.
-      Returns the message's number.
-  
-    MBOX-delmesg  [refnum base dbref -- ]
-      Delete the given message number in the message box.  It moves the
-      rest of the messages after it up in the message box.
-  
-    MBOX-setmesg  [{strrange} infostr refnum base dbref -- ]
-      Sets the given message number in the given message box to contain the
-      given message items and info string.
-  
-    MBOX-msginfo  [refnum base dbref -- infostr]
-      Returns the info string of the goven message number in the message box.
-  
-    MBOX-setinfo  [refnum base dbref -- ]
-      Sets the info string for the given message number in the message box.
-  
-    MBOX-message  [refnum base dbref -- {strrange}]
-      Returns the contents of the given message number in the message box
-      as a range of strings.
-  
-)
+( **** Message Box Object -- MBOX- ****                                       )
+(   MBOX-badref?  [refnum base dbref -- bad?]                                 )
+(     Returns whether or not the given message number exists.                 )
+(                                                                             )
+(   MBOX-ref2prop [refnum base dbref -- mbase dbref]                          )
+(     Returns the name and dbref of the specific message number in the given  )
+(     message box.                                                            )
+(                                                                             )
+(   MBOX-ref2num  [refnum base dbref -- msgnum]                               )
+(     Returns the absolute message number of a message referred to by the     )
+(     given reference number.  See MBOX-num2ref for an explanation of those   )
+(     terms.                                                                  )
+(                                                                             )
+(   MBOX-num2ref  [msgnum base dbref -- refnum]                               )
+(     Returns the reference number of the message that has the given absolute )
+(     message number.  The reference number is the position number of the     )
+(     message in the message list.  The absolute message number is the number )
+(     that the message was given when it was created.  The absolute reference )
+(     number of a message will never change.  If the message with the given   )
+(     message number no longer exists, then the reference to the first message)
+(     after the given message number is returned.                             )
+(                                                                             )
+(   MBOX-create   [base dbref -- ]                                            )
+(     Creates a new message box with no messages in it.                       )
+(                                                                             )
+(   MBOX-count    [base dbref -- count]                                       )
+(     Returns the number of messages contained in the given message box.      )
+(                                                                             )
+(   MBOX-destroy  [base dbref -- ]                                            )
+(     Destroys the message box and all of it's contents.                      )
+(                                                                             )
+(   MBOX-append   [{strrange} infostr base dbref -- refnum]                   )
+(     Creates a new message with the given message items and info string      )
+(     and appends it at the end of the message box. Returns the message's     )
+(     number.                                                                 )
+(                                                                             )
+(   MBOX-insmesg  [{strrange} infostr refnum base dbref -- refnum]            )
+(     Creates a new message with the given message items and info string      )
+(     and inserts it before the given message number in the message box.      )
+(     Returns the message's number.                                           )
+(                                                                             )
+(    MBOX-delmesg  [refnum base dbref -- ]                                    )
+(     Delete the given message number in the message box.  It moves the       )
+(     rest of the messages after it up in the message box.                    )
+(                                                                             )
+(    MBOX-setmesg  [{strrange} infostr refnum base dbref -- ]                 )
+(     Sets the given message number in the given message box to contain the   )
+(     given message items and info string.                                    )
+(                                                                             )
+(   MBOX-msginfo  [refnum base dbref -- infostr]                              )
+(     Returns the info string of the goven message number in the message box. )
+(                                                                             )
+(   MBOX-setinfo  [refnum base dbref -- ]                                     )
+(     Sets the info string for the given message number in the message box.   )
+(                                                                             )
+(   MBOX-message  [refnum base dbref -- {strrange}]                           )
+(     Returns the contents of the given message number in the message box     )
+(     as a range of strings.                                                  )
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-mesgbox,v $
+  Revision 1.5  2004/04/17 17:47:08  feaelin
+  Fixed bug in MBOX-insmesg that caused it to overwrite the mesg at the
+  position you are inserting at, instead of inserting.
+
   Revision 1.4  2004/03/26 03:23:07  feaelin
   Upgraded W-bit so @ props can be used.
-
+  
   Revision 1.3  2001/02/23 15:41:03  feaelin
   Corrected version info.
-
+  
   Revision 1.2  1998/08/22 19:44:24  glow
   Finished RCS-ifying.
-
+  
   Revision 1.1  1998/08/22 19:43:57  glow
   Initial revision
-
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/mesg
@@ -134,7 +138,6 @@ lvar n2r_cnt
     0 "0" 4 rotate 4 rotate MSG-create
 ;
   
-  
 : MBOX-append ({strrange} infostr base dbref -- refnum)
     over over MSG-info
     ({strrange} infostr base dbref next)
@@ -152,9 +155,8 @@ lvar n2r_cnt
     (ref)
 ;
   
-  
 : MBOX-insmesg ({strrange} infostr refnum base dbref -- refnum)
-    over over MSG-info
+    over over MSG-info dup "" strcmp not if pop "0" then
     dup atoi 1 + intostr
     4 pick 4 pick MSG-setinfo
     ({strrange} infostr refnum base dbref next)
@@ -164,26 +166,22 @@ lvar n2r_cnt
     ({strrange} infostr base dbref refnum next)
     dup rot 5 pick 5 pick MSG-insitem
     ({strrange} infostr base dbref next)
-    atoi rot rot MBOX-ref2prop
+    rot "/" strcat swap strcat swap 
     ({strrange} infostr mbase dbref)
     MSG-create
 ;
-  
   
 : MBOX-setmesg ({strrange} infostr refnum base dbref -- )
     MBOX-ref2prop MSG-create
 ;
   
-  
 : MBOX-msginfo (refnum base dbref -- infostr)
     MBOX-ref2prop MSG-info
 ;
   
-  
 : MBOX-setinfo (infostr refnum base dbref -- )
     MBOX-ref2prop MSG-setinfo
 ;
-  
   
 : MBOX-message (refnum base dbref -- {strrange})
     MBOX-ref2prop MSG-message
@@ -230,5 +228,5 @@ q
 @set $tmp/prog1=/_defs/MBOX-setinfo:"$lib/mesgbox" match "MBOX-setinfo" call
 @set $tmp/prog1=/_defs/MBOX-setmesg:"$lib/mesgbox" match "MBOX-setmesg" call
 @set $tmp/prog1=/_docs:@list $lib/mesgbox=3-60
-@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.5 $
 "Installation of lib-mesgbox complete.
