@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/03/21 01:31:43 $ $Revision: 1.18 $             )
+( lib-editor: $Date: 2005/04/04 14:31:05 $ $Revision: 1.19 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.19  2005/04/04 14:31:05  feaelin
+  Documentation and script updated.
+
   Revision 1.18  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -125,7 +128,7 @@ $define SRNGswap    sr-swaprng    $enddef
 $define SRNGcopy    sr-copyrng    $enddef
 $define SRNGdelete  sr-deleterng  $enddef
 $define SRNGinsert  sr-insertrng  $enddef
-  
+ 
 : EDITORerror ( errnum -- )
     dup       1 = if pop "Invalid line reference."
     else dup  2 = if pop "Error: Line referred to is before first line."
@@ -148,7 +151,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     "^FAIL^< ** " swap strcat " ** >^RESET^" strcat
     me @ swap ansi_notify
 ;
-  
+ 
 : EDITORargument ( endline currentline string -- linenum )
     dup "$" 1 strncmp not if
         1 strcut swap pop
@@ -183,14 +186,14 @@ $define SRNGinsert  sr-insertrng  $enddef
         > if swap then pop
     then
 ;
-  
+ 
 : EDITORmesg  (int1 int2 int3 string -- )
     swap intostr "%3" subst
     swap intostr "%2" subst
     swap intostr "%1" subst
     me @ swap ansi_notify
 ;
-  
+ 
 : EDITORparse ( {str_rng} mask currline cmdstr --
                 {str_rng'} mask currline arg1 arg2 exitcmd 1   or
                 {str_rng'} mask currline 0                        )
@@ -630,13 +633,12 @@ $define SRNGinsert  sr-insertrng  $enddef
     then
     pop pop pop pop 8 EDITORerror 1
 ;
-  
-  
+ 
 : EDITORloop ( {rng} mask currpos cmdstr --
               {rng'} mask currpos arg3str arg1int arg2int exitcmd )
     EDITORparse if "" EDITORloop then
 ;
-  
+ 
 : EDITORheader ( -- )
     "^NOTE^< Entering editor.  Type '.h' on a line by itself for help. >^RESET^"
     me @ swap ansi_notify
@@ -647,7 +649,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     "^NOTE^<   line with : or \" just preceed it with a period  ('.')   >^RESET^"
     me @ swap ansi_notify
 ;
-  
+ 
 : EDITOR ( {str_rng} -- {str_rnd'} exitcmdstr )
     EDITORheader
     "" 1 ".i $" EDITORloop -6 rotate pop pop pop pop pop
@@ -661,14 +663,13 @@ PUBLIC EDITORheader
 c
 q
 @register lib-editor=lib/editor
-@register #me lib-editor=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W3
-@set $tmp/prog1=/_defs/EDITOR:"$lib/editor" match "editor" call
-@set $tmp/prog1=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
-@set $tmp/prog1=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
-@set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
-@set $tmp/prog1=/_docs:@list $lib/editor=1-46
-@set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.18 $
+@set $lib/editor=L
+@set $lib/editor=W3
+@set $lib/editor=/_defs/EDITOR:"$lib/editor" match "editor" call
+@set $lib/editor=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
+@set $lib/editor=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
+@set $lib/editor=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
+@set $lib/editor=/_docs:@list $lib/editor=1-51
+@set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
+@set $lib/editor=/_lib-version:FM$Revision: 1.19 $
 wh me=Installation of lib-editor complete.
