@@ -1,8 +1,8 @@
-"Beginning installation of lib-index...
+wh me=Beginning installation of lib-index...
 @prog lib-index
 1 99999 d
 1 i
-( lib-index: $Date: 1998/08/23 16:19:30 $ $Revision: 1.2 $
+( lib-index: $Date: 2004/08/22 01:46:50 $ $Revision: 1.3 $
   Originally taken from the FuzzBall MUF distribution.
   Author: ErmaFelna                                                           )
 ( --------------------------------------------------------------------------- )
@@ -41,13 +41,8 @@
       to match the starts of words: anything that comes immediatly
       after a space.  So 'mat' will match 'mattress' and 'lit match',
       but not 'rematch'.
-      If the 
-      This is the core reason for this library: it does a partial word
-      match on the name given, trying to find any element in the index
-      with a name that has the given name string as a prefix.  This
-      type of match is similar to that performed by the server.  If the
-      error code is true, the name' string is good; if the error code
-      is false, than the name' string is either null for nothing found,
+      If the error code is true, the name' string is good; if the error
+      code is false, than the name' string is either null for nothing found,
       or the first element found if there were multiple matches.
  
     index-matchrange: [ dbref index name -- name1' ... namen' n ]
@@ -115,6 +110,9 @@
 ( --------------------------------------------------------------------------- )
 (
  $Log: lib-index,v $
+ Revision 1.3  2004/08/22 01:46:50  feaelin
+ Documentation cleanup.
+
  Revision 1.2  1998/08/23 16:19:30  glow
  Fixed documentation up.
 
@@ -769,5 +767,5 @@ q
 @set $tmp/prog1=/_defs/.std-index-value:"$lib/index" match "std-index-value" call
 @set $tmp/prog1=/_defs/.std-index-write:"$lib/index" match "std-index-write" call
 @set $tmp/prog1=/_docs:@list $lib/index=5-109
-@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.2 $
-"Installation of lib-index complete.
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.3 $
+wh me=Installation of lib-index complete.
