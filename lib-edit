@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2000/01/10 20:54:44 $ $Revision: 1.4 $
+( lib-edit: $Date: 2004/02/20 17:08:44 $ $Revision: 1.5 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -89,6 +89,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.5  2004/02/20 17:08:44  feaelin
+  Added ansi versions of EDITdisplay and EDITlist,
+  EDITansi_display and EIDTansi_list respectively.
+
   Revision 1.4  2000/01/10 20:54:44  feaelin
   Minor documentation fixes.
 
@@ -364,6 +368,23 @@ $endif
     me @ swap notify
     swap 1 + swap EDITlist
 ;
+
+: EDITansi_list    ( {rng} ... offset nums? start end -- {rng} ... )
+    over over >
+    3 pick 6 pick 7 + pick > or if
+        pop pop pop pop exit
+    then
+    4 pick 6 + dup pick + 3 pick - pick
+    4 pick if
+        "  " 4 pick intostr strcat
+        dup strlen 3 - strcut
+        swap pop ": " strcat
+        swap strcat
+    then
+    dup not if pop " " then
+    me @ swap ansi_notify
+    swap 1 + swap EDITansi_list
+;
     
   
   
@@ -371,6 +392,14 @@ $endif
     dup if
         dup 1 + rotate me @ swap notify
         1 - EDITdisplay exit
+    then pop
+;
+  
+  
+: EDITansi_display ( {str_rng} -- )
+    dup if
+        dup 1 + rotate me @ swap ansi_notify
+        1 - EDITansi_display exit
     then pop
 ;
   
@@ -443,6 +472,7 @@ PUBLIC EDITreplace
 PUBLIC EDITmove
 PUBLIC EDITcopy
 PUBLIC EDITlist
+PUBLIC EDITansi_list
 PUBLIC EDITleft
 PUBLIC EDITcenter
 PUBLIC EDITright
@@ -454,6 +484,7 @@ PUBLIC EDITshuffle
 PUBLIC EDITsort
 PUBLIC EDITjoin
 PUBLIC EDITdisplay
+PUBLIC EDITansi_display
 PUBLIC EDITsplit
 PUBLIC EDITformat
 .
@@ -463,6 +494,8 @@ q
 @register #me lib-edit=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=W
+@set $tmp/prog1=/_defs/EDITansi_display:"$lib/edit" match "EDITansi_display" call
+@set $tmp/prog1=/_defs/EDITansi_list:"$lib/edit" match "EDITansi_list" call
 @set $tmp/prog1=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
 @set $tmp/prog1=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
 @set $tmp/prog1=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
@@ -482,5 +515,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
 "Installation of lib-edit complete.
