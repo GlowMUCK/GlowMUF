@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1999/12/21 17:59:20 $ $Revision: 1.11 $                 )
+( cmd-register $Date: 1999/12/29 23:20:40 $ $Revision: 1.12 $                 )
 ( Original Author: Unknown, presumably Foxen                                  )
 ( Updated for Glowmuck by: Andy & Feaelin                                     )
 ( --------------------------------------------------------------------------- )
@@ -16,10 +16,11 @@ lvar regprop
   "The @register program is used to make objects, particularly programs," tell
   "globally available to all users.  Basic syntax:" tell
   " " tell
-  "  @reg                     ... to list globally registered programs." tell
-  "  @reg <propdir>           ... to list globally registered programs" tell
-  "                               in a particular propdir." tell
-  "  @reg <object> = <name>   ... to register <object> as <name>." tell
+  "  @reg                        - to list globally registered programs." tell
+  "  @reg <propdir>              - to list globally registered programs" tell
+  "                                in a particular propdir." tell
+  "  @reg <object> = <name>        to register <object> as <name>." tell
+  "  @reg #del <object> = <name> - to remove entry <name> on <object>." tell
   " " tell
   "By default, registrations are made on #0 in _reg or the specified" tell
   "subpropdir of _reg." tell
@@ -27,9 +28,9 @@ lvar regprop
   "Of course, only wizards have permission to change #0, but mortal" tell
   "players can still store registrations on themselves or other objects" tell
   "which they own, using the following options:" tell
-  "  #me                      ... makes the registration on the user." tell
-  "  #prop <targobj>:<prop>   ... makes the registration on <targobj>" tell
-  "                               in propdir <prop>" tell
+  "  #me                         - makes the registration on the user." tell
+  "  #prop <targobj>:<prop>      - makes the registration on <targobj>" tell
+  "                                in propdir <prop>" tell
   "Type '@reg #help2' for examples." tell
 ;
 
@@ -135,7 +136,65 @@ lvar regprop
   dup "#help" over if
     over strlen strcut pop stringcmp not else pop pop 0
   then if do-help exit then
-  striplead dup tolower "#me" 3 strncmp not if
+  striplead dup tolower "#del" 3 strncmp not if
+    " " split swap pop
+    dup "=" instr dup not if
+      me @ "^FAIL^Please specify both object and registry entry to remove."
+      ansi_notify
+      depth popn exit
+    then
+    1 - strcut 1 strcut swap pop swap match
+    dup dup #-1 dbcmp swap ok? not or if
+      me @ "^FAIL^Remove a registry entry from what object?" ansi_notify
+      depth popn exit
+    then
+    dup #-2 dbcmp if
+      me @ "^INFO^I don't know which one you mean!" ansi_notify
+      depth popn exit
+    then
+    dup #0 dbcmp me @ "arch" flag? not and if
+      me @ "^FAIL^Sorry. Only Arch-Wizards can remove registry entries from #0."
+      ansi_notify
+      depth popn exit
+    then
+    swap dup "/_reg/" swap strcat
+    3 pick over getpropstr dup not if
+      me @ "^FAIL^That registry entry does not exist." ansi_notify
+      depth popn exit
+    then
+    dup string? if
+      dup "#" instr if
+        1 strcut swap pop
+      then
+      atoi dbref
+    else
+      me @ "^FAIL^Strange...that registry entry isn't in a valid format."
+      ansi_notify depth popn exit
+    then
+    unparseobj me @ swap 
+    "^INFO^Are you sure you want to delete the registry entry: '^NOTE^"
+    5 pick strcat "^INFO^' which is pointing to: '^NOTE^" strcat swap strcat 
+    "^INFO^'?" strcat
+    ansi_notify
+    read tolower dup "y" strcmp not if
+       pop me @ "^INFO^Please type either 'yes' or 'no' entirely." ansi_notify
+       me @ "^INFO^Try again:" ansi_notify
+       read tolower
+    then
+    dup "no" strcmp not if
+      me @ "^FAIL^Aborted..." ansi_notify
+      depth popn exit
+    then
+    "yes" strcmp not if
+      swap pop remove_prop
+      me @ "^SUCC^Registry entry removed." ansi_notify
+    else
+      me @ "^FAIL^Invalid input...aborting." ansi_notify
+      depth popn exit
+    then
+    depth popn exit
+  then    
+  dup tolower "#me" 3 strncmp not if
     " " split swap pop
     me @ regobj !
     "_reg/" regprop !
@@ -216,6 +275,9 @@ lvar regprop
 
 ( 
    $Log: cmd-register,v $
+   Revision 1.12  1999/12/29 23:20:40  feaelin
+   New Feature! You can now remove registry entries with @reg #del <object>=<name>
+
    Revision 1.11  1999/12/21 17:59:20  feaelin
    Cleaned up the log and header comments.
    Fixed any ansi colors to use ^SUCC^/^FAIL^ instead of ^GREEN^/^RED^, making cmd-register more site customizable.
@@ -240,11 +302,11 @@ lvar regprop
 
    Revision 1.3  1998/07/27 01:50:50
    Added a rcs-info stripper to make the version number show up nicely.
-
+ 
    Revision 1.1  1998/07/26 20:14:21
    Updated to bring it in line with any improvements made in FBMUF5.61.
    Cleaned up use of macros, e.g. made it so no macros or libs are required to
-    run/compile cmd-register on a glowmuck server.
+   run/compile cmd-register on a glowmuck server.
    Also added some pretty colors! 
    Fixed _reg props to use refs instead of string props.  Included backward
    compatibility with servers that are still using strings for those
@@ -259,5 +321,5 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.11 $
+@set $cmd/register=_version:FM$Revision: 1.12 $
 "Installation of cmd-register finished.
