@@ -1,12 +1,16 @@
-aa"Beginning installation of cmd-emotion...
+wh me=Beginning installation of cmd-emotion...
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2005/01/14 16:32:03 $ $Revision: 1.6 $
+( cmd-emotion: $Date: 2005/03/07 14:40:34 $ $Revision: 1.7 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.7  2005/03/07 14:40:34  feaelin
+  Fixed the issues where the 'socials' command would report various crazy
+  variants of the words 'emotions' and 'socials' as part of the list.
+
   Revision 1.6  2005/01/14 16:32:03  feaelin
   Broad sweep to clear up terminology usage in regards to database item/object/thing
 
@@ -349,13 +353,14 @@ $def LiORes "o" swap resdir listemotion
  
 : showall (--)
   "Known socials: "
-  alt-trigger @ name dup "soc;" instr 3 + strcut swap pop
+  alt-trigger @ name
+  "" ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc" subst
   ", " ";" subst
   .cleancommas
   "." strcat strcat n
 ;
  
-: remverb (s--)
+: remverb ( s -- )
   trig owner me @ dbcmp if
   striplead striptail
   dup if
@@ -368,11 +373,10 @@ $def LiORes "o" swap resdir listemotion
     repeat
     dup strlen 1 - strcut pop
     1 strcut swap pop
-    trig swap 
-    dup ";soc;" instr 5 -
-    strcut swap pop SortStr
-    "emotions;emotion;emotio;emoti;emot;socials;social;socia;socia;soci;soc;"
-    swap strcat setname pop
+    "" ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc" subst
+    SortStr
+       ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc"
+    strcat setname pop
     "Social verb removed." n
   else
     pop "Usage: " command @ strcat
@@ -397,10 +401,11 @@ $def LiORes "o" swap resdir listemotion
     repeat
     dup strlen 1 - strcut pop
     1 strcut swap pop
-    trig swap dup ";soc;" instr 5 -
-    strcut swap pop SortStr
-    "emotions;emotion;emotio;emoti;emot;socials;social;socia;socia;soci;soc;"
-    swap strcat setname pop
+    trig swap
+    "" ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc" subst
+    SortStr
+       ";emotions;emotion;emotio;emoti;emot;socials;social;socia;soci;soc"
+    strcat setname pop
     "Social verb added." n
   else
     pop "Usage: " command @ strcat
@@ -547,6 +552,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.6 $
-aa"Installation of cmd-emotion complete.
-aa"Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.7 $
+wh me=Installation of cmd-emotion complete.
+wh me=Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
