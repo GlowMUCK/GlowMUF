@@ -2,10 +2,11 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2004/12/12 18:10:02 $ $Revision: 1.9 $                     )
+( cmd-page: $Date: 2005/01/11 15:53:45 $ $Revision: 1.10 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
-( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop             )
+( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
+(               lib-edit                                                      )
 ( --------------------------------------------------------------------------- )
 ( Coding: Pak, Artie & Co. -- Original MufPage by Foxen                       )
 ( Hi's to everyone who doesn't hate me! :-> -- makes it simple doesn't it?    )
@@ -14,6 +15,11 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.10  2005/01/11 15:53:45  feaelin
+  Changed p #mail so that p #mail <name> <name>... works correctly. Added
+  back in the p #changes command and notification that the version has
+  changed.
+
   Revision 1.9  2004/12/12 18:10:02  feaelin
   Fixed bug that introduced extra curly-braces in a multi-line message
 
@@ -48,6 +54,8 @@ $include $lib/strings
 $include $lib/showlist
 $include $lib/userprop
 $include $lib/editor
+$include $lib/case
+$include $lib/edit
   
 $def sizelimit 2500
 $def daysold 9999
@@ -59,7 +67,6 @@ $def guest? dup "guest" flag? swap "mage" flag? not and
   
 $def strftime swap timefmt
 $def split .split2
-$def scn over stringcmp not
 $def Uenvprop Uenvpropstr swap pop
   
 $def descr_idle descrcon conidle
@@ -124,6 +131,14 @@ $endif
   then
 ;
   
+: get-last-version (playerdbref -- ignorestr)
+  "last-version" Ugetpropstr
+;
+ 
+: set-last-version (string playerdbref -- )
+  "last-version" rot Usetpropstr
+;
+ 
 : getignorestr (playerdbref -- ignorestr)
   prog "ignore#"
   rot int intostr
@@ -1755,50 +1770,54 @@ $endif
 
 : show-header ( s -- )
   me @ swap 
-  "^FOREST^MUFpage v2.5FM$Revision: 1.9 $by Foxen                                            ^YELLOW^"
+  "^FOREST^MUFpage v2.5FM$Revision: 1.10 $ by Foxen                                           ^YELLOW^"
   swap strcat
-  begin
-    dup "$" instr while
-    "$" STRsplit strcat
-  repeat
-  "" "Revision: " subst
+  "" "$Revision: 1.10 $" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                Updated $Date: 2004/12/12 18:10:02 $"
-  begin
-    dup "$" instr while
-    "$" STRsplit strcat
-  repeat
-  "" "Date: " subst
-  dup strlen 9 - strcut pop
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated $Date: 2005/01/11 15:53:45 $"
+  "" "$Date: 2005/01/11 15:53:45 $" subst
+  dup strlen 10 - strcut pop
   ansi_notify
   me @
   "^YELLOW^----------------------------------------------------------------------------"
   ansi_notify
 ;
-  
+ 
+: show-changes ( -- )
+  "Changes" show-header
+  "$Log: cmd-page,v $
+  "Revision 1.10  2005/01/11 15:53:45  feaelin
+  "Changed p #mail so that p #mail <name> <name>... works correctly. Added
+  "back in the p #changes command and notification that the version has
+  "changed.
+  ""
+  depth
+  EDITansi_display
+;  
+ 
 : show-help ( -- )
-  "Page1" show-header
+  "Page 1" show-header
   prog "_help1" .showlist
 ;
 : show-help2
-  "Page2" show-header
+  "Page 2" show-header
    prog "_help2" .showlist 
 ;
 : show-help3
-  "Page3" show-header
+  "Page 3" show-header
   prog "_help3" .showlist
 ;
 : show-help4
-  "Page4" show-header
+  "Page 4" show-header
   prog "_help4" .showlist
 ;
 : show-hints
-  "Hints1" show-header
+  "Hints 1" show-header
   prog "_hint1" .showlist
 ;
 : show-hints2
-  "Hints2" show-header
+  "Hints 2" show-header
   prog "_hint2" .showlist
 ;
 : Do-Help (s--) title pop prog "_helpm" .showlist ;
@@ -1902,30 +1921,6 @@ $endif
   then
 ;
  
-: EM-Loop (s--s)
-  read dup "." strcmp not if
-    pop exit
-  then
-  dup "XXX" stringcmp not if
-    pop pop "" exit
-  then
-  strcat "}{" strcat
-  dup strlen 
-  dup sizelimit > if
-    "Maximum mail message size reached, truncating and sending." tell
-     pop sizelimit strcut pop exit
-  then
-  dup sizelimit 500 - > if
-    sizelimit swap -
-    intostr " letters left before mail message is full, please finish soon." 
-    strcat tell
-  else
-    pop
-  then
-    
-  EM-Loop
-;
- 
 : Edit-Mail ( -- s)
   ( call editor )
   0 EDITOR
@@ -1939,18 +1934,6 @@ $endif
     rot swap strcat "}{" strcat swap ( add the new line, terminate it with } )
     1 - dup 0 = ( are we done yet? )
   until pop swap pop dup strlen 2 - strcut pop
-;
-
-: Old-Edit-Mail (--s) ( This is my cheapo editor, no frills :)
-  "Enter the subject for this letter:" tell
-  read "Re: " swap strcat "}{" strcat
-  " " tell
- "A single period on a line saves/sends the mail message." tell
- "XXX on a line nukes the mail message, nothing gets sent." tell
- " " tell
- "  <<< Mail Editor >>>  Enter message here:" tell
- " " tell
- EM-Loop
 ;
  
 : Do-Send (s--)
@@ -2206,38 +2189,37 @@ $endif
     "Use 'mail old' to read saved mail, 'mail help' for help." tell
     exit
   then
-  dup " " instr dup if
-    1 - strcut 1 strcut
-    swap pop swap
-  else
-    pop "" swap
-  then
-  "help"    scn if pop Do-Help  exit then
-  "to"      scn if pop Do-Send  exit then
-  "send"    scn if pop Do-Send  exit then
-  me @ guest? not if
-    "read"    scn if pop Do-Read  exit then
-    "new"     scn if pop Do-New   exit then
-    "old"     scn if pop Do-Old   exit then
-    "check"   scn if pop Do-Check exit then
-    "del"     scn if pop Do-Del   exit then
-    "forward" scn if pop Do-For   exit then
-    "kill"    scn if pop Do-Kill  exit then
-    "erase"   scn if pop Do-Kill  exit then
-    "set"     scn if pop Do-Set   exit then
-    "clear"   scn if swap pop Do-Set exit then
-  then
-  " " strcat
-  swap strcat
+  dup " " STRsplit
+  swap
+  "" "#" subst
+  case
+    "help"   stringcmp not when pop swap pop Do-Help  exit end
+    "to"     stringcmp not when pop swap pop Do-Send  exit end
+    "send"   stringcmp not when pop swap pop Do-Send  exit end
+    me @ guest? not if
+      "read"   stringcmp not when pop swap pop Do-Read  exit end
+      "new"    stringcmp not when pop swap pop Do-New   exit end
+      "old"    stringcmp not when pop swap pop Do-Old   exit end
+      "check"  stringcmp not when pop swap pop Do-Check exit end
+      "del"    stringcmp not when pop swap pop Do-Del   exit end
+      "forward"stringcmp not when pop swap pop Do-For   exit end
+      "kill"   stringcmp not when pop swap pop Do-Kill  exit end
+      "erase"  stringcmp not when pop swap pop Do-Kill  exit end
+      "set"    stringcmp not when pop swap pop Do-Set   exit end
+      "clear"  stringcmp not when swap pop swap pop Do-Set exit end
+    then
+  endcase
+  pop
   dup "=" instr if
     Do-Send exit
   then
-  pop
-  "Hmm?  You probably forgot to use 'mail to person'." tell
-  "Type 'mail help' for examples of how to use mail." tell
+  dup "" strcmp if
+    Do-Send exit
+  then
 ;
  
-: page-main ( s -- ) strip
+: page-main ( s -- ) 
+  strip
   dup not if pop "#help" then
   dup "&" 1 strncmp not if
     1 strcut swap pop
@@ -2259,6 +2241,9 @@ $endif
   dup "#" 1 strncmp not if
     dup "#who" 2 stringmatch? if
       pop show-who-info exit
+    then
+    dup "#changes" stringcmp not if
+      pop show-changes exit
     then
     dup "#help" 2 stringmatch? if
       pop show-help exit
@@ -2669,6 +2654,7 @@ public page
 public mail
 public check
  
+lvar current-version
 : main
   "me" match dup me !
   location loc !
@@ -2689,6 +2675,17 @@ public check
   then
   command @ 1 strcut pop "m" stringcmp if
   page-main else mail-main then
+  "MUFpage v2.5FM$Revision: 1.10 $" "" "$Revision: 1.10 $" subst
+  current-version !
+  me @ get-last-version current-version @ strcmp if
+    "Page has been upgraded.  Type 'page #changes' to see the latest mods." tell
+    me @ get-last-version dup if
+      "You last used " swap strcat tell
+    else
+      pop
+    then
+    current-version @ me @ set-last-version
+  then
 ;  
   
 : do-debug
@@ -2850,5 +2847,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.9 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.10 $
 wh me=Installation of cmd-page complete.

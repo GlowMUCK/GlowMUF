@@ -1,4 +1,4 @@
-CHANGES $Date: 2004/05/08 17:34:47 $ $Revision: 1.17 $
+CHANGES $Date: 2005/01/11 15:53:44 $ $Revision: 1.18 $
 Author: Feaelin
 -------------------------------------------------------------------------------
 I try to keep all the changes on a by program basis, so that you can install
@@ -6,6 +6,13 @@ the individual programs to keep up-to-date. I don't always succeed in getting
 all the changes in, so it is wise to check the webpage that lists the programs
 and their current versions, or check the version number in the individual files
 and compare it to the version shown by @register.
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+01) cmd-page:     Replaced the built-in editor with appropiate calls to
+                  lib-editor. Revised front end so p #mail <name> <name>...
+                  worked correctly. Added back in the #changes support and the
+                  "page has upgraded warning.
+
 -------------------------------------------------------------------------------
 2004 May 08: FM 1.0.2
 -------------------------------------------------------------------------------
