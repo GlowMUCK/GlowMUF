@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/04/05 21:08:02 $ $Revision: 1.12 $                   )
+( lib-match: $Date: 2005/04/06 04:10:57 $ $Revision: 1.13 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -64,6 +64,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.13  2005/04/06 04:10:57  feaelin
+  Added some colorization.
+
   Revision 1.12  2005/04/05 21:08:02  feaelin
   Removed unneeded $include of lib-stackrng
 
@@ -120,7 +123,7 @@ wh me=Begining installation of lib-match...
  
 : noisy_pmatch ( s -- d )
   pmatch dup not if
-    me @ "I don't recognize anyone by that name." notify
+    me @ "^FAIL^I don't recognize anyone by that name." ansi_notify
   then
 ;
  
@@ -245,5 +248,5 @@ q
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-55
-@set $lib/match=/_lib-version:FM$Revision: 1.12 $
+@set $lib/match=/_lib-version:FM$Revision: 1.13 $
 wh me=Installation of lib-match completed.
