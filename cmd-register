@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2000/01/10 16:56:46 $ $Revision: 1.13 $                 )
+( cmd-register $Date: 2004/02/07 17:19:18 $ $Revision: 1.14 $                 )
 ( Original Author: Unknown, presumably Foxen                                  )
 ( Updated for Glowmuck by: Andy & Feaelin                                     )
 ( --------------------------------------------------------------------------- )
@@ -259,6 +259,9 @@ lvar regprop
   " " split if
     pop pop "^FAIL^You cannot have spaces in the registration name." tell exit
   then
+  dup "$" instr if
+    pop pop "^FAIL^You cannot have a dollar sign ($) in the registration name." tell exit
+  then
   regobj @ regprop @ 3 pick strcat getpropstr
   dup if
     dup "#" 1 strncmp not if 1 strcut swap pop then
@@ -276,6 +279,9 @@ lvar regprop
 
 ( 
    $Log: cmd-register,v $
+   Revision 1.14  2004/02/07 17:19:18  feaelin
+   Attempting to use a $ in the prop name now fails.
+
    Revision 1.13  2000/01/10 16:56:46  feaelin
    Added support for @view/_docs.  Made #del prompts a littl
    easier to understand.  Added some color to the output.
@@ -326,6 +332,6 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.13 $
+@set $cmd/register=_version:FM$Revision: 1.14 $
 @set $cmd/register=_docs:@register #help
 "Installation of cmd-register finished.
