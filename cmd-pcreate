@@ -2,11 +2,14 @@
 @prog cmd-pcreate
 1 99999 d
 1 i
-( cmd-pcreate: $Date: 2000/12/22 16:08:43 $ $Revision: 1.1 $                                              )
+( cmd-pcreate: $Date: 2000/12/22 16:10:54 $ $Revision: 1.2 $                  )
 ( Author: Pakrat                                                              )
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-pcreate,v $
+  Revision 1.2  2000/12/22 16:10:54  feaelin
+  Documentation correction.
+
   Revision 1.1  2000/12/22 16:08:43  feaelin
   Initial revision
 
@@ -60,5 +63,5 @@ q
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Permission denied.
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-pcreate complete.
