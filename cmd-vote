@@ -2,12 +2,15 @@
 @prog cmd-vote
 1 99999 d
 1 i
-( cmd-vote: $Date: 2000/12/22 19:08:43 $ $Revision: 1.1 $ )
+( cmd-vote: $Date: 2000/12/22 19:09:23 $ $Revision: 1.2 $ )
 ( Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 ( Vote by PakRat Copyright 1997 All rights reserved )
 (
   $Log: cmd-vote,v $
+  Revision 1.2  2000/12/22 19:09:23  feaelin
+  Fixed bug where if wizard, but staff not set, can't change bot votes.
+
   Revision 1.1  2000/12/22 19:08:43  feaelin
   Initial revision
 
@@ -407,5 +410,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/vote help
-@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:FM$Revision: 1.2 $
 "Installation of cmd-vote complete.
