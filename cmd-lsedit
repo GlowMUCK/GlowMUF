@@ -1,14 +1,23 @@
-"Beginning installation of cmd-lsedit...
+wh me=Beginning installation of cmd-lsedit...
 @prog cmd-lsedit
 1 99999 d
 1 i
-( cmd-lsedit: $Date: 2005/01/14 16:32:13 $ $Revision: 1.5 $
-  Author:
-  --------------------------------------------------------------------------- )
+( cmd-lsedit: $Date: 2005/04/04 18:22:25 $ $Revision: 1.6 $                   )
+( Purpose: Front end for lib-editor as an actual text editor                  )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-lmgr, lib-edit, lib-editor, lib-strings, lib-mv-cp        )
+( --------------------------------------------------------------------------- )
 (
   $Log: cmd-lsedit,v $
+  Revision 1.6  2005/04/04 18:22:25  feaelin
+  Removed redundantly duplicated words that are already defined in lib-lmgr
+  Cleaned up the installer script
+  Cleaned up the header info
+
   Revision 1.5  2005/01/14 16:32:13  feaelin
-  Broad sweep to clear up terminology usage in regards to database item/object/thing
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
 
   Revision 1.4  2004/09/23 15:10:25  feaelin
   Corrected bug where it would allow you to enter the editor without actually
@@ -24,20 +33,15 @@
   Initial revision
 
 )
-
+ 
 $include $lib/lmgr
 $include $lib/edit
 $include $lib/editor
 $include $lib/strings
 $include $lib/mv-cp
-$include $lib/glowstandard
-
+ 
 $def .atell me @ swap ansi_notify
-$def LMGRgetcount lmgr-getcount
-$def LMGRgetrange lmgr-getrange
-$def LMGRputrange lmgr-putrange
-$def LMGRdeleterange lmgr-deleterange
-  
+( We don't need these...they're in lib-lmgr 2005-04-04 IDE   
 : LMGRdeletelist
   over over LMGRgetcount
   1 4 rotate 4 rotate LMGRdeleterange
@@ -48,6 +52,7 @@ $def LMGRdeleterange lmgr-deleterange
   rot rot 1 rot rot
   LMGRgetrange
 ;
+ )
   
 : lsedit-loop  ( listname dbref {rng} mask currline cmdstr -- )
     EDITORloop
@@ -75,7 +80,7 @@ $def LMGRdeleterange lmgr-deleterange
         "^SUCC^< list saved. >" .atell exit
     then
 ;
-
+ 
 : do-delete
   "^SUCC^List to be deleted is as follows:" .atell
   2 pick 2 pick LMGRgetlist EDITdisplay
@@ -88,7 +93,7 @@ $def LMGRdeleterange lmgr-deleterange
     "^INFO^List removal aborted." .atell
   then
 ;
-
+ 
 : do-copy
   swap
   "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
@@ -138,7 +143,7 @@ $def LMGRdeleterange lmgr-deleterange
   "#" strcat 3 pick "#" strcat 3 put copy-prop
   if "^SUCC^Copy successful." .atell else "^FAIL^Copy failed." .atell then
 ;
-
+ 
 : do-move
   swap
   "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
@@ -188,7 +193,7 @@ $def LMGRdeleterange lmgr-deleterange
   "#" strcat 3 pick "#" strcat 3 put move-prop 
   if "^SUCC^Move successful." .atell else "^FAIL^Move failed." .atell then
 ;
-
+ 
 : show-help
   "Usage:" .atell
   "lsedit <database item>=<listname>     - Edit <listname>" .atell
@@ -197,7 +202,7 @@ $def LMGRdeleterange lmgr-deleterange
   "lsmove <database item>=<listname>     - Move <listname>" .atell
   "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." .atell
 ; 
-
+ 
 : cmd-lsedit
   .noguest
   dup "#help" stringcmp not if show-help exit then
@@ -256,13 +261,13 @@ $def LMGRdeleterange lmgr-deleterange
 c
 q
 @register cmd-lsedit=cmd/lsedit
-@register #me cmd-lsedit=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=V
-@set $tmp/prog1=W3
+@set $cmd/lsedit=L
+@set $cmd/lsedit=V
+@set $cmd/lsedit=W3
 @action lsedit;lsdelete;lsdele;lsdel;lserase;lsremove;lsremov;lsremo;lsrem;lscopy;lscp;lsmove;lsmv=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
+@link $tmp/exit1=$cmd/lsedit
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/lsedit #help
-@set $tmp/prog1=_version:FM$Revision: 1.5 $
-"Installation of cmd-lsedit complete.
+@set $tmp/lsedit=/_/de:Type 'lsedit #help' for help
+@set $cmd/lsedit=_version:FM$Revision: 1.6 $
+wh me=Installation of cmd-lsedit complete.
