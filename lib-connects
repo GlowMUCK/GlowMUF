@@ -2,11 +2,21 @@
 @prog lib-connects
 1 99999 d
 1 i
-( lib-connects: $Date: 1998/08/23 16:48:30 $ $Revision: 1.1 $
-  Originally from the Glowmuck MUF distribution
+( lib-connects: $Date: 2000/01/11 15:36:15 $ $Revision: 1.2 $                 )
+( Originally from the Glowmuck MUF distribution                               )
+( --------------------------------------------------------------------------- )
+( firstconn  d -- i              Returns d's first connection number          )
+( findconn   a d -- i            Using function at address a for comparison,  )
+(                                finds the connection meeting that criteria   )
+( lastconn   d -- i              Returns d's last connection number           )
+( leastidle  d -- i              Returns d's least idle connection            )
+( mostidle   d -- i              Returns d's most idle connection             )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-connects,v $
+  Revision 1.2  2000/01/11 15:36:15  feaelin
+  Added documentation.
+
   Revision 1.1  1998/08/23 16:48:30  glow
   Initial revision
 
@@ -74,6 +84,7 @@ q
 @set $tmp/prog1=/_defs/conn-lastconn:"$lib/connects" match "lastconn" call
 @set $tmp/prog1=/_defs/conn-leastidle:"$lib/connects" match "leastidle" call
 @set $tmp/prog1=/_defs/conn-mostidle:"$lib/connects" match "mostidle" call
-@set $tmp/prog1=/_docs:@list $lib/connects=1-29
-@set $tmp/prog1=/_lib-version:FM1.0
+@set $tmp/prog1=/_/de:lib-connects: @list $lib/connects=1-10 for documentation.
+@set $tmp/prog1=/_docs:@list $lib/connects=1-10
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-connects completed.
