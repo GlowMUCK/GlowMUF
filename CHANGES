@@ -1,5 +1,14 @@
-CHANGES $Date: 2004/04/22 17:27:29 $ $Revision: 1.16 $
+CHANGES $Date: 2004/05/08 17:34:47 $ $Revision: 1.17 $
 Author: Feaelin
+-------------------------------------------------------------------------------
+I try to keep all the changes on a by program basis, so that you can install
+the individual programs to keep up-to-date. I don't always succeed in getting
+all the changes in, so it is wise to check the webpage that lists the programs
+and their current versions, or check the version number in the individual files
+and compare it to the version shown by @register.
+-------------------------------------------------------------------------------
+2004 May 08: FM 1.0.2
+-------------------------------------------------------------------------------
 01) lib-edit &
     lib-editor:   Added a .color command that prepends the range of lines 
                   given with the color specified, or replaces previously
@@ -7,11 +16,14 @@ Author: Feaelin
                   Fixed .split and .format so that they correctly preserve
                   colorization. Added the .ruler command. Upgraded to more
                   easily handle @props.
+		  Fixed bug in EDITORarguement that would cause the editor
+                  to crash after being passed certain combinations of invalid
+		  line references.
 02) cmd-roomcheck:Is now more intelligent about checking desc's when
                   @tune transparent_paths is turned on.
 03) cmd-emotion:  Fixed issue where a custom look program will cause the
                   "look at description for list" feature to fail.
-                  Added emotions/socials to list the emotions/socials.
+                  Added emotions/socials commands to list the emotions/socials.
 04) lib-look:     Various changes to slowly bring it up to glow standards:
                   less dependency on macros and $lib/glow. Added MPI parsing
                   for relevant properties. Replaced notifies with ansi_notify
@@ -23,10 +35,24 @@ Author: Feaelin
                   calls to follow the 'standard' format for library calls.
                   Added additional library calls to the new @detail related
                   words. General documentation cleanup. Support for @idesc
-                  added.
+                  added. Fixed 'me' & 'here'matching to work as you might
+		  expect. FAIL messages now use ^FAIL^ to colorize.
+		  Fixed colorization issues with LOOKshort-list*. WARNING!
+		  This has a hidden side-effect. lib-reflist relies on this
+		  public library word to generate a formatted list.  Any
+	          program relying on lib-reflist may generate colorized strings
+                  where they didn't before. Unfortunately, many of those same
+                  programs do not use ansi_notify, which means instead of
+                  seeing colored text, you see '^RED^Fred rides away' etc.
+                  In particular, I've identified a popular 'ride' and 'mumble'
+                  programs that have this problem.  The solution is to replace
+                  the notify's in those programs with ansi_notify's.
                   New Feature: ~look props. If a ~look/something:ref prop is
                   set anywhere in the environment, the program 'ref' will be
                   called by lib-look, with (Look) on top of the stack.
+		  New Feature: Made the standard filter public so that extended
+		  filters can be written without having to recreate the
+		  functionality of the standard filter yourself.
                   Added support for Wixenstyx's FENI library. If it exists on
                   the server, lib-look will use it.
 05) cmd-teleport: Added define to allow customization of the format of the
@@ -46,8 +72,11 @@ Author: Feaelin
                   This fixes issues where puppets, zombies, vehicles, and
                   "listeners" didn't see spoofs.
 13) cmd-register: Documentation update.
+14) lib-glow-...: Fixed documentation for compatibility with the MUF editor's
+		  view command.
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
+-------------------------------------------------------------------------------
 01) lib-stackrng: Added entries so that you can use SRNGxxx (instead of sr-xxx)
                   to make calls to the public functions in lib-stackrng. Fixed
                   a series of logic flaws in SRNGfilterng that caused it to not
