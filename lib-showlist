@@ -2,7 +2,7 @@
 @prog lib-showlist
 1 99999 d
 1 i
-( showlist: ( d s -- ): $Date: 1998/08/23 17:18:20 $ $Revision: 1.1 $        
+( showlist:  d s -- : $Date: 1999/02/13 16:37:36 $ $Revision: 1.2 $        
   Originally from the glowmuf distribution                                    )
 ( --------------------------------------------------------------------------- )
 ( Program to list a list stored within a propdir
@@ -10,6 +10,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-showlist,v $
+  Revision 1.2  1999/02/13 16:37:36  feaelin
+  *sigh* Darn nested parentheses.
+
   Revision 1.1  1998/08/23 17:18:20  glow
   Initial revision
 
