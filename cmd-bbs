@@ -2,7 +2,7 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 1999/04/18 04:00:10 $ $Revision: 1.1 $
+( cmd-bbs: $Date: 1999/04/18 04:02:10 $ $Revision: 1.2 $
   Author: Garth Minette
   --------------------------------------------------------------------------- )
 ( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette )
@@ -35,7 +35,6 @@
 ( You can set _bbspub but not _bbs to make a bbs library only, storage room )
   
 $include $lib/strings
-$include $lib/props
 $include $lib/lmgr
 $include $lib/mesg
 $include $lib/mesgbox
@@ -570,5 +569,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$bbs
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-bbs complete.
