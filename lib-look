@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/04/05 21:32:48 $ $Revision: 1.25 $                )
+( cmd/lib-look: $Date: 2005/04/06 19:28:19 $ $Revision: 1.26 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -79,8 +79,18 @@ wh me=Beginning installation of lib-look...
 (      Does a match function, then calls db-desc with the results.  This      )
 (      will simulate the usual 'look' command.                                )
 ( --------------------------------------------------------------------------- )
+( Features to be aware of:                                                    )
+( If you need programs to run when a player looks you can set a property in   )
+( the ~look property dir anywhere in the environment to the dbref of the      )
+( program you want to run. For example an obvious exits program could be set  )
+( in ~look/obviousexits on #0, and it would run that program. The output is   )
+( displayed after the description but before the Contents list.               )
+( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.26  2005/04/06 19:28:19  feaelin
+  Documented the ~look property directory feature.
+
   Revision 1.25  2005/04/05 21:32:48  feaelin
   Removed unneeded $include statements ...no actual calls to those libraries.
   Revised library words to be in line with the standard and fixed calls to
@@ -672,6 +682,6 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
 @set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.25 $
-@set $lib/look=/_version:1.31FM$Revision: 1.25 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.26 $
+@set $lib/look=/_version:1.31FM$Revision: 1.26 $
 wh me=Installation of lib-look complete.
