@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/03/21 01:31:43 $ $Revision: 1.23 $                )
+( cmd/lib-look: $Date: 2005/04/05 13:42:16 $ $Revision: 1.24 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.24  2005/04/05 13:42:16  feaelin
+  General documentation cleanup.
+  Improvements made to the installer script.
+
   Revision 1.23  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -89,7 +93,8 @@ wh me=Beginning installation of lib-look...
   non feni'd and non-colorized output.
 
   Revision 1.21  2005/01/14 16:32:13  feaelin
-  Broad sweep to clear up terminology usage in regards to database item/object/thing
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
 
   Revision 1.20  2004/08/04 18:50:53  feaelin
   Missed part of the calls when checking for #0.
@@ -181,13 +186,14 @@ lvar sdepth
 lvar realtrig
  
 : otell
-  loc @ me @ rot ansi_notify_except ( s -- ) ( Display string to everyone in my room except me )
+  ( Display string to everyone in my room except me )
+  loc @ me @ rot ansi_notify_except ( s -- )
 ;
-
+ 
 : tell
   me @ swap ansi_notify
 ;
-
+ 
 : safecall  ( x d -- )
   me @ sme !
   loc @ sloc !
@@ -209,7 +215,7 @@ lvar realtrig
 : dark? ( d -- i )
   dup "Dark" flag? swap control? not and
 ;
-
+ 
 : unparse ( d -- s )
   me @ "Silent" flag? if
     "%P" UPOspecial-unparseobj exit
@@ -348,7 +354,7 @@ lvar realtrig
     "^WHITE^and " strcat swap name strcat
   then
 ;
-  
+ 
 : short-display ( d... i -- )
   short-list dup
   if
@@ -387,7 +393,7 @@ lvar realtrig
     pop pop
   then
 ;
-  
+ 
 : look-prop-handler ( d s -- )
   over swap nextprop
   dup "" strcmp not if pop pop exit then
@@ -422,7 +428,7 @@ lvar realtrig
   until
   pop pop
 ; 
-  
+ 
 : look-prop2 ( d -- )
   dup "~look/" nextprop "" strcmp if
     "~look/" look-prop-handler
@@ -430,7 +436,7 @@ lvar realtrig
     pop
   then
 ;
-  
+ 
 : look-prop ( d -- )
   begin
     dup look-prop2
@@ -439,7 +445,7 @@ lvar realtrig
   until
   pop
 ; PUBLIC look-prop
-  
+ 
 : str-desc ( s -- )
   dup
   if
@@ -539,7 +545,7 @@ lvar realtrig
   realtrig @ trigger !
   pop
 ;
-
+ 
 : detail-dbmatch ( d s -- s )
   swap dup "_obj/" nextprop
   begin
@@ -563,7 +569,7 @@ lvar realtrig
   repeat
   -3 rotate pop pop
 ; PUBLIC detail-dbmatch
-
+ 
 : detail-desc ( s -- )
   dup
   "here" match dup rot 
@@ -613,7 +619,6 @@ q
 @set $lib/look=S
 @set $lib/look=H
 @set $lib/look=W3
-@set $lib/look=/_/de:lib-look:List lines 3-60 for documentation.
 @set $lib/look=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
 @set $lib/look=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
 @set $lib/look=/_defs/.db-desc:"$lib/look" match "db-desc" call
@@ -645,6 +650,7 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.23 $
-@set $lib/look=/_version:1.31FM$Revision: 1.23 $
+@set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.24 $
+@set $lib/look=/_version:1.31FM$Revision: 1.24 $
 wh me=Installation of lib-look complete.
