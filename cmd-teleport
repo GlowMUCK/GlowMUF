@@ -2,13 +2,17 @@
 @prog cmd-teleport
 1 99999 d
 1 i
-( cmd-teleport: $Date: 2004/02/14 15:40:06 $ $Revision: 1.4 $ )
+( cmd-teleport: $Date: 2004/03/26 03:05:11 $ $Revision: 1.5 $ )
 ( Author: Scotfox                 )
 ( --------------------------------------------------------------------------- )
 ( teleport.muf v2, by Scotfox, 1-October-93 )
 ( global and wizard aliases added by Quercus 9/96)
 (
   $Log: cmd-teleport,v $
+  Revision 1.5  2004/03/26 03:05:11  feaelin
+  Added a define to allow customization of the
+  name's room format
+
   Revision 1.4  2004/02/14 15:40:06  feaelin
   Adjusted the worldprop define to handle the new adjustable props.
   See 'find' for details.
@@ -29,6 +33,7 @@ $def OARRIVE "A mist appears and condenses into %n."
 
 $def anotify me @ swap ansi_notify
 
+( $def ownerstring yes )
  
 $def TELREF #0
 
@@ -43,7 +48,7 @@ lvar room_jump_ok
 lvar alias_type
  
 : do-help  ( -- )
-  "^FOREST^Teleport by Scotfox $Revision: 1.4 $ $Date: 2004/02/14 15:40:06 $"
+  "^FOREST^Teleport by Scotfox $Revision: 1.5 $ $Date: 2004/03/26 03:05:11 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -185,8 +190,17 @@ lvar alias_type
         ( player/progdbref propname value alias )
         dup strlen 10 >= if " " strcat else 10 padfield then
         " -- " strcat swap atoi dbref dup dup 
-        room? not IF pop pop "*NOT A ROOM*" ELSE name swap
-        owner name "'s " strcat swap strcat THEN strcat anotify
+        room? not IF
+          pop pop "*NOT A ROOM*"
+        ELSE
+          name
+$ifdef ownerstring          
+          swap owner name "'s " strcat swap strcat
+$else
+          swap pop
+$endif
+        THEN
+        strcat anotify
         (": " strcat swap strcat anotify)
     repeat
     pop pop
@@ -341,5 +355,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/teleport 
-@set $tmp/prog1=/_version:2.0FM$Revision: 1.4 $
+@set $tmp/prog1=/_version:2.0FM$Revision: 1.5 $
 "Installation of cmd-teleport complete.
