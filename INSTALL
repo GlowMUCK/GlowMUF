@@ -1,4 +1,4 @@
-INSTALL $Date: 1998/07/25 18:34:21 $ $Revision: 1.1 $
+INSTALL $Date: 1999/02/13 19:10:02 $ $Revision: 1.2 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.1 (Beta Release)
 ---------
@@ -41,9 +41,7 @@ using tinyfugue's /quote feature, or something equivalent.
 
 Comments about some other programs:
   cmd-path:
-    This program requires lib-userprop.  Also do not forget to use @tune
-    to set path_prog to the dbref of the path program. Also, do not forget
-    to use @psetup full.
+    This program requires lib-userprop.
 
   cmd-cinfo:
     This program requires you have cmd-find and cmd-laston installed to
