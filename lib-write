@@ -1,0 +1,312 @@
+"Beginning installation of lib-write...
+@prog lib-write
+1 99999 d
+1 i
+( lib-write: $Date: 1998/08/23 21:12:40 $ $Revision: 1.1 $
+  Author: Merlin <of Chaos> <Earl Miles>                                     )
+( -------------------------------------------------------------------------- )
+( MUF-Editor v 2.0
+* <C> 1990, 1991, 1992 by Merlin <of Chaos> <Earl Miles>
+* To change the number of lines available in the editor, reset the property
+* 'line-limit' on the program.  If the property is unset, the default is
+* 250.  Note that, due to MUF stack limits, any number over 400 can cause
+* stack overflows.
+*)
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-write,v $
+  Revision 1.1  1998/08/23 21:12:40  glow
+  Initial revision
+
+)
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+lvar linenums lvar property lvar where
+$def VERSION "MUF-Editor 2.0"
+$def TEMP "etemp/-"
+$def dcase tolower
+$def prgm prog
+ 
+: lines ( -- i )
+  where @ TEMP property @ strcat "lines" strcat getpropstr atoi
+;
+: putlines ( i -- )
+  where @ TEMP property @ strcat "lines" strcat rot intostr 1 addprop
+;
+: rangelines ( d s -- i )
+  "lines" strcat getpropstr atoi
+;
+: nukefirstword ( s -- s ) ( remove the first word from a string )
+  dup " " instr dup not if pop pop "" exit then
+  strcut swap pop
+;
+: print-version ( -- )                   ( These routines are most of the )
+                                         ( text .editor uses. )
+  me @ VERSION " by Merlin <of Chaos>" strcat notify
+;
+: print-entry ( i -- ) ( What line you're starting at )
+  print-version
+  me @ "Insert text at line " rot intostr strcat
+  ".  \".\" to exit.  \".h\" for help." strcat notify
+;
+: print-options ( -- )
+  me @ "Cmd: [\"help\" for help, \"s\" to save/send, \"a\" to abort]" notify
+;
+: print-help ( s -- ) ( string to append, a "." if in insert mode )
+  print-version
+  me @ " " notify
+  me @ over "s                 -- Save/Send text." strcat notify
+  me @ over "a                 -- Abort editing." strcat notify
+  me @ over "i [line]          -- Begin inserting text at [line]." strcat notify
+  me @ over "d [line] [line]   -- Delete [line], or [line] through [line]" strcat notify
+  me @ over "e [line]          -- Edit [line]" strcat notify
+  me @ over "r [line] [line]   -- Read [line], [line] through [line], or" strcat notify
+  me @      "                     all text if not specified." notify
+  me @ over "l [line] [line]   -- Like read, only it gives a prompt if" strcat notify
+  me @      "                     no [line] is specified." notify
+  me @ over "o                 -- Toggle line numbers." strcat notify
+  me @ over "c                 -- Clear all text." strcat notify
+  me @ over "h                 -- This help file." strcat notify
+  pop
+;
+: screensize ( -- i )
+  me @ "screensize" getpropstr atoi dup 0 = if pop 22 then
+;
+: moreprompt ( -- i )
+  me @ "-- More -- [y/n]" notify
+  read dcase "n" 1 strncmp not if 0 else 1 then
+;
+: read-text ( i i -- ) ( from, to )
+  over over > if pop pop exit then
+  swap where @ TEMP property @ strcat 3 pick intostr strcat getpropstr
+  linenums @ if
+    over dup intostr over 100 < if " " swap strcat then
+    swap 10 < if " " swap strcat then
+    ": " strcat swap strcat
+  then
+  me @ swap notify
+  dup screensize % 0 = if moreprompt not if pop pop exit then then
+  1 + swap
+  read-text
+;
+: copyrangeloop ( -- u d o n t w a n t t o k n o w )
+  dup 7 pick + 6 pick > if
+    4 pick 4 pick "lines" strcat getpropstr atoi + intostr
+    4 pick 4 pick "lines" strcat rot 1 addprop
+    pop pop pop pop pop pop pop exit 
+  then
+  over over + over 8 pick + 
+  10 pick 10 pick rot intostr strcat getpropstr 
+  6 pick 6 pick 4 rotate intostr strcat rot 1 addprop
+  1 +
+  copyrangeloop
+;
+: copyrange ( d s i i d s i -- ) ( This is the word which copies a range )
+  0 copyrangeloop                ( of text from one place to another )
+;                                ( It's *very* flexible. )
+: deleterange ( d s i i -- ) ( object, string, from, to.  And decrement )
+                             ( the lines counter to be nice. )
+  over over > if
+    pop pop
+    over over "lines" strcat getpropstr atoi 0 = if
+      over over "lines" strcat remove_prop
+    then
+    pop pop exit 
+  then
+  4 pick 4 pick 4 pick intostr strcat remove_prop
+  4 pick 4 pick "lines" strcat getpropstr atoi 1 - intostr
+  5 pick 5 pick "lines" strcat rot 1 addprop
+  swap 1 + swap 
+  deleterange
+;
+: get-from ( s -- i )
+  dup "" stringcmp not if pop
+    me @ "Which line? ($ = End of Text)" notify
+    read
+  then
+  dup "$" stringcmp not if pop lines 1 + else atoi then
+  dup 1 < if pop -1 exit then
+  dup lines 1 + > if pop me @ "Out of range." notify -1 exit then
+;
+: get-from-to ( s - i i )
+  dup "" stringcmp not if pop
+    me @ "From? (Q to abort)" notify
+    read atoi dup 0 = if pop me @ "Aborted." notify -1 exit then
+    me @ "To? (Q to abort, $ = end of text)" notify
+    read 
+    dup "$" stringcmp not if pop lines else atoi then
+    dup 0 = if pop pop me @ "Aborted." notify -1 exit then
+  else
+    .trim_spaces dup " " instr strcut 
+    dup "$" stringcmp not if pop lines else atoi then 
+    swap atoi dup 0 = if pop dup else swap then
+  then
+  dup lines > if pop pop me @ "Out of range." notify -1 exit then
+  over over > if 
+    pop pop me @ "Arguments don't make sense." notify -1 exit then
+;
+: line-limit ( -- i )
+  prgm "line-limit" getpropstr atoi dup 0 = if pop 250 then
+;
+: renumberup ( i i -- ) ( from line, end of )
+  over over > if pop pop exit then
+  where @ TEMP property @ strcat 3 pick intostr strcat getpropstr
+  where @ TEMP property @ strcat 4 pick 1 + intostr strcat rot 1 addprop
+  1 - renumberup
+;
+: delete ( i s -- i ) ( returns an adjustment of the current line )
+  get-from-to dup -1 = if pop exit then
+  3 pick 3 pick > if
+    over over swap - 1 + 4 rotate swap - dup 1 < if pop 1 then 
+    rot rot
+  then
+  lines rot rot
+  where @ TEMP property @ strcat 3 pick 1 + lines 
+  where @ TEMP property @ strcat 8 pick copyrange
+  over over swap - 4 rotate swap - lines
+  where @ TEMP property @ strcat 4 rotate 4 rotate deleterange
+  over over = if
+    pop intostr "Line " swap strcat " deleted." strcat
+  else
+    "Lines " rot intostr strcat " to " strcat swap intostr strcat " deleted." 
+    strcat 
+  then
+  me @ swap notify
+;
+: list ( s -- )
+  lines 0 = if pop me @ "Nothing to read." notify exit then
+  get-from-to dup -1 = if pop exit then
+  read-text me @ " " notify
+;
+: editline ( s -- )
+  get-from dup -1 = if pop exit then
+  dup lines > if pop lines then
+  dup where @ TEMP property @ strcat rot intostr strcat getpropstr
+  me @ swap notify
+  me @ "Re-Enter line.  \"-\" to delete, \".\" to leave as is." notify
+  read
+  dup "." stringcmp not if pop pop me @ "Aborted." notify exit then
+  dup "-" stringcmp not if pop
+    1 swap intostr delete pop exit 
+  then
+  swap where @ TEMP property @ strcat rot intostr strcat rot 1 addprop
+  me @ "Done." notify
+;
+: search-and-replace ( s -- )
+  exit ( not implemented yet )
+;
+: save ( -- )
+  where @ property @ over over rangelines 1 swap deleterange
+  where @ TEMP property @ strcat 1 lines
+  where @ property @ 1 copyrange
+  where @ TEMP property @ strcat 1 lines deleterange
+  where @ property @ rangelines 0 = if
+    where @ property @ "lines" strcat remove_prop then
+  me @ "Saved." notify
+;
+: abort ( -- )
+  me @ "Abort. All changes will be lost.  Are you certain?" notify
+  read dcase "y" 1 strncmp if 0 exit then
+  where @ TEMP property @ strcat 1 lines deleterange
+  me @ "Aborted." notify
+  1
+;
+: on_break
+  where @ TEMP property @ strcat 1 lines deleterange
+  me @ "Aborted." notify
+  1
+;
+: linenos ( -- )
+  linenums @ not linenums !
+  me @ "Line numbers " linenums @ if "on." else "off." then strcat notify
+;
+: clear ( -- )
+  me @ "Clear Text -- Are you SURE?" notify
+  read dcase "y" 1 strncmp if me @ "Aborted." notify exit then
+  where @ TEMP property @ strcat 1 lines deleterange
+  me @ "Cleared." notify
+;
+: insert-text ( i -- i ) ( line, true if go to prompt, false if to exit )
+  read
+  dup "." 1 strncmp not if 
+    1 strcut swap pop 
+    dup "" stringcmp if
+      dcase
+      dup "i" 1 strncmp not if 
+        nukefirstword get-from dup -1 = if pop else swap pop then
+        dup print-entry insert-text exit 
+      then
+      dup "d" 1 strncmp not if nukefirstword delete insert-text exit then
+      dup "l" 1 strncmp not if nukefirstword list insert-text exit then
+      dup "e" 1 strncmp not if nukefirstword editline insert-text exit then
+      dup "r" 1 strncmp not if  
+        nukefirstword dup "" stringcmp not if pop "1 $" then
+        list insert-text exit 
+      then
+      dup "o" 1 strncmp not if pop linenos insert-text exit then
+      dup "c" 1 strncmp not if pop clear pop 1 insert-text exit then
+      dup "h" 1 strncmp not if pop "." print-help insert-text exit then
+      dup "s" 1 strncmp not if pop pop save 1 0 exit then
+      dup "a" 1 strncmp not if pop pop abort 
+        if 0 0 exit else insert-text exit then then
+      pop
+      me @ "Invalid command." notify
+      insert-text exit
+    else
+      pop pop 1 exit
+    then
+  then
+  lines line-limit >= if pop
+    me @ "No more room!  Use \".\" on a line by itself to exit." notify
+    insert-text exit then
+  over lines < if over lines renumberup then
+  over where @ TEMP property @ strcat rot intostr strcat rot 1 addprop
+  where @ TEMP property @ strcat "lines" strcat
+  over over getpropstr atoi 1 + intostr 1 addprop   ( increment lines )
+  1 +
+  insert-text
+;
+: insert ( s -- ) ( )
+  get-from dup -1 = if pop exit then
+  dup print-entry insert-text
+;
+: commandprompt ( s -- )
+  print-options
+  read dcase dup "." 1 strncmp not if 1 strcut swap pop then
+  dup "i" 1 strncmp not if nukefirstword insert if commandprompt then exit then
+  dup "d" 1 strncmp not if nukefirstword 1 swap delete pop commandprompt exit then
+  dup "l" 1 strncmp not if nukefirstword list commandprompt exit then
+  dup "e" 1 strncmp not if nukefirstword editline commandprompt exit then
+  dup "r" 1 strncmp not if nukefirstword dup "" stringcmp not if pop "1 $" then 
+    list commandprompt exit 
+  then
+  dup "o" 1 strncmp not if pop linenos commandprompt exit then
+  dup "c" 1 strncmp not if pop clear commandprompt exit then
+  dup "h" 1 strncmp not if pop "" print-help commandprompt exit then
+  dup "s" 1 strncmp not if pop save 1 exit then
+  dup "a" 1 strncmp not if pop abort if 0 exit else commandprompt exit then then
+  pop
+  me @ "Invalid command." notify
+  commandprompt
+;
+: editor ( d s -- i )
+  0 linenums ! property ! where !                  ( load the variables )
+  where @ property @ rangelines 0 = not if
+    where @ property @ over over rangelines 1 swap
+    where @ TEMP property @ strcat 1 copyrange
+    me @ lines intostr " lines already in buffer." strcat notify
+    commandprompt
+  else
+    "1" insert if commandprompt then
+  then
+;
+.
+c
+q
+@register lib-write=lib/write
+@register #me lib-write=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=M3
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+"Installation of lib-write complete.
