@@ -2,7 +2,7 @@
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 1998/08/22 18:57:08 $ $Revision: 1.2 $
+( lib-match: $Date: 1998/08/22 19:03:51 $ $Revision: 1.3 $
   Originally taken from the FuzzBall MUF distribution.                        )
 ( --------------------------------------------------------------------------- )
 ( Matching library
@@ -67,6 +67,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.3  1998/08/22 19:03:51  glow
+  Oops. Remember why I had already taken .controls out of lib-match.
+
   Revision 1.2  1998/08/22 18:57:08  glow
   Added .controls from fbmuf.
 
@@ -94,13 +97,6 @@ $include $lib/glowstandard
     me @ "I don't recognize anyone by that name." notify
   then
 ;
-  
-  
-: controls (player object -- bool)
-  owner over dbcmp
-  swap "wizard" flag? or
-;
-  
   
 : match_controlled (s -- d)
   noisy_match dup ok? if
@@ -155,7 +151,6 @@ $include $lib/glowstandard
   'table_compare table_match
 ;
   
-
 : multi_rmatch-loop (i s d -- dn .. d1 n)
   dup not if pop pop exit then
   over over name swap
@@ -191,7 +186,6 @@ $include $lib/glowstandard
   
 PUBLIC noisy_match
 PUBLIC noisy_pmatch
-PUBLIC controls
 PUBLIC match_controlled
 PUBLIC table_match
 PUBLIC std_table_match
@@ -204,13 +198,12 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=W
 @set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
-@set $tmp/prog1=/_defs/.controls:"$lib/match" match "controls" call
 @set $tmp/prog1=/_defs/.match_controlled:"$lib/match" match "match_controlled" call
 @set $tmp/prog1=/_defs/.noisy_match:"$lib/match" match "noisy_match" call
 @set $tmp/prog1=/_defs/.noisy_pmatch:"$lib/match" match "noisy_pmatch" call
 @set $tmp/prog1=/_defs/.std_table_match:"$lib/match" match "std_table_match" call
 @set $tmp/prog1=/_defs/.table_match:"$lib/match" match "table_match" call
 @set $tmp/prog1=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
-@set $tmp/prog1=/_docs:@list $lib/match=3-68
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@set $tmp/prog1=/_docs:@list $lib/match=3-62
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
 "Installation of lib-match completed.
