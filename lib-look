@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/08/04 18:41:15 $ $Revision: 1.19 $                )
+( cmd/lib-look: $Date: 2004/08/04 18:50:53 $ $Revision: 1.20 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.20  2004/08/04 18:50:53  feaelin
+  Missed part of the calls when checking for #0.
+
   Revision 1.19  2004/08/04 18:41:15  feaelin
   Fix so that if you have an @ sign in your desc it doesn't try to use it
   to call #0 as a program.
@@ -422,7 +425,7 @@ lvar realtrig
       else
         match
       then
-      dup ok?
+      dup ok? over #0 dbcmp not and
       if
         dup trigger @ owner swap controls over "Link_OK" flag? or
         if
@@ -612,6 +615,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.19 $
-@set $lib/look=/_version:1.31FM$Revision: 1.19 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.20 $
+@set $lib/look=/_version:1.31FM$Revision: 1.20 $
 wh me=Installation of lib-look complete.
