@@ -1,0 +1,108 @@
+INSTALL $Date: 1998/07/25 18:34:21 $ $Revision: 1.1 $
+---------------------------------------------------------------------------
+FMMUF 1.0.1 (Beta Release)
+---------
+  Warning: Some of these libs require Glow 3.0.0 or later.   You were going to
+upgrade, weren't you? 
+  The following have to be installed FIRST (before all other programs/libs) in
+this order:
+
+cmd-register
+lib-glow-standard
+lib-strings
+lib-stackrng
+lib-lmgr
+lib-edit
+lib-editor
+lib-match
+lib-mesg
+lib-mesgbox
+lib-look
+lib-reflist
+lib-index
+lib-case
+lib-mpi
+lib-connects
+lib-showlist
+lib-userprop
+
+	At this point, if you're going to install cmd-path, you should do
+so now.  (Hopefully you've not done any building...).  Then you can
+install the rest of the programs as you wish.  
+	Be sure to @tune path_prog=<dbref of path prog> after installing
+cmd-path.
+	NOTE: These installation scripts assume that the player installing
+the programs is a Wizard.  They also assume that any global actions made
+are to be made in the room that Wizard is standing in.  So If you want all
+your global actions to be stored in a specific room, be sure to
+be in that room when quoting them.
+	To install a program or library, simply quote it to the Glow server,
+using tinyfugue's /quote feature, or something equivalent.
+
+Comments about some other programs:
+  cmd-path:
+    This program requires lib-userprop.  Also do not forget to use @tune
+    to set path_prog to the dbref of the path program. Also, do not forget
+    to use @psetup full.
+
+  cmd-cinfo:
+    This program requires you have cmd-find and cmd-laston installed to
+    function properly.
+
+  cmd-emotion:
+    The @action for it was starting to be a nuisance, besides, some of you
+    may not want the default set of emotion/global/socials, so the action
+    and it's props are stored separately in 'cmd-emotion-exit'.  Note that
+    it is at least useful in seeing what props are set by -setup new.
+    DO NOT EDIT THE FILE 'CMD-EMOTION-EXIT' WITH PICO!!!!!! You will mess
+    up the @action line, since pico will try to wrap the long line.
+
+  cmd-compass:
+    This program requires that you install cmd-path to function correctly.
+
+  cmd-bbs:
+    This program requires that you have con-bbsindex installed to function
+    correctly.
+   
+  cmd-enterdesc:
+    This program requires cmd-lsedit.
+
+  cmd-watch/con-watch: 
+    These programs need to be installed together.
+
+  cmd-page:
+    This program requires lib-userprop.  You'll also need to use the wpsetup
+    command to setup a userpropdir for it.  Don't forget to use page #setup.
+
+  cmd-tell:
+    You need cmd-page installed beofre this program will work.
+
+  cmd-pcreate:
+  cmd-mufrestart:
+    On GlowMuck 3.0.1, this program needs to be 'owned' by a w3/w4 and
+    cannot be owned by #1 (The Man).  Both of thes use the force prim,
+    and #1 cannot be forced.
+
+  cmd-archive:
+    Can't be used by #1 to archive programs on glowmuck 3.0.1.  cmd-archive
+    uses the force prim to @list programs, and #1 cannot be forced.
+
+  con-guest:
+    If you're not using con-caller, don't forget to set a ~connect prop
+  for this program.
+
+  con-caller (con all connect):
+    There is a section of code commented out.  This section is used on
+    legacy to make sure folks have read all the new user and policy info.
+    Since most mucks don't have the room that this uses, I commented it
+    out by default.
+
+	The only one of these libraries or muf-programs I "wrote" is the
+lib-glow-standard one (which is mostly just a cut n' paste of the macros
+that are commonly used in the muf programs).  All others are either taken
+from the glowmuf distribution or the fbmuf distribution.  I'm leaving any
+existing credits/author/copyright information intact as well as adding any
+that I may discover or find out later on.
+
+   Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
+
