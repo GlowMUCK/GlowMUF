@@ -1,5 +1,9 @@
-CHANGES $Date: 2001/01/15 15:17:27 $ $Revision: 1.7 $
+CHANGES $Date: 2001/01/22 05:28:28 $ $Revision: 1.8 $
 ---------------------------------------------------------------------------
+1) Added the anti-crossworld teleport feature to cmd-teleport
+2) Added the .sort option to the list editor (in lib-editor)
+3) Added the move, copy and delete commands to lsedit
+
 22 December 2000: Beta Release 1
 ---------------------------------------------------------------------------
 1) Fixed issue with cmd-bbs not dealing with custom look programs properly,
