@@ -2,12 +2,13 @@
 @prog lock-cobinn
 1 99999 d
 1 i
-( lock-cobinn: $Date: 1998/08/23 22:15:10 $ $Revision: 1.1 $
+( lock-cobinn: $Date: 1999/02/14 14:56:01 $ $Revision: 1.2 $
   Author: Pakrat                                                            
   Cobblertown Inn locking and entry program by PakRat, Copyright 1996.        )
 ( --------------------------------------------------------------------------- )
   
 $include $lib/glowstandard
+$include $lib/strings
 
 $def n me @ swap notify
   
@@ -131,5 +132,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=D
 @set $tmp/exit1=/_/de:@$lock/cobinn
-@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:FM$Revision: 1.2 $
 "Installation of lock-cobinn complete.
