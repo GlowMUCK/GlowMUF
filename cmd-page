@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/01/12 19:52:38 $ $Revision: 1.15 $                    )
+( cmd-page: $Date: 2005/01/12 20:03:15 $ $Revision: 1.16 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,11 +15,14 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.16  2005/01/12 20:03:15  feaelin
+  Never put a smiley in a comment.
+
   Revision 1.15  2005/01/12 19:52:38  feaelin
   Corrected problem where if you mistakenly used *name instead of name, page
   would blow up. It now assumes that if it can't find an alias named 'name'
   that its a username, and if it can't find the player, simply reports that
-  it can't find the player. :)
+  it can't find the player.
 
   Revision 1.14  2005/01/11 19:26:30  feaelin
   More colorization
@@ -1806,7 +1809,7 @@ $endif
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/12 19:52:38 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/01/12 20:03:15 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -1819,13 +1822,15 @@ $endif
  
 : show-changes ( -- )
   "Changes" show-header
-  "MUFpage v2.5FM1.14 2005/01/11  Corrected minor display issues."
-  "MUFpage v2.5FM1.13 2005/01/11  Added more colorization."
-  "MUFpage v2.5FM1.12 2005/01/11  Added color and blinking to mail check."
-  "MUFpage v2.5FM1.11 2005/01/11  Corrected display errors in #changes."
-  "MUFpage v2.5FM1.10 2005/01/11  Changed p #mail so that p #mail <name> <name>"
-  "                               works correctly. Added the p #changes command"
-  "                               and notification that the version has changed"
+  "MUFpage v2.5FM1.16 Corrected crashing bug caused by the p *name fixes."
+  "MUFpage v2.5FM1.15 Fixed the problem where p *name would generate an error."
+  "MUFpage v2.5FM1.14 Corrected minor display issues."
+  "MUFpage v2.5FM1.13 Added more colorization."
+  "MUFpage v2.5FM1.12 Added color and blinking to mail check."
+  "MUFpage v2.5FM1.11 Corrected display errors in #changes."
+  "MUFpage v2.5FM1.10 Changed p #mail so that p #mail <name> <name> works"
+  "                   correctly. Added the p #changes command and notification"
+  "                   that the version has changed"
   "^YELLOW^----------------------------------------------------------------------------"
   depth
   EDITansi_display
@@ -2691,7 +2696,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.15 $"
+  "MUFpage v2.5FM$Revision: 1.16 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2885,5 +2890,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.15 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.16 $
 wh me=Installation of cmd-page complete.
