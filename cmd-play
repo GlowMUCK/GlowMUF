@@ -1,0 +1,151 @@
+"Beginning installation of cmd-play...
+@prog cmd-play
+1 99999 d
+1 i
+( cmd-play: $Date: 2000/12/22 16:42:50 $ $Revision: 1.1 $ )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-play,v $
+  Revision 1.1  2000/12/22 16:42:50  feaelin
+  Initial revision
+
+)
+( Play by PakRat & Co. )
+( Type 'play setup' to see how to set play up )
+( Link an action called 'play' that is attached )
+( to an object, that object will be used to store )
+( the songs on. )
+$include $lib/glowstandard
+$include $lib/strings
+
+: split .split ;
+: GetNote
+  trig location "_note" getpropstr
+  dup not if pop "o/~" then
+  dup "none" stringcmp not if pop ""
+  else " " strcat then
+;
+: GetPause
+  trig location "_pause" getpropstr atoi
+  dup 0 > over 30 <= and not if pop 3 then
+;
+: tellroom ( s -- )
+  GetNote swap strcat loc @ #-1 rot notify_except
+;
+: PlayTitle
+  "Play by PakRat  V1.0  Copyright 1993 All Rights Reserved." .tell-me
+  "~~~~~~~~~~~~~~~~~~~~" .tell-me
+;
+: PlayHelp PlayTitle
+  "Usage: play selection-number" .tell-me
+  " " .tell-me
+  "A selection will then be played in the room line by line with pauses." .tell-me
+  "Once it is done you can do a new selection." .tell-me
+  "If the " trig location name strcat
+  " jams, ask the owner to type 'play reset'." strcat .tell-me
+;
+: PlaySetup PlayTitle
+  "First, @create an object called JukeBox or something else." .tell-me
+  "@link jukebox=here" .tell-me
+  "@set jukebox=S" .tell-me
+  "@action play=jukebox" .tell-me
+  "@link play=#" prog intostr strcat .tell-me
+  " " .tell-me
+  "Once you've made your Jukebox, use Lsedit to do the songs." .tell-me
+  "The first line is the song title, then put the rest of the" .tell-me
+  "song after it.  Don't use any blank lines, as they will look" .tell-me
+  "like the end of the song." .tell-me
+  "To add a song, type lsedit jukebox=songnum where songum is 1 to" .tell-me
+  "the number of songs.  Just typing 'play' will list all consecutive" .tell-me
+  "songs from 1 til it finds an empty song number." .tell-me
+  " " .tell-me
+  "Ie: lsedit jukebox=5   will edit song 5." .tell-me
+  "You can @set the pause time with @set jukebox=_pause:number of seconds"
+  .tell-me
+  "Ie: @set jukebox=_pause:3" .tell-me
+  "You can @set the verb with @set jukebox=_verb:ROCK ROCK ROCK etc." .tell-me
+  "You can @set the note style with @set jukebox=_note:{JAM!!!} etc."
+  .tell-me
+  "A space is put at the end for you.  Use _note:none for no note." .tell-me
+  "Play can be used for anything from Jukeboxes to Cd players to VCRs now."
+  .tell-me
+;
+: ListSongs
+  1
+  begin
+    trig location over intostr "#/1" strcat
+    getpropstr dup
+  while
+    over intostr "> " strcat swap strcat .tell-me
+    1 +
+  repeat pop pop
+;
+: PlaySong ( songnum -- )
+  trig location "_nowplaying" getpropstr dup if
+    ":" split pop "The " trig location name strcat
+    " is still playing song " strcat swap strcat
+    "." strcat .tell-me pop exit
+  else pop then
+  trig location over intostr "#/1" strcat getpropstr
+  dup if ( songnum title )
+    getpause rot rot systime rot rot
+    ( pause systime songnum title )
+    over intostr ":" strcat 4 pick intostr strcat
+    trig location "_nowplaying" rot 1 addprop
+    trig location name " starts %ving " trig location "_verb"
+    getpropstr dup not if pop "play" then "%v" subst strcat
+    swap strcat "..." strcat tellroom background 3 pick sleep
+    2 ( pause systime songnum curline -- )
+    begin
+      trig location 3 pick intostr "#/" strcat 3 pick intostr strcat
+      getpropstr dup while
+        4 pick trig location "_nowplaying" getpropstr ":" split swap pop atoi
+        = not if break then ( If new song is playing )
+        tellroom         
+      1 + 4 pick sleep
+    repeat
+    pop pop pop
+    trig location "_nowplaying" getpropstr ":" split swap pop atoi = if
+    trig location "_nowplaying" remove_prop then
+    pop
+  else
+    pop pop "We don't currently have that selection in the "
+    trig location name strcat "." strcat .tell-me
+  then
+ ;
+ : PlayMain (s -- )
+   dup if
+     dup "help" stringcmp not if pop PlayHelp exit then
+     dup "setup" stringcmp not if pop PlaySetup exit then
+     dup "reset" stringcmp not if
+       trig location
+       dup owner me @ dbcmp if
+         "_nowplaying" remove_prop
+         trig location name " reset." strcat .tell-me pop exit
+       else pop then
+     then
+     atoi dup 0 > if PlaySong
+     else pop PlayHelp then
+   else pop
+     Playtitle
+     "Selections currently in the "
+     trig location name strcat ":" strcat .tell-me
+     ListSongs
+     trig location "_nowplaying" getpropstr dup if
+       ":" split pop "Currently playing selection "
+        swap strcat "." strcat .tell-me
+     else pop then
+   then
+ ;
+.
+c
+q
+@register cmd-Play=cmd/Play
+@register #me cmd-Play=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=H
+@set $tmp/prog1=M2
+@set $tmp/prog1=/_/de:@$cmd/play setup
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-play complete.
