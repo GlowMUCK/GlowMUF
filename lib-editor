@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/01 23:13:38 $ $Revision: 1.9 $
+( lib-editor: $Date: 2004/04/03 00:07:11 $ $Revision: 1.10 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,9 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.10  2004/04/03 00:07:11  feaelin
+  Fixed yet another bug in the new .color command.
+
   Revision 1.9  2004/04/01 23:13:38  feaelin
   You'd think I'd have learned by now to not put parens in my RCS log entries.
 
@@ -452,7 +455,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         3 pick
         "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
         swap instr not if
-          14 EDITORerror 1 exit
+          3 popn 14 EDITORerror 1 exit
         then
         3 pick "^" swap strcat "^" strcat 3 put
         over not if pop pop over dup then
@@ -586,12 +589,12 @@ q
 @register lib-editor=lib/editor
 @register #me lib-editor=tmp/prog1
 @set $tmp/prog1=L
-@set $tmp/prog1=M3
+@set $tmp/prog1=W4
 @set $tmp/prog1=/_defs/editor:"$lib/editor" match "editor" call
 @set $tmp/prog1=/_defs/editorheader:"$lib/editor" match "editorheader" call
 @set $tmp/prog1=/_defs/editorloop:"$lib/editor" match "editorloop" call
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
 "Installation of lib-editor complete.
