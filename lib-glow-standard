@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1998/07/30 19:19:54 $ $Revision: 1.4 $                                       )
+( lib-glow-standard: $Date: 1998/07/30 19:28:29 $ $Revision: 1.5 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -49,6 +49,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.5  1998/07/30 19:28:29  glow
+  Added @register of lib/glow for this library.
+
   Revision 1.4  1998/07/30 19:19:54  glow
   Moved .strcutat, .splitarg, .splitfirst (all synonyms of .splitargs)
   to lib-strings.
@@ -209,6 +212,7 @@ c
 q
 @register lib-glow-standard=cmd/null
 @register lib-glow-standard=lib/glowstandard
+@register lib-glow-standard=lib/glow
 @register lib-glow-standard=lock/true
 @register #me lib-glow-standard=tmp/prog1
 @register #me lib-glow-standard=tmp/prog1
@@ -315,5 +319,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
 "Installation of lib-glow-standard completed.
