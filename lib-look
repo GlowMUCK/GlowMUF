@@ -1,7 +1,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 1998/08/23 15:47:21 $ $Revision: 1.1 $
+( cmd/lib-look: $Date: 2004/03/26 03:21:18 $ $Revision: 1.2 $
   Originally part of the FuzzBall MUF distribution.                           )
 ( --------------------------------------------------------------------------- )
 ( Set of library routines for doing 'look' functions.
@@ -65,12 +65,15 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.2  2004/03/26 03:21:18  feaelin
+  Reduced macro/library dependence.
+
   Revision 1.1  1998/08/23 15:47:21  glow
   Initial revision
 
 )
 ( --------------------------------------------------------------------------- )
-$include $lib/glowstandard
+( $include $lib/glowstandard )
 $include $lib/strings
 $include $lib/match
 $include $lib/stackrng
@@ -82,6 +85,14 @@ lvar scommand
 lvar sdepth
 lvar realtrig
  
+: otell
+  loc @ me @ rot ansi_notify_except ( s -- ) ( Display string to everyone in my room except me )
+;
+
+: tell
+  me @ swap ansi_notify
+;
+
 : safecall  ( x d -- )
   me @ sme !
   loc @ sloc !
@@ -103,7 +114,7 @@ lvar realtrig
 : dark? ( d -- i )
   dup "Dark" flag? swap control? not and
 ;
- 
+
 : unparse ( d -- s )
   me @ "Silent" flag?
   if
@@ -177,7 +188,7 @@ lvar realtrig
     if
       unparse
     then
-    .tell
+    tell
   repeat
   pop
 ;
@@ -206,16 +217,16 @@ lvar realtrig
 : short-display ( d... i -- )
   short-list dup
   if
-    "You see " swap strcat "." strcat .tell
+    "You see " swap strcat "." strcat tell
   else
-    "You see nothing." .tell
+    "You see nothing." tell
   then
 ;  
  
 : list-contents ( s d -- )
   get-contents dup
   if
-    dup 2 + rotate .tell
+    dup 2 + rotate tell
     long-display
   else
     pop pop
@@ -227,7 +238,7 @@ lvar realtrig
   if
     dup "@" 1 strncmp
     if
-      .tell
+      tell
     else
       1 strcut swap pop " " .split .stripspaces swap
       dup "$" 1 strncmp
@@ -242,14 +253,14 @@ lvar realtrig
         if
           safecall
         else
-          pop pop "Permission Denied" .tell
+          pop pop "Permission Denied" tell
         then
       else
-        pop .tell
+        pop tell
       then
     then
   else
-    pop "You see nothing special." .tell
+    pop "You see nothing special." tell
   then
 ;
  
@@ -262,16 +273,16 @@ lvar realtrig
 : db-desc ( d -- )
   dup #-1 dbcmp
   if
-    pop "I don't see that here." .tell exit
+    pop "I don't see that here." tell exit
   then
   dup #-2 dbcmp
   if
-    pop "I don't know which one you mean!" .tell exit
+    pop "I don't know which one you mean!" tell exit
   then
   dup trigger @ realtrig ! trigger !
   dup room?
   if
-    dup unparse .tell
+    dup unparse tell
   then
   dup desc str-desc
   dup room?
@@ -289,7 +300,7 @@ $endif
       else
         pop
       then
-      dup ofail .otell
+      dup ofail otell
     else
       dup succ dup
       if
@@ -297,7 +308,7 @@ $endif
       else
         pop
       then
-      dup osucc .otell
+      dup osucc otell
     then
     "Contents:" over list-contents
   else
@@ -353,6 +364,6 @@ q
 @set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=3-60
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.1 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.1 $
-"Installation of lib-look complete.
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.2 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.2 $
+ff"Installation of lib-look complete.
