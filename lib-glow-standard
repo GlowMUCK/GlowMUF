@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-glow-standard...
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2004/08/06 14:12:22 $ $Revision: 1.21 $          )
+( lib-glow-standard: $Date: 2004/09/05 13:29:13 $ $Revision: 1.22 $          )
 ( Author: Various                                                            )
 ( Contributors: Feaelin, Various                                             )
 ( Dependencies: None                                                         )
@@ -53,6 +53,9 @@ wh me=Beginning installation of lib-glow-standard...
   
 (
   $Log: lib-glow-standard,v $
+  Revision 1.22  2004/09/05 13:29:13  feaelin
+  Corrected flaw where guest? was checking against truemage instead of mage
+
   Revision 1.21  2004/08/06 14:12:22  feaelin
   Minor documentation corrections.
 
@@ -291,7 +294,7 @@ q
 @set $tmp/prog1=/_defs/.firstname:( d -- s ) name dup ";" instr if dup ";" instr 1 - strcut pop then
 @set $tmp/prog1=/_defs/.for:dup if begin
 @set $tmp/prog1=/_defs/.getprop?:getpropstr dup if 1 else pop 0 then
-@set $tmp/prog1=/_defs/.guest?:dup "guest" flag? swap "truemage" flag? not and
+@set $tmp/prog1=/_defs/.guest?:dup "guest" flag? swap "mage" flag? not and
 @set $tmp/prog1=/_defs/.hide:( L x -- x L ) over 2 + .neg rotate
 @set $tmp/prog1=/_defs/.initialize:"me" match dup me ! location loc !
 @set $tmp/prog1=/_defs/.input:( s -- s' ) (Notify to ME and READ.) me @ swap notify read
@@ -368,5 +371,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-48 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-48
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.21 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.22 $
 wh me=Installation of lib-glow-standard completed.
