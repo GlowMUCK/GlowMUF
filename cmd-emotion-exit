@@ -1,4 +1,5 @@
 "Installing default social/emotion actions...
+Author: N/A
 @action anvil;bap;bat;blink;blush;boggle;bonk;bounce;bow;burp;bye;cackle;caress;caterpillar;chuckle;cling;comfort;cradle;cry;cuddle;curl;curtsey;dance;dream;drool;eep;eh;embrace;eskimo;fflanda;flee;flirt;fnord;fondle;french;frown;gasp;giggle;goose;greet;grin;groan;grope;grumble;hold;hug;jig;keep;kick;kiss;laugh;lick;listen;love;massage;melt;moan;monster;mount;munch;nag;need;nibble;nod;nuzzle;oogle;peer;pinch;poke;ponder;pounce;pout;prance;purr;rofl;romp;rub;ruffle;salute;scratch;shake;shoot;shrug;sigh;sleep;smack;smile;smirk;smooch;snatch;snicker;sniffle;snuggle;snx;sob;southpark;spel;sprig;sprink;squeeze;squirm;stare;stretch;strut;sweepfeet;tackle;taste;taunt;technobabble;thank;tickle;tie;tip;tug;typo;wave;wiggle;wince;wink;yawn=here=tmp/exit1
 @link $tmp/exit1=$cmd/emotion
 @set $tmp/exit1=V
