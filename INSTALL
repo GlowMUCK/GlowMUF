@@ -1,10 +1,29 @@
-INSTALL $Date: 2004/02/27 18:16:17 $ $Revision: 1.11 $
+INSTALL $Date: 2004/04/02 18:37:18 $ $Revision: 1.12 $
 ---------------------------------------------------------------------------
-FMMUF 1.1
+FMMUF 1.0.1
 ---------
-  Warning: Some of these libs require Glow 3.0.0 or later.   You were going to
-upgrade, weren't you? 
-  The following have to be installed FIRST (before all other programs/libs) in
+I. How to install a MUF program to the muck
+  A. Overview
+    In general, you have to connect to the muck, and transmit the contents of
+    the muf source file to the muck. All the source files in this package
+    assume the following:
+    1. That the player installing them is a Wizard (typically #1).
+    2. That the player installing them is currently located in #0, or the
+       "top level" environment/parent room.
+  B. Specific Client Example: TinyFugue
+    Tinyfugue makes this process particularly easy.  Simply type:
+    /quote -S 'path-to-source-file to install a given file.  For example:
+    /quote -S '~/cmd-register would install cmd-register.
+  C. Specific Client Example: SimpleMU
+     In most cases, you can open the file in a text editor (such as notepad)
+     and highlight the _entire_ file and use the classic windows copy-and-paste
+     method.
+  D. Specific Client Example: zMUD
+     Forthcoming...
+
+II. Core Library Install
+-----------------------
+The following have to be installed FIRST (before all other programs/libs) in
 this order:
 
 cmd-register
@@ -27,20 +46,20 @@ lib-showlist
 cmd-mv-cp
 lib-userprop
 
-	At this point, if you're going to install cmd-path, you should do
-so now.  (Hopefully you've not done any building...).  Then you can
-install the rest of the programs as you wish.  
-	Be sure to @tune path_prog=<dbref of path prog> after installing
-cmd-path.
-	NOTE: These installation scripts assume that the player installing
-the programs is a Wizard.  They also assume that any global actions made
-are to be made in the room that Wizard is standing in.  So If you want all
-your global actions to be stored in a specific room, be sure to
-be in that room when quoting them.
-	To install a program or library, simply quote it to the Glow server,
-using tinyfugue's /quote feature, or something equivalent.
+III. cmd-path
+------------
+At this point, if you're going to install cmd-path, you should do so now.
+(Hopefully you've not done any building...).  Then you can install the rest of
+the programs as you wish.  
+  A. Install the cmd-path muf.
+  B. Use @tune path_prog=<dbref of path prog>
+  C. Use wpsetup to set the path dir. If you're using the standard dir (which
+     I strongly advise) use wpsetup cmd-path=d. If not, use wpsetup as
+     appropiate and update the @tune path_dir appropiately.
 
-Comments about some other programs:
+IV. Comments about specific programs
+  Mainly notes on problem areas
+
   cmd-path:
     This program requires lib-userprop.
 
@@ -101,7 +120,7 @@ Comments about some other programs:
   cmd-roomcheck:
     Renamed @check.  @check is a in-server command revealing who controls
     an object.  If you prefer to have @check=@roomcheck, @permissions will do
-    the same as the inserver @check.  Requires lib-match
+    the same as the inserver @check.  Requires lib-match and lib-path
 
   cmd-notify:
     Requires con-caller to function.
@@ -137,4 +156,3 @@ existing credits/author/copyright information intact as well as adding any
 that I may discover or find out later on.
 
    Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
-

@@ -2,7 +2,7 @@
 @prog cmd-roomcheck
 1 99999 d
 1 i
-( cmd-roomcheck: $Date: 2004/02/12 04:57:52 $ $Revision: 1.3 $                )
+( cmd-roomcheck: $Date: 2004/04/02 18:37:18 $ $Revision: 1.4 $                )
 ( Author: ???                                                                 )
 ( --------------------------------------------------------------------------- )
 $include $lib/glow
@@ -10,7 +10,7 @@ $include $lib/strings
 $include $lib/match
 $include $lib/path
 lvar check-obj-addr
-   
+ 
 : check-next-loop (d -- )
    dup not if pop exit then
    dup exit? over thing? or
@@ -52,7 +52,8 @@ $define pathislocked? (d s -- i) PATHgetlock "" strcmp $enddef
       then
     then
   then
-  dup 3 pick swap PATHgetdesc "" strcmp not if
+  dup 3 pick swap PATHgetdesc "" strcmp not
+     "transparent_paths" sysparm "no" strcmp not and if
      dup me @ swap "^INFO^Path '" swap strcat
      "' has no description." strcat ansi_notify
   then
@@ -371,7 +372,7 @@ q
 @register cmd-roomcheck=cmd/roomcheck
 @register #me cmd-roomcheck=tmp/prog1
 @set $tmp/prog1=M3
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $tmp/prog1=_version:FM$Revision: 1.4 $
 @action @roomcheck;@rc=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
