@@ -2,9 +2,15 @@
 @prog cmd-parclean
 1 99999 d
 1 i
-( cmd-parentcleaner: $Date: 2000/12/21 21:21:41 $ $Revision: 1.1 $                                        )
+( cmd-parentcleaner: $Date: 2000/12/21 21:37:57 $ $Revision: 1.2 $                                        )
 ( Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-parentcleaner,v $
+  Revision 1.2  2000/12/21 21:37:57  feaelin
+  LogFix.
+
+)
 $include $lib/glowstandard
 
 lvar from
@@ -42,5 +48,5 @@ q
 @register cmd-parclean=cmd/parentcleaner
 @register #me cmd-parclean=tmp/prog1
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Beginning installation of cmd-parentcleaner...
