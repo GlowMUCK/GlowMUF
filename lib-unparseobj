@@ -2,9 +2,10 @@
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.7 $ $Date: 2004/04/10 15:54:10 $              )
+( lib-unparseobj: $Revision: 1.8 $ $Date: 2004/04/12 15:47:57 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
-( Contributors: Feaelin, Syvel                                               )
+( Contributors: Syvel                                                        )
+( Dependencies: lib-case                                                     )
 ( -------------------------------------------------------------------------- )
 ( Inspired By Syvel's glow-color-unparseobj                                  )
 ( Dedicated to Syvel...Syvel contributed extensively to the FB/Glow          )
@@ -22,64 +23,66 @@ i
 (                                    nearest format string in the environment)
 ( UPOcolor-query     [ s1 s2 -- s ]  Takes string 's1' looks up color 's2'   )
 (                                    and prepends the appropiate color code  )
-( Format Specifiers:
-  %N %n Name of Object.      'One'
-  %P    Name of Object       'One' [No upper or lower adjustment]
-  %D %d DBref of Object.     '#1'
-  %T %t Type Flag.           'P'    [also %o for back-compatibility]
-  %F %f General Flags        'CT'
-  %B %b Builder Flag         'B'
-  %L %l Mucker/Wizard        'W4'
-        Level Flag
-  %M %m Meeper Flag          'M'
-  %/    Conditional Slash    '/' or '' if nothing after.
-  %Q %q %P[%D%T%/%F%/%B%M%L] 'One[#1P/CI/BMW4]
-                             Except the brackets are actually parentheses,
-                             but I can't include parentheses in a comment.
-  %X %x %T%/%F%/%B%M%L       'P/CI/BMW4'
-  %Y %y %F%/%B%M%L           'CI/BMW4'
-  %Z %z %/%B%M%L             '/BMW4'
-
-   Syvel's version prepended forward slashes using %b instead of %B.  I prefer
-   to use the pronoun substitution model, which means %B would produce 'B' if
-   the Builder flag is set, while %b produces 'b'. To insert a slash
-   intelligently, just use %/.
-
-   This lib supports the following props:
-   _prefs/unparse/format:       Format for unparseobj
-   _prefs/unparse/nocolor?:     'yes' to disable smart colorization.
-   _prefs/unparse/colors/<colorpref>:<color>
-        By setting <type> to <color> you can customize the color of a given
-        item's color. The carets are not required for the color codes, but
-        can be included if you desire. The props are searched through the
-        entire environment, which means a muck can change the muck wide
-        defaults by setting these on a top level parent, or even customize by
-        area/region be setting them on lower-level parents.
-
-        The preferences and their defaults are:
-        builder:^GREEN^  -- The color of the "builder" flag.
-        dbref:^FOREST^   -- The color of the dbref#.
-        exit:^BLUE^      -- The color of the name of an exit and the type flag.
-        flag:^AQUA^      -- The color the miscellaneous flags.
-        guest:^GLOOM^    -- The color of the "guest" flag.
-        meeper:^CYAN^    -- The color of the "meeper" flag.
-        mucker:^RED^     -- The color of the "mucker" flags.
-        paren:^GREY^     -- The color of the parentheses.
-        player:^GREEN^   -- The color of the player name and type flag.
-        program:^RED^    -- The color of the program name and type flag.
-        room:^CYAN^      -- The color of the room name and type flag.
-        slash:^GREY^     -- The color of the slash.
-        thing:^PURPLE^   -- The color of the thing name and type flag.
-        unknown:^GLOOM^  -- The color of garbage obj and type flag 
-                            You should never see this one.
-        wizard:^PURPLE^  -- The color of the "wizard" flags.
-)
+( Format Specifiers:                                                         )
+( %N %n Name of Object.      'One'                                           )
+( %P    Name of Object       'One' [No upper or lower adjustment]            )
+( %D %d DBref of Object.     '#1'                                            )
+( %T %t Type Flag.           'P'    [also %o for back-compatibility]         )
+( %F %f General Flags        'CT'                                            )
+( %B %b Builder Flag         'B'                                             )
+( %L %l Mucker/Wizard        'W4'                                            )
+(       Level Flag                                                           )
+( %M %m Meeper Flag          'M'                                             )
+( %/    Conditional Slash    '/' or '' if nothing after.                     )
+( %Q %q %P[%D%T%/%F%/%B%M%L] 'One[#1P/CI/BMW4]                               )
+(                            Except the brackets are actually parentheses,   )
+(                            but I can't include parentheses in a comment.   )
+( %X %x %T%/%F%/%B%M%L       'P/CI/BMW4'                                     )
+( %Y %y %F%/%B%M%L           'CI/BMW4'                                       )
+( %Z %z %/%B%M%L             '/BMW4'                                         )
+(                                                                            )
+( Syvel's version prepended forward slashes using %b instead of %B.  I prefer)
+( to use the pronoun substitution model, which means %B would produce 'B' if )
+( the Builder flag is set, while %b produces 'b'. To insert a slash          )
+( intelligently, just use %/.                                                )
+(                                                                            )
+(  This lib supports the following props:                                    )
+(  _prefs/unparse/format:       Format for full unparseobj                   )
+(  _prefs/unparse/nocolor?:     'yes' to disable smart colorization.         )
+(  _prefs/unparse/colors/<colorpref>:<color>                                 )
+(      By setting <type> to <color> you can customize the color of a given   )
+(      item's color. The carets are not required for the color codes, but    )
+(      can be included if you desire. The props are searched through the     )
+(      entire environment, which means a muck can change the muck wide       )
+(      defaults by setting these on a top level parent, or even customize by )
+(      area/region be setting them on lower-level parents.                   )
+(                                                                            )
+(       The preferences and their defaults are:                              )
+(       builder:^GREEN^  -- The color of the "builder" flag.                 )
+(       dbref:^FOREST^   -- The color of the dbref#.                         )
+(       exit:^BLUE^      -- The color of the name of an exit & the type flag.)
+(       flag:^AQUA^      -- The color the miscellaneous flags.               )
+(       guest:^GLOOM^    -- The color of the "guest" flag.                   )
+(       meeper:^CYAN^    -- The color of the "meeper" flag.                  )
+(       mucker:^RED^     -- The color of the "mucker" flags.                 )
+(       paren:^GREY^     -- The color of the parentheses.                    )
+(       player:^GREEN^   -- The color of the player name and type flag.      )
+(       program:^RED^    -- The color of the program name and type flag.     )
+(       room:^CYAN^      -- The color of the room name and type flag.        )
+(       slash:^GREY^     -- The color of the slash.                          )
+(       thing:^PURPLE^   -- The color of the thing name and type flag.       )
+(       unknown:^GLOOM^  -- The color of garbage obj and type flag           )
+(       wizard:^PURPLE^  -- The color of the "wizard" flags.                 )
 ( -------------------------------------------------------------------------- )
+  
 (
   $Log: lib-unparseobj,v $
+  Revision 1.8  2004/04/12 15:47:57  feaelin
+  Documentation cleanup.
+
   Revision 1.7  2004/04/10 15:54:10  feaelin
   Fixed bugs related to the builder, guest, and meeper flags
-
+  
   Revision 1.6  2004/04/10 15:19:21  feaelin
   Fixed bug in public library call of UPOspecial-unparseobj
   Fixed bug in formatting that caused names with parentheses
@@ -138,7 +141,7 @@ $include $lib/case
 ;
   
 ( Builder, Guest, Meeper flags we put next to the M1/W3 flag )
-: b-flag ( s d -- s )
+: b-flag ( d -- s )
   dup "b" flag? swap player? and if
     "B" "builder" color-query
   else 
@@ -146,7 +149,7 @@ $include $lib/case
   then
 ;
   
-: g-flag ( s d -- s )
+: g-flag ( d -- s )
   dup "guest" flag? if 
     "G" "guest" color-query
   else 
@@ -239,8 +242,8 @@ $include $lib/case
   "%F%/%B%M%L" "%Y" subst
   "%f%/%b%m%l" "%y" subst
   "%/%B%M%L" "%Z" subst
-  "%/%b%m%l" "%z" subst swap
-  dup name dup 4 pick swap 4 pick name-color "%P" subst 3 put
+  "%/%b%m%l" "%z" subst
+  swap dup name dup 4 pick swap 4 pick name-color "%P" subst 3 put
   1 strcut swap dup toupper 3 pick strcat 4 pick name-color -3 rotate
   tolower swap strcat 3 pick name-color
   4 rotate swap "%n" subst
@@ -294,6 +297,6 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.7 $
-@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-68
+@set $lib/unparseobj=_lib-version:$Revision: 1.8 $
+@set $lib/unparseobj=_docs:@list $lib/unparseobj=1-72
 "Installation Complete.
