@@ -2,10 +2,19 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2004/02/07 17:19:18 $ $Revision: 1.14 $                 )
+( cmd-register $Date: 2004/02/07 17:20:31 $ $Revision: 1.15 $                 )
 ( Original Author: Unknown, presumably Foxen                                  )
 ( Updated for Glowmuck by: Andy & Feaelin                                     )
 ( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-register,v $
+  Revision 1.15  2004/02/07 17:20:31  feaelin
+  Using a $ in the propname now generates an error, preventing
+  messy registry entries.  Fixed the rcs-log.
+
+)
+( --------------------------------------------------------------------------- )
+
 
 $define tell me @ swap ansi_notify $enddef
 
@@ -279,6 +288,10 @@ lvar regprop
 
 ( 
    $Log: cmd-register,v $
+   Revision 1.15  2004/02/07 17:20:31  feaelin
+   Using a $ in the propname now generates an error, preventing
+   messy registry entries.  Fixed the rcs-log.
+
    Revision 1.14  2004/02/07 17:19:18  feaelin
    Attempting to use a $ in the prop name now fails.
 
@@ -332,6 +345,6 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.14 $
+@set $cmd/register=_version:FM$Revision: 1.15 $
 @set $cmd/register=_docs:@register #help
 "Installation of cmd-register finished.
