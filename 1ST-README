@@ -1,4 +1,5 @@
-1ST-README $Date: 1998/07/25 18:20:15 $ $Revision: 1.0 $
+1ST-README $Date: 2001/02/21 15:27:40 $ $Revision: 1.1 $
+Author: Feaelin
 ---------------------------------------------------------------------------
 Warning!!!!!!
 
@@ -11,13 +12,13 @@ Installing lib-glow-standard as is on an existing server (e.g. one with
 programs already installed), will potentially break other programs until
 they're upgraded to use lib-glow-standard (usually as simple as adding
 $include $lib/glowstandard, but not always).  If you want to install
-lib-glow-standard one a already up and running, lots of programs already
-installed system, try using lib-glow-standard-existing instead.
+lib-glow-standard one a already up and running...BACKUP.  Just to be sure,
+make two backups, or three!
 
-Any other programs should install okay (be careful not to mess up any local
-modifications, if any).  If they do, feel free to let me know.  
+Any other programs should install okay.  Make sure no one has made local
+modifications to a program you're upgrading.  Ideally, there shouldn't be
+(bad practice...doesn't allow for upgrades).  If you are thinking of making
+a modification to one of the programs below, feel free to send me your changes
+and I will incorporate them into the next release.
 
-
-
-
-
+Did I mention you should backup your stuff?
