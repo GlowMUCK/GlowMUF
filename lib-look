@@ -2,85 +2,90 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/04/05 13:42:16 $ $Revision: 1.24 $                )
+( cmd/lib-look: $Date: 2005/04/05 21:32:48 $ $Revision: 1.25 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
-( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
+( Dependencies: lib-strings, lib-unparseobj                                   )
 ( --------------------------------------------------------------------------- )
 ( Set of library routines for doing 'look' functions.                         )
 ( The following functions are included in this library:                       )
-( LOOKsafecall:  x d --                                                       )
+( LOOK-safecall:  x d --                                                      )
 (      Takes a dbref which is assumed to be a command or @desc-like program   )
 (      that takes one parameter, usually a string, and returns no values.     )
 (      It ensures that none of the variables me, loc, trigger, or command     )
 (      are modified, and that no garbage is left behind on the stack.         )
-( LOOKunparse:  d -- s                                                        )
+( LOOK-unparse:  d -- s                                                       )
 (      Takes a dbref, and returns either just its name, or the name plus      )
 (      flags, depending on the permissions of me @.                           )
-( LOOKstd-filter: d -- i                                                      )
+( LOOK-std-filter: d -- i                                                     )
 (      A typical filter for LOOKcontents-filter. If you need all the normal   )
 (      filtering plus more, you can call this inside of your own filter to    )
 (      prevent reinvention of the wheel...                                    )
-( LOOKcontents-filter:  a d -- d... i                                         )
+( LOOK-contents-filter:  a d -- d... i                                        )
 (      Takes the address of a 'filter' routine and a dbref, and returns a     )
 (      range on the stack of the filtered contents of the db-item. The first  )
 (      item to print is the bottom of the stack range.  The filter should     )
 (      be  d -- i; it takes a dbref and returns a true/false value to say     )
 (      whether or not the dbref should be put into the list.                  )
-( LOOKget-contents:  d -- d... i                                              )
+( LOOK-get-contents:  d -- d... i                                             )
 (      Takes a dbref, and returns the list of its contents, filtered through  )
 (      the standard filter which acts like the server's contents list:        )
 (      Dark rooms don't list anything unless the room or the db-items are     )
 (      yours, dark db-items not owned by you don't show, and you don't show.  )
 (      This list has the first element in the contents at the bottom of the   )
 (      stack.                                                                 )
-( LOOKlong-display:  d... i --                                                )
+( LOOK-long-display:  d... i --                                               )
 (      List the dbref stack range given, in the usual format for the server.  )
 (      All elements on separate lines, using unparse.  The bottom element is  )
 (      printed first.                                                         )
-( LOOKlist-objects:  d --                                                     )
+( LOOK-list-objects:  d --                                                    )
 (      Lists all the 'db-items' that are setup by the @object/@detail commands)
 (      Parallels long-display.                                                )
-( LOOKdetail-dbmatch: d s -- s                                                )
+( LOOK-detail-dbmatch: d s -- s                                               )
 (      Searches for a detail or object created by @object/@detail and returns )
 (      its description. Searches only the dbref specified.                    )
-( LOOKdetail-desc: s --                                                       )
+( LOOK-detail-desc: s --                                                      )
 (      Searches for a detail or object created by @object/@detail and displays)
 (      its description. Currently only searches the current room "here".      )
-( LOOKshort-list:  d... i -- s                                                )
+( LOOK-short-list:  d... i -- s                                               )
 (      Turns the range of dbrefs on the stack into a properly formatted       )
 (      string, with commas.  1 element is just returned, 2 elements returns   )
 (      '1 and 2', more elements return '1, 2, 3, and 4' or similar.  Returns  )
 (      a null string if there are no elements.  Again, the bottom element is  )
 (      first in the list.                                                     )
-( LOOKshort-display:  d1 d2 d3 ... di i --                                    )
+( LOOK-short-display:  d1 d2 d3 ... di i --                                   )
 (      Calls short-list, then prints out "You see <string>." to the user.     )
 (      Prints "You see nothing." if nothing is on the list.                   )
-( LOOKlist-contents:  s d --                                                  )
+( LOOK-list-contents:  s d --                                                 )
 (      Calls get-contents followed by long-display and list-objects to print  )
 (      out all of the contents of the given dbref. If there are any contents  )
 (      listed, then  the string on the stack is printed out, for "Contents:"  )
 (      or the like. If the contents list is empty, the string is ignored.     )
-( LOOKstr-desc:  s --                                                         )
+( LOOK-str-desc:  s --                                                        )
 (      Takes string 's', and prints it out as a description. Matches the      )
 (      '@###' and '@$prog' values properly, and uses them with the present    )
 (      trigger value.  If neither of these exist, or if they're invalid,      )
 (      the rest of the string is just printed out. Does NOT parse MPI.        )
-( LOOKdbstr-desc:  d s --                                                     )
+( LOOK-dbstr-desc:  d s --                                                    )
 (      Runs str-desc, using the value d on the stack as the effective         )
 (      trigger value. Parses MPI as appropiate.                               )
-( LOOKdb-desc:  d --                                                          )
+( LOOK-db-desc:  d --                                                         )
 (      Does a full description of the db-item, including name and succ/fail   )
 (      if the dbref given is a room, and contents. All programs run with      )
 (      the dbref given in 'trigger @'. Will return the proper values for      )
 (      dbref's #-1 and #-2 as well. Parses MPI as appropiate.                 )
-( LOOKcmd-look:  s --                                                         )
+( LOOK-cmd-look:  s --                                                        )
 (      Does a match function, then calls db-desc with the results.  This      )
 (      will simulate the usual 'look' command.                                )
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.25  2005/04/05 21:32:48  feaelin
+  Removed unneeded $include statements ...no actual calls to those libraries.
+  Revised library words to be in line with the standard and fixed calls to
+  lib-strings and lib-unparseobj as well.
+
   Revision 1.24  2005/04/05 13:42:16  feaelin
   General documentation cleanup.
   Improvements made to the installer script.
@@ -174,8 +179,6 @@ wh me=Beginning installation of lib-look...
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/strings
-$include $lib/match
-$include $lib/stackrng
 $include $lib/unparseobj
  
 lvar sme
@@ -218,7 +221,7 @@ lvar realtrig
  
 : unparse ( d -- s )
   me @ "Silent" flag? if
-    "%P" UPOspecial-unparseobj exit
+    "%P" UPO-special-unparseobj exit
   then
   dup control? not
   if
@@ -228,12 +231,12 @@ lvar realtrig
       if
         dup "Abode" flag? not
         if
-          "%P" UPOspecial-unparseobj exit
+          "%P" UPO-special-unparseobj exit
         then
       then
     then
   then
-  UPOcolor-unparseobj
+  UPO-color-unparseobj
 ;
  
 ( Don't see rooms.  Don't see programs you can't link to. )
@@ -314,7 +317,7 @@ lvar realtrig
 : short-list ( d... i -- s )
   dup 3 <
   if
-    1 - dup 2 + rotate "%P" UPOspecial-unparseobj over
+    1 - dup 2 + rotate "%P" UPO-special-unparseobj over
     if
       " " strcat
     then
@@ -323,13 +326,13 @@ lvar realtrig
     begin
       over 1 >
     while
-      swap 1 - swap over 3 + rotate "%P" UPOspecial-unparseobj
+      swap 1 - swap over 3 + rotate "%P" UPO-special-unparseobj
       "^WHITE^, " strcat strcat
     repeat
   then
   swap
   if
-    "^WHITE^and " strcat swap "%P" UPOspecial-unparseobj strcat
+    "^WHITE^and " strcat swap "%P" UPO-special-unparseobj strcat
   then
 ;
  
@@ -368,9 +371,9 @@ lvar realtrig
   dup "_obj/" nextprop
   begin
     dup "" strcmp while
-    dup ";" STRsplit pop
-    "/" STRsplit swap pop
-    "thing" UPOcolor-query
+    dup ";" STR-split pop
+    "/" STR-split swap pop
+    "thing" UPO-color-query
     me @ "silent" flag? not if
       3 pick control? if
         "^YELLOW^(detail)" strcat
@@ -383,7 +386,7 @@ lvar realtrig
 ; PUBLIC list-objects
  
 : list-contents ( s d -- )
-  dup "_obj/" nextprop STRblank? not swap
+  dup "_obj/" nextprop STR-blank? not swap
   dup get-contents dup dup 4 + rotate or
   if
     dup 3 + rotate tell
@@ -453,7 +456,7 @@ lvar realtrig
     if
       tell
     else
-      1 strcut swap pop " " STRsplit striplead striptail swap
+      1 strcut swap pop " " STR-split striplead striptail swap
       dup "$" 1 strncmp
       if
         atoi dbref
@@ -498,7 +501,7 @@ lvar realtrig
     dup unparse tell
   then
   dup me @ location dbcmp over room? not and
-  over "/_/ide" getpropstr STRblank? not and if
+  over "/_/ide" getpropstr STR-blank? not and if
     dup "/_/ide" "(@Idesc)" 1 parseprop
   else
     dup "/_/de" "(@Desc)" 1 parseprop
@@ -649,8 +652,26 @@ q
 @set $lib/look=/_defs/LOOKstd-filter:"$lib/look" match "std-filter" call
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
+@set $lib/look=/_defs/LOOK-cmd-look:"$lib/look" match "cmd-look" call
+@set $lib/look=/_defs/LOOK-contents-filter:"$lib/look" match "contents-filter" call
+@set $lib/look=/_defs/LOOK-db-desc:"$lib/look" match "db-desc" call
+@set $lib/look=/_defs/LOOK-dbstr-desc:"$lib/look" match "dbstr-desc" call
+@set $lib/look=/_defs/LOOK-detail-dbmatch:"$lib/look" match "detail-dbmatch" call
+@set $lib/look=/_defs/LOOK-detail-desc:"$lib/look" match "detail-desc" call
+@set $lib/look=/_defs/LOOK-get-contents:"$lib/look" match "get-contents" call
+@set $lib/look=/_defs/LOOK-list-contents:"$lib/look" match "list-contents" call
+@set $lib/look=/_defs/LOOK-list-objects:"$lib/look" match "list-objects" call
+@set $lib/look=/_defs/LOOK-long-display:"$lib/look" match "long-display" call
+@set $lib/look=/_defs/LOOK-prop:"$lib/look" match "look-prop" call
+@set $lib/look=/_defs/LOOK-safecall:"$lib/look" match "safecall" call
+@set $lib/look=/_defs/LOOK-short-display:"$lib/look" match "short-display" call
+@set $lib/look=/_defs/LOOK-short-list:"$lib/look" match "short-list" call
+@set $lib/look=/_defs/LOOK-short-list-n:"$lib/look" match "short-list-n" call
+@set $lib/look=/_defs/LOOK-std-filter:"$lib/look" match "std-filter" call
+@set $lib/look=/_defs/LOOK-str-desc:"$lib/look" match "str-desc" call
+@set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
 @set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.24 $
-@set $lib/look=/_version:1.31FM$Revision: 1.24 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.25 $
+@set $lib/look=/_version:1.31FM$Revision: 1.25 $
 wh me=Installation of lib-look complete.
