@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2000/01/10 21:03:38 $ $Revision: 1.3 $
+( lib-editor: $Date: 2001/01/22 01:01:03 $ $Revision: 1.4 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,9 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.4  2001/01/22 01:01:03  feaelin
+  Added the new sort command to the editor.
+
   Revision 1.3  2000/01/10 21:03:38  feaelin
   Documentation cleanup.
 
@@ -88,10 +91,11 @@ $define SRNGinsert  sr-insertrng  $enddef
     else dup 10 = if pop "Error: Must have pattern to search for."
     else dup 11 = if pop "Error: Must have a destination line reference."
     else dup 12 = if pop "Error: Columns parameter invalid."
+    else dup 13 = if pop "Error: Extraneous line references ignored."
     else pop "Unknown error."
     then then then then then
     then then then then then
-    then then
+    then then then
     "< ** " swap strcat " ** >" strcat
     me @ swap notify
 ;
@@ -194,6 +198,35 @@ $define SRNGinsert  sr-insertrng  $enddef
         swap if 7 EDITORerror then
         dup 0 0 "< Insert at line %1 >" EDITORmesg
         swap pop 1 exit
+    then
+    dup "sort" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr ) 
+        pop and if 13 EDITORerror then
+        2 pick 2 + swap
+        dup "as" stringcmp not if 
+          pop 0 0
+        else
+          dup "d" stringcmp not if
+            pop 1 1
+          else
+            dup "s" stringcmp not if
+              pop 0 0
+            else
+              dup "di" stringcmp not if
+                pop 1 1
+              else
+                dup "ds" stringcmp not if
+                  pop 1 0
+                else
+                  pop 0 1
+                then                    
+              then
+            then
+          then
+        then
+        EDITsort
+        3 - 0 0 "< %1 lines sorted. >" EDITORmesg
+        1 exit
     then
     dup "del" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
@@ -397,7 +430,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         over not if pop pop over dup then
         dup not if pop dup then over 4 put
         over over swap - 1 + 3 pick 5 pick
-"< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
+        "< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
         EDITORmesg 2 -4 rotate EDITfmt_rng 1 exit
     then
     dup "indent" stringcmp not if
@@ -450,10 +483,13 @@ $define SRNGinsert  sr-insertrng  $enddef
 " .right [st [en]]=col    Right justifies to column col."
 " .indent [st [en]]=cols  Indents or undents text by cols characters"
 " .format [st [en]]=cols  Formats text nicely to cols columns."
+" .sort [=method]         Sorts all lines. Method can have: a - ascending,"
+"                         d - descending, i - case-insensitive,"
+"                         s - case-sensitive. Default is: ai."
 "---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 ".+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
-        25 EDITdisplay
+        28 EDITdisplay
         pop pop pop pop 1 exit
     then
     pop pop pop pop 8 EDITORerror 1
@@ -498,5 +534,5 @@ q
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
 "Installation of lib-editor complete.
