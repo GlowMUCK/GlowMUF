@@ -2,8 +2,8 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2004/04/22 17:25:53 $ $Revision: 1.12 $                )
-( Purpose: Replicate and enhance the inserver look routine                    )
+( lib-strings: $Date: 2004/08/06 14:12:22 $ $Revision: 1.13 $                 )
+( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: None                                                          )
@@ -41,6 +41,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.13  2004/08/06 14:12:22  feaelin
+  Minor documentation corrections.
+
   Revision 1.12  2004/04/22 17:25:53  feaelin
   Documentation Cleanup
 
@@ -55,19 +58,19 @@ wh me=Beginning installation of lib-strings...
   Revision 1.8  1999/02/13 19:06:17  feaelin
   Fixed .split2 entry
   
-  Revision 1.6  1998/07/30 19:20:41  glow
+  Revision 1.6  1998/07/30 19:20:41  feaelin
   Added synonyms of .split: .splitarg, .splitargs, .splitfirst, .strcutat.
   
-  Revision 1.4  1998/07/30 19:14:48  glow
+  Revision 1.4  1998/07/30 19:14:48  feaelin
   Added STRsplitargs/.splitargs
   
-  Revision 1.3  1998/07/30 04:11:20  glow
+  Revision 1.3  1998/07/30 04:11:20  feaelin
   Updated STRsplit
   
-  Revision 1.2  1998/07/28 03:35:38  glow
+  Revision 1.2  1998/07/28 03:35:38  feaelin
   Corrected wiz-level.
   
-  Revision 1.1  1998/07/27 21:15:02  glow
+  Revision 1.1  1998/07/27 21:15:02  feaelin
   Initial revision
 )  
 ( --------------------------------------------------------------------------- )
@@ -215,5 +218,5 @@ q
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=1-37
 @set $tmp/prog1=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
 wh me=Installation of lib-strings complete.

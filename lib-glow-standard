@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-glow-standard...
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2004/08/06 14:05:52 $ $Revision: 1.20 $          )
+( lib-glow-standard: $Date: 2004/08/06 14:12:22 $ $Revision: 1.21 $          )
 ( Author: Various                                                            )
 ( Contributors: Feaelin, Various                                             )
 ( Dependencies: None                                                         )
@@ -53,6 +53,9 @@ wh me=Beginning installation of lib-glow-standard...
   
 (
   $Log: lib-glow-standard,v $
+  Revision 1.21  2004/08/06 14:12:22  feaelin
+  Minor documentation corrections.
+
   Revision 1.20  2004/08/06 14:05:52  feaelin
   Updated @list lines to reflect new size of documentation. Replaced
   old-style 'says' for the installation notification with new-style whispers.
@@ -363,7 +366,7 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_de:lib-glow:@list lines 1-52 for documentation.
-@set $tmp/prog1=/_docs:@list $lib/glow=1-52
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.20 $
+@set $tmp/prog1=/_de:lib-glow:@list lines 1-48 for documentation.
+@set $tmp/prog1=/_docs:@list $lib/glow=1-48
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.21 $
 wh me=Installation of lib-glow-standard completed.
