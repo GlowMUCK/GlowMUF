@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2004/03/01 16:58:26 $ $Revision: 1.6 $
+( lib-stackrng: $Date: 2004/03/01 23:31:43 $ $Revision: 1.7 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling object -- SRNG ****                 
@@ -45,6 +45,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.7  2004/03/01 23:31:43  feaelin
+  Fixed logic flaws in filterrange
+
   Revision 1.6  2004/03/01 16:58:26  feaelin
   Added SRNGxxx entries, so future uses can be more obvious.
 
@@ -133,21 +136,20 @@
 ;
   
   
-: filterrange-loop ( {rng} {rng2} funcaddr cnt-- {rng'} {rng2'} )
-   3 pick 4 + pick over
-   <= if pop pop pop exit then      (If done, then clean up and exit)
+: filterrange-loop ( {rng} {rng2} funcaddr pnt -- {rng'} {rng2'} )
+   dup 0 = if pop pop exit then     (If done, then clean up and exit)
    3 pick over + 4 + pick           (get the datum from the old range)
    3 pick execute if                (check to see if datum is to be filtered)
-      3 pick over + 4 + rotate         (get data from old range)
-      -4 rotate                        (out it in the new one)
-      rot 1 + rot rot                  (Increment the new range counter)
-      3 pick 4 + pick 1 -              (decrememnt the old range counter)
-      4 pick 4 + put                   (and put it back)
+     3 pick over + 4 + rotate         (get data from old range)
+     -4 rotate                        (out it in the new one)
+     rot 1 + rot rot                  (Increment the new range counter)
+     3 pick 4 + pick 1 -              (decrememnt the old range counter)
+     4 pick 4 + put                   (and put it back)
    then
-   1 + 'filterrange-loop jmp        (repeat until done.)
+   1 - 'filterrange-loop jmp        (repeat until done.)
 ;
 : filterrange ( {rng} funcaddr -- {rng'} {filtrdrng} )
-   0 swap 0 filterrange-loop
+   0 swap 3 pick filterrange-loop
 ;
 public catranges
 public extractrange
@@ -182,5 +184,5 @@ q
 @set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
 @set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
 @set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
 "Installation of lib-stackrng completed
