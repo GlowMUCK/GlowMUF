@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2001/02/22 20:39:56 $ $Revision: 1.10 $
+( lib-strings: $Date: 2001/02/22 20:46:31 $ $Revision: 1.11 $
   Originally included in the FuzzBall MUF archive.                            )
 ( --------------------------------------------------------------------------  )
 ( Contributors: Syvel, Feaelin                                                )
@@ -40,6 +40,9 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
+  Revision 1.11  2001/02/22 20:46:31  feaelin
+  Documentation correction.
+
   Revision 1.10  2001/02/22 20:39:56  feaelin
   Added support to STRfillfield, STRcenter STRleft, STRright to detect
   and handle correctly strings with ANSI codes in them.  Credit goes to
@@ -210,7 +213,7 @@ q
 @set $tmp/prog1=/_defs/STRsplitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
-@set $tmp/prog1=/_docs:@list $lib/strings=1-33
-@set $tmp/prog1=/_/de:lib-strings:List lines 1-33 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@set $tmp/prog1=/_docs:@list $lib/strings=1-35
+@set $tmp/prog1=/_/de:lib-strings: List lines 1-35 for documentation.
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
 "Installation of lib-strings complete.
