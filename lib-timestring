@@ -2,10 +2,14 @@
 @prog lib-timestring
 1 99999 d
 1 i
-( lib-timestring: $Date: 1998/08/23 18:55:34 $ $Revision: 1.1 $                                           )
+( lib-timestring: $Date: 1998/08/23 19:02:17 $ $Revision: 1.2 $               
+  Originally from glowmuck distribution                                       )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-timestring,v $
+  Revision 1.2  1998/08/23 19:02:17  glow
+  *** empty log message ***
+
   Revision 1.1  1998/08/23 18:55:34  glow
   Initial revision
 
