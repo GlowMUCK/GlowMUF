@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/22 17:25:53 $ $Revision: 1.16 $                )
+( cmd/lib-look: $Date: 2004/04/22 19:44:21 $ $Revision: 1.17 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -81,6 +81,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.17  2004/04/22 19:44:21  feaelin
+  Fixed issue where darked players were hidden from wizards.
+
   Revision 1.16  2004/04/22 17:25:53  feaelin
   Documentation Cleanup
 
@@ -215,17 +218,25 @@ lvar realtrig
   dup me @ dbcmp if pop 0 exit then
   dup room? if pop 0 exit then
   dup player? if
-    prog "@allowdarkplayers" getpropstr "yes" strcmp not if
-      dup "@/dark" getpropstr "yes" strcmp swap pop exit
-    else
+    dup me @ swap controls if
       pop 1 exit
+    else
+      prog "@allowdarkplayers" getpropstr "yes" strcmp not if
+        dup "@/dark" getpropstr "yes" strcmp swap pop exit
+      else
+        pop 1 exit
+      then
     then
   then
   dup dup thing? swap "z" flag? and if
-    prog "@allowdarkplayers" getpropstr "yes" strcmp not if
-      dup "@/dark" getpropstr "yes" strcmp swap pop exit
-    else
+    dup me @ swap controls if
       pop 1 exit
+    else
+      prog "@allowdarkplayers" getpropstr "yes" strcmp not if
+        dup "@/dark" getpropstr "yes" strcmp swap pop exit
+      else
+        pop 1 exit
+      then
     then
   then
   dup program? if
@@ -593,6 +604,6 @@ q
 @set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.16 $
-@set $lib/look=/_version:1.31FM$Revision: 1.16 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.17 $
+@set $lib/look=/_version:1.31FM$Revision: 1.17 $
 wh me=Installation of lib-look complete.
