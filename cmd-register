@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2004/04/14 21:08:41 $ $Revision: 1.17 $                 )
+( cmd-register $Date: 2004/04/15 00:50:56 $ $Revision: 1.18 $                 )
 ( Purpose: Handle registration of database items for virtual references       )
 ( Author: Unknown                                                             )
 ( Contributors: Andy & Feaelin                                                )
@@ -10,6 +10,10 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.18  2004/04/15 00:50:56  feaelin
+   Updated cmd-register's documentation again. Added some color and version
+   display.
+
    Revision 1.17  2004/04/14 21:08:41  feaelin
    Updated cmd-register's documentation.
 
@@ -72,47 +76,65 @@ $define tell me @ swap ansi_notify $enddef
 
 lvar regobj
 lvar regprop
-
+ 
+: do-header
+  "^WHITE^------------------------------------------------------------------------------" tell
+  "^FOREST^cmd-register: " "$Revision: 1.18 $" 
+  1 strcut swap pop dup strlen 2 - strcut pop strcat tell
+  "^WHITE^------------------------------------------------------------------------------" tell
+;
+ 
+: do-footer
+  "^WHITE^------------------------------------------------------------------------------" tell
+;
+ 
 : do-help
-  "The @register program is used to make database items, particularly programs," tell
-  "globally available to all users.  Basic syntax:" tell
+  do-header
+  "^RESET^The @register program is used to make database items, particularly programs," tell
+  "^RESET^globally available to all users. Basic syntax:" tell
   " " tell
-  "  @reg                        - to list globally registered items." tell
-  "  @reg <propdir>              - to list globally registered items" tell
-  "                                in a particular propdir." tell
-  "  @reg <item> = <name>        to register <item> as <name>." tell
-  "  @reg #del <item> = <name> - to remove entry <name> on <item>." tell
+  "^INFO^  @reg                      ^RESET^- to list globally registered items." tell
+  "^INFO^  @reg <directory>          ^RESET^- to list globally registered items in a" tell
+  "^RESET^                              particular directory." tell
+  "^INFO^  @reg <item> = <name>^RESET^      ^RESET^- to register <item> as <name>." tell
+  "^INFO^  @reg <item> = <dir>/<name>^RESET^- to register <item> as <name> in directory <dir>" tell
+  "^INFO^  @reg #del <item> = <name> ^RESET^- to remove entry <name> on <item>." tell
   " " tell
-  "By default, registrations are made on #0 in _reg or the specified" tell
-  "subpropdir of _reg." tell
-  " " tell
-  "Of course, only wizards have permission to change #0, but mortal" tell
-  "players can still store registrations on themselves or other items" tell
-  "which they own, using the following options:" tell
-  "  #me                         - makes the registration on the user." tell
-  "  #prop <targetitem>:<prop>   - makes the registration on <targetitem>" tell
-  "                                in propdir <prop>" tell
-  "Type '@reg #help2' for examples." tell
+  "^RESET^By default, registrations are stored on #0. Of course, only wizards have" tell
+  "^RESET^permission to change #0, but mortal players can still store registrations on" tell
+  "^RESET^themselves or other items which they own, using the following options:" tell
+  "  ^INFO^@reg #me                  ^RESET^- makes the registration on the user." tell
+  "  ^INFO^@reg #prop <item>:<prop>  ^RESET^- makes the registration on <item>" tell
+  "^RESET^                                in propdir <prop>" tell
+  " "
+  "^RESET^Some typical directories:" tell
+  "^INFO^cmd  ^RESET^- 'command' programs           ^INFO^lib  ^RESET^- program libararies" tell
+  "^INFO^con  ^RESET^- connect/disconnect programs  ^INFO^lock ^RESET^- lock programs" tell
+  "^INFO^game ^RESET^- games such as yahtzee        ^INFO^par  ^RESET^- parent rooms" tell
+  "^RESET^Type '^INFO^@reg #help2^RESET^' for additional information." tell
+  do-footer
 ;
 
 : do-help-2
-  "Example:  @reg #12345 = sample" tell
+  do-header
+  "^INFO^Example:  '@reg #12345 = sample^RESET^'" tell
   "This registers database item #12345 as '_reg/sample' on #0, so that players" tell
   "can refer to it as '$sample' instead of '#12345'." tell
   " " tell
-  "Example:  @reg lib-reflist = lib/reflist" tell
+  "^INFO^Example:  '@reg lib-reflist = lib/reflist'" tell
   "This registers the program lib-reflist as '_reg/lib/reflist' on #0," tell
   "so that coders can use '$include $lib/reflist' in their programs." tell
   " " tell
-  "Example:  @reg #me #20645 = pet" tell
+  "^INFO^Example:  '@reg #me #20645 = pet'" tell
   "This registers database item #20645 as '_reg/pet' on the user.  The user" tell
   "may now refer to #20645 as '$pet'.  Since the registration is not" tell
   "on #0, only the user may use this reference." tell
   " " tell
-  "Example:  @reg #prop #9876:_arrive #12345=sample" tell
+  "^INFO^Example:  '@reg #prop #9876:_arrive #12345=sample'" tell
   "This registers database item #12345 as '_arrive/sample' on #9876.  Notice" tell
   "that it is not registered as '_reg/_arrive/sample'.  The #prop" tell
   "option does not include '_reg' automatically." tell
+  do-footer
 ;
  
 : split
@@ -346,6 +368,6 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.17 $
+@set $cmd/register=_version:FM$Revision: 1.18 $
 @set $cmd/register=_docs:@register #help
 "Installation of cmd-register finished.
