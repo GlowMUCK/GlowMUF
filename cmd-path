@@ -2,11 +2,14 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2001/02/26 20:12:58 $ $Revision: 1.7 $
+( cmd-path: $Date: 2004/02/12 17:34:45 $ $Revision: 1.8 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.8  2004/02/12 17:34:45  feaelin
+  Fixed some inaccessible public functions.
+
   Revision 1.7  2001/02/26 20:12:58  feaelin
   New backlinking code had a bug in it that would cause the program underflow if
   there wasn't any backlink specified.
@@ -119,7 +122,7 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.7 $ $Date: 2001/02/26 20:12:58 $"
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.8 $ $Date: 2004/02/12 17:34:45 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -208,7 +211,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   "nw" "northwest" trysub "sw" "southwest" trysub
   "ne" "northeast" trysub "se" "southeast" trysub
   swap strcat
-;
+; public dir-prop
   
 : dir-n ( s -- s ) tolower
   dup ";" instring dup if 1 - strcut then pop
@@ -720,6 +723,27 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     strcat n
   then
 ;
+
+: cmd-data
+  arg @ "=" split strip swap strip
+  dup if
+    dir-prop dir ! val !
+    plr @ src @ controls? if
+      src @ dir @ path-get-dir-link okobj? if
+        val @ if
+          src @ dir @ "/data" strcat val @
+          setprop "Data set." n
+        else
+          src @ dir @ "/data" strcat removeprop "Data cleared." n
+        then
+      else NOPATH a then
+    else NOPERM a then
+  else
+    pop pop TITLE
+    command @ tolower " path=value -- set the date value for a path" strcat n
+    command @ tolower " path=      -- clear the data value for a path" strcat n
+  then
+;
   
 : cmd-junk ( -- )
   arg @ dir-prop dir !
@@ -876,7 +900,9 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     then
   repeat val @
   dup if dup strlen 3 - strcut pop then
-; public path-list
+;
+
+public path-list
   
 : cmd-excavate
  depth popn
@@ -939,6 +965,15 @@ $endif
             depth cdepth @ - dup 0 > if popn else pop then
           else
             plr @ dst @ moveto
+            "$cmd/path-data-handler" match dup ok? over program? and if
+              src @ dir @ "/data" path-get-dir-prop dup if
+                swap call
+              else
+                pop
+              then
+            else
+              pop
+            then
           then
           src @ dst @ src ! "" path-drop src !
         then
@@ -963,6 +998,7 @@ $endif
     "show" cmp if cmd-show exit then
     "stat" cmp if cmd-show exit then
     "junk" cmp if cmd-junk exit then
+    "data" cmp if cmd-data exit then
     "help" cmp if cmd-help exit then
   
     "name" cmp if  "na" cst then
@@ -1002,7 +1038,7 @@ q
 @set $tmp/prog1=V
 @set $tmp/prog1=W3
 @register cmd-path=lib/path
-@set $tmp/prog1=/_defs/obvexits:"$cmd/path" match "path-obvious-exits-main" call
+@set $tmp/prog1=/_defs/obvexits:"$cmd/path" match "path-obvious-exits" call
 @set $tmp/prog1=/_defs/PATHlist:"$lib/path" match "path-list" call
 @set $tmp/prog1=/_defs/PATHgetlink:"$lib/path" match "path-getlink" call
 @set $tmp/prog1=/_defs/PATHlocked?:"$lib/path" match "path-locked?" call
@@ -1015,7 +1051,9 @@ q
 @set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
 @set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
-@set $tmp/prog1=_version:FM$Revision: 1.7 $
+@set $tmp/prog1=/_defs/PATHmatch:"$lib/path" match "path-match" call
+@set $tmp/prog1=/_defs/PATHdir-prop:"$lib/path" match "path-match" call
+@set $tmp/prog1=_version:FM$Revision: 1.8 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
