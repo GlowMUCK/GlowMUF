@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2001/02/24 21:35:27 $ $Revision: 1.17 $          )
+( lib-glow-standard: $Date: 2003/05/04 22:42:46 $ $Revision: 1.18 $          )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -50,6 +50,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.18  2003/05/04 22:42:46  feaelin
+  Change .noguest to use ^FAIL^ instead of ^RED^
+
   Revision 1.17  2001/02/24 21:35:27  feaelin
   Incorrect public declaration.
 
@@ -292,7 +295,7 @@ q
 @set $tmp/prog1=/_defs/.namesplit:( d -- s1 s2 ) dup unparseobj swap name strlen strcut
 @set $tmp/prog1=/_defs/.neg:( i -- -i ) 0 swap -
 @set $tmp/prog1=/_defs/.no?:( s -- i ) ( checks that string starts with "n", is "0", or is blank ) tolower "n" 1 strncmp not
-@set $tmp/prog1=/_defs/.noguest:"me" match .guest? if me @ "^RED^This command is unavailable to guests." ansi_notify pop exit then
+@set $tmp/prog1=/_defs/.noguest:"me" match .guest? if me @ "^FAIL^This command is unavailable to guests." ansi_notify pop exit then
 @set $tmp/prog1=/_defs/.null:not
 @set $tmp/prog1=/_defs/.null?:not
 @set $tmp/prog1=/_defs/.otell:loc @ me @ rot notify_except ( s -- ) ( Display string to everyone in my room except me )
@@ -352,5 +355,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-46 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-46
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.18 $
 "Installation of lib-glow-standard completed.
