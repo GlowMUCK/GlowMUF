@@ -2,7 +2,7 @@
 @prog cmd-globals
 1 99999 d
 1 i
-( cmd-globals: $Date: 2000/01/26 16:31:31 $ $Revision: 1.1 $                                              )
+( cmd-globals: $Date: 2000/12/20 14:06:35 $ $Revision: 1.2 $                                              )
 ( Author: Scotfox                                                             )
 ( --------------------------------------------------------------------------- )
 ( Globals.muf -- by Scotfox, 26-September-93                                  )
@@ -10,6 +10,12 @@
 ( Tweaked by Casual, 8-July-94, to display globals on the location of the     )
 ( trigger action, on #0 or otherwise.                                         )
 ( Andy added going up the room tree finding globals                           )
+(
+  $Log: cmd-globals,v $
+  Revision 1.2  2000/12/20 14:06:35  feaelin
+  Removed extraneous reference to a board on Legacy.
+
+)
  
 $include $lib/glowstandard
 
@@ -57,6 +63,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/globals
-@set $tmp/exit1=/_old/sc:{null:{ansi:^GREEN^Type '^WHITE^^FLASH^pub^ ^^GREEN^' to get to the common chat haus and bulletin board.}}\r{null:{ansi:^CYAN^Public: global commands:}}{null:{ansi:^CYAN^{commas:{filter:duh2,{exits:#0},{if:{instr:{flags:{&duh2}},d},{if:{and:{instr:{flags:me},w},{not:{instr:{flags:me},q}}},{&duh2}},{&duh2}}},\, and ,duh1,{name:{&duh1}}}}}{null:{ansi:^GREEN^For instructions on a command\, look at it ('look <command>').}}
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-globals complete.
