@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/04/03 14:55:01 $ $Revision: 1.15 $                 )
+( lib-strings: $Date: 2005/04/03 15:02:27 $ $Revision: 1.16 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -41,6 +41,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.16  2005/04/03 15:02:27  feaelin
+  Simple whitespace changes.
+
   Revision 1.15  2005/04/03 14:55:01  feaelin
   Fixed installer script
 
@@ -82,7 +85,7 @@ wh me=Beginning installation of lib-strings...
       rot swap 1 - strcut rot strlen strcut swap pop
    else pop pop "" then
 ;
-
+ 
 : splitargs ( s -- s s )
   dup " " instr if
     dup "=" instr if
@@ -92,7 +95,7 @@ wh me=Beginning installation of lib-strings...
     else " " split then
   else "=" split then
 ;
-
+ 
 : rsplit
     swap over over swap
     rinstr dup not if
@@ -103,34 +106,33 @@ wh me=Beginning installation of lib-strings...
         swap pop
     then
 ;
-  
+ 
 : sms ( str -- str')
     dup "  " instr if
         " " "  " subst 'sms jmp
     then
 ;
-  
+ 
 : fillfield (str padchar fieldwidth -- padstr)
   rot ansi_strlen - dup 1 < if pop pop "" exit then
   swap over begin swap dup strcat swap 2 / dup not until pop
   swap ansi_strcut pop
 ;
-  
+ 
 : left (str fieldwidth -- str')
   over " " rot fillfield strcat
 ;
-  
+ 
 : right (str fieldwidth -- str')
   over " " rot fillfield swap strcat
 ;
-  
+ 
 : center (str fieldwidth -- str')
   over " " rot fillfield
   dup ansi_strlen 2 / ansi_strcut
   rot swap strcat strcat
 ;
-  
-  
+ 
 : STRasc ( c -- i )
     " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" strcat
@@ -142,7 +144,7 @@ wh me=Beginning installation of lib-strings...
         31 +
     then
 ;
-  
+ 
 : STRchr ( i -- c )
     dup 31 > over 128 < and if
         " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -152,7 +154,7 @@ wh me=Beginning installation of lib-strings...
         pop "."
     then
 ;
-  
+ 
 : STRparse ( s -- s1 s2 s3 ) (
     Before: " #option  tom dick  harry = message "
     After:  "option" "tom dick harry" " message "
@@ -220,5 +222,5 @@ q
 @set $lib/strings=/_defs/STRsts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-37
 @set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.15 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.16 $
 wh me=Installation of lib-strings complete.
