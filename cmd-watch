@@ -1,0 +1,188 @@
+"Beginning installation of cmd-watch...
+@prog cmd-watch
+1 99999 d
+1 i
+( cmd-watch: $Date: 2000/12/22 19:12:24 $ $Revision: 1.1 $ )
+( Author: Unknown                                                             )
+( --------------------------------------------------------------------------- )
+( cmd-watch 2.00 -- lists logins/logouts )
+(
+  $Log: cmd-watch,v $
+  Revision 1.1  2000/12/22 19:12:24  feaelin
+  Initial revision
+
+)
+$include $lib/glowstandard
+$include $lib/strings
+$include $lib/showlist
+  
+$def announce_fmt_prop  "_prefs/ann/fmt"
+$def announce_list_prop "_prefs/ann/list"
+$def announce_hide_prop "_prefs/ann/hide"
+  
+: sms ( s -- s ) begin dup "  " instr while " " "  " subst repeat ;
+  
+: remove_listitem (sList sItem -- sList)
+  " " swap strip strcat " " strcat
+  " " rot strip strcat " " strcat swap
+  over tolower swap tolower instr
+  dup if
+    strcut dup " " instr dup if
+      strcut swap pop
+    else pop
+    then
+    strcat
+  else pop then
+  strip sms
+;
+  
+: in_strlist? (sName sList -- bool)
+  dup not if pop pop 0 exit then
+  " " swap strcat " " strcat tolower
+  swap " " swap strcat " " strcat
+  tolower instr
+;
+  
+: name_in_strlist? (s sList -- bool)
+  over over in_strlist?
+  rot rot in_strlist? or
+;
+  
+: sort-stringwords (s -- s)
+  strip sms " " explode .sort
+  begin dup 1 > while 1 -
+    swap " " swap strcat rot swap strcat swap
+  repeat pop strip
+;
+  
+lvar edlist
+lvar listname
+: edit-list (sList sPlayers listname -- sListout)
+  listname !
+  swap strip sms edlist !
+  strip sms " " explode
+  begin
+    dup while 1 - swap
+    dup "!" 1 strncmp not if
+      (a request to remove name from list)
+      1 strcut swap pop
+      dup not if pop continue then
+      dup dup "#" 1 strncmp if "*" swap strcat then
+      match dup player? if
+        dup name
+        rot pop swap pop
+      else pop
+      then
+      dup edlist @ name_in_strlist? not if
+        (Name isn't in list anyways)
+        " wasn't in your " strcat
+        listname @ strcat " list."
+        strcat .tell
+      else
+        (name in list.  Remove)
+        edlist @ over remove_listitem edlist !
+        edlist @ over remove_listitem edlist !
+        "Removing " swap strcat
+        " from your " strcat listname @ strcat
+        " list." strcat .tell
+      then
+    else
+      (a request to add name to list)
+      dup not if pop continue then
+      dup dup "#" 1 strncmp if "*" swap strcat then
+      match dup player? if
+        dup name
+        rot pop swap
+        dup awake? if
+          name " is currently online."
+          strcat .tell
+        else pop
+        then
+      else pop
+      then
+      dup edlist @ name_in_strlist? if
+        (Name is already in list)
+        " is already in your "
+        strcat listname @ strcat "list."
+        strcat .tell
+      else
+        (add name to list)
+        edlist @ " " strcat over strcat
+        strip sms edlist !
+        "Adding " swap strcat
+        " to your " strcat listname @ strcat
+        " list." strcat .tell
+      then
+    then
+  repeat pop
+  edlist @
+  strip sms sort-stringwords
+;
+  
+: do-help prog "_help" .showlist ;
+  
+: watch-main ( s -- )
+  "me" match me !
+  strip dup "#" 1 strncmp not if
+    " " .split swap
+    dup "#list" stringcmp not if
+      pop pop me @ announce_list_prop getpropstr
+      strip sms sort-stringwords
+      dup not if pop "*no one*" then
+      "Currently watching for: " swap strcat
+      .tell exit
+    then
+    dup "#help" stringcmp not if
+      pop pop do-help exit
+    then
+    dup "#hidefrom" stringcmp not
+    over "#hide" stringcmp not or if
+      pop dup if
+        me @ announce_hide_prop getpropstr
+        swap "hidefrom" edit-list
+        me @ announce_hide_prop rot .setpropstr
+        exit
+      else
+        pop me @ announce_hide_prop getpropstr
+        strip sms sort-stringwords
+        dup not if pop "*no one*" then
+        "#all" over in_strlist? if pop "*everyone*" then
+        "Hiding from: " swap strcat
+        .tell exit
+      then
+    then
+  then
+  dup if
+    me @ announce_list_prop getpropstr
+    swap "permanent watchfor" edit-list
+    me @ announce_list_prop rot .setpropstr
+  else
+    pop "$con/watch" match "list-awake-watched" call
+    exit
+  then
+;
+.
+c
+q
+@register cmd-watch=cmd/watch
+@register #me cmd-watch=tmp/prog1
+@set $tmp/prog1=M2
+@set $tmp/prog1=/_help#:12
+@set $tmp/prog1=/_help#/1:watch tells you when given players log in or out.
+@set $tmp/prog1=/_help#/10:watch #hidefrom #all    Lets no one be informed of your logins/logouts.
+@set $tmp/prog1=/_help#/11:watch #hidefrom !#all   Lets people see your logins/logouts again.
+@set $tmp/prog1=/_help#/12:watch #hidefrom         Lists who you are hiding from.
+@set $tmp/prog1=/_help#/2:~~~~~
+@set $tmp/prog1=/_help#/3:watch                   Lists all watched players currently online.
+@set $tmp/prog1=/_help#/4:watch #help             Gives this help screen.
+@set $tmp/prog1=/_help#/5:watch #list             Lists all players being watched for.
+@set $tmp/prog1=/_help#/6:watch <player>          Adds the given player to your watch list.
+@set $tmp/prog1=/_help#/7:watch !<player>         Removes the given player from your watch list.
+@set $tmp/prog1=/_help#/8:watch #hidefrom <plyr>  Prevents <plyr> from being told of your logins.
+@set $tmp/prog1=/_help#/9:watch #hidefrom !<plyr> Lets <plyr> be told of your logins again.
+@action watchfor;watch;wf=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M1
+@set $tmp/exit1=/_/de:@$cmd/watchfor #help
+@set $tmp/prog1=_version:2.0FM$Revision: 1.1 $
+"Installation of cmd-watch complete.
