@@ -2,7 +2,7 @@
 @prog lock-cobinn
 1 99999 d
 1 i
-( lock-cobinn: $Date: 1999/02/14 14:56:01 $ $Revision: 1.2 $
+( lock-cobinn: $Date: 1999/04/17 13:10:51 $ $Revision: 1.3 $
   Author: Pakrat                                                            
   Cobblertown Inn locking and entry program by PakRat, Copyright 1996.        )
 ( --------------------------------------------------------------------------- )
@@ -57,9 +57,10 @@ $def n me @ swap notify
     atoi list-occupied-rooms
   exit then
   
-  trig player? if
+  trig room? over not and command @ "(" 1 strncmp and trig player? or if
     pop path-locked?
-  exit then ( Seems locks give players as trigs )
+    exit 
+  then ( Seems locks give players as trigs )
   
   command @ "knock" stringcmp if
     " " .split2 swap dup "knock" stringcmp not if pop 1 else swap pop 0 then
@@ -114,8 +115,11 @@ $def n me @ swap notify
   
 lvar dep
 : debug ( s -- )
+  command @ .tell
   depth dep ! cobbin
-  depth dep @ trig player? not if 1 - then = not if
+  depth dep @ trig player?
+  trig room? command @ "(" 1 strncmp and
+  or not if 1 - then = not if
     "Please tell Andy you saw this." n .debug-line
   then
 ;
@@ -132,5 +136,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=D
 @set $tmp/exit1=/_/de:@$lock/cobinn
-@set $tmp/prog1=/_version:FM$Revision: 1.2 $
+@set $tmp/prog1=/_version:FM$Revision: 1.3 $
 "Installation of lock-cobinn complete.
