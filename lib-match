@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/04/04 15:05:26 $ $Revision: 1.9 $                    )
+( lib-match: $Date: 2005/04/04 15:14:30 $ $Revision: 1.10 $                    )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -64,6 +64,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.10  2005/04/04 15:14:30  feaelin
+  Forgot the _defs entry for pmatch.
+
   Revision 1.9  2005/04/04 15:05:26  feaelin
   Moved pmatch to this library from lib-glow-standard
   Revised noisy_pmatch to use the local word
@@ -221,6 +224,7 @@ q
 @set $lib/match=/_defs/.std_table_match:"$lib/match" match "std_table_match" call
 @set $lib/match=/_defs/.table_match:"$lib/match" match "table_match" call
 @set $lib/match=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
+@set $lib/match=/_defs/MATCHpmatch: "$lib/match" match "pmatch" call
 @set $lib/match=/_defs/MATCHmatch_controlled:"$lib/match" match "match_controlled" call
 @set $lib/match=/_defs/MATCHnoisy_match:"$lib/match" match "noisy_match" call
 @set $lib/match=/_defs/MATCHnoisy_pmatch:"$lib/match" match "noisy_pmatch" call
@@ -229,5 +233,5 @@ q
 @set $lib/match=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-55
-@set $lib/match=/_lib-version:FM$Revision: 1.9 $
+@set $lib/match=/_lib-version:FM$Revision: 1.10 $
 wh me=Installation of lib-match completed.
