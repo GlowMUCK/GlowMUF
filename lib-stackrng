@@ -2,7 +2,7 @@
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2004/03/02 03:26:22 $ $Revision: 1.8 $
+( lib-stackrng: $Date: 2004/03/26 03:16:32 $ $Revision: 1.9 $
   Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( ***** Stack based range handling object -- SRNG ****                 
@@ -45,6 +45,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.9  2004/03/26 03:16:32  feaelin
+  Fixed bug with 'swaprange' where it didn't finish
+  properly.
+
   Revision 1.8  2004/03/02 03:26:22  feaelin
   Fixed bugs in swaprng. It now works as advertised.
 
@@ -117,6 +121,7 @@
   
 : swapranges ( {rng1} {rng2} -- {rng2} {rng1} )
     dup 1 + dup 2 + pick 1 extractrange
+    dup dup 3 + pick + 3 + rotate pop
 ;
   
 : deleterange  ( {rng} ... offset num pos -- {rng'} )
@@ -186,5 +191,5 @@ q
 @set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
 @set $tmp/prog1=/_docs:@list $lib/stackrng=1-41
 @set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
 "Installation of lib-stackrng completed
