@@ -2,7 +2,7 @@
 @prog cmd-tell
 1 99999 d
 1 i
-( cmd-tell: $Date: 2000/12/22 18:27:01 $ $Revision: 1.1 $                                                 )
+( cmd-tell: $Date: 2000/12/22 18:36:54 $ $Revision: 1.2 $                                                 )
 ( Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 $include $lib/glowstandard
@@ -25,10 +25,6 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
-@set $tmp/exit1=/@u/p/formats/opage:%n pages, "%m" to %t.
-@set $tmp/exit1=/@u/p/formats/opose:In a page-pose to %t, %n %m
-@set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
-@set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:Usage: tell player message
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of cmd-tell complete.
