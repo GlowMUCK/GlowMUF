@@ -1,4 +1,4 @@
-CHANGES $Date: 1998/07/25 18:25:35 $ $Revision: 1.1 $
+CHANGES $Date: 1999/02/20 17:55:46 $ $Revision: 1.2 $
 ---------------------------------------------------------------------------
 25 July 1998: Beta Release of this distribution
 ---------------------------------------------------------------------------
@@ -91,3 +91,11 @@ con-caller:
 
 cmd-ic-ooc:
   New in this distribution.  Sets/unsets the in_character flag.
+
+lock-guest:
+  Removed.  Not needed for glow, make sure your guests are set G, and set the
+exits you don't want guests to use G.
+
+lock-prop:
+  Removed. Use @lock obj=prop:val instead.  It checks the player, and/or any
+objs in the player's possession.
