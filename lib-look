@@ -2,7 +2,7 @@
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2004/04/12 15:50:55 $ $Revision: 1.9 $                 )
+( cmd/lib-look: $Date: 2004/04/13 23:18:24 $ $Revision: 1.10 $                 )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
@@ -77,6 +77,9 @@
   
 ( 
   $Log: lib-look,v $
+  Revision 1.10  2004/04/13 23:18:24  feaelin
+  Added support for IDESCs
+
   Revision 1.9  2004/04/12 15:50:55  feaelin
   Fixed bug in look that caused it to display dbrefs & flags for players that
   had 'color' turned on.
@@ -339,20 +342,20 @@ lvar realtrig
     pop "^FAIL^I don't know which one you mean!" tell exit
   then
   dup trigger @ realtrig ! trigger !
-  dup room?
+  dup room? over me @ location dbcmp or
   if
     dup unparse tell
   then
-  dup "/_/de" "(@Desc)" 1 parseprop
+  dup me @ location dbcmp over room? not and
+  over "/_/ide" getpropstr STRblank? not and if
+    dup "/_/ide" "(@Idesc)" 1 parseprop
+  else
+    dup "/_/de" "(@Desc)" 1 parseprop
+  then
   str-desc
-  dup room?
+  dup room? over me @ location dbcmp or
   if
-$ifndef __version<Muck2.2fb4.5
-    (patch since LOCKED? goes too deep)
     me @ over locked?
-$else
-    0
-$endif
     if
       dup "/_/fl" "(@Fail)" 1 parseprop dup
       if
@@ -492,6 +495,6 @@ q
 @set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
 @set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
 @set $tmp/prog1=/_docs:@list $lib/look=1-71
-@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.9 $
-@set $tmp/prog1=/_version:1.31FM$Revision: 1.9 $
+@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.10 $
+@set $tmp/prog1=/_version:1.31FM$Revision: 1.10 $
 "Installation of lib-look complete.
