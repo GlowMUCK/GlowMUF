@@ -2,11 +2,17 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2001/02/21 03:09:04 $ $Revision: 1.4 $
+( cmd-path: $Date: 2001/02/21 17:40:29 $ $Revision: 1.5 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.5  2001/02/21 17:40:29  feaelin
+  Added support for 'broken' look programs which fail to put @desc in
+  parentheses on the stack before callingn programs.  defining STUPIDLOOK
+  will turn on this support, but be warned that it may break other programs
+  that depend on the @desc functionality to operate.
+
   Revision 1.4  2001/02/21 03:09:04  feaelin
   Added 'backlink' functionality, modified default help.
 
@@ -67,7 +73,15 @@
 $include $lib/glow
 $include $lib/strings  
 $include $lib/UserProp
-  
+
+( Define this if you're using a custom-look program that isn't smart enough   )
+( to put the correct things on the stack when calling a program.  Ideally,    )
+( you should fix the _look_ since this work around will break other programs, )
+( but, if the custom-look program will be more work to fix, use the define to )
+( use a clumsy workaround.  Feaelin--2001 February 21                         )
+
+( $def STUPIDLOOK 1 )
+
 $def debug? 1 ( 0 = no stack checking, 1 = stack checking )
 $def split .split2
 $def cleancommas .cleancommas
@@ -97,7 +111,7 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.4 $ $Date: 2001/02/21 03:09:04 $"
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.5 $ $Date: 2001/02/21 17:40:29 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -421,6 +435,8 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   "@pjunk   dir                -- Remove a path" n
   "@pdup    olddir=newdir      -- Copy a path as is to a new path" n
   "@pcopy   exitname=dir       -- Copy a real exit into a path" n
+(  "@xdig" n )
+(  "@excavate (same as @xdig)" n )
   " " n
   "Use @succ here=@$cmd/path ... to show paths in a room." n
   " " n
@@ -716,10 +732,13 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   arg @ not arg @ "help" instring or if
 "@path setup -- @psetup -- Help Screen" n
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" n
-"To change the '@psetup' exit dbref to the full @path command structure" n
-"and path directions, type '@psetup full'.  This will rename '@psetup'" n
-"to the 8 cardinal and several other directions, 0-10, and several support" n
-"commands like @pdesc, @plink, @phelp, etc." n
+"To change the '@psetup' exit to make path modification features available," n
+"type '@psetup feep'.  To change the '@psetup' exit to make @path handle the" n
+"directions as well, type '@psetup full'." n
+"This will rename '@psetup' to the 8 cardinal and several other directions, " n
+"0-10, and several support commands like @pdesc, @plink, @phelp, etc." n
+" "
+"For a full list of commnads, type '@phelp' after using @psetup." n
 " " n
 "To create new path names in your parent room if @path is installed already," n
 "use @psetup name1;name2;name3 etc." n
@@ -731,7 +750,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     "@path;@phelp;@pshow;@pex;@pstat;@pjunk;"
     "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
     "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
-    "@plock;@punlock" strcat
+    "@plock;@punlock;@xdig;@excavate" strcat
   else arg @ "full" stringcmp if arg @ else
     "@path;o;n;s;e;w;u;d;nw;sw;ne;se;1;2;3;4;5;6;7;8;9;10;"
     "north;south;east;west;up;down;in;out;" strcat
@@ -739,7 +758,7 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
     "@phelp;@pshow;@pex;@pstat;@pjunk;" strcat
     "@pclone;@pcopy;@psetup;@pdup;@pdark;@plight;" strcat
     "@pname;@pdesc;@psucc;@pfail;@pdrop;@posucc;@pofail;@podrop;" strcat
-    "@plock;@punlock" strcat
+    "@plock;@punlock;@xdig;@excavate" strcat
   then then trig swap setname
   trig "@" prog intostr strcat " look" strcat setdesc
   trig "" setsucc trig "" setosucc
@@ -853,6 +872,10 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   dup if dup strlen 3 - strcut pop then
 ; public path-list
   
+: cmd-excavate
+ depth popn
+;
+  
 : path-main ( s -- ) strip
   strip arg ! command @ strip tolower cmd !
   "me" match dup plr ! location src !
@@ -860,8 +883,16 @@ $def trysub 3 pick strcmp if pop else swap pop swap strcat exit then
   privilege? not if
     "@path is not set up right with $lib/userprop. Cannot run." n exit
   then
-  
-  command @ "(@" 2 strncmp not if path-obvious-exits exit then
+
+$ifdef STUPIDLOOK
+  caller program? if path-obvious-exits exit then
+$else
+  cmd @ "(@" 2 strncmp not if path-obvious-exits exit then
+$endif
+
+  cmd @ "@xd" 3 strncmp not cmd @ "@exc" 4 strncmp not or if
+    cmd-excavate exit
+  then
 
   cmd @ 2 strcut pop "@p" strcmp if
   ( Path )
@@ -974,7 +1005,7 @@ q
 @set $tmp/prog1=/_defs/PATHgetofail:"$lib/path" match "path-get-ofail" call
 @set $tmp/prog1=/_defs/PATHgetdrop:"$lib/path" match "path-get-drop" call
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
-@set $tmp/prog1=_version:FM$Revision: 1.4 $
+@set $tmp/prog1=_version:FM$Revision: 1.5 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
