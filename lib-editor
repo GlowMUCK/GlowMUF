@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
+( lib-editor: $Date: 2004/04/01 23:11:31 $ $Revision: 1.8 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,10 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.8  2004/04/01 23:11:31  feaelin
+  Fixed issue where .color # # (no color specified) would cause the editor
+  to crash.
+
   Revision 1.7  2004/04/01 05:39:12  feaelin
   Added feature which allows the user to prepend each line in a range with
   a color code. Updated documentation for recent changes.
@@ -439,9 +443,13 @@ $define SRNGinsert  sr-insertrng  $enddef
     then
     dup "color" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
-        pop 3 pick "" "^" subst toupper 3 put 3 pick
-        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT" swap
-        instr not if
+        pop 3 pick "" "^" subst toupper 3 put
+        3 pick "" strcmp not if
+          3 popn 9 EDITORerror 1 exit
+        then
+        3 pick
+        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
+        swap instr not if
           14 EDITORerror 1 exit
         then
         3 pick "^" swap strcat "^" strcat 3 put
@@ -529,6 +537,7 @@ $define SRNGinsert  sr-insertrng  $enddef
 " ^MOVE^.left [st [en]]^RESET^           Aligns all the text to the left side of the screen."
 " ^MOVE^.center [st [en]]=cols^RESET^    Centers the given lines for cols screenwidth."
 " ^MOVE^.right [st [en]]=col^RESET^      Right justifies to column col."
+" ^MOVE^.color [st [en]]=color^RESET^    Sets the color at the start of each line."
 " ^MOVE^.indent [st [en]]=cols^RESET^    Indents or undents text by cols characters"
 " ^MOVE^.format [st [en]]=cols^RESET^    Formats text nicely to cols columns."
 " ^MOVE^.sort [=method]^RESET^           Sorts all lines. Method can have: a - ascending,"
@@ -537,7 +546,7 @@ $define SRNGinsert  sr-insertrng  $enddef
 "^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 "^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
-        30 EDITansi_display
+        31 EDITansi_display
         pop pop pop pop 1 exit
     then
     pop pop pop pop 8 EDITORerror 1
@@ -582,5 +591,5 @@ q
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
 "Installation of lib-editor complete.
