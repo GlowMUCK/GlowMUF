@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2001/01/22 01:01:03 $ $Revision: 1.4 $
+( lib-editor: $Date: 2001/01/22 02:17:34 $ $Revision: 1.5 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,8 +52,9 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
-  Revision 1.4  2001/01/22 01:01:03  feaelin
-  Added the new sort command to the editor.
+  Revision 1.5  2001/01/22 02:17:34  feaelin
+  Fixed a small bug in the sort where it didn't returne the
+  correct info to the editor.
 
   Revision 1.3  2000/01/10 21:03:38  feaelin
   Documentation cleanup.
@@ -202,7 +203,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     dup "sort" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr ) 
         pop and if 13 EDITORerror then
-        2 pick 2 + swap
+        rot rot 4 pick 4 + 0 swap - rotate 3 pick 4 + 0 swap - rotate
         dup "as" stringcmp not if 
           pop 0 0
         else
@@ -224,8 +225,8 @@ $define SRNGinsert  sr-insertrng  $enddef
             then
           then
         then
-        EDITsort
-        3 - 0 0 "< %1 lines sorted. >" EDITORmesg
+        EDITsort dup 3 + rotate over 3 + rotate
+        dup 1 - 0 0 "< %1 lines sorted. >" EDITORmesg
         1 exit
     then
     dup "del" stringcmp not if
@@ -534,5 +535,5 @@ q
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
 "Installation of lib-editor complete.
