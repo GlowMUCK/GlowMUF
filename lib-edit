@@ -2,7 +2,7 @@
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2004/04/03 05:09:00 $ $Revision: 1.8 $
+( lib-edit: $Date: 2005/01/18 16:23:46 $ $Revision: 1.9 $
   Originally from the FuzzBall MUF distribution                               )
 ( --------------------------------------------------------------------------- )
 ( Previous change by Andy from FB's version is a $ifdef to check to see if
@@ -99,6 +99,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.9  2005/01/18 16:23:46  feaelin
+  Corrected problem that would crash the editor when formatting lines with
+  ANSI codes in them.
+
   Revision 1.8  2004/04/03 05:09:00  feaelin
   Fixed .split and .format so that they preserve color on lines that they split
 
@@ -297,11 +301,15 @@ $endif
     dup "^" rinstr dup if
       strcut swap pop toupper dup
       "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
-      swap instr if
-        "^" swap strcat "^" strcat 
-        6 pick strcat 5 put
+      swap dup "" strcmp if
+        instr if 
+          "^" swap strcat "^" strcat 
+          6 pick strcat 5 put
+        else
+          pop
+        then
       else
-        pop
+        pop pop pop
       then
     else
       pop pop
@@ -576,5 +584,5 @@ q
 @set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
 @set $tmp/prog1=/_docs:@list $lib/edit=9-82
 @set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
 "Installation of lib-edit complete.

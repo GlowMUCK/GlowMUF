@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/01/14 06:55:14 $ $Revision: 1.15 $             )
+( lib-editor: $Date: 2005/01/18 16:23:46 $ $Revision: 1.16 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -54,6 +54,10 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.16  2005/01/18 16:23:46  feaelin
+  Corrected problem that would crash the editor when formatting lines with
+  ANSI codes in them.
+
   Revision 1.15  2005/01/14 06:55:14  feaelin
   Entering a command string starting with a period and a space no longer
   generates a program error.
@@ -476,7 +480,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     then
     dup "center" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
-        pop rot dup not if pop "72" then
+        pop rot dup not if pop "80" then
         dup number? not if
             pop pop pop 12 EDITORerror 1 exit
         then atoi
@@ -508,7 +512,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     then
     dup "right" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
-        pop rot dup not if pop "72" then
+        pop rot dup not if pop "80" then
         dup number? not if
             pop pop pop 12 EDITORerror 1 exit
         then atoi
@@ -522,7 +526,7 @@ $define SRNGinsert  sr-insertrng  $enddef
     then
     dup "format" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
-        pop rot STRstrip dup not if pop "72" then
+        pop rot STRstrip dup not if pop "80" then
         dup number? not if
             pop pop pop 12 EDITORerror 1 exit
         then atoi
@@ -588,6 +592,7 @@ $define SRNGinsert  sr-insertrng  $enddef
 "^NOTE^Lines starting with '..', '.\"' , or '.:' are added with the '.' removed."
 "^NOTE^-------  st = start line   en = end line   de = destination line  -------"
 " ^MOVE^.end^RESET^                      Exits the editor with the changes intact."
+" ^MOVE^.save^RESET^                     Saves the changes without leaving editor."
 " ^MOVE^.abort^RESET^                    Aborts the edit."
 " ^MOVE^.h^RESET^                        Displays this help screen."
 " ^MOVE^.i [st]^RESET^                   Changes the current line for insertion."
@@ -615,7 +620,7 @@ $define SRNGinsert  sr-insertrng  $enddef
 "^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 "^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
-        32 EDITansi_display
+        33 EDITansi_display
         pop pop pop pop 1 exit
     then
     pop pop pop pop 8 EDITORerror 1
@@ -660,5 +665,5 @@ q
 @set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.15 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.16 $
 "Installation of lib-editor complete.
