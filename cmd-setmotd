@@ -1,0 +1,75 @@
+"Beginning installation of cmd-setmotd...
+@prog cmd-setmotd
+1 99999 d
+1 i
+( cmd-setmod: $Date: 2000/12/22 17:13:26 $ $Revision: 1.1 $ )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$include $lib/strings
+
+$def n me @ swap notify
+: motd-help ( -- )
+  " " .tell
+  "SetMOTD manages frequently reused MOTDs for easy maintenance." .tell
+  "~~~~~~~" .tell 
+  "setmotd help             -- This helpscreen" .tell
+  "setmotd list             -- Lists MOTDs currently available" .tell
+  "setmotd name=spammy motd -- Adds a MOTD called 'name' to motd list" .tell
+  "setmotd name             -- Puts MOTD called 'name' on actual muck MOTD" .tell
+  " " .tell
+  "motd clear               -- Clears the actual muck MOTD screen" .tell
+  "motd long spammy motd    -- Adds a temporary MOTD not saved in the list" .tell
+;
+  
+: motd-list ( -- )
+  "Stored MOTDs" .tell
+  "~~~~~~~~~~~~" .tell
+  prog "_motd/" nextprop
+  begin dup while
+    dup dup "/" rinstr strcut swap pop
+    "        " swap strcat dup strlen 8 - strcut swap pop
+    " -- " prog 4 pick getpropstr strcat
+    71 strcut if
+      dup " " rinstr 1 - strcut pop
+    then
+    strcat .tell
+  prog swap nextprop repeat
+  "Done." .tell
+;
+  
+: motd-add ( s s -- )
+  over over and not if pop pop "Do what?" .tell exit then
+  swap "_motd/" swap strcat swap
+  prog rot rot setprop
+  "Motd added to SetMOTD list." .tell
+;
+  
+: motd-main ( s -- )
+  "me" match dup me ! location loc ! trig trigger !
+  me @ .mage? not if "Permission denied." n pop exit then
+  
+  dup not if pop motd-help exit then
+  dup "#" 1 strncmp not if 1 strcut swap pop then
+  dup "help" stringcmp not if pop motd-help exit then
+  dup "list" stringcmp not if pop motd-list exit then
+  dup "=" instr if "=" .split motd-add exit then
+  dup not if pop "Usage: setmotd name -- add _motd/name prop to motd list." n exit then
+  prog "_motd/" rot strcat getpropstr
+  dup not if pop "Unknown motd." n exit then
+  "*Force" match "motd " rot strcat force
+  "Added." .tell
+;
+( SetMOTD by PakRat Copyright 1996 All Rights Reserved )
+.
+c
+q
+@register cmd-setmotd=cmd/setmotd
+@register #me cmd-setmotd=tmp/prog1
+@set $tmp/prog1=W3
+@action @setmotd;setmotd=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=D
+@set $tmp/exit1=M3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-setmotd complete.
