@@ -1,7 +1,7 @@
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2004/04/03 00:07:11 $ $Revision: 1.10 $
+( lib-editor: $Date: 2004/04/03 05:44:11 $ $Revision: 1.11 $
   Original Author: Foxen                                                 )
 ( ---------------------------------------------------------------------- )
 ( This code is hereby stated as public domain, for use in any program
@@ -52,6 +52,11 @@ EDITORheader takes and returns no arguments, but prints out a standard
 ( ---------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.11  2004/04/03 05:44:11  feaelin
+  Added the .ruler command.
+  Spotted a minor bug in .color that would allow you to 'color' with
+  things like 'r' and 'f' ...because it thought they were red and flash.
+
   Revision 1.10  2004/04/03 00:07:11  feaelin
   Fixed yet another bug in the new .color command.
 
@@ -452,12 +457,12 @@ $define SRNGinsert  sr-insertrng  $enddef
         3 pick "" strcmp not if
           3 popn 9 EDITORerror 1 exit
         then
+        3 pick "^" swap strcat "^" strcat 3 put
         3 pick
-        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
+        "^RED^^BLACK^^CRIMSON^^FOREST^^BROWN^^NAVY^^VIOLET^^AQUA^^GRAY^^GLOOM^^BLUE^^PURPLE^^GREEN^^CYAN^^YELLOW^^WHITE^^BBLACK^^BBLUE^^BRED^^BPURPLE^^BGREEN^^BCYAN^^BBROWN^^BGRAY^^NORMAL^^FLASH^^INVERT^"
         swap instr not if
           3 popn 14 EDITORerror 1 exit
         then
-        3 pick "^" swap strcat "^" strcat 3 put
         over not if pop pop over dup then
         dup not if pop dup then
         over over swap - 1 + 3 pick 0
@@ -506,6 +511,27 @@ $define SRNGinsert  sr-insertrng  $enddef
         "^SUCC^< Indented %1 lines starting at line %2, %3 columns. >"
         EDITORmesg 2 -4 rotate EDITindent 1 exit
     then
+    dup "ruler" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @ "^WHITE^12345678901234567890123456789012345678901234567890123456789012345678901234567890" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler1" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @ "^WHITE^12345678901234567890123456789012345678901234567890123456789012345678901234567890" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler2" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @ "^WHITE^.........1.........2.........3.........4.........5.........6.........7.........8" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler3" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @ "^WHITE^.........1.........2.........3.........4.........5.........6.........7.........8" ansi_notify
+        me @ "^WHITE^123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789." ansi_notify
+        pop pop pop pop 1 exit
+    then
     dup "end" stringcmp not if
         ( {strrng} mask currline arg3str args1int arg2int cmdstr )
         0 0 0 "^INFO^< Editor exited. >"
@@ -519,7 +545,7 @@ $define SRNGinsert  sr-insertrng  $enddef
         pop pop pop pop pop pop SRNGpop
         0 "" 1 "" 1 1 "abort" 0 exit
     then
-    dup "h" stringcmp not if
+    dup tolower "h" 1 strncmp not if
 "^NOTE^          MUFedit Help Screen.  Arguments in [] are optional."
 "^NOTE^    Any line not starting with a '.' is inserted at the current line."
 "^NOTE^Lines starting with '..', '.\"' , or '.:' are added with the '.' removed."
@@ -545,13 +571,14 @@ $define SRNGinsert  sr-insertrng  $enddef
 " ^MOVE^.color [st [en]]=color^RESET^    Sets the color at the start of each line."
 " ^MOVE^.indent [st [en]]=cols^RESET^    Indents or undents text by cols characters"
 " ^MOVE^.format [st [en]]=cols^RESET^    Formats text nicely to cols columns."
+" ^MOVE^.ruler[#]^RESET^                 Prints out a line of numbers as a ruler-guide."
 " ^MOVE^.sort [=method]^RESET^           Sorts all lines. Method can have: a - ascending,"
 "                           d - descending, i - case-insensitive,"
 "                           s - case-sensitive. Default is: ai."
 "^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
 "^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
 "^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
-        31 EDITansi_display
+        32 EDITansi_display
         pop pop pop pop 1 exit
     then
     pop pop pop pop 8 EDITORerror 1
@@ -596,5 +623,5 @@ q
 @set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
 @set $tmp/prog1=/_docs:@list $lib/editor=1-46
 @set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
 "Installation of lib-editor complete.
