@@ -1,13 +1,14 @@
-"Beginning installation of cmd-roomcheck...
+%"Beginning installation of cmd-roomcheck...
 @prog cmd-roomcheck
 1 99999 d
 1 i
-( cmd-roomcheck: $Date: 2000/01/27 16:43:51 $ $Revision: 1.1 $ )
+( cmd-roomcheck: $Date: 2000/02/11 19:56:21 $ $Revision: 1.2 $ )
 ( Author: ???                      )
 ( --------------------------------------------------------------------------- )
 $include $lib/glow
 $include $lib/strings
 $include $lib/match
+$include $lib/path
 lvar check-obj-addr
    
 : check-next-loop (d -- )
@@ -22,6 +23,78 @@ lvar check-obj-addr
 : check-contents (d -- )
    contents check-next-loop
 ;
+
+$define pathislocked? (d s -- i) PATHgetlock "" strcmp $enddef
+
+: pathislocked_always (d-location s-pathname -- i)
+  PATHgetlockstr dup "#0" stringcmp not if pop 1 exit then
+  dup "#" STRsplit swap pop atoi
+  "#" swap intostr strcat
+  (lockstr "#dbref")
+  dup "&!" over strcat strcat
+  3 pick stringcmp not if pop pop 1 exit then
+  "&" over strcat strcat "!" swap strcat
+  stringcmp not if 1 exit then
+  0
+;
+
+: check-path ( d s -- )
+  dup 3 pick swap
+  ( Path not linked? )
+  PATHgetlink dup room? not if
+    dup me @ swap "^FAIL^The path '" swap strcat 
+    "' is unlinked." strcat ansi_notify
+  else ( Path is linked )
+    3 pick dbcmp if ( Linked to source? )
+      dup 3 pick swap PATHlocked? if ( Path linked to source, is it locked? )
+        dup me @ swap "^RED^The path '" swap strcat
+        "' is linked to it's source, but is not locked." strcat ansi_notify
+      then
+    then
+  then
+  dup 3 pick swap PATHgetdesc "" strcmp not if
+     dup me @ swap "^INFO^Path '" swap strcat
+     "' has no description." strcat ansi_notify
+  then
+  dup 3 pick swap PATHgetlink room? if
+    dup 3 pick swap pathislocked_Always not if
+      dup 3 pick swap PATHgetsucc "" strcmp not if
+        dup me @ swap "^INFO^Path '" swap strcat
+        "' has no success message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetosucc "" strcmp not if
+        dup me @ swap "^INFO^Path '" swap strcat
+        "' has no osuccess message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetodrop "" strcmp not if
+        dup me @ swap "^INFO^Path '" swap strcat
+        "' has no odrop message." strcat ansi_notify
+      then
+    then
+    dup 3 pick swap pathislocked? if
+      dup 3 pick swap PATHgetfail "" strcmp not if
+        dup me @ swap "^INFO^Path '" swap strcat
+        "' has no fail message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetofail "" strcmp not if
+        dup me @ swap "^INFO^Path '" swap strcat
+        "' has no ofail message." strcat ansi_notify
+      then
+    then
+  then
+;
+
+: check-paths (d -- )
+  dup PATHlist dup "" strcmp not if exit then
+  dup "|" instr if
+    begin
+      "|" STRsplit swap strip
+      3 pick swap check-path
+      dup "|" instr while
+    repeat
+  then
+  strip check-path
+;
    
 : check-exits (d -- )
    exits check-next-loop
@@ -30,7 +103,8 @@ lvar check-obj-addr
 : exec-err (d mtypestr warnstr -- )
    "On " 4 rotate unparseobj strcat
    ", in it's " strcat rot strcat
-   ", " strcat swap strcat .tell
+   ", " strcat swap strcat "^INFO^" 
+   swap strcat me @ swap ansi_notify
 ;
    
 : can-linkto? (player object -- i)
@@ -81,14 +155,16 @@ lvar check-obj-addr
    swap unparseobj
    " is missing an "
    strcat swap strcat
-   " message." strcat .tell
+   " message." strcat
+   "^INFO^" swap strcat me @ swap ansi_notify
 ;
    
 : colon-err ( d s -- )
    swap unparseobj
    " has an unnecesary ':' at the start of its "
    strcat swap strcat
-   " message." strcat .tell
+   " message." strcat
+   "^INFO^" swap strcat me @ swap ansi_notify
 ;
    
 : check-desc (d -- )
@@ -162,7 +238,7 @@ lvar check-obj-addr
    
    
 $define islocked? (d -- i) getlockstr "*UNLOCKED*" stringcmp $enddef
-   
+ 
 : islocked_always? (d -- i)
    getlockstr dup "#0" stringcmp not if pop 1 exit then
    dup "#" STRsplit swap pop atoi
@@ -177,20 +253,23 @@ $define islocked? (d -- i) getlockstr "*UNLOCKED*" stringcmp $enddef
    
 : check-link ( d -- )
    dup getlink not if
-      dup unparseobj " is unlinked." strcat .tell
+      dup unparseobj " is unlinked." strcat
+      "^INFO^" swap strcat me @ swap ansi_notify 
    else
       dup getlink over location dbcmp if
          dup islocked? not if
             dup unparseobj
             " is linked to it's location, but is unlocked."
-            strcat .tell
+            strcat
+            "^INFO^" swap strcat me @ swap ansi_notify
          then
       else (is not linked to it's location)
          dup getlink program? if
             dup dup owner swap getlink can-linkto? not if
                dup unparseobj
                " is linked to a program which is not Link_OK."
-               strcat .tell
+               strcat
+               "^INFO^" swap strcat me @ swap ansi_notify
             then
          then
       then
@@ -211,7 +290,8 @@ $define islocked? (d -- i) getlockstr "*UNLOCKED*" stringcmp $enddef
       dup check-odrop
    then
    dup check-contents
-   check-exits
+   dup check-exits
+   check-paths
 ;
    
 : check-exit ( d -- )
@@ -276,13 +356,14 @@ $define islocked? (d -- i) getlockstr "*UNLOCKED*" stringcmp $enddef
 ;
    
 : main
+   me @ "^SUCC^Beginning @check..." ansi_notify
    'check-obj check-obj-addr !
-   .strip dup not if pop "here" then
+   STRstrip dup not if pop "here" then
    .match_controlled
    dup #-3 dbcmp if pop me @ getlink then
    dup ok? not if pop exit then
    check-obj
-   me @ "Check done." notify
+   me @ "^SUCC^Check done." ansi_notify
 ;
 .
 c
@@ -290,7 +371,7 @@ q
 @register cmd-roomcheck=cmd/roomcheck
 @register #me cmd-roomcheck=tmp/prog1
 @set $tmp/prog1=M3
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 @action @roomcheck;@rc=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
