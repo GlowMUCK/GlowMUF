@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.9 $ $Date: 2004/04/22 01:41:27 $              )
+( lib-unparseobj: $Revision: 1.10 $ $Date: 2004/04/23 02:38:44 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                   )
 ( Contributors: Syvel                                                        )
 ( Dependencies: lib-case                                                     )
@@ -83,6 +83,9 @@ i
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.10  2004/04/23 02:38:44  feaelin
+  Installer now flags the program link_ok
+
   Revision 1.9  2004/04/22 01:41:27  feaelin
   Added support for lib-feni, if it exists on the muck that lib-unparseobj
   is on.
@@ -296,6 +299,7 @@ $include $lib/glow
 c
 q
 @reg lib-unparseobj=lib/unparseobj
+@set $lib/unparseobj=L
 @set $lib/unparseobj=/_defs/UPOcolor-query:"$lib/unparseobj" match "color-query" call
 @set $lib/unparseobj=/_defs/UPOcolor-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
 @set $lib/unparseobj=/_defs/UPOspecial-unparseobj:"$lib/unparseobj" match "special-unparseobj" call
@@ -318,6 +322,6 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=_lib-version:$Revision: 1.9 $
+@set $lib/unparseobj=_lib-version:$Revision: 1.10 $
 @set $lib/unparseobj=_docs:@list $lib/unparseobj=1-72
 wh me=Installation Complete.
