@@ -1,0 +1,574 @@
+"Beginning installation of cmd-bbs...
+@prog cmd-bbs
+1 99999 d
+1 i
+( cmd-bbs: $Date: 1999/04/18 04:00:10 $ $Revision: 1.1 $
+  Author: Garth Minette
+  --------------------------------------------------------------------------- )
+( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette )
+( A program for storing and displaying multi-line messages   )
+  
+( Custom succ/osucc messages:
+     @set <action>=_read:You read a note.
+     @set <action>=_oread:%N reads a note.
+     @set <action>=_write:You write a note.
+     @set <action>=_owrite:%N writes a note.
+)
+  
+( @set here=_bbs:yes    -- This room has a BBS )
+( @set here=_bbsro:yes  -- This BBS is read only cept for owner )
+( @set here=_bbslib:yes -- BBS library room )
+( @set here=_bbspub:yes -- Public BBS can be in library lists )
+( @set here=_bbsuse:123 -- Use this BBS, must be public )
+( @set here=_expire:7   -- Messages expire in 7 days unless protected )
+  
+( Wizstuff...)
+( @set here=~bbswiz:yes -- Board is public to Mages+ )
+( @set here=@bbsadm:yes -- Board is public to Arches+ )
+  
+( @set *player=~/ban/bbs:yes -- Ban a player from using any bbs )
+( @set *player=~/ban/bbswrite:yes -- Ban a player from writing any posts )
+  
+( We'll try some tricks... )
+( You can set _bbslib but not _bbs to keep a bbs from being in a library )
+( You can set _bbsuse but not _bbs to keep a bbs from being in a mirror )
+( You can set _bbspub but not _bbs to make a bbs library only, storage room )
+  
+$include $lib/strings
+$include $lib/props
+$include $lib/lmgr
+$include $lib/mesg
+$include $lib/mesgbox
+$include $lib/edit
+$include $lib/editor
+$include $lib/glow
+  
+$def IndexRef     #0
+$def IndexDir     "_bbs/"
+$def BanProp      "~/ban/bbs"
+$def BanWriteProp "~/ban/bbswrite"
+$def notify       .wrapnotify
+$def .sedit_std   EDITOR
+$def STRtolower   tolower
+$def showrange    EDITdisplay
+  
+( ***** Misc. Object ***** )
+  
+lvar theboard lvar bbsindexprog
+  
+: conBBSlistnew ( i --   ) bbsindexprog @ "BBSlistnew"  call ;
+: okpubboard?   ( d -- i ) bbsindexprog @ "okpubboard?" call ;
+  
+: which-board
+  loc @ "_bbslib" getpropstr .yes? if
+    me @ "_prefs/bbs/board" getpropstr
+    atoi dbref dup okpubboard? not if pop #-1 then
+  else
+    loc @ "_bbsuse" getpropstr dup if
+      atoi dbref dup okpubboard? not if pop #-2 then
+    else
+      pop loc @ "_bbs" getpropstr .yes? if loc @ else #-3 then
+    then
+  then
+  theboard !
+;
+  
+: get-new ( mbrdref -- i )
+  me @ "_prefs/bbs/new/" rot intostr strcat getpropval
+  dup 0 < if pop 0 then 1 -
+;
+  
+: set-new ( mbrdref i -- i )
+  1 +
+  me @ "_prefs/bbs/new/" 4 rotate intostr strcat rot setprop
+;
+  
+: find-next ( base d -- i )
+  swap "#/" strcat swap dup get-new
+  dup 0 < if 3 popn 1 exit then ( handle msg 0/1 )
+  ( base board curr )
+  over 4 pick "#" "#/" subst getpropstr atoi
+  1 begin over over >= while
+    ( base board curr top cnt )
+    4 pick 6 pick 3 pick intostr strcat getpropstr atoi
+    4 pick > if ( found next ) break then
+  1 + repeat
+  -5 rotate 4 popn
+;
+  
+: get-day ( -- dayint)
+    systime dup 86400 % time 60 * + 60 * + - - 86400 /
+;
+  
+( ***** Message Board Object -- MBRD *****
+    Display  [parm base dbref -- err]
+    Add      [parm base dbref -- err]
+    Kill     [parm base dbref -- err]
+)
+  
+: MBRDparseinfo (refnum base dbref -- keywords prot? hidden? poster day subject)
+    (format: player# day# subject$)
+    (new:    $topicword safe? player# day# subject$)
+    (newer:  $topicword safe? hidden? player# day# subject$)
+    MBOX-msginfo
+    dup "$" 1 strncmp not if
+      1 strcut swap pop
+      " " STRsplit " " STRsplit swap atoi swap
+      " " STRsplit swap atoi swap
+    else
+      "" 0 0 4 rotate
+    then
+    " " STRsplit swap atoi dbref swap
+    " " STRsplit swap atoi swap
+;
+  
+: MBRDoldparse (refnum base dbref -- keywords prot? poster day subject)
+    MBOX-msginfo
+    dup "$" 1 strncmp not if
+      1 strcut swap pop
+      " " STRsplit " " STRsplit swap atoi swap
+    else
+      "" 0 4 rotate
+    then
+    " " STRsplit swap atoi dbref swap
+    " " STRsplit swap atoi swap
+;
+  
+: MBRDreparseinfo (keywords protect? hidden? poster day subject -- infostr)
+    swap intostr " " strcat swap strcat
+    swap int intostr " " strcat swap strcat
+    swap intostr " " strcat swap strcat
+    swap intostr " " strcat swap strcat
+    swap ";" " " subst STRtolower " " strcat
+    swap strcat "$" swap strcat
+;
+  
+: MBRDsetinfo (refnum base dbref keywords prot? hidden? poster day subject -- )
+    MBRDreparseinfo -4 rotate MBOX-setinfo
+;
+  
+: MBRDperms? (refnum base dbref -- bool)
+    MBRDparseinfo pop pop swap pop rot rot pop pop
+    dup ok? if me @ swap controls else pop 1 then
+    me @ theboard @ controls or
+;
+  
+  
+: MBRDdisplay-expire? (refnum base dbref -- bool)
+    dup "_expire" getpropstr atoi
+    dup not if pop pop pop pop 0 exit then
+    -4 rotate MBRDparseinfo
+    pop -5 rotate pop pop swap pop
+    if pop pop 0 exit then
+    get-day swap - <
+;
+  
+: MBRDhidden? (refnum base dbref -- bool)
+    MBRDparseinfo
+    pop pop pop -3 rotate pop pop
+;
+  
+  
+  
+: MBRDdisplay-header (topicstr refnum base dbref -- )
+    3 pick 3 pick 3 pick MBRDparseinfo
+    (topicstr refnum base dbref keywords protect? hidden? poster day subject)
+    6 rotate 10 rotate dup if
+        dup "recent" stringcmp not
+        get-day 6 pick - 8 < and
+        over "new" stringcmp not
+        get-day 7 pick - 3 < and or
+        not (rot rot) swap pop swap pop
+        (instr not and) if
+            pop pop pop pop
+            pop pop pop pop exit
+        then
+    else
+        pop pop
+    then
+    8 pick intostr 6 rotate if "}" else ")" then strcat
+    "    " swap strcat dup strlen 4 - strcut swap pop ( padding )
+    5 rotate if "*" else " " then strcat
+    4 rotate
+    dup ok? if
+        dup player? if name
+        else pop "(Toaded Player)"
+        then
+    else pop "(Toaded Player)"
+    then
+    strcat "  " strcat
+    rot get-day swap - 
+    dup 7 < if
+        dup not if pop "Today"
+        else dup 1 = if pop "Yesterday"
+            else intostr " days ago" strcat
+            then
+        then
+    else 7 / dup 1 = if pop "Last week"
+        else intostr " weeks ago" strcat
+        then
+    then
+    " -- " strcat strcat swap
+    strcat me @ swap notify
+    pop pop pop
+;
+  
+: MBRDdisplay-loop (topic base dbref cnt lcv  -- )
+    over over <  if pop pop pop pop pop exit then
+    5 pick over 6 pick 6 pick
+    3 pick 3 pick 3 pick MBRDdisplay-expire? if
+      MBOX-delmesg pop
+      swap 1 - swap
+    else
+      3 pick 3 pick 3 pick MBRDhidden? not
+      me @ theboard @ controls or if
+          MBRDdisplay-header
+      else pop pop pop pop
+      then
+      1 +
+    then
+    MBRDdisplay-loop
+;
+  
+: bbs-index-help ( -- )
+"'bbnew' shows unread boards, 'bbindex' lists all boards." .tell
+"'bbindex <num>' selects that board to read from." .tell
+;
+  
+: MBRDdisplay (parmstr base dbref -- err)
+    3 pick number? if
+        rot atoi rot rot
+        3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
+        3 pick 3 pick 3 pick MBRDhidden? me @ theboard @ controls not and
+        if pop pop pop 2 exit then
+        "" 4 pick 4 pick 4 pick MBRDdisplay-header
+        3 pick 3 pick 3 pick MSG-item atoi
+        over swap set-new
+        MBOX-message showrange
+        " " .tell
+    else
+        rot STRtolower -3 rotate
+        over over MBOX-count
+        1 MBRDdisplay-loop
+        " " .tell
+"'bbnext' reads next unread message, 'bbnext <count>' reads multiple." .tell
+"'bbread' lists all messages, 'bbread <num>' reads that message." .tell
+"'bbwrite' posts a new message, it prompts you for what it needs." .tell
+        loc @ "_bbslib" getpropstr .yes? if bbs-index-help then
+    then
+    0 (no error)
+;
+  
+: MBRDreadlines ( -- {str_rng})
+    0 .sedit_std pop
+;
+  
+: MBRDadd (parmstr base dbref -- err)
+    dup "_bbsro" getpropstr .yes? if
+      dup me @ swap controls not if pop pop pop 6 exit then
+    then
+    rot "=" STRsplit STRstrip swap STRstrip
+    dup not if
+        "What is the subject of this post?"
+        .tell pop read STRstrip
+    then
+    swap
+    dup not if
+        "What keywords fit this post? (ie: art, building, place, personal)"
+        .tell pop read STRstrip
+    then
+    0 0 me @ get-day 6 rotate MBRDreparseinfo rot rot
+  
+    ( infostr base dbref )
+    MBRDreadlines
+    dup if
+        dup 4 + rotate
+        over 4 + rotate
+        3 pick 4 + rotate
+        MBOX-append pop
+        "Message posted." .tell 0 (no error)
+    else pop pop pop pop 4 (post cancelled) then
+;
+  
+: MBRDkill (parmstr base dbref -- err)
+    dup "_bbsro" getpropstr .yes? if
+      dup me @ swap controls not if pop pop pop 6 exit then
+    then
+    rot dup number? not if pop pop pop 1 exit then
+    atoi rot rot
+    3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
+    3 pick 3 pick 3 pick MBRDperms? not if
+        pop pop pop 3 exit  (not owner of mesgboard or poster)
+    then
+    3 pick 3 pick 3 pick MBRDhidden? me @ theboard @ controls not and if
+        pop pop pop 2 exit
+    then
+    MBOX-delmesg
+    "Message erased." .tell 0 (no error)
+;
+  
+: MBRDprotect (parmstr base dbref -- err)
+    rot dup number? not if pop pop pop 1 exit then
+    atoi rot rot
+    3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
+    me @ theboard @ controls not if
+        pop pop pop 3 exit  (not owner of mesgboard or poster)
+    then
+    3 pick 3 pick 3 pick MBRDparseinfo
+    5 rotate not -5 rotate MBRDsetinfo
+    "Message protected." .tell 0 (no error)
+;
+  
+: MBRDhide (parmstr base dbref -- err)
+    rot dup number? not if pop pop pop 1 exit then
+    atoi rot rot
+    3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
+    me @ theboard @ controls not if
+        pop pop pop 3 exit  (not a Wizard)
+    then
+    3 pick 3 pick 3 pick MBRDparseinfo
+    4 rotate not -4 rotate MBRDsetinfo
+    "Message protected." .tell 0 (no error)
+;  
+  
+: MBRDedit (parmstr base dbref -- err)
+    dup "_bbsro" getpropstr .yes? if
+      dup me @ swap controls not if pop pop pop 6 exit then
+    then
+    rot dup number? not if pop pop pop 1 exit then
+    atoi rot rot
+    3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
+    3 pick 3 pick 3 pick MBRDperms? not if
+        pop pop pop 3 exit  (not owner of mesgboard or poster)
+    then
+    3 pick 3 pick 3 pick MBRDhidden? me @ theboard @ controls not and if
+        pop pop pop 2 exit
+    then
+    3 pick 3 pick 3 pick MBOX-message
+    .sedit_std pop dup not if
+        pop pop pop pop 5 (no error) exit
+    then
+    dup 4 + rotate over 4 + rotate 3 pick 4 + rotate
+    3 pick 3 pick 3 pick MBRDparseinfo
+  
+    me @ "Current subject: \"" 3 pick strcat "\"" strcat notify
+    "Enter new subject, or press space and return to keep old one."
+    .tell read STRstrip dup if swap then pop
+  
+    6 rotate
+    me @ "Current keywords: \"" 3 pick strcat "\"" strcat notify
+    "Enter new keywords, or press space and return to keep old ones."
+    .tell read STRstrip dup if swap then pop
+    -6 rotate
+  
+    swap pop get-day swap MBRDreparseinfo
+    -4 rotate MBOX-setmesg
+    "Message edited." .tell 0 (no error)
+;
+  
+: MBRDnext (parmstr base dbref -- err)
+  over over find-next 4 rotate atoi
+  dup 1 < if pop 1 then
+  ( base board next# cnt )
+  begin dup while
+    over intostr 5 pick 5 pick
+    MBRDdisplay if
+"No more unread messages.  Type 'bbclear' to go back to the first message." 
+      .tell break
+    then
+    1 - swap 1 + swap
+  repeat 4 popn
+  0 (no error)
+;
+  
+: BBSsetboard ( i -- )
+  1 IndexRef IndexDir nextprop
+  begin dup while
+    ( Board# Count Prop )
+    IndexRef over getpropstr atoi dbref okpubboard? if
+      3 pick 3 pick = if break then
+      swap 1 + swap
+    then
+    IndexRef swap nextprop
+  repeat rot rot pop pop
+  dup if
+    IndexRef swap getpropstr atoi dbref
+    dup okpubboard? if
+      me @ "_prefs/bbs/board" 3 pick intostr setpropstr
+      "You are now reading the board at "
+      swap name strcat "." strcat .tell
+    else pop "That board is not set public." .tell then
+  else pop "Which board?" .tell then
+;
+  
+: BBSlistnew ( s i -- )
+  over over and if
+    pop atoi BBSsetboard exit
+  else swap pop conBBSlistnew then
+  me @ "_prefs/bbs/board" getpropstr dup atoi dbref
+  dup okpubboard? rot and if
+    "You are currently reading the board at "
+    swap name strcat "." strcat .tell
+  else pop "You are currently not reading any board." .tell then
+  " " .tell
+  bbs-index-help
+;
+  
+: BBSclearnew ( d -- i ) ( Clear newest read message )
+  me @ "_prefs/bbs/new/" rot intostr strcat remove_prop
+  "Index reset to first message." .tell
+;
+  
+: bbshelp ( -- )
+  "Bulletin Board Help Screen" .tell
+  "~~~~~~~~~~~~~~" .tell
+  "bbread      -- List all messages for the current board" .tell
+  "bbnext      -- Read the next unread message" .tell
+  "bbnext <n>  -- Read the next 'n' messages." .tell
+  "bbread <m>  -- Read message 'm' (sets 'next' count)" .tell
+  "bbclear     -- Reset 'next' count to first message of board" .tell
+  "               This will remove a board from your 'new' list" .tell
+  " " .tell
+  "bbindex     -- List all public boards" .tell
+  "bbindex <n> -- Change to read board 'n' at a library of boards" .tell
+  "bbnew       -- List boards you have read before with new messages" .tell
+  " " .tell
+  "bbwrite     -- Post a message" .tell
+  "bberase <m> -- Delete a message " .tell
+  "bbedit <m>  -- Edit a message " .tell
+  "bbhide <m>  -- Hide a message" .tell
+  "bbkeep <m>  -- Keep a message from expiring" .tell
+;
+  
+( ***** Interface Object *****
+)
+: basename "_bbs/msgs" ;
+  
+: handle-errs ( i -- )
+    ( dup not if pop "Done." .tell exit then )
+    dup not if pop exit then
+    dup 1 = if pop "Should be a number." .tell exit then
+    dup 2 = if pop "Invalid message number." .tell exit then
+    dup 3 = if pop "Permission denied." .tell exit then
+    dup 4 = if pop "Cancelling post." .tell exit then
+    dup 5 = if pop "Cancelling edit." .tell exit then
+    dup 6 = if pop "Board is read only." .tell exit then
+    pop "Unknown error." .tell exit
+;
+  
+: handle-succs-and-osuccs
+  trig "_" command @ strcat getpropstr
+  dup if me @ swap pronoun_sub .tell else pop then
+  trig "_o" command @ strcat getpropstr
+  dup if me @ swap pronoun_sub .otell else pop then
+;
+  
+: interface ( s -- )
+  .noguest
+  "me" match dup me ! location loc !
+  me @ BanProp getpropstr .yes? if
+    pop "^RED^You are banned from using bulletin boards." .tell exit
+  then
+  "$con/bbsindex" match dup program? not if
+    "$con/bbsindex does not exist, cannot run." .tell pop exit
+  then bbsindexprog !
+  trig exit? not if
+    dup if
+      " " .split swap
+    else "bbread" then
+    command !
+  then
+  which-board
+  theboard @ #-2 dbcmp if
+    "The board mirrored here is bad, please tell the room owner."
+    .tell pop exit
+  then
+  handle-succs-and-osuccs
+  command @
+  dup "help" instring if
+    pop pop BBShelp exit
+  then
+  dup "new" instring if
+    pop 0 BBSlistnew exit
+  then
+  theboard @ #-3 dbcmp if
+    pop pop "There is no bulletin board here.  Type 'bbhelp' for help."
+    .tell exit
+  then
+  dup "index" instring if
+    loc @ "_bbslib" getpropstr .yes? if
+      pop 1 BBSlistnew exit
+    else "You are not at a library.  Type 'bbhelp' for help."
+    .tell pop pop exit then
+  then
+  theboard @ #-1 dbcmp if
+    "You need to select a board to read.  Type 'bbindex' to list boards."
+    .tell pop pop exit
+  then
+  dup "read" instring if
+    pop basename theboard @ MBRDdisplay
+    handle-errs exit
+  then
+  dup "next" instring if
+    pop basename theboard @ MBRDnext
+    handle-errs exit
+  then
+  dup "clear" instring if
+    pop pop theboard @ BBSclearnew
+    exit
+  then
+  me @ BanWriteProp getpropstr .yes? if
+    "^RED^You are banned from writing on bulletin boards." .tell
+    pop pop BBShelp exit
+  then
+  dup "write" instring if
+    pop basename theboard @ MBRDadd
+    handle-errs exit
+  then
+  dup "erase" instring if
+    pop basename theboard @ MBRDkill
+    handle-errs exit
+  then
+  dup "edit" instring if
+    pop basename theboard @ MBRDedit
+    handle-errs exit
+  then
+  dup "keep" instring if
+    pop basename theboard @ MBRDprotect
+    handle-errs exit
+  then
+  dup "hide" instring if
+    pop basename theboard @ MBRDhide
+    handle-errs exit
+  then
+  pop pop BBShelp exit
+;
+  
+: debug-bbs ( s -- )
+  interface
+  depth if
+    depth "Bad stack depth: " swap intostr strcat .tell
+    .debug-line
+  then
+;
+.
+c
+q
+@register cmd-bbs=cmd/bbs
+@register #me cmd-bbs=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=W2
+@set $tmp/prog1=/_/de:@$desc %list[doc]
+@set $tmp/prog1=/_defs/.eval-loop:"$desc" match "eval-loop" call
+@set $tmp/prog1=/_defs/.format-print:"$desc" match "format-print" call
+@set $tmp/prog1=/_defs/.gen-desc:"$desc" match "gen-desc" call
+@set $tmp/prog1=/_defs/.get-legal-prop:"$desc" match "get-legal-prop" call
+@set $tmp/prog1=/_defs/.split-args:"$desc" match "split-args" call
+@set $tmp/prog1=/_defs/.wipe-list:"$desc" match "wipe-list" call
+@set $tmp/prog1=/_docs:@list $desc-docs
+@action bbhelp;bbread;bbnext;bbindex;bbnew;bbwrite;bbedit;bbhide;bberase;bbkeep;bbclear;read;write;erase;protect=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@set $tmp/exit1=M3
+@set $tmp/exit1=/_/de:@$bbs
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-bbs complete.
