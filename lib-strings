@@ -2,45 +2,50 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/04/05 15:23:19 $ $Revision: 1.17 $                 )
+( lib-strings: $Date: 2005/04/05 15:31:20 $ $Revision: 1.18 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( These routines deal with spaces in strings.                                 )
-( STRblank?    [       str -- bool          ]  true if str null or only spaces)
-( STRsls       [       str -- str'          ]  strip leading spaces           )
-( STRsts       [       str -- str'          ]  strip trailing spaces          )
-( STRstrip     [       str -- str'          ]  strip lead and trail spaces    )
-( STRsms       [       str -- str'          ]  strips mult. internal spaces   )
+( STR-blank?   [       str -- bool          ]  true if str null or only spaces)
+( STR-sms      [       str -- str'          ]  strips mult. internal spaces   )
 (                                                                             )
 ( These two are routines to split a string on a substring, non-inclusively.   )
-( STRsplit     [ str delim -- prestr postr  ]  splits str on first delim.     )
-( STRrsplit    [ str delim -- prestr postr  ]  splits str on last delim.      )
-( STRsplitargs [       str -- str str       ]  split a string at first space  )
+( STR-split    [ str delim -- prestr postr  ]  splits str on first delim.     )
+( STR-rsplit   [ str delim -- prestr postr  ]  splits str on last delim.      )
+( STR-splitargs[       str -- str str       ]  split a string at first space  )
 (                                              or = sign                      )
 (                                                                             )
 ( The following are useful for formatting strings into fields. As of revision )
 ( 1.10, they are aware of Glow-ansi-codes, and should pad correctly strings   )
 ( containing them.                                                            )
-( STRfillfield [ str char width -- padstr   ]  return padding string to width )
+( STR-fillfield[ str char width -- padstr   ]  return padding string to width )
 (                                              chars                          )
-( STRcenter    [ str width -- str'          ]  center a string in a field.    )
-( STRleft      [ str width -- str'          ]  pad string w/ spaces to width  )
+( STR-center   [ str width -- str'          ]  center a string in a field.    )
+( STR-left     [ str width -- str'          ]  pad string w/ spaces to width  )
 (                                              chars                          )
-( STRright     [ str width -- str'          ]  right justify string to width  )
+( STR-right    [ str width -- str'          ]  right justify string to width  )
 (                                              chars                          )
 ( These convert between ascii integers and string character.                  )
-( STRasc       [      char -- i             ]  convert character to ASCII     )
+( STR-asc      [      char -- i             ]  convert character to ASCII     )
 (                                              number                         )
-( STRchar      [         i -- char          ]  convert number to character    )
+( STR-char     [         i -- char          ]  convert number to character    )
 (                                                                             )
 ( This routine is useful for parsing command line input:                      )
-( STRparse     [      str -- str1 str2 str3 ] " #X Y  y = Z" -> "X" "Y y" " Z")
+( STR-parse    [      str -- str1 str2 str3 ] " #X Y  y = Z" -> "X" "Y y" " Z")
+(                                                                             )
+( The following routines are deprecated, do not use them.                     ) 
+( STR-sls      [       str -- str'          ]  use 'striplead'                )
+( STR-sts      [       str -- str'          ]  use 'striptail'                )
+( STR-strip    [       str -- str'          ]  use 'strip'                    )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.18  2005/04/05 15:31:20  feaelin
+  Updated documentation in light of the new library word name standard
+
   Revision 1.17  2005/04/05 15:23:19  feaelin
   Provided more aliases of the library words
 
@@ -241,5 +246,5 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-37
 @set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.17 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.18 $
 wh me=Installation of lib-strings complete.
