@@ -1,12 +1,15 @@
-"Beginning installation of cmd-emotion...
+aa"Beginning installation of cmd-emotion...
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2004/04/08 13:35:38 $ $Revision: 1.4 $
+( cmd-emotion: $Date: 2004/04/12 02:18:00 $ $Revision: 1.5 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.5  2004/04/12 02:18:00  feaelin
+  Fixed bugs in the newly added 'socials' and 'emotions' commands
+
   Revision 1.4  2004/04/08 13:35:38  feaelin
   Fixed issue where custom look programs weren't able to 'look emotion' to
   see a list of possible emotions. Added feature so you can type 'socials'
@@ -362,7 +365,11 @@ $def LiORes "o" swap resdir listemotion
     repeat
     dup strlen 1 - strcut pop
     1 strcut swap pop
-    trig swap SortStr setname pop
+    trig swap 
+    dup ";soc;" instr 5 -
+    strcut swap pop SortStr
+    "emotions;emotion;emotio;emoti;emot;socials;social;socia;socia;soci;soc;"
+    swap strcat setname pop
     "Social verb removed." n
   else
     pop "Usage: " command @ strcat
@@ -387,7 +394,10 @@ $def LiORes "o" swap resdir listemotion
     repeat
     dup strlen 1 - strcut pop
     1 strcut swap pop
-    trig swap SortStr setname pop
+    trig swap dup ";soc;" instr 5 -
+    strcut swap pop SortStr
+    "emotions;emotion;emotio;emoti;emot;socials;social;socia;socia;soci;soc;"
+    swap strcat setname pop
     "Social verb added." n
   else
     pop "Usage: " command @ strcat
@@ -446,7 +456,7 @@ $def LiORes "o" swap resdir listemotion
   "-l" "#l" dopt if getarg showsettings exit then
   "-a" "#a" dopt if pop showall exit then
   "-n" "#n" dopt if getarg newverb exit then
-  "-r" "#d" dopt if getarg remverb exit then
+  "-r" "#r" dopt if getarg remverb exit then
   "-f" "#f" dopt prog "mage" flag? and if
      " " .split
      "*" swap strcat swap pop
@@ -534,6 +544,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.4 $
-"Installation of cmd-emotion complete.
-"Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.5 $
+aa"Installation of cmd-emotion complete.
+aa"Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
