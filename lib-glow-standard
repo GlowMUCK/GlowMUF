@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1999/04/16 21:02:35 $ $Revision: 1.7 $                                       )
+( lib-glow-standard: $Date: 1999/04/16 23:43:17 $ $Revision: 1.8 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -49,6 +49,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.8  1999/04/16 23:43:17  feaelin
+  Oops.  Some that crap wasn't supposed to be in here. *grin*
+
   Revision 1.7  1999/04/16 21:02:35  feaelin
   Oh Me! Oh My! Added all the feeps and goodies from glow 3.1.0.
   primarily from macro-macro.  Enjoy.
@@ -325,134 +328,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
-@action pounce=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
-@lock $tmp/exit1=here&!here
-@set $tmp/exit1=M
-@set $tmp/exit1=^/@/glow/fl2:4
-@set $tmp/exit1=/_/de:Get em tiger!
-@set $tmp/exit1=/_/fl:{if:{lt:{ref:{&arg}},#0},Who?,{otell:{name:me} pounces on {name:{&arg}}\, {pronouns:{rand:_pounce2},{&arg}}}}
-@set $tmp/exit1=/_/lok:PakRat(#9PJKCIW2)&!PakRat(#9PJKCIW2)
-@set $tmp/exit1=/_dark:yes
-@action \;\d=here=tmp/exit2
-@link $tmp/exit2=$tmp/prog1
-@set $tmp/exit2=M
-@set $tmp/exit2=M3
-@set $tmp/exit2=^/@/glow/fl2:4
-@set $tmp/exit2=/\:{eval:{&arg}}
-@set $tmp/exit2=/\d:{debug:{eval:{&arg}}}
-@set $tmp/exit2=/_/de:{list:use,this}
-@set $tmp/exit2=/_/sc:{if:{not:{&arg}},{list:use,this},{exec:{&cmd},this}}
-@set $tmp/exit2=/duh:{with:v1,{:1},{with:v2,{:2},{with:v3,{:3},{if:{not:{:3}},{set:v3,/}}{parse:var,{listprops:{&v3},{&v1}},{if:{propdir:{&var},{&v1}},{recurse-copy:{{&v1},{&v2},{&var}},{null:{store:{prop:{&var},{&v1}},{&var},{&v2}}}}}}}
-@set $tmp/exit2=/use#:5
-@set $tmp/exit2=/use#/1:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@set $tmp/exit2=/use#/2:USAGE:  \ (expression)  | parses MPI (expression)
-@set $tmp/exit2=/use#/3:        \d (expression) | debugs and parses MPI (expression)
-@set $tmp/exit2=/use#/4:       Written by:Mystikite@DelusionsMUCK: Freeware
-@set $tmp/exit2=/use#/5:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@action world;worlds;land;lands;realm;realms=here=tmp/exit3
-@link $tmp/exit3=$tmp/prog1
-@set $tmp/exit3=W
-@set $tmp/exit3=/_/de:{null:{ansi:^YELLOW^Typing '^GREEN^world^YELLOW^' or '^GREEN^land^YELLOW^' will tell what world or land you are in.  Worlds can contain many different lands.  For a list of world and land managers type '^GREEN^managers^YELLOW^'.  If you would like to move your rooms to exist in a particular land or world type '^GREEN^setworld^YELLOW^'.}}
-@set $tmp/exit3=/_/sc:{null:{ansi:^YELLOW^{eval:{prop:{prop:_{&cmd},this},this}}}}
-@set $tmp/exit3=/_land:_show_land
-@set $tmp/exit3=/_lands:_show_land
-@set $tmp/exit3=/_realm:_show_world
-@set $tmp/exit3=/_realms:_show_world
-@set $tmp/exit3=/_show_land:You are in the land of {prop:_land,here} run by {prop:_landlord,here}.
-@set $tmp/exit3=/_show_world:You are in the world of {prop:~world,here} managed by {prop:~manager,here}.
-@set $tmp/exit3=/_world:_show_world
-@set $tmp/exit3=/_worlds:_show_world
-@action diceroll;droll=here=tmp/exit4
-@link $tmp/exit4=$tmp/prog1
-@set $tmp/exit4=M
-@set $tmp/exit4=M3
-@set $tmp/exit4=^/@/glow/fl2:4
-@set $tmp/exit4=/_/de:Dice roller!{nl}{nl}Usage: {&cmd} XdY+Z{nl}{nl}X is the number of dice.{nl}Y is the number of sides on each die.{nl}Z is a number to add to the result.{nl}{nl}'{&cmd} XdY' acts like XdY+0.{nl}'{&cmd} Y' acts like 1dY+0.{nl}'{&cmd} Y+Z' acts like 1dY+Z.
-@set $tmp/exit4=/_/sc:{with:dpos,{instr:{&arg},d},{with:ppos,{instr:{&arg},+},{with:sides,{if:{&dpos},{add:0,{midstr:{&arg},{add:{&dpos},1},{subt:{&ppos},1}}},{add:0,{midstr:{&arg},1,{if:{&ppos},{subt:{&ppos},1},{strlen:{&arg}}}}}},{with:rolls,{if:{&dpos},{add:0,{midstr:{&arg},1,{subt:{&dpos},}1}},1},{with:plus,{if:{&ppos},{add:0,{midstr:{&arg},{add:{&ppos},1},{strlen:{&arg}}}},0},You roll {&rolls}d{&sides}+{&plus} and get {dice:{&sides},{&rolls},{&plus}}}}}}}.
-@action old\d=here=tmp/exit5
-@link $tmp/exit5=$tmp/prog1
-@lock $tmp/exit5=#0
-@set $tmp/exit5=D
-@set $tmp/exit5=M
-@set $tmp/exit5=^/@/glow/fl2:4
-@set $tmp/exit5=/\:{eval:{&arg}}
-@set $tmp/exit5=/\d:{debug:{eval:{&arg}}}
-@set $tmp/exit5=/_/lok:lock-meeper(#474FLM1)
-@set $tmp/exit5=/_/sc:{exec:{&cmd},this}
-@action stand=here=tmp/exit6
-@link $tmp/exit6=$tmp/prog1
-@lock $tmp/exit6=here&!here
-@set $tmp/exit6=/_/fl:You stand up from the soft rug and stretch happily
-@set $tmp/exit6=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
-@set $tmp/exit6=/_/ofl:stands up from the rug and stretches
-@action stand=here=tmp/exit7
-@link $tmp/exit7=$tmp/prog1
-@lock $tmp/exit7=here&!here
-@set $tmp/exit7=D
-@set $tmp/exit7=/_/fl:You stand up from the bench.
-@set $tmp/exit7=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
-@set $tmp/exit7=/_/ofl:stands up from the bench.
-@action sit=here=tmp/exit8
-@link $tmp/exit8=$tmp/prog1
-@lock $tmp/exit8=here&!here
-@set $tmp/exit8=D
-@set $tmp/exit8=/_/fl:You sit on the bench and warm yourself by the fire.
-@set $tmp/exit8=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
-@set $tmp/exit8=/_/ofl:sits on the bench and warms up by the fire.
-@action quit;exit;logout=here=tmp/exit9
-@link $tmp/exit9=$tmp/prog1
-@lock $tmp/exit9=#0&!#0
-@set $tmp/exit9=D
-@set $tmp/exit9=M3
-@set $tmp/exit9=/_/de:To leave type QUIT in all caps.
-@set $tmp/exit9=/_/fl:To leave type QUIT in all caps.
-@set $tmp/exit9=/_/lok:StarFire(#0RDS)&!StarFire(#0RDS)
-@action cls=here=tmp/exit10
-@link $tmp/exit10=$tmp/prog1
-@set $tmp/exit10=M
-@set $tmp/exit10=M1
-@set $tmp/exit10=^/@/glow/fl2:4
-@set $tmp/exit10=/_/de:Cls clears your screen.
-@set $tmp/exit10=/_/sc:\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r
-@action telescope=here=tmp/exit11
-@link $tmp/exit11=$tmp/prog1
-@lock $tmp/exit11=here&!here
-@set $tmp/exit11=/_/fl:You put you eye to the eyepiece and look off into the sky and stars beyond.  They shine brighter and clearer than you have ever seen them before.  You can pick out your favorite constellations, and see each star with remarkable clarity.  It is a breathtaking sight.
-@set $tmp/exit11=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
-@set $tmp/exit11=/_/ofl:puts thier eye up to the telescope and stares out at the stars twinkling in the night, like diamonds.
-@action clock;time;date=here=tmp/exit12
-@link $tmp/exit12=$tmp/prog1
-@set $tmp/exit12=M
-@set $tmp/exit12=^/@/glow/fl2:4
-@set $tmp/exit12=/_/de:{eval:{prop:_/sc,this}}
-@set $tmp/exit12=/_/sc:The current {muckname} time is {ftime:%r %Z} on {ftime:%C}.
-@action @uptime;uptime=here=tmp/exit13
-@link $tmp/exit13=$tmp/prog1
-@set $tmp/exit13=M
-@set $tmp/exit13=M1
-@set $tmp/exit13=^/@/glow/fl2:4
-@set $tmp/exit13=/_/de:{eval:{prop:_/sc,this}}
-@set $tmp/exit13=/_/sc:{eval:{nl}{prop:_downtime,this}{nl}{prop:_lastclean,this}{nl}{prop:_lastdump,this}{nl}{prop:_nextdump,this}{nl}{nl}{prop:_uptime,this}{nl}{prop:_time,this}{nl} }
-@set $tmp/exit13=/_downtime:Last down {ltimestr:{subt:{secs},{prop:~sys/shutdowntime,#0}}} ago for {ltimestr:{subt:{prop:~sys/startuptime,#0},{prop:~sys/shutdowntime,#0}}}.
-@set $tmp/exit13=/_lastclean:Last prop clean {ltimestr:{subt:{secs},{prop:~sys/lastcleantime,#0}}} ago.
-@set $tmp/exit13=/_lastdump:Last dump {ltimestr:{subt:{secs},{prop:~sys/lastdumptime,#0}}} ago{if:{ge:{prop:~sys/lastdumpdone,#0},{prop:~sys/lastdumptime,#0}}, took {ltimestr:{subt:{prop:~sys/lastdumpdone,#0},{prop:~sys/lastdumptime}}}}.
-@set $tmp/exit13=/_nextdump:Next dump in {ltimestr:{add:{subt:{prop:~sys/lastdumptime,#0},{secs}},{prop:~sys/dumpinterval,#0}}}.
-@set $tmp/exit13=/_time:Current {muckname} time is {ftime:%r %Z} on {ftime:%C}.
-@set $tmp/exit13=/_uptime:Up for {ltimestr:{subt:{secs},{prop:~sys/startuptime,#0}}}.
-@action twho;whospe;ws=here=tmp/exit14
-@link $tmp/exit14=$tmp/prog1
-@set $tmp/exit14=W2
-@set $tmp/exit14=/_/de:{eval:{prop:_twho,this}}
-@set $tmp/exit14=/_/sc:{eval:{prop:_twho,this}}
-@set $tmp/exit14=/_idlestr:{if:{ge:{&i},86400},{div:{&i},86400}d,{if:{ge:{&i},3600},{div:{&i},3600}h,{if:{ge:{&i},60},{div:{&i},60}m,{&i}s}}}
-@set $tmp/exit14=/_twho:{null:{ansi:^FOREST^{left:Player,16} ^CRIMSON^{left:Gender,6} ^NAVY^{left:Species,6} ^VIOLET^{left:Status,6} ^BROWN^{left:Idle,4} ^AQUA^{midstr:{left:{if:{prop:_poll,#0},{prop:_poll,#0},@doing},35},1,35}}{foreach:who,{if:{&arg},{online},{contents:here,player}},{if:1,{ansi:^GREEN^{midstr:{left:{name:{&who}},16},1,16} ^RED^{midstr:{left:{prop:sex,{&who}},6},1,6} ^BLUE^{midstr:{left:{prop:species,{&who}},7},1,7} ^PURPLE^{left:{if:{awake:{&who}},Awake,Asleep},6} ^YELLOW^{if:{awake:{&who}},{midstr:{right:{with:i,{idle:{&who}},{exec:_idlestr}},4},1,4},{left:,4}} ^CYAN^{midstr:{left:{prop:_/do,{&who}},35},1,35}}}}}
-@action who=here=tmp/exit15
-@link $tmp/exit15=$tmp/prog1
-@set $tmp/exit15=W
-@set $tmp/exit15=/_/de:'who' lists everybody currently playing, and everyone in the room.
-@set $tmp/exit15=/_/sc:{eval:{prop:_who,this}{prop:_here,this}}
-@set $tmp/exit15=/_here:{null:{ansi:^CYAN^In the room: {commas:{contents:here,player},\, ^YELLOW^and ,plr,^GREEN^{name:{&plr}}^AQUA^{if:{awake:{&plr}},{if:{ge:{idle:{&plr}},600},^BLUE^(idle)^AQUA^,},^BLUE^(sleeping)^AQUA^}}.}}
-@set $tmp/exit15=/_who:{null:{ansi:^CYAN^Players online: {commas:{online},\, ^YELLOW^and ,plr,^GREEN^{name:{&plr}}^AQUA^}.}}
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
 "Installation of lib-glow-standard completed.
