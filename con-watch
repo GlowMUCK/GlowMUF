@@ -1,0 +1,179 @@
+"Beginning installation of con-watch...
+@prog con-watch
+1 99999 d
+1 i
+( con-announce: $Date: 1999/04/17 20:55:25 $ $Revision: 1.1 $
+  Author: ???
+  --------------------------------------------------------------------------- )
+(
+  $Log: con-watch,v $
+  Revision 1.1  1999/04/17 20:55:25  feaelin
+  Initial revision
+
+)
+( CON-Announce 2.00 -- announces logins/logouts to interested players. )
+  
+$include $lib/glow
+
+$def announce_fmt_prop  "_prefs/ann/fmt"
+$def announce_list_prop "_prefs/ann/list"
+$def announce_hide_prop "_prefs/ann/hide"
+$def announce_con_prop  "_prefs/ann/con"
+$def hidepref           "_prefs/nonotify"
+$def notipref           "_prefs/notify"
+$def cinlist            "_cin/wholist"
+$def tell               me @ swap ansi_notify
+  
+lvar verb
+lvar discon?
+lvar idle?
+  
+: sms ( s -- s )
+  begin dup "  " instr while
+    " " "  " subst
+  repeat
+;
+  
+: find-action ( -- s)
+  idle? @ if
+    discon? @ if "woke up" else "zoned out" then exit
+  then
+  discon? @ if
+    me @ awake? 0 <= if
+      "disconnected"
+    else "lost a connection" then
+  else
+    me @ awake? 1 <= if
+      "connected"
+    else "reconnected" then
+  then
+;
+  
+: in_strlist? (sName sList -- bool)
+  dup not if pop pop 0 exit then
+  " " swap strcat " " strcat tolower
+  swap " " swap strcat " " strcat
+  tolower instr
+;
+  
+: in_permlist? (dListowner sName -- bool)
+  swap announce_list_prop getpropstr in_strlist?
+;
+  
+: name_in_hidelist? (dListowner dWho -- bool)
+  dup .mage? if pop pop 0 exit then
+  swap announce_hide_prop getpropstr
+  swap name over in_strlist?
+  "#all" rot in_strlist? or
+;
+  
+: name_in_strlist? (s sList -- bool) in_strlist? ;
+  
+: get-time ( -- s) "%l:%M%p" systime timefmt strip tolower;
+  
+: do_format_subs (d -- s)
+  dup announce_fmt_prop getpropstr  (get the announce format)
+  dup not if pop "[!] %n %v at %t." then
+  "%n" "%N" subst me @ name "%n" subst
+  "%v" "%V" subst find-action "%v" subst
+  "%t" "%T" subst get_time "%t" subst
+  "%l" "%L" subst
+  over .mage? if  (only wizards can see location.)
+    me @ location name "%l" subst
+  else
+    "somewhere" "%l" subst
+  then
+  swap pop
+;
+  
+: announce ( -- )
+  preempt
+  concount begin dup while
+    dup condbref
+    dup location me @ location dbcmp not (only ann. if !same room...)
+    me @ location "dark" flag? or if  (...or room is set dark.)
+      me @ over name_in_hidelist? not if
+        dup me @ name in_permlist? if  (if in list, announce)
+          do_format_subs
+          over swap connotify
+        else pop then  (if in announce list)
+      else pop then
+    else pop then  (if not in same location)
+    1 -
+  repeat pop
+;
+  
+: do-notify ( -- )
+  find-action verb !
+  "^PURPLE^<< ^CYAN^" me @ name strcat " " strcat verb @ strcat
+  " at " strcat get_time strcat ". ^PURPLE^>>" strcat verb !
+  online begin dup while 1 - swap ( ... d )
+    dup .mage? me @ hidepref getpropstr .yes? not or if
+      dup notipref getpropstr "cin" stringcmp not if
+        dup cinlist getpropstr
+        " " me @ name "," strcat strcat instring
+      else 0 then
+      dup not if pop dup notipref getpropstr .yes? then
+      if dup verb @ ansi_notify then
+    then pop
+  repeat pop
+;
+  
+lvar shownheader
+: list-awake-watched ( -- )
+  0 shownheader !
+  me @ announce_list_prop getpropstr
+  strip sms " " explode
+  "" begin
+    over while
+    swap 1 - swap rot
+    dup .pmatch
+    dup not if pop pop continue then
+    dup me @ name_in_hidelist? if pop pop continue then
+    swap pop dup awake? not if pop continue then
+    name "                  " strcat 18 strcut pop
+    shownheader @ not if
+      "^CYAN^Players online who you are watching for:" tell
+      1 shownheader !
+    then
+    strcat dup strlen 60 > if "^GREEN^" swap strcat tell "" then
+  repeat
+  "^GREEN^" swap strcat tell pop
+  shownheader @ not if
+    "^YELLOW^No one that you are watching for is online." tell
+  else
+    me @ "^YELLOW^Done." ansi_notify
+  then
+;
+PUBLIC list-awake-watched
+  
+: watch-con-main
+  dup "idle" instring if
+    me @ "idle" flag? if pop exit then
+    1 idle? !
+    "idle" stringcmp if 1 else 0 then discon? !
+  else
+    0 idle? !
+    "disconnect" stringcmp not discon? !
+  then
+  do-notify
+  announce
+  discon? @ not idle? @ not and if
+    me @ announce_con_prop getpropstr .yes? if
+      me @ announce_list_prop getpropstr if
+        preempt list-awake-watched
+      then
+    then
+  then
+;
+.
+c
+q
+@register con-watch=con/watch
+@register #me con-watch=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=V
+@set $tmp/prog1=W3
+@set $tmp/prog1=/_docs:@list $con/announce=1-42
+@set $tmp/prog1=_version:2.0FM$Revision: 1.1 $
+"Installation of con-watch complete.
