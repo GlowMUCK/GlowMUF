@@ -1,8 +1,9 @@
-INSTALL $Date: 2004/04/02 18:37:18 $ $Revision: 1.12 $
+INSTALL $Date: 2004/04/05 01:32:41 $ $Revision: 1.13 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.1
----------
+-----------
 I. How to install a MUF program to the muck
+-------------------------------------------
   A. Overview
     In general, you have to connect to the muck, and transmit the contents of
     the muf source file to the muck. All the source files in this package
@@ -19,10 +20,16 @@ I. How to install a MUF program to the muck
      and highlight the _entire_ file and use the classic windows copy-and-paste
      method.
   D. Specific Client Example: zMUD
-     Forthcoming...
+     1. Connect to the muck.
+     2. Click on "Actions"
+     3. Click on "Send To Mud"
+     4. Click on the folder icon to browse to the file. You'll need to change
+        the "Files of Type" to "All Files"
+     5. Make sure "String to prefix" and "String to postfix are empty.
+     6. Click on "Send"
 
 II. Core Library Install
------------------------
+------------------------
 The following have to be installed FIRST (before all other programs/libs) in
 this order:
 
@@ -49,8 +56,7 @@ lib-userprop
 III. cmd-path
 ------------
 At this point, if you're going to install cmd-path, you should do so now.
-(Hopefully you've not done any building...).  Then you can install the rest of
-the programs as you wish.  
+Then you can install the rest of the programs as you wish.  
   A. Install the cmd-path muf.
   B. Use @tune path_prog=<dbref of path prog>
   C. Use wpsetup to set the path dir. If you're using the standard dir (which
@@ -58,6 +64,7 @@ the programs as you wish.
      appropiate and update the @tune path_dir appropiately.
 
 IV. Comments about specific programs
+------------------------------------
   Mainly notes on problem areas
 
   cmd-path:
