@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1998/07/30 19:15:22 $ $Revision: 1.5 $
+( lib-strings: $Date: 1998/07/30 19:20:41 $ $Revision: 1.6 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
@@ -38,6 +38,9 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
+  Revision 1.6  1998/07/30 19:20:41  glow
+  Added synonyms of .split: .splitarg, .splitargs, .splitfirst, .strcutat.
+
   Revision 1.5  1998/07/30 19:15:22  glow
   *** empty log message ***
 
@@ -176,8 +179,11 @@ q
 @set $tmp/prog1=/_defs/.singlespace:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.sms:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.split:"$lib/strings" match "split" call
+@set $tmp/prog1=/_defs/.splitarg:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/.splitargs:"$lib/strings" match "splitargs" call
+@set $tmp/prog1=/_defs/.splitfirst:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/.stripspaces:strip
+@set $tmp/prog1=/_defs/.strcutat:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/STRasc:"$lib/strings" match "STRasc" call
 @set $tmp/prog1=/_defs/STRblank?:striplead not
 @set $tmp/prog1=/_defs/STRcenter:"$lib/strings" match "center" call
@@ -195,5 +201,5 @@ q
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
 "Installation of lib-strings complete.
