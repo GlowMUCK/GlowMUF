@@ -2,7 +2,7 @@
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 1998/07/27 21:07:41 $ $Revision: 1.7 $
+( cmd-register $Date: 1998/07/27 21:12:30 $ $Revision: 1.8 $
   Original Author: Unknown                              
   Updated for Glowmuck by: Andy
   Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
@@ -10,8 +10,11 @@
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.8  1998/07/27 21:12:30  glow
+   Fixed annoying bug with updating the Revision string used for comparing.
+
    Revision 1.7  1998/07/27 21:07:41  glow
-   Fixed strip-rcs to handle a null $Revision$
+   Fixed strip-rcs to handle a null $Revision: 1.8 $
 
    Revision 1.6  1998/07/27 19:40:20  glow
    During earlier changes, messed up the wiz-level.  It's now corrected.
@@ -93,7 +96,7 @@ lvar regprop
   result! FM-IDE 1998July26                                                )
 : strip-rcs ( s -- s' )
   dup dup "$" instr dup if
-    1 - strcut dup "$Revision: 1.7 $" stringcmp if
+    1 - strcut dup "$Revis" "ion$" strcat stringcmp if
       11 strcut swap pop dup "$" instr 2 - strcut 
       dup " $" stringcmp if 2 strcut swap pop strcat else pop then
       strcat swap pop
@@ -243,5 +246,5 @@ q
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=_version:FM$Revision: 1.7 $
+@set $cmd/register=_version:FM$Revision: 1.8 $
 "Installation of cmd-register finished.
