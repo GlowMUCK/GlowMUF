@@ -1,0 +1,481 @@
+"Beginning installation of cmd-emotion...
+@prog cmd-emotion
+1 99999 d
+1 i
+( cmd-emotion: $Date: 2000/01/26 16:16:17 $ $Revision: 1.1 $
+  Author: Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-emotion,v $
+  Revision 1.1  2000/01/26 16:16:17  feaelin
+  Initial revision
+
+)
+( Emotion V1.0 by PakRat & Artie Productions Ltd. ) 
+( Copyright 1992 All Rights Reserved. )
+()
+( Default actions can be set on the actual action dbref.                      )
+( _v/verb and _v/overb set default actions, ie @set bonk=_v/bonk:You bonk %n! )
+( _r/verb and _r/overb set default responses, ie @set bonk=_r/obonk:%n OIFs!  )
+( _p/verb sets default poses, for when not using an action on someone         )
+( This works for male/female/name combinations too.                           )
+( You can also do: hug -s @hug  and  hug -p @hug  if you own the action.      )
+  
+( *** SETUP *** )
+( @reg #program=cmd/emotion             Add this to the @reg list       )
+( @set $cmd/emotion=2                   This should work with an M2 bit )
+( @set $cmd/emotion=L                   Let everyone use the program    )
+( @action hug;kiss;bonk;...=#0          Create a global action          )
+( @link hug=$cmd/emotion                Set the action to the program   )
+( @desc hug=@$cmd/emotion -help         Add a decent description        )
+  
+( More setup can be done to customize responses of actions.             )
+lvar thing lvar dept
+$include $lib/glow
+$include $lib/strings
+
+$def n (s --) "^YELLOW^" swap strcat me @ swap ansi_notify
+$def t (s --) "^YELLOW^" swap strcat thing @ swap notify
+$def dopt 3 pick swap 2 strncmp not 3 pick rot 2 strncmp not or
+$def yes? (--i) read 1 strcut pop "y" stringcmp not
+$def resdir "_prefs/action/response/"
+$def verdir "_prefs/action/verb/"
+$def posdir "_prefs/action/"
+$def topdir ""
+$def add4o 4 pick strcat
+$def setpropstr dup if 1 addprop else pop remove_prop then
+$def getstr command @ strcat getpropstr
+$def setstr swap command @ strcat swap setpropstr
+$def ifaexit dup if swap pop swap pop exit else pop then
+$def getresponse "" over getaresponse thing @ dosub
+$def getoresponse "o" over getaresponse thing @ dosub
+$def getverb "" over getaverb over dosub
+$def getoverb "o" over getaverb over dosub
+  
+: getarg (s--)
+  dup " " instr dup if
+    1 - strcut 1 strcut
+    swap pop swap pop
+  else pop pop "" then
+;
+  
+: sex (d -- s)
+  "sex" getpropstr
+  dup 2 strcut pop "ma" stringcmp not if
+    pop "male"
+  else
+    dup 2 strcut pop "fe" stringcmp not if
+      pop "female"
+    else pop "" then
+  then
+;
+  
+: helpscreen-1
+"Emotion Help Screen 1" n
+" " n
+command @ " -all              -- list all known socials" strcat n
+command @ " -pose             -- setup emotion for verb alone" strcat n
+command @ " -setup <sex/name> -- setup emotions to people" strcat n
+command @ " -list  <sex/name> -- list settings for an emotion" strcat n
+command @ " -new   <verb>     -- add a new social verb" strcat n
+command @ " -rem   <verb>     -- remove a bad social verb" strcat n
+" " n
+"You can put %substs in anything and it will change to a name or word." n
+"'You bonk %victim!' will turn into 'You bonk Artie!' if you bonk Artie." n
+" " n
+"%actor = name of emoter   %victim = name of victim   %loc  = name of room" n
+"%owner = owner of room    %action = emotion name     %verb = emotion name" n
+"%time  = current time     %date   = current date" n
+" " n
+"In responses, these refer to the actor. In verbs, they are for the victim." n
+"%n = name      %s = he/she/it      %p = his/hers/its      %o = him/her/it" n
+" " n
+"Type " command @ strcat " -more to see more hints and tips." strcat n
+" " n
+"Send comments, questions, and ideas to " prog owner name strcat "." strcat n
+;
+  
+: helpscreen-2
+"Emotion Help Screen 2 -- More Hints and Tips" n
+" " n
+"* The List and Setup commands will accept male, female, or a player's name." n
+" " n
+"* Setup and list can take an @objectname to set/show emotions for it." n
+"  '" command @ strcat
+" -setup @here male' would set this room's responses for guys." strcat n
+" " n
+"* You can put a @1234 program in to run as the response to the actor." n
+"  (It's only valid for the first response you enter using the setup command.)" n
+" " n
+"* You can use !someotherverbname at the start of the command line to make" n
+"  emotion think you used that as the real verb, ie: hug !kiss PakRat" n
+"  This is useful if you want to give a programmed response, ie:" n
+"  @$cmd/emotion !offend %victim   as a response if you hate kisses." n
+" " n
+"* Program and @thing responses can be weird, ie. when the @thing is 'here'." n
+"  Programs and the noNAMEglobal prop use the @thing's owner, not the @thing." n
+"  In a program response %victim, etc won't match a room because the room name," n
+"  not 'here', is substituted before the program is called." n
+" " n
+"Send comments, questions, and ideas to " prog owner name strcat "." strcat n
+;
+  
+: SSort 2 sort ;
+  
+: SortStr ( s -- s )
+  dup if
+    ";" explode SSort
+    begin dup 1 > while
+      rot ";" strcat
+      rot strcat swap
+      1 -
+    repeat pop
+  then
+;
+  
+: showaction (s--)
+  "  " over strcat
+  command @ strcat ": " strcat
+  thing @ verdir add4o getstr dup if
+    strcat n
+  else pop pop then
+  "  o" over strcat
+  command @ strcat ": " strcat
+  thing @ verdir "o" strcat add4o getstr dup if
+    strcat n
+  else pop pop then
+  pop
+;
+  
+: showresponse (s--s)
+  "  " over strcat
+  command @ strcat ": " strcat
+  thing @ resdir add4o getstr dup if
+    strcat n
+  else pop pop then
+  "  o" over strcat
+  command @ strcat ": " strcat
+  thing @ resdir "o" strcat add4o getstr dup if
+    strcat n
+  else pop pop then
+  pop
+;
+  
+: showsettings (sp --)
+  dup if dup " " strcat else "" then
+  thing @ .firstname "'s " strcat swap strcat
+  command @ strcat " emotions:" strcat n
+  dup showaction
+  dup not if
+    dup "male" swap strcat showaction
+    dup "female" swap strcat showaction
+  then
+  "Responses:" n
+  dup showresponse
+  dup not if
+    dup "male" swap strcat showresponse
+    dup "female" swap strcat showresponse
+  then
+  thing @ posdir getstr dup if
+    "Pose: " thing @ .firstname strcat " " strcat swap strcat n
+  else pop then
+  pop
+;
+  
+: getaresponse ("o" d--s)
+  dup  resdir add4o thing @ .firstname strcat getstr ifaexit
+  dup  topdir add4o thing @ .firstname strcat getstr ifaexit
+  trig resdir add4o thing @ .firstname strcat getstr ifaexit
+  dup  resdir add4o thing @ sex strcat getstr ifaexit
+  dup  topdir add4o thing @ sex strcat getstr ifaexit
+  trig resdir add4o thing @ sex strcat getstr ifaexit
+  dup  resdir add4o getstr ifaexit
+  dup  topdir add4o getstr ifaexit
+  trig resdir add4o getstr ifaexit
+  trig "_r/"  add4o getstr ifaexit
+  pop pop ""
+;
+  
+: getaverb ("o" d--s)
+  thing @ verdir add4o 3 pick name strcat getstr ifaexit
+  thing @ verdir add4o 3 pick sex strcat getstr ifaexit
+  thing @ verdir add4o getstr ifaexit
+  trig verdir add4o 3 pick name strcat getstr ifaexit
+  trig verdir add4o 3 pick sex strcat getstr ifaexit
+  trig verdir add4o getstr ifaexit
+  trig "_v/" add4o getstr ifaexit
+  pop not if "You " command @ strcat " %victim." strcat
+  else command @ "s %victim!" strcat then 
+;
+  
+: dosub ( d s d -- s ) ( victim string actor )
+  swap 3 pick ( victim actor string victim )
+  name "%victim" subst
+  thing @ .firstname "%actor" subst
+  "%T" systime timefmt "%time" subst
+  "%D" systime timefmt "%date" subst
+  loc @ name "%loc" subst
+  loc @ owner name "%owner" subst
+  command @ "%verb" subst
+  command @ "%action" subst
+  "%%" "%" subst
+  "%" "%%v" subst
+  rot swap pronoun_sub
+  "%%" "%" subst
+  "%" "%%a" subst
+  thing @ swap pronoun_sub
+  pronoun_sub
+;
+  
+: trypose (--success)
+  thing @ posdir command @ strcat getpropstr
+  dup not if pop trig posdir command @ strcat getpropstr then
+  dup not if pop trig "_p/"  command @ strcat getpropstr then
+  dup if
+    thing @ .firstname " " strcat swap strcat
+    thing @ swap over dosub
+    loc @ #-1 rot "^CYAN^" swap strcat ansi_notify_except 1
+  else pop 0 then
+;
+  
+: ChangeSetting ( "o" "male" "propdir" )
+  rot strcat swap strcat
+  " " n
+  "Enter a new setting, a period to keep this, or xxx to clear the setting." n
+  read
+  dup "." strcmp not if pop pop "Not changed." n exit then
+  dup "xxx" stringcmp not if
+    pop thing @ swap "" setstr
+    "Cleared." n exit
+  then
+  thing @ rot rot setstr
+  "Changed." n
+;
+  
+: doposet (--)
+  thing @ posdir getstr
+  thing @ .firstname
+  "'s current pose setting for " strcat
+  command @ strcat " is:" strcat n
+  dup if n else pop "-- none --" n then 
+  "To set a new pose enter a pose with no colon, for example:" n
+  command @ "s happily!" strcat n
+  "" "" posdir ChangeSetting
+;
+  
+: listemotion ( "o" "name" "propdir" )
+  rot rot strcat swap over strcat thing @ swap getstr
+  ( "oname" "str" )
+  "Old " rot strcat command @ strcat " setting:" strcat n
+  dup not if pop "-- none --" then n
+;
+ 
+$def ChVer "" swap verdir ChangeSetting
+$def ChOVer "o" swap verdir ChangeSetting
+$def ChRes "" swap resdir ChangeSetting
+$def ChORes "o" swap resdir ChangeSetting
+$def LiVer "" swap verdir listemotion
+$def LiOVer "o" swap verdir listemotion
+$def LiRes "" swap resdir listemotion
+$def LiORes "o" swap resdir listemotion
+  
+: dosetup (s--)
+  "Setting up " thing @ .firstname strcat "'s responses and actions:" strcat n
+  dup LiRes
+  "This is the response that only the actor sees, ie:" n
+  "How could you " command @ strcat " me like that?" strcat n
+  dup ChRes " " n
+  dup LiORes
+  "This is the response that everyone else in the room sees, ie:" n
+  "%victim leers at %actor and rips %p face off!" n
+  dup ChORes " " n
+  
+  dup LiVer
+  "This is what you see when you do something to someone, ie:" n
+  "You " command @ strcat " %victim with much enjoyment." strcat n
+  dup ChVer " " n
+  dup LiOVer
+  "This is what everyone else sees, entered in a form of a pose with no colon:"
+  n command @ "s %victim enthusiastically!" strcat n
+  dup ChOVer " " n
+  
+  "Done!" n
+  " " n
+  "If you would like to change your " command @ strcat
+  " pose, type:" strcat n
+  command @ " -p" strcat n
+  "(Do a pose by simply typing " command @ strcat ".)" strcat n
+  pop
+;
+ 
+: showall (--)
+  "Known socials: "
+  trig name ", " ";" subst
+  .cleancommas
+  "." strcat strcat n
+;
+ 
+: remverb (s--)
+  trig owner me @ dbcmp if
+  striplead striptail
+  dup if
+    ";" swap ";" strcat strcat
+    trig name ";" swap ";" strcat strcat
+    over ";;" swap subst
+    begin
+      dup ";;" instr while
+      ";" ";;" subst
+    repeat
+    dup strlen 1 - strcut pop
+    1 strcut swap pop
+    trig swap SortStr setname pop
+    "Social verb removed." n
+  else
+    pop "Usage: " command @ strcat
+    " -rem badsocialname" strcat n
+  then
+  else
+    pop "You don't own the action." n
+  then
+;
+ 
+: newverb (s--)
+  trig owner me @ dbcmp if
+  striplead striptail
+  dup if
+    ";" swap ";" strcat strcat
+    trig name ";" swap ";" strcat strcat
+    over ";;" swap subst
+    over strcat
+    begin
+      dup ";;" instr while
+      ";" ";;" subst
+    repeat
+    dup strlen 1 - strcut pop
+    1 strcut swap pop
+    trig swap SortStr setname pop
+    "Social verb added." n
+  else
+    pop "Usage: " command @ strcat
+    " -new newsocialname" strcat n
+  then
+  else
+    pop "You don't own the action." n
+  then
+;
+ 
+: Emotion-Main (s --)
+  trig exit? not if pop exit then
+  trig trigger !
+  command @ tolower command !
+  "me" match dup me ! location loc !
+  
+  striplead striptail
+  dup 1 strcut pop "!" strcmp not if
+    " " .split2 swap
+    1 strcut swap pop
+    dup if command ! else pop then
+  then
+  
+  command @ not if pop "No verb name used." n exit then
+  command @ " " instr if pop "Cannot use spaces in verb names." n exit then
+  striplead striptail
+  dup "@" instr dup if (s i)
+    1 - strcut 1 strcut
+    swap pop striplead
+    dup " " instr dup if (s s i)
+      strcut rot swap strcat
+      swap striptail
+    else pop then 
+    match thing !
+  else pop me @ thing ! then
+  thing @ #-1 dbcmp if
+    pop "I don't see that @thing here." n exit
+  then
+  thing @ #-2 dbcmp if
+    pop "I don't know which @thing you mean!" n exit
+  then
+  thing @ owner me @ owner dbcmp not if
+    pop "You don't own that @thing." n exit
+  then
+  
+  striplead striptail
+  "-h" "#h" dopt if pop helpscreen-1 exit then
+  "-m" "#m" dopt if pop helpscreen-2 exit then
+  "-p" "#p" dopt if pop doposet exit then
+  "-s" "#s" dopt if getarg dosetup exit then
+  "-l" "#l" dopt if getarg showsettings exit then
+  "-a" "#a" dopt if pop showall exit then
+  "-n" "#n" dopt if getarg newverb exit then
+  "-r" "#d" dopt if getarg remverb exit then
+  
+  thing @ dup player? over thing? or swap room? or not if
+    pop "That isn't a very emotional @thing." n exit
+  then
+  
+  dup not if trypose if pop exit then then
+  
+  dup if match else pop #-1 then
+  dup player? over thing? or over room? or if
+    loc @ "noglobals" getpropstr
+    loc @ "no" command @ strcat getpropstr or if
+      "You can't do that here." t exit
+    then
+    dup "noglobals" getpropstr if
+      name " isn't feeling very emotional today." strcat t exit
+    then
+    dup "no" command @ strcat getpropstr if
+      name " isn't feeling very emotional today." strcat t exit
+    then
+    dup "no" me @ name strcat
+    command @ strcat getpropstr if
+      name " doesn't like you doing that." strcat n exit
+    then
+    dup "no" thing @ sex strcat
+    command @ strcat getpropstr if
+      name " doesn't like your gender doing that." strcat t exit
+    then
+    
+    dup getoverb over getoresponse
+    dup not if pop else "  " swap strcat strcat then
+    thing @ .firstname " " strcat swap strcat
+    loc @ thing @ rot "^CYAN^" swap strcat ansi_notify_except
+    
+    dup getverb over getresponse
+      dup 1 strcut pop "@" strcmp not if
+      swap thing @ swap .wrapnotify .run
+    else
+      dup not if pop else "  " swap strcat strcat then
+      thing @ swap "^CYAN^" swap strcat .wrapnotify
+    then
+    
+    pop 
+  else
+    #-2 dbcmp if
+      "I don't know which one you mean!" n
+    else
+      "I don't see that here." n
+    then
+    "Usage: " command @ strcat " name of player or thing" strcat n
+    "       " command @ strcat " -help for a help screen" strcat n
+  then
+;
+  
+: debug
+  depth dept !
+  emotion-main
+  depth dept @ 1 - = not if
+  "Please tell Artie that you saw this, and what you did to do it." n
+  .debug-line then
+;
+( Inspiration: That annoying puppydog whiner Dalles ;)
+.
+c
+q
+@register cmd-emotion=cmd/emotion
+@register #me cmd-emotion=tmp/prog1
+@set $tmp/prog1=V
+@set $tmp/prog1=M3
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.1 $
+"Installation of cmd-emotion complete.
+"Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.

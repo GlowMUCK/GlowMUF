@@ -1,0 +1,122 @@
+"Beginning installation of cmd-getsite...
+@prog cmd-getsite
+1 99999 d
+1 i
+( cmd-getsite: $Date: 2000/01/26 16:15:39 $ $Revision: 1.1 $                              )
+( Author: PakRat                                              )
+( ----------------------------------------------------------- )
+( Getsite by PakRat Copyright 1997 All Rights Reserved        )
+( Getsite allows you to let other players see your login site )
+( This is mainly a feep so I can let friends see what site I  )
+( am logged into so they can get to accounts on my machine.   )
+( 
+  $Log: cmd-getsite,v $
+  Revision 1.1  2000/01/26 16:15:39  feaelin
+  Initial revision
+
+)
+$include $lib/glow
+$include $lib/strings
+
+$def pdir "@prefs/getsite"
+$def n me @ swap notify
+( )
+: showsite ( s -- )
+  dup if .pmatch then
+  dup not if pop "Who?" n exit then
+  dup me @ dbcmp not if
+    me @ intostr "#" swap strcat " " strcat
+    over pdir getpropstr swap instr
+  else 1 then if
+    dup "@/site" getpropstr "Host: " swap strcat n
+    dup "@/host" getpropstr "IP #: " swap strcat n
+    pop
+  else pop "Don't think so bud." n then
+;
+ 
+: listsite ( -- )
+  me @ pdir getpropstr dup if
+    " " "#"  subst
+    " " "  " subst
+    " " explode
+    begin dup while 1 - swap
+      dup not if pop continue then
+      atoi dbref dup player? if name else
+        "<toaded player #" swap intostr strcat ">" strcat
+      then n
+    repeat pop
+    "Done." n
+  else pop "Noone can see your site information." n then
+;
+  
+: addsite ( s -- )
+  dup if .pmatch then
+  dup not if pop "Who?" n exit then
+  intostr "#" swap strcat " " strcat
+  me @ pdir getpropstr swap
+  over over instr if pop pop "Already in your site list." n exit then
+  strcat
+  me @ pdir rot setprop
+  "Player added to your getsite list." n
+;
+  
+: delsite ( s -- )
+  dup not if pop "Who?" n exit then
+  dup "#" 1 strncmp if .pmatch else
+    atoi dbref dup player? not if pop #-1 then
+  then
+  dup not if pop "Who?" n exit then
+  "#" swap intostr strcat " " strcat
+  me @ pdir getpropstr swap
+  over not if pop pop "Your site list is empty." n exit then
+  over over instr dup not if pop pop pop "Not in your site list." n exit then
+  rot swap 1 - strcut
+  rot strlen strcut
+  swap pop strcat
+  me @ pdir rot setprop
+  "Player removed from your getsite list." n
+;
+  
+: helpsite ( s -- )
+  "GetSite by PakRat" n
+  "~~~~~~~" n
+  "getsite <player>       -- See player's site info" n
+  "getsite #add <player>  -- Allow someone to see your site info" n
+  "getsite #del <player>  -- Stop someone from seeing your info" n
+  "getsite #list          -- See who can see your site info" n
+;
+ 
+: main ( s -- )
+  .noguest
+  "me" match dup location loc ! me !
+  " " STRsplit swap
+  dup not if pop pop helpsite exit then
+  dup "#h" instring if pop pop helpsite exit then
+  dup "#l" instring if pop pop listsite exit then
+  dup "#a" instring if pop addsite exit then
+  dup "#d" instring if pop delsite exit then
+  swap pop showsite
+;
+: do-debug ( ? -- ? )
+  main
+  depth if
+    "Oops!  Please tell PakRat you saw this." n
+    .debug-line
+  then
+;
+.
+c
+q
+@register cmd-getsite=cmd/getsite
+@register #me cmd-getsite=tmp/prog1
+@set $tmp/prog1=W3
+@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@action @getsite;getsite;@site;site=here=tmp/exit1
+@link $tmp/exit1=$tmp/prog1
+@desc $tmp/exit1=@$cmd/getsite #help
+"Installation of cmd-getsite complete.
+
+
+
+
+
