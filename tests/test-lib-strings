@@ -1,0 +1,25 @@
+@prog test-lib-strings
+$include $lib/strings
+$def message if "succeeded!" strcat "^GREEN^" swap strcat me @ swap ansi_notify else "failed!" strcat "^RED^" swap strcat me @ swap ansi_notify then
+: main
+  "Testing STRblank? with a null string..." "" STRblank? message depth popn
+  "Testing STRblank? with a empty string..." " " STRblank? message depth popn
+  "Testing STRblank? with a non-empty string..." dup STRblank? not message depth popn
+  "Testing STRsls with leading spaces..." "    ^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message depth popn
+  "Testing STRsls without leading spaces..." "^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message depth popn
+  "Testing STRsts with trailing spaces..." "  ^PURPLE^cow  " STRsts "  ^PURPLE^cow" strcmp not message depth popn
+  "Testing STRsts without trailing spaces..." "  ^PURPLE^cow" STRsts "  ^PURPLE^cow" strcmp not message depth popn
+  "Testing STRstrip with leading/trailing spaces..." "  ^PURPLE^cow  " STRstrip "^PURPLE^cow" strcmp not message depth popn
+  "Testing STRstrip without leading/trailing spaces..." "^PURPLE^cow" STRstrip "^PURPLE^cow" strcmp not message depth popn
+  "Testing STRsplit..." "^PURPLE^cow $test$cow" "$" STRsplit "test$cow" strcmp not swap "^PURPLE^cow " strcmp not and message depth popn
+  "Testing STRrsplit..." "^PURPLE^cow $test$cow" "$" STRrsplit "cow" strcmp not swap "^PURPLE^cow $test" strcmp not and message depth popn
+  "Testing STRsplitargs (=)..." "^PURPLE^cow=args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message depth popn 
+  "Testing STRsplitargs ( )..." "^PURPLE^cow args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message depth popn 
+  "Testing STRfillfield..." "^PURPLE^cows" " " 10 STRfillfield "      " strcmp not message depth popn
+  "Testing STRcenter..." "^PURPLE^cows" 10 STRcenter "   ^PURPLE^cows   " strcmp not message depth popn
+  "Testing STRleft..." "^PURPLE^cows" 10 STRleft "^PURPLE^cows      " strcmp not message depth popn
+  "Testing STRright..." "^PURPLE^cows" 10 STRright "      ^PURPLE^cows" strcmp not message depth popn
+  "Testing STRasc..." "A" STRasc 65 = "B" STRasc 66 = and message depth popn
+  "Testing STRchr..." 65 STRchr "A" strcmp not 66 STRchr "B" strcmp not and message depth popn
+  "Testing STRparse..." "#cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message depth popn
+;
