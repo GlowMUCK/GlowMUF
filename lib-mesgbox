@@ -1,7 +1,7 @@
 @prog lib-mesgbox
 1 99999 d
 1 i
-( lib-mesgbox: $Date: 2001/02/23 15:41:03 $ $Revision: 1.3 $
+( lib-mesgbox: $Date: 2004/03/26 03:23:07 $ $Revision: 1.4 $
   Originally from FuzzBall MUF Distribution                                   )
 ( --------------------------------------------------------------------------- )
 ( **** Message Box Object -- MBOX- ****
@@ -67,6 +67,9 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-mesgbox,v $
+  Revision 1.4  2004/03/26 03:23:07  feaelin
+  Upgraded W-bit so @ props can be used.
+
   Revision 1.3  2001/02/23 15:41:03  feaelin
   Corrected version info.
 
@@ -210,6 +213,7 @@ q
 @register lib-mesgbox=lib/mesgbox
 @register #me lib-mesgbox=tmp/prog1
 @set $tmp/prog1=L
+@set $tmp/prog1=W3
 @set $tmp/prog1=/_/de:lib-mesgbox: List lines 3-60 for documentation.
 @set $tmp/prog1=/_defs/MBOX-append:"$lib/mesgbox" match "MBOX-append" call
 @set $tmp/prog1=/_defs/MBOX-badref?:"$lib/mesgbox" match "MBOX-badref?" call
@@ -226,5 +230,5 @@ q
 @set $tmp/prog1=/_defs/MBOX-setinfo:"$lib/mesgbox" match "MBOX-setinfo" call
 @set $tmp/prog1=/_defs/MBOX-setmesg:"$lib/mesgbox" match "MBOX-setmesg" call
 @set $tmp/prog1=/_docs:@list $lib/mesgbox=3-60
-@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.3 $
+@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.4 $
 "Installation of lib-mesgbox complete.
