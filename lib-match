@@ -2,8 +2,12 @@
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2000/01/10 21:23:33 $ $Revision: 1.4 $
-  Originally taken from the FuzzBall MUF distribution.                        )
+( lib-match: $Date: 2004/08/04 14:12:21 $ $Revision: 1.5 $                    )
+( Purpose: Provides various words to match a string to a database item's dbref)
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-glow-standard, lib-stackrng                               )
+( Originally taken from the FuzzBall MUF distribution.                        )
 ( --------------------------------------------------------------------------- )
 ( Matching library
   .noisy_match  [ itemname -- itemdbref ]
@@ -67,6 +71,10 @@
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.5  2004/08/04 14:12:21  feaelin
+  Updated header documentation. Updated library entries to add the new
+  LIBNAMEfuncname format for function names.
+
   Revision 1.4  2000/01/10 21:23:33  feaelin
   Fixed .controls backward compatibility
 
@@ -207,7 +215,13 @@ q
 @set $tmp/prog1=/_defs/.std_table_match:"$lib/match" match "std_table_match" call
 @set $tmp/prog1=/_defs/.table_match:"$lib/match" match "table_match" call
 @set $tmp/prog1=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
+@set $tmp/prog1=/_defs/MATCHmatch_controlled:"$lib/match" match "match_controlled" call
+@set $tmp/prog1=/_defs/MATCHnoisy_match:"$lib/match" match "noisy_match" call
+@set $tmp/prog1=/_defs/MATCHnoisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@set $tmp/prog1=/_defs/MATCHstd_table_match:"$lib/match" match "std_table_match" call
+@set $tmp/prog1=/_defs/MATCHtable_match:"$lib/match" match "table_match" call
+@set $tmp/prog1=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
 @set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
 @set $tmp/prog1=/_docs:@list $lib/match=3-62
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
 "Installation of lib-match completed.
