@@ -2,11 +2,14 @@
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2000/01/26 16:16:17 $ $Revision: 1.1 $
+( cmd-emotion: $Date: 2000/12/25 03:26:24 $ $Revision: 1.2 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.2  2000/12/25 03:26:24  feaelin
+  Made 'hug me' type stuff work as expected.
+
   Revision 1.1  2000/01/26 16:16:17  feaelin
   Initial revision
 
@@ -380,6 +383,7 @@ $def LiORes "o" swap resdir listemotion
   command @ not if pop "No verb name used." n exit then
   command @ " " instr if pop "Cannot use spaces in verb names." n exit then
   striplead striptail
+  dup "me" stringcmp not if pop "" then
   dup "@" instr dup if (s i)
     1 - strcut 1 strcut
     swap pop striplead
@@ -476,6 +480,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.1 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.2 $
 "Installation of cmd-emotion complete.
 "Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.
