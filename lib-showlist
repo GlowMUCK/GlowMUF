@@ -1,0 +1,97 @@
+"Beginning installation of lib-showlist...
+@prog lib-showlist
+1 99999 d
+1 i
+( showlist: ( d s -- ): $Date: 1998/08/23 17:18:20 $ $Revision: 1.1 $        
+  Originally from the glowmuf distribution                                    )
+( --------------------------------------------------------------------------- )
+( Program to list a list stored within a propdir
+  s is the listname, often "_desc"                                            )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-showlist,v $
+  Revision 1.1  1998/08/23 17:18:20  glow
+  Initial revision
+
+) 
+$define n me @ swap notify $enddef
+
+: getlines ( d s -- i )
+  ( checks prop# prop and prop/lines, returns biggest line # )
+  over over 
+  getpropstr atoi
+  3 rotate 3 rotate 
+  "/lines" strcat
+  getpropstr atoi
+  over over < if 
+    swap 
+  then
+  pop
+;
+ 
+: showlist ( d s -- )
+  ( illegal spam prevention )
+  "me" match me !
+  ( null list )
+  dup not if 
+    pop pop exit 
+  then
+  ( get rid of possible / at end ) 
+  dup strlen
+  1 - strcut
+  dup "/" strcmp if
+    strcat
+  else
+    pop
+  then
+  over over 
+  getlines
+  ( try a list#, then a _list if not found )
+  dup not if
+    pop "#" strcat
+    over over
+    getlines
+  then
+  dup not if
+    pop "_" 
+    swap strcat
+    over over 
+    getlines
+  then
+  dup not if 
+    pop pop pop exit 
+  then
+  
+  ( convert to propdir and show )
+  swap "/" strcat swap
+  rot rot 1
+  ( n d s/ 1 )
+  begin 
+    4 pick over >= 
+  while
+    3 pick 
+    3 pick 
+    3 pick 
+    intostr strcat
+    getpropstr
+    ( don't notify null lines, as we may be past the end of list )
+    dup if n else pop then
+    1 +
+  repeat
+  pop pop pop pop
+;
+
+public showlist
+.
+c
+q
+@register lib-showlist=lib/showlist
+@register #me lib-showlist=tmp/prog1
+@set $tmp/prog1=L
+@set $tmp/prog1=W
+@set $tmp/prog1=/_defs/.listread:( d s -- ) "$lib/showlist" match call
+@set $tmp/prog1=/_defs/.showlist:( d s -- ) "$lib/showlist" match call
+@set $tmp/prog1=/_defs/listread:( d s -- ) "$lib/showlist" match call
+@set $tmp/prog1=/_defs/showlist:( d s -- ) "$lib/showlist" match call
+@set $tmp/prog1=_lib-version:FM1.0
+"Installation of lib-showlist complete.
