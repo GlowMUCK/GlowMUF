@@ -2,7 +2,7 @@ wh me=Beginning Installation of cmd-register
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2005/04/03 14:37:58 $ $Revision: 1.19 $                 )
+( cmd-register $Date: 2005/04/06 18:48:01 $ $Revision: 1.20 $                 )
 ( Purpose: Handle registration of database items for virtual references       )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -10,6 +10,12 @@ wh me=Beginning Installation of cmd-register
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.20  2005/04/06 18:48:01  feaelin
+   Output changes. Now prints the library prefix/symbol. This is the
+   set of letters that precedes the library words in the library: STR, LMGR,
+   etc.
+   Adjusted indentation so the level of items is clearer.
+
    Revision 1.19  2005/04/03 14:37:58  feaelin
    Documentation update, changes to the installation script to make it cleaner.
 
@@ -82,7 +88,7 @@ lvar regprop
  
 : do-header
   "^WHITE^------------------------------------------------------------------------------" tell
-  "^FOREST^cmd-register: " "$Revision: 1.19 $" 
+  "^FOREST^cmd-register: " "$Revision: 1.20 $" 
   1 strcut swap pop dup strlen 2 - strcut pop strcat tell
   "^WHITE^------------------------------------------------------------------------------" tell
 ;
@@ -192,9 +198,14 @@ lvar regprop
           "     ^INFO^Ver. " swap strcat strcat
         else pop
         then
-        swap "_lib-version" getpropstr
+        over "_lib-version" getpropstr
         dup if strip-rcs
           "     ^INFO^Lib.ver. " swap strcat strcat
+        else pop
+        then
+        swap "_lib-symbol" getpropstr
+        dup if
+          " (^INFO^" swap strcat "^RESET^)" strcat strcat
         else pop
         then
       else pop "^RED^<garbage>^ ^"
@@ -206,7 +217,7 @@ lvar regprop
     then
     over over propdir? if
       dup regprop @ strlen strcut swap pop
-      "    " swap strcat
+      "  " swap strcat
       "/ (^SUCC^directory^ ^)" strcat tell
     then
     over swap nextprop
@@ -371,7 +382,7 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=/_version:FM$Revision: 1.19 $
+@set $cmd/register=/_version:FM$Revision: 1.20 $
 @set $cmd/register=/_/de:Use '@register #help' to get more information.
 @set $cmd/register=_docs:@register #help
 wh me=Installation of cmd-register finished.
