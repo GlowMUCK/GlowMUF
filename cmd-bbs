@@ -2,20 +2,22 @@
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2004/03/10 06:18:31 $ $Revision: 1.7 $
-  Author: Garth Minette
-  Mods By: Feaelin Moilar AKA Iain E. Davis
-  --------------------------------------------------------------------------- )
-( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette )
-( A program for storing and displaying multi-line messages   )
-  
+( cmd-bbs: $Date: 2004/03/11 20:57:41 $ $Revision: 1.8 $                      )
+( Author: Garth Minette                                                       )
+( Mods & Fixes By: Feaelin Moilar AKA Iain E. Davis                           )
+(                  Wixenstyx AKA Jennifer A. Boeyink                          )
+( Color By: Wixenstyx AKA Jennifer A. Boeyink                                 )
+( --------------------------------------------------------------------------- )
+( MUFmessageBoard v0.80   Copyright 5/31/91 by Garth Minette                  )
+( A program for storing and displaying multi-line messages                    )
+ 
 ( Custom succ/osucc messages:
      @set <action>=_read:You read a note.
      @set <action>=_oread:%N reads a note.
      @set <action>=_write:You write a note.
      @set <action>=_owrite:%N writes a note.
 )
-  
+ 
 ( @set here=_bbs:yes    -- This room has a BBS )
 ( @set here=_bbsro:yes  -- This BBS is read only cept for owner )
 ( @set here=_bbslib:yes -- BBS library room )
@@ -44,10 +46,16 @@
  
 ( 
   $Log: cmd-bbs,v $
+  Revision 1.8  2004/03/11 20:57:41  feaelin
+  Incorporated color changes by Wixenstyx
+  Applied bugfixes that Wixenstyx found
+  Replaced call to EDITdisplay to EDITansi_display so you
+  can use color in the body text of your messages.
+
   Revision 1.7  2004/03/10 06:18:31  feaelin
   Added some customization features.  With appropiate props, the commands can
   be changed.
-
+  
   Revision 1.6  2000/12/19 20:23:26  feaelin
   General cleanup.
   
@@ -58,7 +66,7 @@
   Fixed an issue where a custom look would not properly trigger
   the 'bbread' event when looking at a bulletin board object.
 )
-
+ 
 $include $lib/strings
 $include $lib/lmgr
 $include $lib/mesg
@@ -66,23 +74,20 @@ $include $lib/mesgbox
 $include $lib/edit
 $include $lib/editor
 $include $lib/glow
-  
+ 
 $def IndexRef     #0
 $def IndexDir     "_bbs/"
 $def BanProp      "~/ban/bbs"
 $def BanWriteProp "~/ban/bbswrite"
 $def notify       .wrapnotify
-$def .sedit_std   EDITOR
-$def STRtolower   tolower
-$def showrange    EDITdisplay
-  
+ 
 ( ***** Misc. Object ***** )
-  
+ 
 lvar theboard lvar bbsindexprog
-  
+ 
 : conBBSlistnew ( i --   ) bbsindexprog @ "BBSlistnew"  call ;
 : okpubboard?   ( d -- i ) bbsindexprog @ "okpubboard?" call ;
-  
+ 
 : mytell ( s -- )
   dup "bb" instring if
     loc @ "_cmdprefix" getpropstr dup "" strcmp if
@@ -93,7 +98,7 @@ lvar theboard lvar bbsindexprog
   then
   me @ swap ansi_notify
 ;
-   
+ 
 : which-board
   loc @ "_bbslib" getpropstr .yes? if
     me @ "_prefs/bbs/board" getpropstr
@@ -107,17 +112,17 @@ lvar theboard lvar bbsindexprog
   then
   theboard !
 ;
-  
+ 
 : get-new ( mbrdref -- i )
   me @ "_prefs/bbs/new/" rot intostr strcat getpropval
   dup 0 < if pop 0 then 1 -
 ;
-  
+ 
 : set-new ( mbrdref i -- i )
   1 +
   me @ "_prefs/bbs/new/" 4 rotate intostr strcat rot setprop
 ;
-  
+ 
 : find-next ( base d -- i )
   swap "#/" strcat swap dup get-new
   dup 0 < if 3 popn 1 exit then ( handle msg 0/1 )
@@ -130,17 +135,17 @@ lvar theboard lvar bbsindexprog
   1 + repeat
   -5 rotate 4 popn
 ;
-  
+ 
 : get-day ( -- dayint)
     systime dup 86400 % time 60 * + 60 * + - - 86400 /
 ;
-  
+ 
 ( ***** Message Board Object -- MBRD *****
     Display  [parm base dbref -- err]
     Add      [parm base dbref -- err]
     Kill     [parm base dbref -- err]
 )
-  
+ 
 : MBRDparseinfo (refnum base dbref -- keywords prot? hidden? poster day subject)
     (format: player# day# subject$)
     (new:    $topicword safe? player# day# subject$)
@@ -156,7 +161,7 @@ lvar theboard lvar bbsindexprog
     " " STRsplit swap atoi dbref swap
     " " STRsplit swap atoi swap
 ;
-  
+ 
 : MBRDoldparse (refnum base dbref -- keywords prot? poster day subject)
     MBOX-msginfo
     dup "$" 1 strncmp not if
@@ -168,27 +173,26 @@ lvar theboard lvar bbsindexprog
     " " STRsplit swap atoi dbref swap
     " " STRsplit swap atoi swap
 ;
-  
+ 
 : MBRDreparseinfo (keywords protect? hidden? poster day subject -- infostr)
     swap intostr " " strcat swap strcat
     swap int intostr " " strcat swap strcat
     swap intostr " " strcat swap strcat
     swap intostr " " strcat swap strcat
-    swap ";" " " subst STRtolower " " strcat
+    swap ";" " " subst tolower " " strcat
     swap strcat "$" swap strcat
 ;
-  
+ 
 : MBRDsetinfo (refnum base dbref keywords prot? hidden? poster day subject -- )
     MBRDreparseinfo -4 rotate MBOX-setinfo
 ;
-  
+ 
 : MBRDperms? (refnum base dbref -- bool)
     MBRDparseinfo pop pop swap pop rot rot pop pop
     dup ok? if me @ swap controls else pop 1 then
     me @ theboard @ controls or
 ;
-  
-  
+ 
 : MBRDdisplay-expire? (refnum base dbref -- bool)
     dup "_expire" getpropstr atoi
     dup not if pop pop pop pop 0 exit then
@@ -197,14 +201,12 @@ lvar theboard lvar bbsindexprog
     if pop pop 0 exit then
     get-day swap - <
 ;
-  
+ 
 : MBRDhidden? (refnum base dbref -- bool)
     MBRDparseinfo
     pop pop pop -3 rotate pop pop
 ;
-  
-  
-  
+ 
 : MBRDdisplay-header (topicstr refnum base dbref -- )
     3 pick 3 pick 3 pick MBRDparseinfo
     (topicstr refnum base dbref keywords protect? hidden? poster day subject)
@@ -221,30 +223,32 @@ lvar theboard lvar bbsindexprog
     else
         pop pop
     then
-    8 pick intostr 6 rotate if "}" else ")" then strcat
-    "    " swap strcat dup strlen 4 - strcut swap pop ( padding )
+    8 pick intostr 6 rotate if "}^RESET^" else ")^RESET^" then strcat
+    "^WHITE^" swap strcat
+    "    " swap strcat dup ansi_strlen 4 - strcut swap pop ( padding )
     5 rotate if "*" else " " then strcat
     4 rotate
     dup ok? if
-        dup player? if name
-        else pop "(Toaded Player)"
+        dup player? if name "^RESET^" strcat "^GREEN^" swap strcat
+        else pop "^GLOOM^(Toaded Player)^RESET^"
         then
-    else pop "(Toaded Player)"
+    else pop "^GLOOM^(Toaded Player)^RESET^"
     then
     strcat "  " strcat
     rot get-day swap - 
     dup 7 < if
-        dup not if pop "Today"
-        else dup 1 = if pop "Yesterday"
-            else intostr " days ago" strcat
+        dup not if pop "^CYAN^Today^RESET^"
+        else dup 1 = if pop "^CYAN^Yesterday^RESET^"
+            else intostr " days ago^RESET^" strcat
+              "^CYAN^" swap strcat
             then
         then
-    else 7 / dup 1 = if pop "Last week"
-        else intostr " weeks ago" strcat
+    else 7 / dup 1 = if pop "^AQUA^Last week^RESET^"
+        else intostr " weeks ago^RESET^" strcat "^AQUA^" swap strcat
         then
     then
-    " -- " strcat strcat swap
-    strcat me @ swap notify
+    "^WHITE^ -- ^YELLOW^" strcat strcat swap
+    strcat me @ swap ansi_notify
     pop pop pop
 ;
   
@@ -271,6 +275,9 @@ lvar theboard lvar bbsindexprog
 ;
   
 : MBRDdisplay (parmstr base dbref -- err)
+    " " mytell
+    "^YELLOW^Message List:" mytell
+    " " mytell
     3 pick number? if
         rot atoi rot rot
         3 pick 3 pick 3 pick MBOX-badref? if pop pop pop 2 exit then
@@ -279,23 +286,23 @@ lvar theboard lvar bbsindexprog
         "" 4 pick 4 pick 4 pick MBRDdisplay-header
         3 pick 3 pick 3 pick MSG-item atoi
         over swap set-new
-        MBOX-message showrange
+        MBOX-message EDITansi_display
         " " mytell
     else
-        rot STRtolower -3 rotate
+        rot tolower -3 rotate
         over over MBOX-count
         1 MBRDdisplay-loop
         " " mytell
-"'bbnext' reads next unread message, 'bbnext <count>' reads multiple." mytell
-"'bbread' lists all messages, 'bbread <num>' reads that message." mytell
-"'bbwrite' posts a new message, it prompts you for what it needs." mytell
+        "^WHITE^'^CYAN^bbnext^WHITE^' reads next unread message, '^CYAN^bbnext <count>^WHITE^' reads multiple." mytell
+        "^WHITE^'^YELLOW^bbread^WHITE^' lists all messages, '^YELLOW^bbread <num>^WHITE^' reads that message." mytell
+        "^WHITE^'^GREEN^bbwrite^WHITE^' posts a new message, it prompts you for what it needs." mytell
         loc @ "_bbslib" getpropstr .yes? if bbs-index-help then
     then
     0 (no error)
 ;
   
 : MBRDreadlines ( -- {str_rng})
-    0 .sedit_std pop
+    0 EDITOR pop
 ;
   
 : MBRDadd (parmstr base dbref -- err)
@@ -304,12 +311,12 @@ lvar theboard lvar bbsindexprog
     then
     rot "=" STRsplit STRstrip swap STRstrip
     dup not if
-        "What is the subject of this post?"
+        "^YELLOW^What is the subject of this post?"
         mytell pop read STRstrip
     then
     swap
     dup not if
-        "What keywords fit this post? (ie: art, building, place, personal)"
+        "^YELLOW^What ^RED^keywords^YELLOW^ fit this post? (ie: art, building, place, personal)"
         mytell pop read STRstrip
     then
     0 0 me @ get-day 6 rotate MBRDreparseinfo rot rot
@@ -321,7 +328,7 @@ lvar theboard lvar bbsindexprog
         over 4 + rotate
         3 pick 4 + rotate
         MBOX-append pop
-        "Message posted." mytell 0 (no error)
+        "^SUCC^Message posted." mytell 0 (no error)
     else pop pop pop pop 4 (post cancelled) then
 ;
   
@@ -339,7 +346,7 @@ lvar theboard lvar bbsindexprog
         pop pop pop 2 exit
     then
     MBOX-delmesg
-    "Message erased." mytell 0 (no error)
+    "^SUCC^Message erased." mytell 0 (no error)
 ;
   
 : MBRDprotect (parmstr base dbref -- err)
@@ -351,7 +358,7 @@ lvar theboard lvar bbsindexprog
     then
     3 pick 3 pick 3 pick MBRDparseinfo
     5 rotate not -5 rotate MBRDsetinfo
-    "Message protected." mytell 0 (no error)
+    "^SUCC^Message protected." mytell 0 (no error)
 ;
   
 : MBRDhide (parmstr base dbref -- err)
@@ -363,7 +370,7 @@ lvar theboard lvar bbsindexprog
     then
     3 pick 3 pick 3 pick MBRDparseinfo
     4 rotate not -4 rotate MBRDsetinfo
-    "Message protected." mytell 0 (no error)
+    "^SUCC^Message hidden." mytell 0 (no error)
 ;  
   
 : MBRDedit (parmstr base dbref -- err)
@@ -380,19 +387,19 @@ lvar theboard lvar bbsindexprog
         pop pop pop 2 exit
     then
     3 pick 3 pick 3 pick MBOX-message
-    .sedit_std pop dup not if
+    EDITOR pop dup not if
         pop pop pop pop 5 (no error) exit
     then
     dup 4 + rotate over 4 + rotate 3 pick 4 + rotate
     3 pick 3 pick 3 pick MBRDparseinfo
   
-    me @ "Current subject: \"" 3 pick strcat "\"" strcat notify
-    "Enter new subject, or press space and return to keep old one."
+    me @ "^INFO^Current subject: \"^NOTE^" 3 pick strcat "^INFO^\"" strcat notify
+    "^INFO^Enter new subject, or ^RED^press space and return^INFO^ to keep old one."
     mytell read STRstrip dup if swap then pop
   
     6 rotate
-    me @ "Current keywords: \"" 3 pick strcat "\"" strcat notify
-    "Enter new keywords, or press space and return to keep old ones."
+    me @ "^INFO^Current keywords: \"^NOTE^" 3 pick strcat "^INFO^\"" strcat notify
+    "^INFO^Enter new keywords, or ^RED^press space and return^INFO^ to keep old ones."
     mytell read STRstrip dup if swap then pop
     -6 rotate
   
@@ -408,7 +415,7 @@ lvar theboard lvar bbsindexprog
   begin dup while
     over intostr 5 pick 5 pick
     MBRDdisplay if
-"No more unread messages.  Type 'bbclear' to go back to the first message." 
+"^FAIL^No more unread messages.  Type 'bbclear' to go back to the first message." 
       mytell break
     then
     1 - swap 1 + swap
@@ -430,10 +437,10 @@ lvar theboard lvar bbsindexprog
     IndexRef swap getpropstr atoi dbref
     dup okpubboard? if
       me @ "_prefs/bbs/board" 3 pick intostr setpropstr
-      "You are now reading the board at "
-      swap name strcat "." strcat mytell
-    else pop "That board is not set public." mytell then
-  else pop "Which board?" mytell then
+      "^INFO^You are now reading the board at ^GREEN^"
+      swap name strcat "^INFO^." strcat mytell
+    else pop "^FAIL^That board is not set public." mytell then
+  else pop "^FAIL^Which board?" mytell then
 ;
   
 : BBSlistnew ( s i -- )
@@ -442,37 +449,37 @@ lvar theboard lvar bbsindexprog
   else swap pop conBBSlistnew then
   me @ "_prefs/bbs/board" getpropstr dup atoi dbref
   dup okpubboard? rot and if
-    "You are currently reading the board at "
-    swap name strcat "." strcat mytell
-  else pop "You are currently not reading any board." mytell then
+    "You are currently reading the board at ^GREEN^"
+    swap name strcat "^YELLOW^." strcat mytell
+  else pop "^FAIL^You are currently not reading any board." mytell then
   " " mytell
   bbs-index-help
 ;
   
 : BBSclearnew ( d -- i ) ( Clear newest read message )
   me @ "_prefs/bbs/new/" rot intostr strcat remove_prop
-  "Index reset to first message." mytell
+  "^INFO^Index reset to first message." mytell
 ;
   
 : bbshelp ( -- )
-  "Bulletin Board Help Screen" mytell
-  "~~~~~~~~~~~~~~" mytell
-  "bbread      -- List all messages for the current board" mytell
-  "bbnext      -- Read the next unread message" mytell
-  "bbnext <n>  -- Read the next 'n' messages." mytell
-  "bbread <m>  -- Read message 'm' (sets 'next' count)" mytell
-  "bbclear     -- Reset 'next' count to first message of board" mytell
-  "               This will remove a board from your 'new' list" mytell
+  "^YELLOW^Bulletin Board Help Screen" mytell
+  "^GREEN^~~~~~~~~~~~~~~" mytell
+  "^YELLOW^bbread^WHITE^      -- List all messages for the current board" mytell
+  "^YELLOW^bbnext ^WHITE^     -- Read the next unread message" mytell
+  "^YELLOW^bbnext <n> ^WHITE^ -- Read the next 'n' messages." mytell
+  "^YELLOW^bbread <m>^WHITE^  -- Read message 'm' (sets 'next' count)" mytell
+  "^YELLOW^bbclear ^WHITE^    -- Reset 'next' count to first message of board" mytell
+  "               ^WHITE^This will remove a board from your 'new' list" mytell
   " " mytell
-  "bbindex     -- List all public boards" mytell
-  "bbindex <n> -- Change to read board 'n' at a library of boards" mytell
-  "bbnew       -- List boards you have read before with new messages" mytell
+  "^CYAN^bbindex  ^WHITE^   -- List all public boards" mytell
+  "^CYAN^bbindex <n>^WHITE^ -- Change to read board 'n' at a library of boards" mytell
+  "^CYAN^bbnew   ^WHITE^    -- List boards you have read before with new messages" mytell
   " " mytell
-  "bbwrite     -- Post a message" mytell
-  "bberase <m> -- Delete a message " mytell
-  "bbedit <m>  -- Edit a message " mytell
-  "bbhide <m>  -- Hide a message" mytell
-  "bbkeep <m>  -- Keep a message from expiring" mytell
+  "^GREEN^bbwrite   ^WHITE^  -- Post a message" mytell
+  "^GREEN^bberase <m> ^WHITE^-- Delete a message " mytell
+  "^GREEN^bbedit <m> ^WHITE^ -- Edit a message " mytell
+  "^GREEN^bbhide <m> ^WHITE^ -- Hide a message" mytell
+  "^GREEN^bbkeep <m> ^WHITE^ -- Keep a message from expiring" mytell
 ;
   
 ( ***** Interface Object *****
@@ -480,15 +487,15 @@ lvar theboard lvar bbsindexprog
 : basename "_bbs/msgs" ;
   
 : handle-errs ( i -- )
-    ( dup not if pop "Done." mytell exit then )
+    ( dup not if pop "^SUCC^Done." mytell exit then )
     dup not if pop exit then
-    dup 1 = if pop "Should be a number." mytell exit then
-    dup 2 = if pop "Invalid message number." mytell exit then
-    dup 3 = if pop "Permission denied." mytell exit then
-    dup 4 = if pop "Cancelling post." mytell exit then
-    dup 5 = if pop "Cancelling edit." mytell exit then
-    dup 6 = if pop "Board is read only." mytell exit then
-    pop "Unknown error." mytell exit
+    dup 1 = if pop "^FAIL^Should be a number." mytell exit then
+    dup 2 = if pop "^FAIL^Invalid message number." mytell exit then
+    dup 3 = if pop "^FAIL^Permission denied." mytell exit then
+    dup 4 = if pop "^FAIL^Cancelling post." mytell exit then
+    dup 5 = if pop "^FAIL^Cancelling edit." mytell exit then
+    dup 6 = if pop "^FAIL^Board is read only." mytell exit then
+    pop "^FAIL^Unknown error." mytell exit
 ;
   
 : handle-succs-and-osuccs
@@ -531,7 +538,7 @@ lvar theboard lvar bbsindexprog
   then
   which-board
   theboard @ #-2 dbcmp if
-    "The board mirrored here is bad, please tell the room owner."
+    "^FAIL^The board mirrored here is bad, please tell the room owner."
     mytell pop exit
   then
   handle-succs-and-osuccs
@@ -543,17 +550,17 @@ lvar theboard lvar bbsindexprog
     pop 0 BBSlistnew exit
   then
   theboard @ #-3 dbcmp if
-    pop pop "There is no bulletin board here.  Type 'bbhelp' for help."
+    pop pop "^FAIL^There is no bulletin board here.  Type 'bbhelp' for help."
     mytell exit
   then
   dup "index" instring if
     loc @ "_bbslib" getpropstr .yes? if
       pop 1 BBSlistnew exit
-    else "You are not at a library.  Type 'bbhelp' for help."
+    else "^FAIL^You are not at a library.  Type 'bbhelp' for help."
     mytell pop pop exit then
   then
   theboard @ #-1 dbcmp if
-    "You need to select a board to read.  Type 'bbindex' to list boards."
+    "^FAIL^You need to select a board to read.  Type 'bbindex' to list boards."
     mytell pop pop exit
   then
   dup "read" instring if
@@ -569,7 +576,7 @@ lvar theboard lvar bbsindexprog
     exit
   then
   me @ BanWriteProp getpropstr .yes? if
-    "^RED^You are banned from writing on bulletin boards." mytell
+    "^FAIL^You are banned from writing on bulletin boards." mytell
     pop pop BBShelp exit
   then
   dup "write" instring if
@@ -598,7 +605,7 @@ lvar theboard lvar bbsindexprog
 : debug-bbs ( s -- )
   interface
   depth if
-    depth "Bad stack depth: " swap intostr strcat mytell
+    depth "^FAIL^Bad stack depth: ^INFO^" swap intostr strcat mytell
     .debug-line
   then
 ;
@@ -621,5 +628,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $tmp/prog1=_version:0.80FM$Revision: 1.7 $
+@set $tmp/prog1=_version:0.80FM$Revision: 1.8 $
 "Installation of cmd-bbs complete.
