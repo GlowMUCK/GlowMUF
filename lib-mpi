@@ -2,7 +2,7 @@
 @program lib-mpi
 1 9999 d
 1 i
-( lib-MPI: $Date: 1998/08/23 16:45:24 $ $Revision: 1.1 $
+( lib-MPI: $Date: 2000/01/11 15:23:07 $ $Revision: 1.2 $
   Originally taken from the FuzzBall MUF Library
   Author: Foxen                                                               )
 ( --------------------------------------------------------------------------- )
@@ -23,6 +23,9 @@
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-mpi,v $
+  Revision 1.2  2000/01/11 15:23:07  feaelin
+  Documentation corrections.
+
   Revision 1.1  1998/08/23 16:45:24  glow
   Initial revision
 
@@ -50,7 +53,6 @@ q
 @register lib-mpi=lib/mpi
 @set $lib/mpi=L
 @set $lib/mpi=W
-@set $lib/mpi=/_/de:lib-mpi:List lines 1-14 for documentation.
 @set $lib/mpi=_defs/parse_desc:"$lib/mpi" match "parse_desc" call
 @set $lib/mpi=_defs/parse_idesc:"$lib/mpi" match "parse_idesc" call
 @set $lib/mpi=_defs/parse_succ:"$lib/mpi" match "parse_succ" call
@@ -59,6 +61,7 @@ q
 @set $lib/mpi=_defs/parse_ofail:"$lib/mpi" match "parse_ofail" call
 @set $lib/mpi=_defs/parse_drop:"$lib/mpi" match "parse_drop" call
 @set $lib/mpi=_defs/parse_odrop:"$lib/mpi" match "parse_odrop" call
-@set $lib/mpi=_docs:@list $lib/mpi=1-14
-@set $lib/mpi=_lib-version:1.0FM$Revision: 1.1 $
+@set $lib/mpi=/_/de:lib-mpi:List lines 1-15 for documentation.
+@set $lib/mpi=_docs:@list $lib/mpi=1-15
+@set $lib/mpi=_lib-version:1.0FM$Revision: 1.2 $
 "Installation of lib-mpi complete.
