@@ -2,7 +2,7 @@
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 1998/07/27 19:50:36 $ $Revision: 1.1 $                                       )
+( lib-glow-standard: $Date: 1998/07/30 04:13:02 $ $Revision: 1.2 $                                       )
 ( -------------------------------------------------------------------------- )
 ( A library based on the macros originally stored in the following files:
   macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
@@ -22,7 +22,6 @@
   cleancommas -- make commafied lists prettier
   run         -- run description programs
   wrapnotify  -- do line-wrapping for notify
-  split       -- split a string given a delimiter
   splitarg    -- split a string at first space or = sign
   pmatch      -- match a player name
   null        -- basic null program, for locks, always true                  )
@@ -51,6 +50,9 @@
 ( -------------------------------------------------------------------------- )
 (
   $Log: lib-glow-standard,v $
+  Revision 1.2  1998/07/30 04:13:02  glow
+  Moved split to lib-strings.
+
   Revision 1.1  1998/07/27 19:50:36  glow
   Initial revision
 
@@ -179,12 +181,6 @@ $define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
       pop pop "Program loop aborted." tell
     else call then
   else pop wrap then
-;
- 
-: split ( s si -- s s )
-   over over instr dup if
-      rot swap 1 - strcut rot strlen strcut swap pop
-   else pop pop "" then
 ;
  
 : splitargs ( s -- s s )
@@ -331,5 +327,5 @@ q
 @set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/for:dup if begin
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
 "Installation of lib-glow-standard completed.
