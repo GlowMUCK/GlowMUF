@@ -2,7 +2,7 @@
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 1998/07/30 19:25:37 $ $Revision: 1.7 $
+( lib-strings: $Date: 1999/02/13 19:06:17 $ $Revision: 1.8 $
   Originally included in the FuzzBall MUF archive.                           )
 ( -------------------------------------------------------------------------- )
 ( ***** Misc String routines -- STR *****
@@ -38,6 +38,9 @@ This routine is useful for parsing command line input:
 )
 (
   $Log: lib-strings,v $
+  Revision 1.8  1999/02/13 19:06:17  feaelin
+  Fixed .split2 entry
+
   Revision 1.7  1998/07/30 19:25:37  glow
   *** empty log message ***
 
@@ -182,6 +185,7 @@ q
 @set $tmp/prog1=/_defs/.singlespace:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.sms:"$lib/strings" match "sms" call
 @set $tmp/prog1=/_defs/.split:"$lib/strings" match "split" call
+@set $tmp/prog1=/_defs/.split2:"$lib/strings" match "split" call
 @set $tmp/prog1=/_defs/.splitarg:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/.splitargs:"$lib/strings" match "splitargs" call
 @set $tmp/prog1=/_defs/.splitfirst:"$lib/strings" match "splitargs" call
@@ -204,5 +208,5 @@ q
 @set $tmp/prog1=/_defs/STRstrip:strip
 @set $tmp/prog1=/_defs/STRsts:striptail
 @set $tmp/prog1=/_docs:@list $lib/strings=4-31
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
 "Installation of lib-strings complete.
