@@ -2,11 +2,14 @@
 @prog macro-longdesc
 1 99999 d
 1 i
-( macro-longdesc: $Date: 1998/08/23 21:38:42 $ $Revision: 1.1 $
+( macro-longdesc: $Date: 1998/08/23 22:10:58 $ $Revision: 1.2 $
   Author: Pakrat                                                              )
 ( --------------------------------------------------------------------------- )
 (
   $Log: macro-longdesc,v $
+  Revision 1.2  1998/08/23 22:10:58  glow
+  Finished RCS-ifying.
+
   Revision 1.1  1998/08/23 21:38:42  glow
   Initial revision
 
@@ -54,5 +57,5 @@ q
 @set $tmp/prog1=L
 @set $tmp/prog1=M2
 @set $tmp/prog1=/_/lok:A new beginning(#0R)
-@set $tmp/prog1=_version:FM1.0
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of macro-longdesc complete.
