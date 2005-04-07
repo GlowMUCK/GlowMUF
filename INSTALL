@@ -1,4 +1,4 @@
-INSTALL $Date: 2005/01/14 16:32:03 $ $Revision: 1.15 $
+INSTALL $Date: 2005/04/07 13:03:14 $ $Revision: 1.16 $
 ---------------------------------------------------------------------------
 FMMUF 1.0.1
 -----------
@@ -53,6 +53,8 @@ lib-connects
 lib-showlist
 cmd-mv-cp
 lib-userprop
+lib-wordwrap
+lib-write
 
 III. cmd-path
 ------------

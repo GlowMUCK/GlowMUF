@@ -1,4 +1,4 @@
-CHANGES $Date: 2005/01/14 16:32:02 $ $Revision: 1.19 $
+CHANGES $Date: 2005/04/07 13:03:39 $ $Revision: 1.20 $
 Author: Feaelin
 -------------------------------------------------------------------------------
 I try to keep all the changes on a by program basis, so that you can install
@@ -8,6 +8,8 @@ and their current versions, or check the version number in the individual files
 and compare it to the version shown by @register.
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
+00) Most Programs:Various updates to documentation and installation scripts.
+                  General reduction of dependency on lib-glow-standard
 01) cmd-page:     Replaced the built-in editor with appropiate calls to
                   lib-editor. Revised front end so p #mail <name> <name>...
                   worked correctly. Added back in the #changes support and the
