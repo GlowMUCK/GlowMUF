@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-stackrng...
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2005/04/05 15:38:24 $ $Revision: 1.13 $                )
+( lib-stackrng: $Date: 2005/04/07 21:11:11 $ $Revision: 1.14 $                )
 ( Purpose: Stack manipulation of an entire range                              )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -46,6 +46,9 @@ wh me=Beginning installation of lib-stackrng...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.14  2005/04/07 21:11:11  feaelin
+  Library Symbol Added
+
   Revision 1.13  2005/04/05 15:38:24  feaelin
   Added aliases for library words to make the library use the new
   word-name standard.
@@ -209,5 +212,6 @@ q
 @set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
 @set $lib/stackrng=/_docs:@list $lib/stackrng=1-42
 @set $lib/stackrng=/_/de:lib-stackrng: List lines 1-42 for documentation.
-@set $lib/stackrng=/_lib-version:FM$Revision: 1.13 $
+@set $lib/stackrng=/_lib-version:FM$Revision: 1.14 $
+@set $lib/stackrng=/_lib-symbol:SRNG
 wh me=Installation of lib-stackrng completed
