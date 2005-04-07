@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/04/05 16:42:56 $ $Revision: 1.19 $                 )
+( lib-strings: $Date: 2005/04/07 21:08:58 $ $Revision: 1.20 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -43,6 +43,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.20  2005/04/07 21:08:58  feaelin
+  Library Symbol added
+
   Revision 1.19  2005/04/05 16:42:56  feaelin
   *** empty log message ***
 
@@ -249,5 +252,6 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-37
 @set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.19 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.20 $
+@set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
