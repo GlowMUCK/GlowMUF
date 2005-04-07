@@ -1,64 +1,59 @@
-"Beginning installation of lib-userprop...
+wh me=Beginning installation of lib-userprop...
 @prog lib-userprop
 1 99999 d
 1 i
-( lib-userprop: $Date: 2005/03/21 01:31:43 $ $Revision: 1.4 $
-  Author: PakRat                                                              )
+( lib-userprop: $Date: 2005/04/07 13:45:48 $ $Revision: 1.5 $                 )
+( Purpose: Provides secured access to property directories                    )
+( Author: PakRat                                                              )
+( Contributors: None                                                          )
+( Dependencies: lib-strings                                                   )
 ( --------------------------------------------------------------------------- )
-( WizProp-Propdir Manager by PakRat v1.1 -- $lib/userprop               
-  This gives a program exclusive access to props in the @u/named propdir 
-  as if it was a wiz program.  Only program dbrefs set to read this pdir 
-  can access information inside.  Each program dbref can only access one 
-  wizpropdir, but can access any subpropdirs of that propdir. A program  
-  will not know which propdir it is being stored in, that is completely  
-  internal, it only knows it has a propdir that it can have completely   
-  to itself.  If wished the dbref can be changed to 'prog' to use the    
-  program dbref to store Priv-Data on.  #0 may be more convenient for    
-  wizards, even though the program supports listing all programs in a    
-  clean list. 
-  *** SETUP *** 
-  @reg #program=lib/userprop            Add to proper @reg lib dir      
-  @set $lib/userprop=W                  Ew, it needs a wizbit!          
-  @set $lib/userprop=L                  Let everyone use it             
-  @action wpsetup=#0                    Add the wizard-setup action     
-  @link wpsetup=$lib/userprop           Link the program                
-  @desc wpsetup=@$lib/userprop -help    Make a decent description       
-  
-  There are quite a few special settings needed and are performed after 
-  the program compiles:                                                 
-  
-  Once the program is @registered properly, /pipe or otherwise send the 
-  commands in 'wizprop.setup' to the muck as a wizard to complete setup 
-  
-  Check below for more instructions on what this masterpiece does.      )
-  
-( Customizable settings )
-$def WizProp-UserPropDir "@u/"
-$def WizProp-PrivPropDir "@user/"
-$def WizProp-PrivDbref    prog
-$def Wizard? .archwizard?
-  
-( WizProp-UserPropDir is the propdir a program has exclusive access to. )
-( WizProp-PrivPropDir is the propdir wizards set access privileges in.  )
-( WizProp-PrivDbref   is the dbref the access privileges are stored on. )
-    
-  
-( ********** How to use User Props in your own programs ********** )
-( 1. Ask a wizard for a private propdir for your program.          )
-( 2. Add $include $lib/UserProp as the first line in your program. )
-( 3. Use the 'UFunction' settings to call the public funtions,     )
-(    not the WizProp-Function ones.  The UFunctions will appear as )
-(    if they are builtin commands just like setpropstr, etc.       )
-  
-( Basic format is:  #dbref "property" UGetPropStr               )
-( This would return the string stored in '@user/property' on #d )
-  
-( ** Always use UPrivilege? to make sure your program has a user ** )
-( ** propdir. Otherwise you will receive null information and no ** )
-( ** properties will be set or cleared. ** )  
+( WizProp-Propdir Manager by PakRat v1.1 -- $lib/userprop                     )
+( This gives a program exclusive access to props in the @u/named propdir as   )
+( if it was a wiz program. Only program dbrefs set to read this pdir can      )
+( access information inside. Each program dbref can only access one wizpropdir)
+( but can access any subpropdirs of that propdir. A program will not know     )
+( which propdir it is being stored in, that is completely internal, it only   )
+( knows it has a propdir that it can have completely to itself.  If wished,   )
+( the dbref can be changed to 'prog' to use the program dbref to store        )
+( Priv-Data on. #0 may be more convenient for wizards, even though the        )
+( program supports listing all programs in a clean list.                      )
+( *** SETUP ***                                                               )
+( @reg #program=lib/userprop            Add to proper @reg lib dir            )
+( @set $lib/userprop=W                  Ew, it needs a wizbit!                )
+( @set $lib/userprop=L                  Let everyone use it                   )
+( @action wpsetup=#0                    Add the wizard-setup action           )
+( @link wpsetup=$lib/userprop           Link the program                      )
+( @desc wpsetup=@$lib/userprop -help    Make a decent description             )
+(                                                                             )
+( There are quite a few special settings needed and are performed after the   )
+( program compiles:                                                           )
+(                                                                             )
+( Once the program is @registered properly, /pipe or otherwise send the       )
+( commands in 'wizprop.setup' to the muck as a wizard to complete setup       )
+(                                                                             )
+( Check below for more instructions on what this masterpiece does.            )
+(                                                                             )
+( ********** How to use User Props in your own programs **********            )
+( 1. Ask a wizard for a private propdir for your program.                     )
+( 2. Add $include $lib/UserProp as the first line in your program.            )
+( 3. Use the 'UFunction' settings to call the public funtions,                )
+(    not the WizProp-Function ones.  The UFunctions will appear as            )
+(    if they are builtin commands just like setpropstr, etc.                  )
+(                                                                             )
+( Basic format is:  #dbref "property" UGetPropStr                             )
+( This would return the string stored in '@user/property' on #d               )
+( ** Always use UPrivilege? to make sure your program has a user **           )
+( ** propdir. Otherwise you will receive null information and no **           )
+( ** properties will be set or cleared. **                                    )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-userprop,v $
+  Revision 1.5  2005/04/07 13:45:48  feaelin
+  Eliminated Dependence on lib-glow-standard
+  Cleaned up documentation
+  Updated installer script
+
   Revision 1.4  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -69,6 +64,19 @@ $def Wizard? .archwizard?
   lib-userprop needs lib-strings.
 )
 ( --------------------------------------------------------------------------- )
+
+$include $lib/strings
+
+( Customizable settings                                                       )
+$def WizProp-UserPropDir "@u/"
+$def WizProp-PrivPropDir "@user/"
+$def WizProp-PrivDbref    prog
+  
+( WizProp-UserPropDir is the propdir a program has exclusive access to. )
+( WizProp-PrivPropDir is the propdir wizards set access privileges in.  )
+( WizProp-PrivDbref   is the dbref the access privileges are stored on. )
+(                                                                             )
+
 $define UPrivilege?  WizProp-Privilege?  $enddef
 $define UAddProp     WizProp-AddProp     $enddef
 $define URemove_Prop WizProp-Remove_Prop $enddef
@@ -89,9 +97,6 @@ $define n me @ swap notify $enddef
 $define SetPropStr dup if SetProp else pop Remove_Prop then $enddef
 $define SetPropVal dup if SetProp else pop Remove_Prop then $enddef
   
-$include $lib/glowstandard
-$include $lib/strings
-
 lvar PropDirFunc
 lvar bytes 
 lvar numprops
@@ -101,7 +106,7 @@ lvar HeaderSize
     dup strlen 1 - strcut pop
   repeat
 ;
-  
+ 
 : AddSlash ( s -- s ) ( Add a propdir slash at right side )
   dup if
     dup strlen 1 - strcut
@@ -113,7 +118,7 @@ lvar HeaderSize
     pop "/"
   then
 ;
-  
+ 
 : GetUserPropDir ( -- s=propdir i=success? )
   WizProp-PrivDbref
   WizProp-PrivPropDir
@@ -128,12 +133,12 @@ lvar HeaderSize
     0
   then
 ;
-  
+ 
 : WizProp-privilege? ( -- i )
   GetUserPropDir
   swap pop
 ;
-  
+ 
 : WizProp-AddProp ( d s s i -- )   
   GetUserPropDir if
     4 rotate strcat
@@ -143,7 +148,7 @@ lvar HeaderSize
     pop pop pop pop
   then
 ;
-  
+ 
 : WizProp-Remove_Prop ( d s -- )
   GetUserPropDir if
     swap strcat remslash remove_prop
@@ -151,7 +156,7 @@ lvar HeaderSize
     pop pop pop
   then
 ;
-  
+ 
 : WizProp-GetPropStr ( d s -- s )
   GetUserPropDir if
     swap strcat remslash getpropstr
@@ -159,7 +164,7 @@ lvar HeaderSize
     pop pop pop ""
   then
 ;
-   
+  
 : WizProp-EnvPropStr ( d s -- d s )
   GetUserPropDir if
     swap strcat remslash envpropstr
@@ -167,7 +172,7 @@ lvar HeaderSize
     pop pop pop #-1 ""
   then
 ;
-  
+ 
 : WizProp-GetPropVal ( d s -- i )
   GetUserPropDir if
     swap strcat remslash getpropval
@@ -175,7 +180,7 @@ lvar HeaderSize
     pop pop pop 0
   then
 ;
-  
+ 
 : WizProp-GetProp ( d s -- x )
   GetUserPropDir if
     swap strcat remslash getprop
@@ -183,7 +188,7 @@ lvar HeaderSize
     pop pop pop 0
   then
 ;
-  
+ 
 : WizProp-Propdir? ( d s -- i )
   GetUserPropDir if
     swap strcat propdir?
@@ -191,7 +196,7 @@ lvar HeaderSize
     pop pop pop 0
   then
 ;
-  
+ 
 : WizProp-NextProp ( d s -- s )
   GetUserPropDir if
     dup strlen HeaderSize !
@@ -204,7 +209,7 @@ lvar HeaderSize
     pop pop pop ""
   then
 ; 
-  
+ 
 : WizProp-SetPropStr ( d s s -- )
   GetUserPropDir if
     rot strcat remslash swap setpropstr
@@ -212,7 +217,7 @@ lvar HeaderSize
     pop pop pop pop
   then
 ;
-  
+ 
 : WizProp-SetPropVal ( d s i -- )
   GetUserPropDir if
     rot strcat remslash swap setpropval
@@ -220,7 +225,7 @@ lvar HeaderSize
     pop pop pop pop
   then
 ;
-  
+ 
 : WizProp-SetProp ( d s x -- )
   GetUserPropDir if
     rot strcat remslash swap setprop
@@ -228,7 +233,7 @@ lvar HeaderSize
     pop pop pop pop
   then
 ;
-  
+ 
 : Do-PropDir-Loop ( d s -- )
   ( Do something to each prop in propdir and all subpropdirs )
   over over PropDirFunc @ execute
@@ -242,19 +247,19 @@ lvar HeaderSize
   then
   pop pop
 ;
-  
+ 
 ( I changed DelPropDir to use a function that calls a loop so that if )
 ( similar future functions such as list all props are wanted they can )
 ( be added with the greatest of ease. )
-  
+ 
 : Do-PropDir ( d s a -- )
   PropDirFunc !
   RemSlash
   Do-PropDir-Loop
 ;
-  
+ 
 : Do-RemProp remove_prop ;  
-  
+ 
 : WizProp-DelPropDir ( d s -- )
   GetUserPropDir if
     swap strcat 
@@ -264,7 +269,7 @@ lvar HeaderSize
     pop pop pop
   then
 ;
-  
+ 
 : Do-AddStats ( d s -- )
   numprops @ 1 + numprops !
   dup
@@ -276,7 +281,7 @@ lvar HeaderSize
   +
   bytes @ + bytes !
 ;
-  
+ 
 : WizProp-PropDirInfo ( d s -- i=num_of_props i=bytes_used )
   ( Use s = "" to see total stats of props stored on d )
   0 bytes ! 0 numprops !
@@ -288,7 +293,7 @@ lvar HeaderSize
     pop pop pop 0 0
   then
 ;
-    
+   
 : Do-ListProp ( d s -- )
   swap over getpropstr
   dup if
@@ -299,7 +304,7 @@ lvar HeaderSize
     pop pop
   then
 ;
-  
+ 
 : WizProp-PropDirList ( d s -- )
   ( This lists properties stored on d in user subpropdir s recursively )
   GetUserPropDir if
@@ -310,7 +315,7 @@ lvar HeaderSize
     pop pop pop
   then
 ;
-  
+ 
 : Do-Help
   "User @Propdir Manager by PakRat v1.0" n
   "~~~~~~~~~~~~~~~~~~~~~" n
@@ -331,7 +336,7 @@ lvar HeaderSize
   " Please ask original owner if it's ok for Rogue Hacker Joe" n
   " to access a given propdir before granting access to that propdir." n
 ;
-  
+ 
 : Do-Match ( s -- d )
   match
   ( Since program is wizzed it does #num matching automatically )
@@ -342,7 +347,7 @@ lvar HeaderSize
     dup #-2 dbcmp if "I don't know which one you mean!" n pop #-1 then
   then
 ;
-  
+ 
 : Do-AddProg ( spdir sprog -- )
   Do-Match dup if
     dup program? not if
@@ -363,7 +368,7 @@ lvar HeaderSize
     "." strcat n
   else pop pop then
 ;
-  
+ 
 : Do-DelProg ( sprog -- )
   Do-Match dup if
     WizProp-PrivDbref
@@ -379,7 +384,7 @@ lvar HeaderSize
     " propdirs." strcat n
   else pop then
 ;
-  
+ 
 : Do-ListProgs ( -- )
   WizProp-PrivDbref
   WizProp-PrivPropDir
@@ -405,13 +410,15 @@ lvar HeaderSize
   pop pop
   "Done." n
 ;
-  
+ 
 : Maintain-Privs ( s -- )
   "me" match dup me !
   location loc !
   trig trigger !
-  trig .firstname command !
-  me @ Wizard? not if pop "Permission denied." n exit then
+  trig 
+  name dup ";" instr if dup ";" instr 1 - strcut pop then
+  command !
+  me @ "archwizard" flag? not if pop "Permission Denied." n exit then
     
   tolower
   dup "h" 1 strncmp not if pop "" then
@@ -420,12 +427,12 @@ lvar HeaderSize
   then
   
   dup "l" 1 strncmp not if pop Do-ListProgs exit then
-  " " .split2 
+  " " STR-split 
   over over and not if
     Do-Help pop pop exit
   then
   over "d" 1 strncmp not if swap pop Do-DelProg exit then
-  "=" .split2
+  "=" STR-split
   over over and not if
     Do-Help pop pop pop exit
   then
@@ -455,28 +462,43 @@ public WizProp-PropDirList ( d s s -- )   ( List user propdir recursively )
 c
 q
 @register lib-userprop=lib/userprop
-@register #me lib-userprop=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W3
-@set $tmp/prog1=/_defs/UAddProp:"$lib/UserProp" match "WizProp-AddProp" call
-@set $tmp/prog1=/_defs/UDelPropDir:"$lib/UserProp" match "WizProp-DelPropDir" call
-@set $tmp/prog1=/_defs/UEnvPropStr:"$lib/UserProp" match "WizProp-EnvPropStr" call
-@set $tmp/prog1=/_defs/UGetProp:"$lib/UserProp" match "WizProp-GetProp" call
-@set $tmp/prog1=/_defs/UGetPropStr:"$lib/UserProp" match "WizProp-GetPropStr" call
-@set $tmp/prog1=/_defs/UGetPropVal:"$lib/UserProp" match "WizProp-GetPropVal" call
-@set $tmp/prog1=/_defs/UNextProp:"$lib/UserProp" match "WizProp-NextProp" call
-@set $tmp/prog1=/_defs/UPrivilege?:"$lib/UserProp" match "WizProp-Privilege?" call
-@set $tmp/prog1=/_defs/UPropdir?:"$lib/UserProp" match "WizProp-Propdir?" call
-@set $tmp/prog1=/_defs/UPropDirInfo:"$lib/UserProp" match "WizProp-PropDirInfo" call
-@set $tmp/prog1=/_defs/UPropDirList:"$lib/UserProp" match "WizProp-PropDirList" call
-@set $tmp/prog1=/_defs/URemove_Prop:"$lib/UserProp" match "WizProp-Remove_Prop" call
-@set $tmp/prog1=/_defs/USetProp:"$lib/UserProp" match "WizProp-SetProp" call
-@set $tmp/prog1=/_defs/USetPropStr:"$lib/UserProp" match "WizProp-SetPropStr" call
-@set $tmp/prog1=/_defs/USetPropVal:"$lib/UserProp" match "WizProp-SetPropVal" call
-@set $tmp/prog1=/_/de:@list lines 1-56 for documentation.
-@set $tmp/prog1=/_docs:@list $lib/userprop=1-56
+@set $lib/userprop=L
+@set $lib/userprop=W3
+@set $lib/userprop=/_defs/UAddProp:"$lib/UserProp" match "WizProp-AddProp" call
+@set $lib/userprop=/_defs/UDelPropDir:"$lib/UserProp" match "WizProp-DelPropDir" call
+@set $lib/userprop=/_defs/UEnvPropStr:"$lib/UserProp" match "WizProp-EnvPropStr" call
+@set $lib/userprop=/_defs/UGetProp:"$lib/UserProp" match "WizProp-GetProp" call
+@set $lib/userprop=/_defs/UGetPropStr:"$lib/UserProp" match "WizProp-GetPropStr" call
+@set $lib/userprop=/_defs/UGetPropVal:"$lib/UserProp" match "WizProp-GetPropVal" call
+@set $lib/userprop=/_defs/UNextProp:"$lib/UserProp" match "WizProp-NextProp" call
+@set $lib/userprop=/_defs/UPrivilege?:"$lib/UserProp" match "WizProp-Privilege?" call
+@set $lib/userprop=/_defs/UPropdir?:"$lib/UserProp" match "WizProp-Propdir?" call
+@set $lib/userprop=/_defs/UPropDirInfo:"$lib/UserProp" match "WizProp-PropDirInfo" call
+@set $lib/userprop=/_defs/UPropDirList:"$lib/UserProp" match "WizProp-PropDirList" call
+@set $lib/userprop=/_defs/URemove_Prop:"$lib/UserProp" match "WizProp-Remove_Prop" call
+@set $lib/userprop=/_defs/USetProp:"$lib/UserProp" match "WizProp-SetProp" call
+@set $lib/userprop=/_defs/USetPropStr:"$lib/UserProp" match "WizProp-SetPropStr" call
+@set $lib/userprop=/_defs/USetPropVal:"$lib/UserProp" match "WizProp-SetPropVal" call
+@set $lib/userprop=/_defs/UP-AddProp:"$lib/UserProp" match "WizProp-AddProp" call
+@set $lib/userprop=/_defs/UP-DelPropDir:"$lib/UserProp" match "WizProp-DelPropDir" call
+@set $lib/userprop=/_defs/UP-EnvPropStr:"$lib/UserProp" match "WizProp-EnvPropStr" call
+@set $lib/userprop=/_defs/UP-GetProp:"$lib/UserProp" match "WizProp-GetProp" call
+@set $lib/userprop=/_defs/UP-GetPropStr:"$lib/UserProp" match "WizProp-GetPropStr" call
+@set $lib/userprop=/_defs/UP-GetPropVal:"$lib/UserProp" match "WizProp-GetPropVal" call
+@set $lib/userprop=/_defs/UP-NextProp:"$lib/UserProp" match "WizProp-NextProp" call
+@set $lib/userprop=/_defs/UP-Privilege?:"$lib/UserProp" match "WizProp-Privilege?" call
+@set $lib/userprop=/_defs/UP-Propdir?:"$lib/UserProp" match "WizProp-Propdir?" call
+@set $lib/userprop=/_defs/UP-PropDirInfo:"$lib/UserProp" match "WizProp-PropDirInfo" call
+@set $lib/userprop=/_defs/UP-PropDirList:"$lib/UserProp" match "WizProp-PropDirList" call
+@set $lib/userprop=/_defs/UP-Remove_Prop:"$lib/UserProp" match "WizProp-Remove_Prop" call
+@set $lib/userprop=/_defs/UP-SetProp:"$lib/UserProp" match "WizProp-SetProp" call
+@set $lib/userprop=/_defs/UP-SetPropStr:"$lib/UserProp" match "WizProp-SetPropStr" call
+@set $lib/userprop=/_defs/UP-SetPropVal:"$lib/UserProp" match "WizProp-SetPropVal" call
+@set $lib/userprop=/_/de:@list lines 1-45 for documentation.
+@set $lib/userprop=/_docs:@list $lib/userprop=1-45
 @action wpsetup;wizpropsetter=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
+@link $tmp/exit1=$lib/userprop
 @set $tmp/exit1=/_/de:Set up $lib/userprop propdirs for programs, Arch only.
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
-"Installation of lib-userprop completed...
+@set $lib/userprop=/_lib-version:FM$Revision: 1.5 $
+@set $lib/userprop=/_lib-symbol:UP
+wh me=Installation of lib-userprop completed...
