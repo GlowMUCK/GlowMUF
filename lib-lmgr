@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-lmgr...
 @prog lib-lmgr
 1 99999 d
 1 i
-( lib-lmgr: $Date: 2005/04/05 15:44:43 $ $Revision: 1.5 $                     )
+( lib-lmgr: $Date: 2005/04/07 21:19:52 $ $Revision: 1.6 $                     )
 ( Purpose: Routines for manipulating lists                                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -65,6 +65,9 @@ wh me=Beginning installation of lib-lmgr...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-lmgr,v $
+  Revision 1.6  2005/04/07 21:19:52  feaelin
+  Added Library Symbols
+
   Revision 1.5  2005/04/05 15:44:43  feaelin
   Revised word names in light of the new library word name standard
 
@@ -448,5 +451,6 @@ q
 @set $lib/lmgr=/_defs/LMGR-PutRange:"$lib/lmgr" match "lmgr-putrange" call
 @set $lib/lmgr=/_defs/LMGR-SetCount:"$lib/lmgr" match "lmgr-setcount" call
 @set $lib/lmgr=/_docs:@list $lib/lmgr=1-61
-@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.5 $
+@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.6 $
+@set $lib/lmgr=/_lib-symbol:LMGR
 wh me=Installation of lib-lmgr complete.

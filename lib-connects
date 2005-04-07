@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-connects...
 @prog lib-connects
 1 99999 d
 1 i
-( lib-connects: $Date: 2005/04/06 18:27:37 $ $Revision: 1.4 $                 )
+( lib-connects: $Date: 2005/04/07 21:19:47 $ $Revision: 1.5 $                 )
 ( Purpose: Provides words related to various player connections               )
 ( Author: Unknown                                                             )
 ( Contributors: None                                                          )
@@ -17,6 +17,9 @@ wh me=Beginning installation of lib-connects...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-connects,v $
+  Revision 1.5  2005/04/07 21:19:47  feaelin
+  Added Library Symbols
+
   Revision 1.4  2005/04/06 18:27:37  feaelin
   Updated documentation. Fixed library words to be in line with new
   standard.
@@ -95,5 +98,6 @@ q
 @set $lib/connects=/_defs/CONN-mostidle:"$lib/connects" match "mostidle" call
 @set $lib/connects=/_/de:lib-connects: @list $lib/connects=1-10 for documentation.
 @set $lib/connects=/_docs:@list $lib/connects=1-10
-@set $lib/connects=/_lib-version:FM$Revision: 1.4 $
+@set $lib/connects=/_lib-version:FM$Revision: 1.5 $
+@set $lib/connects=/_lib-symbol:CONN
 wh me=Installation of lib-connects completed.

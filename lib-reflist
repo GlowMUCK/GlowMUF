@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-reflist...
 @prog lib-reflist
 1 99999 d
 1 i
-( lib-reflist: $Date: 2005/04/05 22:21:34 $ $Revision: 1.6 $                  )
+( lib-reflist: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                  )
 ( Purpose: Handles a string property that contains a list of dbrefs           )
 ( Author: Unknown                                                             )
 ( Contributors: None                                                          )
@@ -59,6 +59,9 @@ wh me=Beginning installation of lib-reflist...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-reflist,v $
+  Revision 1.7  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+
   Revision 1.6  2005/04/05 22:21:34  feaelin
   Fixed library calls. Eliminated the need for the library to include
   lib-glow-standard. Added in REF-count from legacy's reflist.
@@ -260,5 +263,6 @@ q
 @set $lib/reflist=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
 @set $lib/reflist=/_/de:lib-reflist: List lines 1-52 for documentation.
 @set $lib/reflist=/_docs:@list $lib/reflist=1-52
-@set $lib/reflist=_lib-version:FM$Revision: 1.6 $
+@set $lib/reflist=/_lib-version:FM$Revision: 1.7 $
+@set $lib/reflist=/_lib-symbol:REF
 wh me=Installation of lib-reflist complete.

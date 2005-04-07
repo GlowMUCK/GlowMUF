@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-mesgbox...
 @prog lib-mesgbox
 1 99999 d
 1 i
-( lib-mesgbox: $Date: 2005/04/04 16:34:14 $ $Revision: 1.7 $                  )
+( lib-mesgbox: $Date: 2005/04/07 21:20:00 $ $Revision: 1.8 $                  )
 ( Purpose: Handles a collection of messages created by lib-mesg               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -69,6 +69,9 @@ wh me=Beginning installation of lib-mesgbox...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-mesgbox,v $
+  Revision 1.8  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+
   Revision 1.7  2005/04/04 16:34:14  feaelin
   Cleaned up installer script and documentation.
 
@@ -245,5 +248,6 @@ q
 @set $lib/mesgbox=/_defs/MBOXsetmesg:"$lib/mesgbox" match "MBOX-setmesg" call
 @set $lib/mesgbox=/_/de:lib-mesgbox: List lines 1-65 for documentation.
 @set $lib/mesgbox=/_docs:@list $lib/mesgbox=1-65
-@set $lib/mesgbox=/_lib-version:1.2FM$Revision: 1.7 $
+@set $lib/mesgbox=/_lib-version:1.2FM$Revision: 1.8 $
+@set $lib/mesgbox=/_lib-symbol:MBOX
 wh me=Installation of lib-mesgbox complete.

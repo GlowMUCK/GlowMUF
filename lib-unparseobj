@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.14 $ $Date: 2005/04/05 21:23:13 $              )
+( lib-unparseobj: $Revision: 1.15 $ $Date: 2005/04/07 21:20:00 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors: Syvel                                                         )
 ( Dependencies: lib-case                                                      )
@@ -86,6 +86,9 @@ i
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.15  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+
   Revision 1.14  2005/04/05 21:23:13  feaelin
   It is kindof annoying to have to make another commit for a single character
   typo in the documentation...unfortunately, it was a critical one.
@@ -337,7 +340,8 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:$Revision: 1.14 $
+@set $lib/unparseobj=/_lib-version:$Revision: 1.15 $
 @set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-72 for documentation.
 @set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-72
+@set $lib/unparseobj=/_lib-symbol:UPO
 wh me=Installation Complete.

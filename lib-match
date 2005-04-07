@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/04/06 04:10:57 $ $Revision: 1.13 $                   )
+( lib-match: $Date: 2005/04/07 21:20:00 $ $Revision: 1.14 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -64,6 +64,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.14  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+
   Revision 1.13  2005/04/06 04:10:57  feaelin
   Added some colorization.
 
@@ -248,5 +251,6 @@ q
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-55
-@set $lib/match=/_lib-version:FM$Revision: 1.13 $
+@set $lib/match=/_lib-version:FM$Revision: 1.14 $
+@set $lib/match=/_lib-symbol:MATCH
 wh me=Installation of lib-match completed.

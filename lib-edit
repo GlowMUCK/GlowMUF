@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/04/05 21:01:48 $ $Revision: 1.14 $                    )
+( lib-edit: $Date: 2005/04/07 21:19:48 $ $Revision: 1.15 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -93,6 +93,9 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.15  2005/04/07 21:19:48  feaelin
+  Added Library Symbols
+
   Revision 1.14  2005/04/05 21:01:48  feaelin
   Corrected misspelled library calls
 
@@ -594,5 +597,6 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.14 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.15 $
+@set $lib/edit=/_lib-symbol:EDIT
 wh me=Installation of lib-edit complete.

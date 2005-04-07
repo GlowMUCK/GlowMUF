@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/04/05 21:04:46 $ $Revision: 1.21 $             )
+( lib-editor: $Date: 2005/04/07 21:19:49 $ $Revision: 1.22 $             )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.22  2005/04/07 21:19:49  feaelin
+  Added Library Symbols
+
   Revision 1.21  2005/04/05 21:04:46  feaelin
   Corrected misspelled library calls
 
@@ -673,5 +676,6 @@ q
 @set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
 @set $lib/editor=/_docs:@list $lib/editor=1-51
 @set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
-@set $lib/editor=/_lib-version:FM$Revision: 1.21 $
+@set $lib/editor=/_lib-version:FM$Revision: 1.22 $
+@set $lib/editor=/_lib-editor:EDITOR
 wh me=Installation of lib-editor complete.

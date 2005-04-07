@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-index...
 @prog lib-index
 1 99999 d
 1 i
-( lib-index: $Date: 2005/04/05 22:34:17 $ $Revision: 1.7 $                    )
+( lib-index: $Date: 2005/04/07 21:19:51 $ $Revision: 1.8 $                    )
 ( Purpose: Routine manipulate name-value pairs                                )
 ( Author: ErmaFelna                                                           )
 ( Contributors: Feaelin                                                       )
@@ -107,6 +107,9 @@ wh me=Beginning installation of lib-index...
 ( --------------------------------------------------------------------------- )
 (
  $Log: lib-index,v $
+ Revision 1.8  2005/04/07 21:19:51  feaelin
+ Added Library Symbols
+
  Revision 1.7  2005/04/05 22:34:17  feaelin
  Cleaned up formatting
  Added color
@@ -799,5 +802,6 @@ q
 @set $lib/index=/_defs/INDEX-std-write:"$lib/index" match "std-index-write" call
 @set $lib/index=/_/de:lib-index: List lines 1-103 for documentation.
 @set $lib/index=/_docs:@list $lib/index=1-103
-@set $lib/index=/_lib-version:1.2FM$Revision: 1.7 $
+@set $lib/index=/_lib-version:1.2FM$Revision: 1.8 $
+@set $lib/index=/_lib-symbol:INDEX
 wh me=Installation of lib-index complete.

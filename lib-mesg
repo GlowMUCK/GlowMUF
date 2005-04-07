@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-mesg...
 @prog lib-mesg
 1 99999 d
 1 i
-( lib-mesg: $Date: 2005/04/04 16:19:32 $ $Revision: 1.6 $                     )
+( lib-mesg: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                     )
 ( Purpose: Provides routines for handling messages                            )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -61,6 +61,9 @@ wh me=Beginning installation of lib-mesg...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-mesg,v $
+  Revision 1.7  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+
   Revision 1.6  2005/04/04 16:19:32  feaelin
   Replaced .setpropstr call to $lib/glow with the equivalent primitives.
   Updated documentation and installer scripting.
@@ -271,5 +274,6 @@ q
 @set $lib/mesg=/_defs/MSGsetitem:"$lib/mesg" match "MSG-setitem" call
 @set $lib/mesg=/_/de:lib-mesg: List lines 1-57 for documentation.
 @set $lib/mesg=/_docs:@list $lib/mesg=1-57
-@set $lib/mesg=/_lib-version:FM$Revision: 1.6 $
+@set $lib/mesg=/_lib-version:FM$Revision: 1.7 $
+@set $lib/mesg=/_lib-symbol:MSG
 wh me=Installation of lib-mesg complete.
