@@ -1,14 +1,20 @@
-"Beginning installation of lib-showlist...
+wh me=Beginning installation of lib-showlist...
 @prog lib-showlist
 1 99999 d
 1 i
-( showlist:  d s -- : $Date: 2005/03/21 01:31:43 $ $Revision: 1.6 $           )
-( Originally from the glowmuf distribution                                    )
+( showlist:  d s -- : $Date: 2005/04/07 12:58:44 $ $Revision: 1.7 $           )
+( Purpose: Displays a property list to a player. Deprecated. Use EDIT-display )
+( Author: Unknown                                                             )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( showlist d s --         Lists list 's' on database item 'd' to player.      )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-showlist,v $
+  Revision 1.7  2005/04/07 12:58:44  feaelin
+  Updated documentation and installer script.
+
   Revision 1.6  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -26,7 +32,7 @@
   *sigh* Darn nested parentheses.
 ) 
 $define n me @ swap notify $enddef
-
+ 
 : getlines ( d s -- i )
   ( checks prop# prop and prop/lines, returns biggest line # )
   over over 
@@ -97,14 +103,13 @@ public showlist
 c
 q
 @register lib-showlist=lib/showlist
-@register #me lib-showlist=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W
-@set $tmp/prog1=/_defs/.listread:( d s -- ) "$lib/showlist" match call
-@set $tmp/prog1=/_defs/.showlist:( d s -- ) "$lib/showlist" match call
-@set $tmp/prog1=/_defs/listread:( d s -- ) "$lib/showlist" match call
-@set $tmp/prog1=/_defs/showlist:( d s -- ) "$lib/showlist" match call
-@set $tmp/prog1=/_/de:lib-showlist: @list $lib/showlist=1-5 for documentation.
-@set $tmp/prog1=/_docs:@list $lib/showlist=1-5 
-@set $tmp/prog1=_lib-version:FM$Revision: 1.6 $
-"Installation of lib-showlist complete.
+@set $lib/showlist=L
+@set $lib/showlist=W
+@set $lib/showlist=/_defs/.listread:( d s -- ) "$lib/showlist" match call
+@set $lib/showlist=/_defs/.showlist:( d s -- ) "$lib/showlist" match call
+@set $lib/showlist=/_defs/listread:( d s -- ) "$lib/showlist" match call
+@set $lib/showlist=/_defs/showlist:( d s -- ) "$lib/showlist" match call
+@set $lib/showlist=/_/de:lib-showlist: @list $lib/showlist=1-8 for documentation.
+@set $lib/showlist=/_docs:@list $lib/showlist=1-8
+@set $lib/showlist=_lib-version:FM$Revision: 1.7 $
+wh me=Installation of lib-showlist complete.
