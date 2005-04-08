@@ -1,12 +1,18 @@
-"Beginning installation of cmd-3who...
+wh me=Beginning installation of cmd-3who...
 @prog cmd-3who
 1 99999 d
 1 i
-( cmd-3who: $Date: 2003/01/24 17:05:07 $ $Revision: 1.2 $
-  Author: ???
-  --------------------------------------------------------------------------- )
+( cmd-3who: $Date: 2005/04/08 18:17:29 $ $Revision: 1.3 $                     )
+( Purpose: Provides a who list in 3 column format                             )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-3who,v $
+  Revision 1.3  2005/04/08 18:17:29  feaelin
+  Documentation and installer script updates.
+
   Revision 1.2  2003/01/24 17:05:07  feaelin
   Modified so it recognizes the /@/dark prop
 
@@ -14,10 +20,7 @@
   Initial revision
 
 )
-
-  
-$def .atell me @ swap ansi_notify
-  
+ 
 : stimestr (i -- s)
     dup 86400 > if
         86400 / intostr "d" strcat 
@@ -33,8 +36,7 @@ $def .atell me @ swap ansi_notify
     "    " swap strcat
     dup strlen 4 - strcut swap pop
 ;
-  
-  
+ 
 : mtimestr (i -- s)
     "" over 86400 > if
         over 86400 / intostr "d " strcat strcat
@@ -49,8 +51,7 @@ $def .atell me @ swap ansi_notify
     dup strlen 2 - strcut
     swap pop strcat
 ;
-  
-  
+ 
 : collate-entry (i -- s)
     dup condbref 
     dup "/@/dark" getpropstr 
@@ -70,9 +71,7 @@ $def .atell me @ swap ansi_notify
     swap conidle stimestr "^YELLOW^" swap strcat strcat
     1
 ;
-  
-  
-  
+ 
 : get-namelist  ( -- {s})
     0 concount
     begin
@@ -83,8 +82,7 @@ $def .atell me @ swap ansi_notify
     repeat
     pop
 ;
-  
-  
+ 
 lvar col
 : show-namelist ({s} -- )
     begin
@@ -96,7 +94,7 @@ lvar col
         over 3 / 3 pick 3 % 1 +
         3 / + col @ + 1 +
         rotate strcat
-        .atell 3 -
+        me @ swap ansi_notify 3 -
     repeat
     dup if
         ""
@@ -105,31 +103,29 @@ lvar col
             rot strcat "   " strcat
             swap 1 - swap
         repeat
-        .atell
+        me @ swap ansi_notify
     then
     pop
 ;
-  
-  
+ 
 : show-who
-    preempt
-    "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
-    "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat .atell
-    get-namelist
-    show-namelist
-    concount intostr "^BLUE^" swap strcat
-    " players are connected."
-    strcat .atell
+  preempt
+  me @ "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
+  "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat ansi_notify
+  get-namelist
+  show-namelist
+  concount intostr "^BLUE^" swap strcat
+  " players are connected."
+  strcat me @ swap ansi_notify
 ;
 .
 c
 q
 @register cmd-3who=cmd/3who
-@register #me cmd-3who=tmp/prog1
-@set $tmp/prog1=W3
+@set $cmd/3who=W3
+@set $cmd/3who=_version:FM$Revision: 1.3 $
 @action 3who;who3;3w=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
+@link $tmp/exit1=$cmd/3who
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Same as the WHO list of everyone connected, except in three columns.
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
-"Installation of cmd-3who complete.
+wh me=Installation of cmd-3who complete.
