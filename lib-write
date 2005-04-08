@@ -1,20 +1,29 @@
-"Beginning installation of lib-write...
+wh me=Beginning installation of lib-write...
 @prog lib-write
 1 99999 d
 1 i
-( lib-write: $Date: 2005/03/21 01:31:43 $ $Revision: 1.3 $
-  Author: Merlin <of Chaos> <Earl Miles>                                     )
-( -------------------------------------------------------------------------- )
-( MUF-Editor v 2.0
-* <C> 1990, 1991, 1992 by Merlin <of Chaos> <Earl Miles>
-* To change the number of lines available in the editor, reset the property
-* 'line-limit' on the program.  If the property is unset, the default is
-* 250.  Note that, due to MUF stack limits, any number over 400 can cause
-* stack overflows.
-*)
+( lib-write: $Date: 2005/04/08 01:30:38 $ $Revision: 1.4 $                    )
+( Purpose: MUF based line editor                                              )
+( Author: Merlin <of Chaos> <Earl Miles>                                      )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( MUF-Editor v 2.0                                                            )
+( <C> 1990, 1991, 1992 by Merlin <of Chaos> <Earl Miles>                      )
+( To change the number of lines available in the editor, reset the property   )
+( 'line-limit' on the program.  If the property is unset, the default is 250. )
+( Note that, due to MUF stack limits, any number over 400 can cause stack     )
+( overflows.                                                                  )
+(                                                                             )
+( To use the editor
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-write,v $
+  Revision 1.4  2005/04/08 01:30:38  feaelin
+  Eliminated dependency on lib-glow-standard
+  Updated documentation.
+  Updated installer script.
+
   Revision 1.3  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -23,9 +32,11 @@
   item/object/thing
 )
 ( --------------------------------------------------------------------------- )
-$include $lib/glowstandard
-
-lvar linenums lvar property lvar where
+  
+lvar linenums
+lvar property
+lvar where
+ 
 $def VERSION "MUF-Editor 2.0"
 $def TEMP "etemp/-"
 $def dcase tolower
@@ -34,28 +45,35 @@ $def prgm prog
 : lines ( -- i )
   where @ TEMP property @ strcat "lines" strcat getpropstr atoi
 ;
+ 
 : putlines ( i -- )
   where @ TEMP property @ strcat "lines" strcat rot intostr 1 addprop
 ;
+ 
 : rangelines ( d s -- i )
   "lines" strcat getpropstr atoi
 ;
+ 
 : nukefirstword ( s -- s ) ( remove the first word from a string )
   dup " " instr dup not if pop pop "" exit then
   strcut swap pop
 ;
+ 
 : print-version ( -- )                   ( These routines are most of the )
                                          ( text .editor uses. )
   me @ VERSION " by Merlin <of Chaos>" strcat notify
 ;
+ 
 : print-entry ( i -- ) ( What line you're starting at )
   print-version
   me @ "Insert text at line " rot intostr strcat
   ".  \".\" to exit.  \".h\" for help." strcat notify
 ;
+ 
 : print-options ( -- )
   me @ "Cmd: [\"help\" for help, \"s\" to save/send, \"a\" to abort]" notify
 ;
+ 
 : print-help ( s -- ) ( string to append, a "." if in insert mode )
   print-version
   me @ " " notify
@@ -73,13 +91,16 @@ $def prgm prog
   me @ over "h                 -- This help file." strcat notify
   pop
 ;
+ 
 : screensize ( -- i )
   me @ "screensize" getpropstr atoi dup 0 = if pop 22 then
 ;
+ 
 : moreprompt ( -- i )
   me @ "-- More -- [y/n]" notify
   read dcase "n" 1 strncmp not if 0 else 1 then
 ;
+ 
 : read-text ( i i -- ) ( from, to )
   over over > if pop pop exit then
   swap where @ TEMP property @ strcat 3 pick intostr strcat getpropstr
@@ -93,6 +114,7 @@ $def prgm prog
   1 + swap
   read-text
 ;
+ 
 : copyrangeloop ( -- u d o n t w a n t t o k n o w )
   dup 7 pick + 6 pick > if
     4 pick 4 pick "lines" strcat getpropstr atoi + intostr
@@ -105,9 +127,11 @@ $def prgm prog
   1 +
   copyrangeloop
 ;
+ 
 : copyrange ( d s i i d s i -- ) ( This is the word which copies a range )
   0 copyrangeloop                ( of text from one place to another )
-;                                ( It's *very* flexible. )
+;
+                                 ( It's *very* flexible. )
 : deleterange ( d s i i -- ) ( db-item, string, from, to.  And decrement )
                              ( the lines counter to be nice. )
   over over > if
@@ -123,6 +147,7 @@ $def prgm prog
   swap 1 + swap 
   deleterange
 ;
+ 
 : get-from ( s -- i )
   dup "" stringcmp not if pop
     me @ "Which line? ($ = End of Text)" notify
@@ -132,6 +157,7 @@ $def prgm prog
   dup 1 < if pop -1 exit then
   dup lines 1 + > if pop me @ "Out of range." notify -1 exit then
 ;
+ 
 : get-from-to ( s - i i )
   dup "" stringcmp not if pop
     me @ "From? (Q to abort)" notify
@@ -141,7 +167,7 @@ $def prgm prog
     dup "$" stringcmp not if pop lines else atoi then
     dup 0 = if pop pop me @ "Aborted." notify -1 exit then
   else
-    .trim_spaces dup " " instr strcut 
+    strip dup " " instr strcut 
     dup "$" stringcmp not if pop lines else atoi then 
     swap atoi dup 0 = if pop dup else swap then
   then
@@ -149,15 +175,18 @@ $def prgm prog
   over over > if 
     pop pop me @ "Arguments don't make sense." notify -1 exit then
 ;
+ 
 : line-limit ( -- i )
   prgm "line-limit" getpropstr atoi dup 0 = if pop 250 then
 ;
+ 
 : renumberup ( i i -- ) ( from line, end of )
   over over > if pop pop exit then
   where @ TEMP property @ strcat 3 pick intostr strcat getpropstr
   where @ TEMP property @ strcat 4 pick 1 + intostr strcat rot 1 addprop
   1 - renumberup
 ;
+ 
 : delete ( i s -- i ) ( returns an adjustment of the current line )
   get-from-to dup -1 = if pop exit then
   3 pick 3 pick > if
@@ -177,11 +206,13 @@ $def prgm prog
   then
   me @ swap notify
 ;
+ 
 : list ( s -- )
   lines 0 = if pop me @ "Nothing to read." notify exit then
   get-from-to dup -1 = if pop exit then
   read-text me @ " " notify
 ;
+ 
 : editline ( s -- )
   get-from dup -1 = if pop exit then
   dup lines > if pop lines then
@@ -196,9 +227,11 @@ $def prgm prog
   swap where @ TEMP property @ strcat rot intostr strcat rot 1 addprop
   me @ "Done." notify
 ;
+ 
 : search-and-replace ( s -- )
   exit ( not implemented yet )
 ;
+ 
 : save ( -- )
   where @ property @ over over rangelines 1 swap deleterange
   where @ TEMP property @ strcat 1 lines
@@ -208,6 +241,7 @@ $def prgm prog
     where @ property @ "lines" strcat remove_prop then
   me @ "Saved." notify
 ;
+ 
 : abort ( -- )
   me @ "Abort. All changes will be lost.  Are you certain?" notify
   read dcase "y" 1 strncmp if 0 exit then
@@ -215,21 +249,25 @@ $def prgm prog
   me @ "Aborted." notify
   1
 ;
+ 
 : on_break
   where @ TEMP property @ strcat 1 lines deleterange
   me @ "Aborted." notify
   1
 ;
+ 
 : linenos ( -- )
   linenums @ not linenums !
   me @ "Line numbers " linenums @ if "on." else "off." then strcat notify
 ;
+ 
 : clear ( -- )
   me @ "Clear Text -- Are you SURE?" notify
   read dcase "y" 1 strncmp if me @ "Aborted." notify exit then
   where @ TEMP property @ strcat 1 lines deleterange
   me @ "Cleared." notify
 ;
+ 
 : insert-text ( i -- i ) ( line, true if go to prompt, false if to exit )
   read
   dup "." 1 strncmp not if 
@@ -270,10 +308,12 @@ $def prgm prog
   1 +
   insert-text
 ;
+ 
 : insert ( s -- ) ( )
   get-from dup -1 = if pop exit then
   dup print-entry insert-text
 ;
+ 
 : commandprompt ( s -- )
   print-options
   read dcase dup "." 1 strncmp not if 1 strcut swap pop then
@@ -293,6 +333,7 @@ $def prgm prog
   me @ "Invalid command." notify
   commandprompt
 ;
+ 
 : editor ( d s -- i )
   0 linenums ! property ! where !                  ( load the variables )
   where @ property @ rangelines 0 = not if
@@ -308,8 +349,9 @@ $def prgm prog
 c
 q
 @register lib-write=lib/write
-@register #me lib-write=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=M3
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
-"Installation of lib-write complete.
+@set $lib/write=L
+@set $lib/write=M3
+@set $lib/write=/_lib-version:FM$Revision: 1.4 $
+@set $lib/write=/_docs:@list $lib/write=
+@set $lib/write=/_/de:Use @list $lib/write= for documentation.
+wh me=Installation of lib-write complete.
