@@ -1,23 +1,36 @@
-"Beginning installation of lib-wordwrap.muf...
-@prog lib-wordwrap.muf
+wh me=Beginning installation of lib-wordwrap.muf...
+@prog lib-wordwrap
 1 10000 d
 i
-( lib-wordwrap By Iain E. Davis AKA Feaelin                                  )
-( With Thanks to Andy's original wrapnotify code                             )
-( $Revision: 1.3 $ $Date: 2005/03/21 01:31:43 $                              )
-( -------------------------------------------------------------------------- )
+( lib-wordwrap: $Date: 2005/04/08 00:37:26 $ $Revision: 1.4 $                 )
+( Purpose: Reformat a single string into multiple lines                       )
+( Author: Feaelin Moilar                                                      )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( With Thanks to Andy's original wrapnotify code                              )
+( WRAP-wordwrap: i s -- s1 ... sn n                                           )
+(   Wordwraps string 's' to 'i' characters, allowing for ansi codes and word  )
+(   breaks. Returns each line as a separate string with the number of lines   )
+(   on top.                                                                   )
+( --------------------------------------------------------------------------- )
 (
   $Log: lib-wordwrap,v $
+  Revision 1.4  2005/04/08 00:37:26  feaelin
+  Cleaned up the installer script.
+  Documented the library words
+  Cleaned up the documentation header.
+
   Revision 1.3  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
   Revision 1.2  2004/04/10 20:34:55  feaelin
   Fixed variable used as a global var when it should be used lvar.
 )
-( -------------------------------------------------------------------------- )
-
+( --------------------------------------------------------------------------- )
+ 
 lvar line_count
-
+ 
 : last-color ( s -- s )
   "\\~" "\\^" subst
   dup "^" rinstr dup if
@@ -29,7 +42,7 @@ lvar line_count
     else pop pop "" then
   else pop pop "" then
 ;
-
+ 
 : wraploop ( i s -- s1 s2 ... n sn )
   dup ansi_strlen 3 pick > if
     2 pick over swap 1 ansi_offset strcut
@@ -51,22 +64,21 @@ lvar line_count
     wraploop
   else swap pop line_count @ 1 + line_count ! then
 ;
-
+ 
 : wordwrap ( i s -- s1 s2 ... sn n )
   0 line_count ! wraploop 0 line_count @ - rotate line_count @
 ;
-
+ 
 public wordwrap
-
-: main
-  pop 20
-  "^CYAN^^RED^This line should be longer than 10 characters, I hope" wordwrap
-;
 .
 c
 q
-@set lib-wordwrap.muf=W3
-@set lib-wordwrap.muf=_lib-version:$Revision: 1.3 $
-@set lib-wordwrap.muf=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
-@register lib-wordwrap.muf=lib/wordwrap
-"Installation completed.
+@register lib-wordwrap=lib/wordwrap
+@set $lib/wordwrap=W3
+@set $lib/wordwrap=/_/de:Use @list $lib/wordwrap=1-12 for documentation.
+@set $lib/wordwrap=/_docs:@list $lib/wordwrap=1-12
+@set $lib/wordwrap=/_lib-version:$Revision: 1.4 $
+@set $lib/wordwrap=/_lib-symbol:WRAP
+@set $lib/wordwrap=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
+@set $lib/wordwrap=/_defs/WRAP-wordwrap:"$lib/wordwrap" match "wordwrap" call
+wh me=Installation completed.
