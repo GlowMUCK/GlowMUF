@@ -1,30 +1,36 @@
-"Beginning installation of cmd-who...
+wh me=Beginning installation of cmd-who...
 @prog cmd-who
 1 99999 d
 1 i
-( cmd-who: $Date: 2004/03/26 03:06:03 $ $Revision: 1.3 $                                                  )
+( cmd-who: $Date: 2005/04/18 23:48:01 $ $Revision: 1.4 $                     )
+( Purpose: A detailed 'who is in the game'                                    )
 ( Author: Scotfox                                                             )
+( Contributors: Feaelin, Foxen?                                               )
+( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( Shows a list of everybody connected.  By Scotfox.                           )
 ( Also uses Foxen's cmd-who                                                   )
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-who,v $
+  Revision 1.4  2005/04/18 23:48:01  feaelin
+  Revised colors. They're now in spectrum order.
+  Removed cmd-who's dependency on lib-glow-standard
+  Updated documentation.
+  Updated installer
+
   Revision 1.3  2004/03/26 03:06:03  feaelin
   Support for the who_hides_dark sysparm added.
-
 )
 ( --------------------------------------------------------------------------- )
 
-$include $lib/glowstandard
-$define notify .wrapnotify $enddef
- 
 lvar roomstuff
 : get-connected-list  ( concount -- namelist total howmanyleft )
     begin dup 0 > while
         dup condbref dup 
-        dup "/@/dark" getpropstr .yes? "who_hides_dark" sysparm .yes? and
-        swap location me @ location dbcmp or if
+        dup "/@/dark" getpropstr tolower "y" 1 strncmp not
+        "who_hides_dark" sysparm tolower "y" 1 strncmp not
+        and swap location me @ location dbcmp or if
           pop swap 1 - swap
         else
           name    
@@ -34,6 +40,7 @@ lvar roomstuff
     repeat pop
     1 sort
 ;
+ 
 : glue-together-list  ( namelist gluedstring howmany  -- s)
     begin dup 0 > while
         rot                  ( namelist gluedstring howmany name )
@@ -44,23 +51,25 @@ lvar roomstuff
         1 - repeat
     pop
 ;
+ 
 : show-connected
     concount dup 1 = if
-        me @ "^GREEN^You are the only one connected." notify exit then
+        me @ "^PURPLE^You are the only one connected." ansi_notify exit then
     dup get-connected-list
+    1 sort
     dup 0 <= if
         pop
-        "^GREEN^Everyone is in this room." me @ swap notify exit then
+        "^PURPLE^Everyone is in this room." me @ swap ansi_notify exit then
     dup 1 = if
         pop
         "~" "^" subst
         " is the only player connected who's not in this room." strcat
-        "^GREEN^" swap strcat
-        me @ swap notify exit then
+        "^PURPLE^" swap strcat
+        me @ swap ansi_notify exit then
     "" swap glue-together-list
     me @ swap
     "~" "^" subst
-    " are awake elsewhere in the game." strcat "^GREEN^" swap strcat notify
+    " are awake elsewhere in the game." strcat "^PURPLE^" swap strcat ansi_notify
 ;
  
 $define MIN_IDLE 3 (minutes) $enddef
@@ -73,14 +82,14 @@ $define MIN_IDLE 3 (minutes) $enddef
     else pop
     then
 ;
-  
+ 
 : idletime (d -- i)
     descriptors
     begin dup 1 > while rot pop 1 - repeat
     not if -1 exit then
     descrcon conidle
 ;
-  
+ 
 : who-loop (pupstr idlestr asleepstr awakestr dbref -- pupstr idlestr asleepstr awakestr)
     dup #-1 dbcmp if
         pop do_and
@@ -127,76 +136,73 @@ $define MIN_IDLE 3 (minutes) $enddef
 ;
  
 : cmd-who
-    "me" match me !
-    "" "" "" "" me @ location contents who-loop
-    dup me @ name strcmp not if
-        pop "^CYAN^You are the only one awake in this room."
+  "me" match me !
+  "" "" "" "" me @ location contents who-loop
+  4 rotate dup if
+    dup ", and " instr not if
+      "^YELLOW^The only puppet here is " swap strcat
     else
+      "~" "^" subst
+      "^YELLOW^The puppets here are " swap strcat
+      "." strcat
+    then
+    me @ swap ansi_notify
+  else
+    pop
+  then
+  dup me @ name strcmp not if
+    pop "^GREEN^You are the only one awake in this room."
+  else
+    "~" "^" subst
+    " are awake in this room." strcat "^GREEN^" swap strcat 
+  then
+  me @ swap ansi_notify
+  swap dup if
+    dup ", and " instr not if
+      "~" "^" subst
+      "^CYAN^Only " swap strcat
+      " is idle here." strcat
+    else
+      " are idle in this room." strcat "^CYAN^" swap strcat
+    then
+    me @ swap ansi_notify
+  else
+    pop
+  then
+  me @ location "DARK" flag? not if
+    dup not if
+      pop "^BLUE^There are no sleepers here."
+    else
+      dup ", and " instr not if
+        "^BLUE^Only " swap strcat
+        " is asleep here." strcat
+      else
         "~" "^" subst
-        " are awake in this room." strcat "^CYAN^" swap strcat then
-    me @ swap notify
-    swap
-    dup if
-        dup ", and " instr not if
-            "~" "^" subst
-            "^YELLOW^Only " swap strcat
-            " is idle here." strcat
-        else
-            " are idle in this room." strcat "^YELLOW^" swap strcat then
-        me @ swap notify
-    else pop
+        "^BLUE^The sleepers here are " swap strcat
+        "." strcat
+      then
     then
-    me @ location "DARK" flag? not if
-        dup not if
-            pop "^PURPLE^There are no sleepers here."
-        else
-            dup ", and " instr not if
-                "^PURPLE^Only " swap strcat
-                " is asleep here." strcat
-            else
-                "~" "^" subst
-                "^PURPLE^The sleepers here are " swap strcat
-                "." strcat
-            then
-        then
-        me @ swap notify
-    else pop
-    then
-    dup if
-        dup ", and " instr not if
-            "^BLUE^The only puppet here is " swap strcat
-        else
-            "~" "^" subst
-            "^BLUE^The puppets here are " swap strcat
-            "." strcat
-        then
-        me @ swap notify
-    else pop
-    then
+    me @ swap ansi_notify
+  else
+    pop
+  then
 ;
  
 : main
-    pop
-    show-connected
-    cmd-who
+  pop
+  cmd-who
+  show-connected
 ;
 .
 c
 q
 @register cmd-who=cmd/who
-@register cmd-who=lib/cmdwho
-@register #me cmd-who=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W3
-@set $tmp/prog1=/_defs/.eval-loop:"$desc" match "eval-loop" call
-@set $tmp/prog1=/_defs/.format-print:"$desc" match "format-print" call
-@set $tmp/prog1=/_defs/.gen-desc:"$desc" match "gen-desc" call
-@set $tmp/prog1=/_defs/.get-legal-prop:"$desc" match "get-legal-prop" call
-@set $tmp/prog1=/_defs/.split-args:"$desc" match "split-args" call
-@set $tmp/prog1=/_defs/.wipe-list:"$desc" match "wipe-list" call
-@set $tmp/prog1=/_docs:@list $desc-docs
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $cmd/who=/_/de:Displays who is online and in this room.
+@set $cmd/who=L
+@set $cmd/who=W3
+@set $cmd/who=_version:FM$Revision: 1.4 $
 @action who=here=tmp/exit1
 @link $tmp/exit1=$cmd/who
 @set $tmp/exit1=/_/de:@$cmd/who
-"Installation of cmd-who complete.
+@set $tmp/exit1=M3
+wh me=Installation of cmd-who complete.
