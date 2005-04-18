@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-who...
 @prog cmd-who
 1 99999 d
 1 i
-( cmd-who: $Date: 2005/04/18 23:48:01 $ $Revision: 1.4 $                     )
+( cmd-who: $Date: 2005/04/18 23:57:58 $ $Revision: 1.5 $                     )
 ( Purpose: A detailed 'who is in the game'                                    )
 ( Author: Scotfox                                                             )
 ( Contributors: Feaelin, Foxen?                                               )
@@ -13,6 +13,9 @@ wh me=Beginning installation of cmd-who...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-who,v $
+  Revision 1.5  2005/04/18 23:57:58  feaelin
+  Minor grammar correction.
+
   Revision 1.4  2005/04/18 23:48:01  feaelin
   Revised colors. They're now in spectrum order.
   Removed cmd-who's dependency on lib-glow-standard
@@ -63,7 +66,7 @@ lvar roomstuff
     dup 1 = if
         pop
         "~" "^" subst
-        " is the only player connected who's not in this room." strcat
+        " is the only player connected who is not in this room." strcat
         "^PURPLE^" swap strcat
         me @ swap ansi_notify exit then
     "" swap glue-together-list
@@ -200,7 +203,7 @@ q
 @set $cmd/who=/_/de:Displays who is online and in this room.
 @set $cmd/who=L
 @set $cmd/who=W3
-@set $cmd/who=_version:FM$Revision: 1.4 $
+@set $cmd/who=_version:FM$Revision: 1.5 $
 @action who=here=tmp/exit1
 @link $tmp/exit1=$cmd/who
 @set $tmp/exit1=/_/de:@$cmd/who
