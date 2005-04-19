@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-who...
 @prog cmd-who
 1 99999 d
 1 i
-( cmd-who: $Date: 2005/04/18 23:57:58 $ $Revision: 1.5 $                     )
+( cmd-who: $Date: 2005/04/19 03:03:36 $ $Revision: 1.6 $                     )
 ( Purpose: A detailed 'who is in the game'                                    )
 ( Author: Scotfox                                                             )
 ( Contributors: Feaelin, Foxen?                                               )
@@ -13,6 +13,9 @@ wh me=Beginning installation of cmd-who...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-who,v $
+  Revision 1.6  2005/04/19 03:03:36  feaelin
+  Corrected another grammar issue is/are!
+
   Revision 1.5  2005/04/18 23:57:58  feaelin
   Minor grammar correction.
 
@@ -157,7 +160,11 @@ $define MIN_IDLE 3 (minutes) $enddef
     pop "^GREEN^You are the only one awake in this room."
   else
     "~" "^" subst
-    " are awake in this room." strcat "^GREEN^" swap strcat 
+    dup ", and " instr not if
+      "^GREEN^Only " swap strcat " is idle here." strcat
+    else
+      " are awake in this room." strcat "^GREEN^" swap strcat
+    then
   then
   me @ swap ansi_notify
   swap dup if
@@ -203,7 +210,7 @@ q
 @set $cmd/who=/_/de:Displays who is online and in this room.
 @set $cmd/who=L
 @set $cmd/who=W3
-@set $cmd/who=_version:FM$Revision: 1.5 $
+@set $cmd/who=_version:FM$Revision: 1.6 $
 @action who=here=tmp/exit1
 @link $tmp/exit1=$cmd/who
 @set $tmp/exit1=/_/de:@$cmd/who
