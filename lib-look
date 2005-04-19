@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/04/07 21:19:52 $ $Revision: 1.27 $                )
+( cmd/lib-look: $Date: 2005/04/19 19:34:50 $ $Revision: 1.28 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -80,14 +80,28 @@ wh me=Beginning installation of lib-look...
 (      will simulate the usual 'look' command.                                )
 ( --------------------------------------------------------------------------- )
 ( Features to be aware of:                                                    )
+(                                                                             )
 ( If you need programs to run when a player looks you can set a property in   )
 ( the ~look property dir anywhere in the environment to the dbref of the      )
 ( program you want to run. For example an obvious exits program could be set  )
 ( in ~look/obviousexits on #0, and it would run that program. The output is   )
 ( displayed after the description but before the Contents list.               )
+(                                                                             )
+( Similarly, if you set ~look/contents-handler to a program dbref, look will  )
+( call the program specified with a dbref of an item its listing in a contents)
+( list and Look in parentheses at the top of the stack. The program should    )
+( return only a string which will either be appended with parentheses to the  )
+( list OR You can specify the format of the list-item by setting the property )
+( ~/look/contents-format. In that property %normal% represents the regular    )
+( part of the string, %extra% represents the portion that your program will   )
+( return. Any other text in the property is displayed normally.               )
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.28  2005/04/19 19:34:50  feaelin
+  Added a feature by which a muck can make local changes to the contents list
+  withouth changing lib-look.
+
   Revision 1.27  2005/04/07 21:19:52  feaelin
   Added Library Symbols
 
@@ -193,7 +207,7 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 $include $lib/strings
 $include $lib/unparseobj
- 
+$include $lib/glow 
 lvar sme
 lvar sloc
 lvar strigger
@@ -230,6 +244,62 @@ lvar realtrig
  
 : dark? ( d -- i )
   dup "Dark" flag? swap control? not and
+;
+ 
+( To allow the administrators to add additional text to the contents list     )
+( on a per item basis, we'll check to see if there is a program handler and   )
+( also check to see if there is a format string.                              )
+( The program handler needs to use a dbref and return a string while leaving  )
+( everything else on the stack.                                               )
+: unparse-secondary ( s d -- s )
+  me @ "~look/contents-handler" envpropstr swap pop
+  dup dbref? not if
+    dup string? if
+      dup "#" instr if
+        1 strcut swap pop
+      then
+      atoi dbref
+    else
+      dup int? if
+        dbref
+      then
+    then
+  then
+  dup ok? over #0 dbcmp not and if
+    dup program? if
+      dup "LINK_OK" flag? if
+        me @ sme !
+        loc @ sloc !
+	trigger @ strigger !
+	command @ scommand !
+	depth sdepth !
+	"(Look)" swap call
+	sme @ me !
+	sloc @ loc !
+	strigger @ trigger !
+	scommand @ command !
+	depth 1 + sdepth @ - popn
+      else
+        pop ""
+      then
+    else
+      pop ""
+    then
+  else
+    pop ""
+  then
+  ( No string, no further processing )
+  dup "" strcmp not if
+    pop pop
+    exit
+  then
+  me @ "~look/contents-format" envpropstr swap pop
+  dup "" strcmp not if
+    pop " (" swap strcat strcat ")" strcat
+  else
+    swap "%extra%" subst
+    swap "%normal%" subst
+  then
 ;
  
 : unparse ( d -- s )
@@ -320,7 +390,8 @@ lvar realtrig
     1 - dup 2 + rotate
     dup dbref?
     if
-      unparse
+      dup unparse
+      swap unparse-secondary
     then
     tell
   repeat
@@ -427,18 +498,26 @@ lvar realtrig
         then
       then
     then
-    dup ok? over #0 dbcmp not and if
-      dup program? if
-        dup "LINK_OK" flag? if
-          "(Look)" swap safecall
+    over "contents-handler" instr not if
+      over "contents-format" instr not if
+        dup ok? over #0 dbcmp not and if
+          dup program? if
+            dup "LINK_OK" flag? if
+              "(Look)" swap safecall
+            else
+              pop
+            then
+          else
+            pop
+          then
         else
-          pop pop pop exit
+          pop
         then
       else
-        pop pop pop exit
+        pop
       then
     else
-      pop pop pop exit
+      pop
     then
     over swap nextprop dup "" strcmp not
   until
@@ -446,7 +525,8 @@ lvar realtrig
 ; 
  
 : look-prop2 ( d -- )
-  dup "~look/" nextprop "" strcmp if
+  dup "~look/"
+  nextprop "" strcmp if
     "~look/" look-prop-handler
   else
     pop
@@ -685,7 +765,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
 @set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.27 $
-@set $lib/look=/_version:1.31FM$Revision: 1.27 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.28 $
+@set $lib/look=/_version:1.31FM$Revision: 1.28 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
