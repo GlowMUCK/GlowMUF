@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-who...
 @prog cmd-who
 1 99999 d
 1 i
-( cmd-who: $Date: 2005/04/19 03:03:36 $ $Revision: 1.6 $                     )
+( cmd-who: $Date: 2005/04/19 15:14:47 $ $Revision: 1.7 $                     )
 ( Purpose: A detailed 'who is in the game'                                    )
 ( Author: Scotfox                                                             )
 ( Contributors: Feaelin, Foxen?                                               )
@@ -13,6 +13,11 @@ wh me=Beginning installation of cmd-who...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-who,v $
+  Revision 1.7  2005/04/19 15:14:47  feaelin
+  Added logic to deal with those odd moments when, in fact, no one is awake
+  in a room. Corrected the problem where I put the wrong message in the
+  wrong place.
+
   Revision 1.6  2005/04/19 03:03:36  feaelin
   Corrected another grammar issue is/are!
 
@@ -156,17 +161,22 @@ $define MIN_IDLE 3 (minutes) $enddef
   else
     pop
   then
-  dup me @ name strcmp not if
-    pop "^GREEN^You are the only one awake in this room."
+  dup "" strcmp not if
+    me @ "^GREEN^No one is awake in this room." ansi_notify
+    pop
   else
-    "~" "^" subst
-    dup ", and " instr not if
-      "^GREEN^Only " swap strcat " is idle here." strcat
+    dup me @ name strcmp not if
+      pop "^GREEN^You are the only one awake in this room."
     else
-      " are awake in this room." strcat "^GREEN^" swap strcat
+      "~" "^" subst
+      dup ", and " instr not if
+        "^GREEN^Only " swap strcat " is awake in this room." strcat
+      else
+        " are awake in this room." strcat "^GREEN^" swap strcat
+      then
     then
+    me @ swap ansi_notify
   then
-  me @ swap ansi_notify
   swap dup if
     dup ", and " instr not if
       "~" "^" subst
@@ -210,7 +220,7 @@ q
 @set $cmd/who=/_/de:Displays who is online and in this room.
 @set $cmd/who=L
 @set $cmd/who=W3
-@set $cmd/who=_version:FM$Revision: 1.6 $
+@set $cmd/who=_version:FM$Revision: 1.7 $
 @action who=here=tmp/exit1
 @link $tmp/exit1=$cmd/who
 @set $tmp/exit1=/_/de:@$cmd/who
