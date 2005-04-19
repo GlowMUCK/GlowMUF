@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/04/19 19:34:50 $ $Revision: 1.28 $                )
+( cmd/lib-look: $Date: 2005/04/19 20:04:29 $ $Revision: 1.29 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -98,6 +98,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.29  2005/04/19 20:04:29  feaelin
+  Amazing how one 'pop' in the wrong place does so much damage.
+
   Revision 1.28  2005/04/19 19:34:50  feaelin
   Added a feature by which a muck can make local changes to the contents list
   withouth changing lib-look.
@@ -290,7 +293,7 @@ lvar realtrig
   then
   ( No string, no further processing )
   dup "" strcmp not if
-    pop pop
+    pop
     exit
   then
   me @ "~look/contents-format" envpropstr swap pop
@@ -765,7 +768,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-76
 @set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.28 $
-@set $lib/look=/_version:1.31FM$Revision: 1.28 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.29 $
+@set $lib/look=/_version:1.31FM$Revision: 1.29 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
