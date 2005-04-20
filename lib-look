@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/04/19 22:12:37 $ $Revision: 1.31 $                )
+( cmd/lib-look: $Date: 2005/04/20 01:17:24 $ $Revision: 1.32 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -97,6 +97,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.32  2005/04/20 01:17:24  feaelin
+  Fixed issue where on mu*s that aren't using the contents-handler, that
+  the look errors when it reaches the contents lister.
+
   Revision 1.31  2005/04/19 22:12:37  feaelin
   Sigh. Updated _docs property again.
 
@@ -262,6 +266,9 @@ lvar realtrig
 ( everything else on the stack.                                               )
 : unparse-secondary ( s d -- s )
   me @ "~look/contents-handler" envpropstr swap pop
+  dup "" strcmp not if
+    pop pop exit
+  then
   dup dbref? not if
     dup string? if
       dup "#" instr if
@@ -774,7 +781,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-93
 @set $lib/look=/_/de:lib-look:List lines 1-93 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.31 $
-@set $lib/look=/_version:1.31FM$Revision: 1.31 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.32 $
+@set $lib/look=/_version:1.31FM$Revision: 1.32 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
