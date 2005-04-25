@@ -1,30 +1,48 @@
-"Beginning installation of con-guest...
+wh me=Beginning installation of con-guest...
 @prog con-guest
 1 99999 d
 1 i
-( con-guest: $Date: 1999/04/17 20:38:44 $ $Revision: 1.1 $
-  Author: PakRat/Andy
-  --------------------------------------------------------------------------- )
+( con-guest: $Date: 2005/04/25 14:26:38 $ $Revision: 1.2 $                    )
+( Purpose: Provides multiple guest account support                            )
+( Author: PakRat/Andy                                                         )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-match                                        )
+( --------------------------------------------------------------------------- )
 (
   $Log: con-guest,v $
-  Revision 1.1  1999/04/17 20:38:44  feaelin
-  Initial revision
+  Revision 1.2  2005/04/25 14:26:38  feaelin
+  Removed dependency on lib-glow-standard
+  Updated installer script
+  Added customization through props as part of the features.
+  Cleaned up documentation.
 
 )
 ( PakRat's More interesting Multi-Guest system Copyright 1996 )
 
-$include $lib/glow
 $include $lib/strings
+$include $lib/match
  
 $def GuestPW "yes"
 $def n me @ swap notify
   
-lvar guest lvar newname
-  
+lvar guest
+lvar newname
+ 
 : GS ( -- s )
-  "#0Bard#1Peasant#2Hero#3Serf#4Rogue#5Knight#6Knave#7Noble#8Pauper#"
+  prog "GS" getpropstr
+  dup "" strcmp not if
+    pop "#0Bard#1Peasant#2Hero#3Serf#4Rogue#5Knight#6Knave#7Noble#8Pauper#"
+  then
 ;
-  
+ 
+: name-prefix ( -- s )
+  prog "name-prefix" getpropstr
+;
+ 
+: name-suffix ( -- s )
+  prog "name-suffix" getpropstr
+;
+ 
 : num-color ( i s )
   intostr "#" swap strcat
   GS swap instring dup if
@@ -32,14 +50,15 @@ lvar guest lvar newname
     dup "#" instring 1 - strcut pop
   else pop "" then
 ;
-  
+ 
 : Rand-Guest ( -- d ) ( #-1 means we couldn't find one )
   0 begin
-    random 9 % num-color "_Guest" strcat .pmatch dup guest !
+    random 9 % num-color name-prefix swap strcat
+    name-suffix strcat MATCH-pmatch dup guest !
     dup if awake? not else pop 0 then if pop exit then
   1 + dup 30 < while repeat pop #-1 guest !
 ;
-  
+ 
 : main ( s -- )
   "me" match dup location loc ! me !
   me @ name "Guest" stringcmp if pop exit then
@@ -83,7 +102,7 @@ lvar guest lvar newname
   then
   
   me @ "!C" set
-  me @ "_/do" "I'm exploring the realms as a " newname @ "_" .split
+  me @ "_/do" "I'm exploring the realms as a " newname @ "_" STR-split
   me @ "_prefs" remove_prop
   pop tolower strcat "!" strcat setprop
   " " n
@@ -95,8 +114,8 @@ lvar guest lvar newname
 c
 q
 @register con-guest=con/guest
-@register #me con-guest=tmp/prog1
-@set $tmp/prog1=L
-@set $tmp/prog1=W3
-@set $tmp/prog1=/_version:FM$Revision: 1.1 $
-"Installation of con-guest complete.
+@set $con/guest=/_/de:A multiguest program.
+@set $con/guest=L
+@set $con/guest=W3
+@set $con/guest=/_version:FM$Revision: 1.2 $
+wh me=Installation of con-guest complete.
