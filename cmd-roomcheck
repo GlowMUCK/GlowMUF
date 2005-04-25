@@ -2,7 +2,7 @@
 @prog cmd-roomcheck
 1 99999 d
 1 i
-( cmd-roomcheck: $Date: 2004/04/02 18:37:18 $ $Revision: 1.4 $                )
+( cmd-roomcheck: $Date: 2005/04/25 17:04:38 $ $Revision: 1.5 $                )
 ( Author: ???                                                                 )
 ( --------------------------------------------------------------------------- )
 $include $lib/glow
@@ -14,7 +14,7 @@ lvar check-obj-addr
 : check-next-loop (d -- )
    dup not if pop exit then
    dup exit? over thing? or
-   me @ 3 pick .controls and if
+   me @ 3 pick controls and if
       dup check-obj-addr @ execute
    then
    next check-next-loop
@@ -110,7 +110,7 @@ $define pathislocked? (d s -- i) PATHgetlock "" strcmp $enddef
    
 : can-linkto? (player object -- i)
    dup "link_ok" flag? if pop pop 1 exit then
-   .controls
+   controls
 ;
    
 : check-exec (d mtype execstr -- )
@@ -372,7 +372,7 @@ q
 @register cmd-roomcheck=cmd/roomcheck
 @register #me cmd-roomcheck=tmp/prog1
 @set $tmp/prog1=M3
-@set $tmp/prog1=_version:FM$Revision: 1.4 $
+@set $tmp/prog1=_version:FM$Revision: 1.5 $
 @action @roomcheck;@rc=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3

@@ -2,7 +2,7 @@
 @prog cmd-sweep
 1 99999 d
 1 i
-( cmd-sweep: $Date: 2004/05/08 17:09:54 $ $Revision: 1.3 $                    )
+( cmd-sweep: $Date: 2005/04/25 17:04:38 $ $Revision: 1.4 $                    )
 ( Authors: Tygryss, IMiR of XR, Scotfox                                       )
 ( Written: 1991 May 02                                                        )
 ( --------------------------------------------------------------------------- )
@@ -27,6 +27,9 @@
 )
 (
   $Log: cmd-sweep,v $
+  Revision 1.4  2005/04/25 17:04:38  feaelin
+  Updated to use the controls primitive instead of the .controls macro.
+
   Revision 1.3  2004/05/08 17:09:54  feaelin
   Minor cleanup.
 
@@ -151,7 +154,7 @@ dup program? if dup owner else #-3 then moveto
     "me" match me !
     caller exit? not if pop exit then
     dup not if
-      me @ dup location .controls not
+      me @ dup location controls not
       me @ authorized? not and
       me @ location "_sweep/public?" .envprop
       "yes" stringcmp and if
@@ -200,13 +203,13 @@ dup program? if dup owner else #-3 then moveto
         me @ swap notify exit
       then
       dup location me @ location dbcmp not if
-        me @ over .controls not
-        me @ 3 pick location .controls not and if
+        me @ over controls not
+        me @ 3 pick location controls not and if
           "I don't see that here!"
           me @ swap notify pop exit
         then
       then
-      me @ over .controls not
+      me @ over controls not
       over "Z" flag?
       3 pick "_listen" getpropstr or
       3 pick "_listen" propdir? or
@@ -215,7 +218,7 @@ dup program? if dup owner else #-3 then moveto
       3 pick thing? and
       3 pick location "_sweep/public?"
       getpropstr "yes" stringcmp not and not and
-      me @ 3 pick location .controls not and
+      me @ 3 pick location controls not and
       me @ authorized? not and if
         pop "Permission denied."
         me @ swap notify exit
@@ -260,5 +263,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Sweeps all sleepers from the current room, if you have permission.  See 'sweep #help'
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $tmp/prog1=_version:FM$Revision: 1.4 $
 "Installation of cmd-sweep complete.
