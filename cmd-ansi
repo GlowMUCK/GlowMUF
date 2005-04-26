@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-ansi...
 @prog cmd-ansi
 1 99999 d
 1 i
-( cmd-ansi: $Date: 2005/04/26 19:05:32 $ $Revision: 1.2 $                     )
+( cmd-ansi: $Date: 2005/04/26 19:54:27 $ $Revision: 1.3 $                     )
 ( Purpose: Prettily turn and off ANSI color and/or 256 xterm colors           )
 ( Author: Andy/Pakrat                                                         )
 ( Contributors: Feaelin                                                       )
@@ -10,6 +10,9 @@ wh me=Beginning installation of cmd-ansi...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-ansi,v $
+  Revision 1.3  2005/04/26 19:54:27  feaelin
+  Missed a me @ or two...
+
   Revision 1.2  2005/04/26 19:05:32  feaelin
   Removed dependency on lib-glow-standard
   Added compatibility with the new 256 colors feature of glowmuck 3.2.0
@@ -140,10 +143,10 @@ $endif
 $ifdef __pref_256colors
       me @ __pref_256colors remove_prop
 $endif
-      " " notify
-      "For linewrap try: @wrap 80" notify
-      " " notify
-      "^BLUE^Ansi color turned ^GREEN^^FLASH^on^ ^^BLUE^! "
+      me @ " " notify
+      me @ "For linewrap try: @wrap 80" notify
+      me @ " " notify
+      me @ "^BLUE^Ansi color turned ^GREEN^^FLASH^on^ ^^BLUE^! "
       "^YELLOW^You will now see in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ " strcat
       "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!" strcat ansi_notify
     else
@@ -151,8 +154,8 @@ $endif
 $ifdef __pref_256colors
       me @ __pref_256colors remove_prop
 $endif
-      " " notify
-      "Ansi color turned off. Living in a monochrome world again. *sigh*" notify
+      me @ " " notify
+      me @ "Ansi color turned off. Living in a monochrome world again. *sigh*" notify
     then
   else pop
     me @ "C" flag? if
@@ -170,7 +173,7 @@ q
 @register cmd-ansi=cmd/ansi
 @set $cmd/ansi=V
 @set $cmd/ansi=M3
-@set $cmd/ansi=_version:FM$Revision: 1.2 $
+@set $cmd/ansi=_version:FM$Revision: 1.3 $
 @action color;ansi;colors;colors2;@ansi=here=tmp/exit1
 @link $tmp/exit1=$cmd/ansi
 @set $tmp/exit1=M1
