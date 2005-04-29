@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @prog cmd-page
 1 99999 d
 1 i
-( cmd-page: $Date: 2005/02/01 16:46:39 $ $Revision: 1.19 $                    )
+( cmd-page: $Date: 2005/04/29 17:09:21 $ $Revision: 1.20 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,12 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.20  2005/04/29 17:09:21  feaelin
+  Fixed problem where page would bomb on an empty message
+  Added feature so that Archwizards can control whether  mortals can page
+  and paged by guests."
+  Colorized some of the fail messages.
+
   Revision 1.19  2005/02/01 16:46:39  feaelin
   Fixed problem where very long messages will make 'mail old' fail.
 
@@ -108,7 +114,13 @@ $ifdef NOSORTPRIM
 $else
 : SSort 3 sort ;
 $endif
-  
+ 
+$def GUESTMORTALPROP "/_prefs/guestpagemortal?"
+ 
+: guestpagemortal? ( -- )
+  prog GUESTMORTALPROP getpropstr "yes" strcmp not
+;
+ 
 : fillspace
   swap strlen -
   "                                        " ( 40 spaces )
@@ -1243,10 +1255,11 @@ $endif
   then
   swap 1 - swap remove-maxers
 ;
-  
+ 
 : remove-noguest (dbrefrange count nullstr -- dbrefrange sleeperstr)
   over not if swap pop sort-stringwords exit then
-  3 pick 3 + rotate dup noguest? not if
+  3 pick 3 + rotate dup
+  noguest? not if
     -4 rotate
   else
     name " " strcat strcat
@@ -1254,12 +1267,34 @@ $endif
   then
   swap 1 - swap remove-noguest
 ;
-
+ 
+: remove-noguest-mortal (dbrefrange count nullstr -- dbrefrange sleeperstr)
+  over not if swap pop sort-stringwords exit then
+  3 pick 3 + rotate dup
+  "mage" flag? guestpagemortal? or if
+    -4 rotate
+  else
+    name " " strcat strcat
+    rot 1 - rot rot
+  then
+  swap 1 - swap remove-noguest-mortal
+;
+ 
+: remove-mortal-noguest (dbrefrange count nullstr -- dbrefrange sleeperstr)
+  over not if swap pop sort-stringwords exit then
+  3 pick 3 + rotate dup
+  "guest" flag? not guestpagemortal? or if
+    -4 rotate
+  else
+    name " " strcat strcat
+    rot 1 - rot rot
+  then
+  swap 1 - swap remove-mortal-noguest
+;
+ 
 : remove-nomail (dbrefrange count nullstr -- dbrefrange sleeperstr)
   over not if swap pop sort-stringwords exit then
-  3 pick 3 + rotate dup nomail? not over guest?
-  me @ "mage" flag? not and
-  not and if
+  3 pick 3 + rotate dup nomail? not if
     -4 rotate
   else
     name " " strcat strcat
@@ -1348,7 +1383,27 @@ $endif
     " do"
     over " " instr not if "es" strcat then
     " not wish to be paged by guests." strcat
-    strcat tell
+    strcat "^FAIL^" swap strcat me @ swap ansi_notify
+  else pop
+  then
+;
+ 
+: do-noguest-mortal (dbrefrange -- dbrefrange')
+  dup "" remove-noguest-mortal
+  dup if
+    comma-format
+    " cannot be paged because guests cannot page mortals." strcat
+    "^FAIL^" swap strcat me @ swap ansi_notify
+  else pop
+  then
+;
+
+: do-mortal-noguest (dbrefrange -- dbrefrange')
+  dup "" remove-mortal-noguest
+  dup if
+    comma-format
+    " cannot be paged because only wizards can page guests." strcat
+    "^FAIL^" swap strcat me @ swap ansi_notify
   else pop
   then
 ;
@@ -1517,7 +1572,13 @@ $endif
 : get-valid-pagees (players -- dbrefrange players')
   do-getplayers
   do-sleepers
-  me @ guest? if do-noguest then
+  me @ guest? if
+    do-noguest
+    do-noguest-mortal
+  then
+  me @ "mage" flag? not if
+    do-mortal-noguest
+  then
   do-nomail
   do-nopagers
   do-ignoring
@@ -1829,7 +1890,7 @@ $endif
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/02/01 16:46:39 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2005/04/29 17:09:21 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -1842,6 +1903,12 @@ $endif
  
 : show-changes ( -- )
   "Changes" show-header
+  "MUFpage v2.5FM1.20 Fixed problem where page would bomb on an empty message."
+  "                   Added feature so that Archwizards can control whether"
+  "                   mortals can page and paged by guests."
+  "                   Colorized some of the fail messages."
+  "MUFpage v2.5FM1.19 Fixed problem where long messages made 'mail old' fail."
+  "MUFpage v2.5FM1.18 Added output that shows the addressees in the header."
   "MUFpage v2.5FM1.17 Corrected issue where 'mail to <name>' no longer worked."
   "MUFpage v2.5FM1.16 Corrected crashing bug caused by the p *name fixes."
   "MUFpage v2.5FM1.15 Fixed the problem where p *name would generate an error."
@@ -1989,6 +2056,9 @@ $endif
     Page exists. I know, this is a hack, but its quick and easy. )
   "abort" strcmp not if
     popn "" exit
+  then
+  dup 0 = if ( If the user 'ends' without entering any text, bail out )
+    pop "" exit
   then
   "" over begin
     dup 3 + rotate ( fetch the next line off the stack )
@@ -2269,6 +2339,9 @@ $endif
       "erase"  stringcmp not when swap pop Do-Kill  exit end
       "set"    stringcmp not when swap pop Do-Set   exit end
       "clear"  stringcmp not when swap pop swap pop Do-Set exit end
+    else
+      me @ "^FAIL^That page command is not available to guests." ansi_notify
+      exit
     then
   endcase
   pop
@@ -2339,6 +2412,26 @@ $endif
       pop me @ "noguest" Uremove_prop
       "Guests can page you now."
       tell exit
+    then
+    dup "#!mortalnoguest" 3 stringmatch? if
+      me @ "archwizard" flag? if
+        pop prog GUESTMORTALPROP "yes" setpropstr
+        me @ "^SUCC^Mortals can now page and be paged by guests." ansi_notify
+      else
+        me @ "^FAIL^Only Archwizards+ can change that setting." ansi_notify
+        pop
+      then
+      exit
+    then
+    dup "#mortalnoguest" 3 stringmatch? if
+      me @ "archwizard" flag? if
+        pop prog GUESTMORTALPROP remove_prop
+        me @ "^SUCC^Mortals now cannot page or be paged by guests." ansi_notify
+      else
+        me @ "^FAIL^Only Archwizards+ can change that setting." ansi_notify
+        pop
+      then
+      exit
     then
     dup "#!away" 3 stringmatch? if
       pop me @ "away" Uremove_prop
@@ -2677,7 +2770,7 @@ $endif
     me @ guest? if
       dup " " instr if
         " " STRsplit pop
-        "Guests are not allowed to use multi-page." tell
+        me @ "^FAIL^Guests are not allowed to use multi-page." ansi_notify
       then
     then
   
@@ -2702,7 +2795,7 @@ $endif
     me @ guest? if
       dup " " instr if
         " " STRsplit pop
-        "Guests are not allowed to use multi-page." tell
+        me @ "^FAIL^Guests are not allowed to use multi-page." ansi_notify
       then
     then
     multi-page
@@ -2718,7 +2811,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.19 $"
+  "MUFpage v2.5FM$Revision: 1.20 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2838,7 +2931,7 @@ q
 @set $cmd/page=/_help3#/16:To set a format that you see when paging:    'page #format <fmtname>=<fmt>'"
 @set $cmd/page=/_help3#/17:To set a format that others receive:         'page #oformat <fmtname>=<fmt>'"
 @set $cmd/page=/_help3#/18:To display the fourth help screen:           'page #help4'
-@set $cmd/page=/_help4#:13
+@set $cmd/page=/_help4#:15
 @set $cmd/page=/_help4#/1:To mark yourself away:                       'page #away'
 @set $cmd/page=/_help4#/2:To set your away flag and message:           'page #away <message>'
 @set $cmd/page=/_help4#/3:To clear your away message:                  'page #away #clear'
@@ -2852,6 +2945,8 @@ q
 @set $cmd/page=/_help4#/11:To stop forwarding page-mail:                'page #forward #'"
 @set $cmd/page=/_help4#/12:To see who page-mail to you is forwarded to: 'page #forward'"
 @set $cmd/page=/_help4#/13:To see if page-mail is waiting for a player: 'page #check [players]'"
+@set $cmd/page=/_help4#/14:To disallow guests from paging mortals:      'page #mortalnoguest'"
+@set $cmd/page=/_help4#/15:To allow guests to page mortals:             'page #!mortalnoguest'"
 @set $cmd/page=/_helpm#:19
 @set $cmd/page=/_helpm#/1:Command -- Usage -- Type 'mail ' then the command below to use it.
 @set $cmd/page=/_helpm#/2:~~~~~~~    ~~~~~
@@ -2912,5 +3007,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.19 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.20 $
 wh me=Installation of cmd-page complete.
