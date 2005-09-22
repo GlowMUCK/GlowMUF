@@ -2,11 +2,14 @@
 @prog cmd-path
 1 99999 d
 1 i
-( cmd-path: $Date: 2004/02/12 17:34:45 $ $Revision: 1.8 $
+( cmd-path: $Date: 2005/09/22 21:26:42 $ $Revision: 1.9 $
   Author: Andy/Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-path,v $
+  Revision 1.9  2005/09/22 21:26:42  feaelin
+  Replaced .debug-line with debug-line
+
   Revision 1.8  2004/02/12 17:34:45  feaelin
   Fixed some inaccessible public functions.
 
@@ -122,7 +125,7 @@ $def NOPERM "^RED^Permission denied."
 $def NODEST "^YELLOW^I don't know where that is."
 $def NOPATH "^YELLOW^That path does not exist here."
 $define TITLE
-  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.8 $ $Date: 2004/02/12 17:34:45 $"
+  "^PURPLE^@path exit simulator ^FOREST^By Pakrat ^GREEN^$Revision: 1.9 $ $Date: 2005/09/22 21:26:42 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -1025,7 +1028,7 @@ $endif
   path-main
   debug? if depth odepth @ 1 - = not if
     depth "@Path: Bad Stack depth: " swap intostr strcat n
-    plr @ prog owner dbcmp if .debug-line then
+    plr @ prog owner dbcmp if debug-line then
   then then
 ;
 .
@@ -1053,7 +1056,7 @@ q
 @set $tmp/prog1=/_defs/PATHgetodrop:"$lib/path" match "path-get-odrop" call
 @set $tmp/prog1=/_defs/PATHmatch:"$lib/path" match "path-match" call
 @set $tmp/prog1=/_defs/PATHdir-prop:"$lib/path" match "path-match" call
-@set $tmp/prog1=_version:FM$Revision: 1.8 $
+@set $tmp/prog1=_version:FM$Revision: 1.9 $
 @action @psetup=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/path
