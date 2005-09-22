@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-announce...
 @prog cmd-announce
 1 99999 d
 1 i
-( cmd-announce: $Date: 2005/09/22 17:05:17 $ $Revision: 1.3 $                 )
+( cmd-announce: $Date: 2005/09/22 19:20:25 $ $Revision: 1.4 $                 )
 ( Purpose: Global Public Channel                                              )
 ( Author: Scotfox                                                             )
 ( Contributors: Casual, Dalles, Andy, Pakrat, Feaelin                         )
@@ -10,6 +10,9 @@ wh me=Beginning installation of cmd-announce...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-announce,v $
+  Revision 1.4  2005/09/22 19:20:25  feaelin
+  Updated timestamp format.
+
   Revision 1.3  2005/09/22 17:05:17  feaelin
   Removed reliance on lib-glow-standard.
 
@@ -228,7 +231,7 @@ $def pck ( s s -- s ) over swap instring if pop 1 exit then
         over annpre envpropstr swap pop dup not if pop "<*>" then
         "^^" "^" subst
         "^CYAN^" swap strcat
-        3 pick stamp? if " %X" systime timefmt strcat then
+        3 pick stamp? if " [%Y-%m-%d %X]" systime timefmt strcat then
         swap strcat
         ansi_notify 1 - repeat
     pop pop
@@ -241,7 +244,7 @@ q
 @set $cmd/announce=L
 @set $cmd/announce=V
 @set $cmd/announce=W3
-@set $cmd/announce=/_version:FM$Revision: 1.3 $
+@set $cmd/announce=/_version:FM$Revision: 1.4 $
 @action @announce;@announc;@announ;@annou;@anno;@ann;@an;announce;announc;announ;annou;anno;ann;an;+announce;+announc;+announ;+annou;+anno;+ann;+an;think;thin;thi;th;do;itn;@shout;@shou;@shou;@sho;@sh;shout;shou;sho;sh;.;chat;talk;public;gossip;gossi;goss;gos=here=tmp/exit1
 @link $tmp/exit1=$cmd/announce
 @set $tmp/exit1=Z
