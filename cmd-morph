@@ -2,12 +2,12 @@
 @prog cmd-morph
 1 99999 d
 1 i
-( cmd-morph: $Date: 2000/01/28 17:09:55 $ $Revision: 1.1 $ )
-( Author: PakRat )
+( cmd-morph: $Date: 2005/09/22 20:30:23 $ $Revision: 1.2 $                    )
+( Author: PakRat                                                              )
+( Contributors: Maddax                                                        )
 ( --------------------------------------------------------------------------- )
-( MorphPro Copyright 1992 by PakRat Productions, all rights reserved.     )
-( Type morph to see your current morph; morph -help for the help screen.  )
-( Version 1.0a )
+( MorphPro Copyright 1992 by PakRat Productions, all rights reserved.         )
+( Type morph to see your current morph; morph -help for the help screen.      )
 
 $include $lib/glowstandard  
 
@@ -307,7 +307,7 @@ $define MGet over swap strcat getprop swap $enddef
 : dodebug ( s -- ? )
   .noguest
   MorphMain
-  depth command @ "morph" stringcmp not and if .debug-line "Ack!" n then
+  depth command @ "morph" stringcmp not and if debug-line "Ack!" n then
 ;
 .
 c
@@ -316,7 +316,7 @@ q
 @register #me cmd-morph=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M2
-@set $tmp/prog1=_version:1.0AFM$Revision: 1.1 $
+@set $tmp/prog1=_version:1.0AFM$Revision: 1.2 $
 @action morph=here=tmp/exit1
 @link $tmp/exit1=$cmd/morph
 @set $tmp/exit1=M1

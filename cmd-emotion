@@ -2,11 +2,17 @@ wh me=Beginning installation of cmd-emotion...
 @prog cmd-emotion
 1 99999 d
 1 i
-( cmd-emotion: $Date: 2005/03/07 15:25:45 $ $Revision: 1.8 $
+( cmd-emotion: $Date: 2005/09/22 20:30:23 $ $Revision: 1.9 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-emotion,v $
+  Revision 1.9  2005/09/22 20:30:23  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.8  2005/03/07 15:25:45  feaelin
   Fixed problem where prior fix introduced bug that caused 'remove verb' to fail.
 
@@ -545,7 +551,7 @@ $def LiORes "o" swap resdir listemotion
   emotion-main
   depth dept @ 1 - = not if
   "Please tell Artie that you saw this, and what you did to do it." n
-  .debug-line then
+  debug-line then
 ;
 ( Inspiration: That annoying puppydog whiner Dalles ;)
 .
@@ -555,6 +561,6 @@ q
 @register #me cmd-emotion=tmp/prog1
 @set $tmp/prog1=V
 @set $tmp/prog1=M3
-@set $tmp/prog1=/_version:1.0FM$Revision: 1.8 $
+@set $tmp/prog1=/_version:1.0FM$Revision: 1.9 $
 wh me=Installation of cmd-emotion complete.
 wh me=Note: This install script does not create an exit for cmd-emotion.  If you want to try the default emotions/socials, also quote in cmd-emotion-exit.

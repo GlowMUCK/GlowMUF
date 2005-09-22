@@ -2,11 +2,17 @@
 @prog cmd-detail
 1 99999 d
 1 i
-( cmd-detail: $Date: 2005/04/25 17:04:38 $ $Revision: 1.3 $
+( cmd-detail: $Date: 2005/09/22 20:30:23 $ $Revision: 1.4 $
   Author: Pakrat
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-detail,v $
+  Revision 1.4  2005/09/22 20:30:23  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.3  2005/04/25 17:04:38  feaelin
   Updated to use the controls primitive instead of the .controls macro.
 
@@ -179,7 +185,7 @@ lvar ddesc
   prog "D" flag? not if
     depth 0 > if
       "Please tell PakRat you saw this line, you should not have." n
-      .debug-line
+      debug-line
     then
   then
 ;
@@ -194,5 +200,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/detail
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $tmp/prog1=_version:FM$Revision: 1.4 $
 "Installation of cmd-detail complete.

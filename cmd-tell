@@ -2,7 +2,7 @@
 @prog cmd-tell
 1 99999 d
 1 i
-( cmd-tell: $Date: 2000/12/22 18:36:54 $ $Revision: 1.2 $                                                 )
+( cmd-tell: $Date: 2005/09/22 20:30:24 $ $Revision: 1.3 $                                                 )
 ( Author: PakRat                                                              )
 ( --------------------------------------------------------------------------- )
 $include $lib/glowstandard
@@ -10,7 +10,7 @@ $include $lib/strings
 
 : do-tell ( s -- )
   dup " " instr over "=" instr not and if
-  " " .split2
+  " " STR-split
   "=" swap strcat strcat
   then
   "$cmd/page" match call
@@ -26,5 +26,5 @@ q
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Usage: tell player message
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
 "Installation of cmd-tell complete.

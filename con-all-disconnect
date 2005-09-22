@@ -2,11 +2,17 @@
 @prog dis-caller
 1 99999 d
 1 i
-( dis-caller: $Date: 1999/04/17 18:04:24 $ $Revision: 1.1 $
+( dis-caller: $Date: 2005/09/22 20:30:24 $ $Revision: 1.2 $
   Author: Andy
   --------------------------------------------------------------------------- )
 (
   $Log: con-all-disconnect,v $
+  Revision 1.2  2005/09/22 20:30:24  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.1  1999/04/17 18:04:24  feaelin
   Initial revision
 
@@ -37,7 +43,7 @@ $def achars "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@"
 
 : tattle ( -- ) "Please tell " tellwho strcat " that you saw this." strcat n ;
   
-: cleanstack ( ? -- ) depth if .debug-line tattle depth popn then ;
+: cleanstack ( ? -- ) depth if debug-line tattle depth popn then ;
     
 : daysecs ( isystime -- isecs )
   timesplit 5 popn 3600 * swap 60 * + +
@@ -183,5 +189,5 @@ q
 @set $tmp/prog1=S
 @set $tmp/prog1=W3
 @set $tmp/prog1=V
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
 "Installation of dis-caller complete.

@@ -2,11 +2,17 @@
 @prog cmd-cyberspace
 1 99999 d
 1 i
-( cmd-cyberspace: $Date: 2000/12/20 20:09:23 $ $Revision: 1.2 $
+( cmd-cyberspace: $Date: 2005/09/22 20:30:23 $ $Revision: 1.3 $
   Author: Andy Nelson
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-cyberspace,v $
+  Revision 1.3  2005/09/22 20:30:23  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.2  2000/12/20 20:09:23  feaelin
   Conflicting definition of setpropstr. Corrected.
 
@@ -2135,7 +2141,7 @@ $define firstname name dup ";" instr dup if strcut then pop $enddef
  
 : CyDebug ( s -- )
   CyCom
-  depth if .debug-line then
+  depth if debug-line then
 ;
  
 ( Coding: PakRat )
@@ -2167,7 +2173,7 @@ q
 @set $tmp/prog1=/_C/G/soc/hug:pose hugs %% tightly!
 @set $tmp/prog1=/_C/G/soc/kiss:pose kisses %% on the cheek.
 @set $tmp/prog1=/_C/G/soc/tickle:pose tickles %% mercilessly!
-@set $tmp/prog1=/_version:2.0FM$Revision: 1.2 $
+@set $tmp/prog1=/_version:2.0FM$Revision: 1.3 $
 @action c;cs;cw=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3

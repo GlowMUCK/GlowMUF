@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-glow-standard...
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2005/03/21 01:31:43 $ $Revision: 1.24 $          )
+( lib-glow-standard: $Date: 2005/09/22 20:30:24 $ $Revision: 1.25 $          )
 ( Author: Various                                                            )
 ( Contributors: Feaelin, Various                                             )
 ( Dependencies: None                                                         )
@@ -53,6 +53,12 @@ wh me=Beginning installation of lib-glow-standard...
   
 (
   $Log: lib-glow-standard,v $
+  Revision 1.25  2005/09/22 20:30:24  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.24  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 
@@ -284,9 +290,6 @@ q
 @set $tmp/prog1=/_defs/.controls:controls
 @set $tmp/prog1=/_defs/.cr:me @ " " notify
 @set $tmp/prog1=/_defs/.dark?:dup "D" flag? swap "_dark" \getpropstr or ( d -- i )
-@set $tmp/prog1=/_defs/.debug-line:( -- ) prog "!d" over "d" set set (shows a single debug line)
-@set $tmp/prog1=/_defs/.debug-off:( -- ) prog "!D" set ( set a program !debug from this line )
-@set $tmp/prog1=/_defs/.debug-on:( -- ) prog "D" set ( set a program debug from this line )
 @set $tmp/prog1=/_defs/.descwrap:"$macro/descwrap" match call
 @set $tmp/prog1=/_defs/.endfor:1 - dup not until then pop
 @set $tmp/prog1=/_defs/.envprop:envpropstr swap pop
@@ -373,5 +376,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-48 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-48
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.24 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.25 $
 wh me=Installation of lib-glow-standard completed.

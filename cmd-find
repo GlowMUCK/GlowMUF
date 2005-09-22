@@ -2,7 +2,7 @@
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2004/03/26 03:02:28 $ $Revision: 1.7 $               )
+( cmd-find: $Date: 2005/09/22 20:30:23 $ $Revision: 1.8 $               )
 ( Author: PakRat                                                        )
 ( Contributors: Regabyr AKA Jennifer Boeyink                            )
 (               Feaelin Moilar AKA Iain E. Davis                        ) 
@@ -33,6 +33,12 @@
 ( --------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
+  Revision 1.8  2005/09/22 20:30:23  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.7  2004/03/26 03:02:28  feaelin
   Header Cleanup
 
@@ -430,7 +436,7 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0FM" "$Revision: 1.7 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  "Find 2.0FM" "$Revision: 1.8 $" 11 strcut swap pop dup strlen 1 - strcut pop
   " by PakRat" strcat strcat n
   "~~~~~~~~~~~~~~~~~~" n
   "Find lists information about where players are on the game." n
@@ -526,7 +532,7 @@ public FindDbrefList
 : dodebug
   depth dept !
   find-main
-  depth dept @ 1 - = not if .debug-line then
+  depth dept @ 1 - = not if debug-line then
 ;
 .
 c
@@ -539,5 +545,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $tmp/prog1=_version:2.0FM$Revision: 1.7 $
+@set $tmp/prog1=_version:2.0FM$Revision: 1.8 $
 "Installation of cmd-find complete.

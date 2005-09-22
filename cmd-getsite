@@ -2,7 +2,7 @@
 @prog cmd-getsite
 1 99999 d
 1 i
-( cmd-getsite: $Date: 2004/02/12 04:38:17 $ $Revision: 1.2 $                              )
+( cmd-getsite: $Date: 2005/09/22 20:30:23 $ $Revision: 1.3 $                              )
 ( Author: PakRat                                              )
 ( ----------------------------------------------------------- )
 ( Getsite by PakRat Copyright 1997 All Rights Reserved        )
@@ -11,6 +11,12 @@
 ( am logged into so they can get to accounts on my machine.   )
 ( 
   $Log: cmd-getsite,v $
+  Revision 1.3  2005/09/22 20:30:23  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
   Revision 1.2  2004/02/12 04:38:17  feaelin
   Fixed minor spelling error.
 
@@ -104,7 +110,7 @@ $def n me @ swap notify
   main
   depth if
     "Oops!  Please tell PakRat you saw this." n
-    .debug-line
+    debug-line
   then
 ;
 .
@@ -113,7 +119,7 @@ q
 @register cmd-getsite=cmd/getsite
 @register #me cmd-getsite=tmp/prog1
 @set $tmp/prog1=W3
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
 @action @getsite;getsite;@site;site=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @desc $tmp/exit1=@$cmd/getsite #help
