@@ -2,7 +2,7 @@ wh me=Beginning Installation of cmd-register
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2005/04/06 18:48:01 $ $Revision: 1.20 $                 )
+( cmd-register $Date: 2005/09/25 13:01:18 $ $Revision: 1.21 $                 )
 ( Purpose: Handle registration of database items for virtual references       )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -10,25 +10,28 @@ wh me=Beginning Installation of cmd-register
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.21  2005/09/25 13:01:18  feaelin
+   Minor cosmetic update.
+
    Revision 1.20  2005/04/06 18:48:01  feaelin
    Output changes. Now prints the library prefix/symbol. This is the
    set of letters that precedes the library words in the library: STR, LMGR,
    etc.
    Adjusted indentation so the level of items is clearer.
-
+ 
    Revision 1.19  2005/04/03 14:37:58  feaelin
    Documentation update, changes to the installation script to make it cleaner.
-
+ 
    Revision 1.18  2004/04/15 00:50:56  feaelin
    Updated cmd-register's documentation again. Added some color and version
    display.
-
+ 
    Revision 1.17  2004/04/14 21:08:41  feaelin
    Updated cmd-register's documentation.
-
+ 
    Revision 1.16  2004/03/26 03:03:30  feaelin
    Further rcs-log fixes.
-
+ 
    Revision 1.15  2004/02/07 17:20:31  feaelin
    Using a $ in the propname now generates an error, preventing
    messy registry entries.  Fixed the rcs-log.
@@ -88,7 +91,7 @@ lvar regprop
  
 : do-header
   "^WHITE^------------------------------------------------------------------------------" tell
-  "^FOREST^cmd-register: " "$Revision: 1.20 $" 
+  "^FOREST^cmd-register: " "$Revision: 1.21 $" 
   1 strcut swap pop dup strlen 2 - strcut pop strcat tell
   "^WHITE^------------------------------------------------------------------------------" tell
 ;
@@ -157,8 +160,8 @@ lvar regprop
     then
 ;
  
-( Using RCS to automatically update the version prop? This prettifies the
-  result! FM-IDE 1998July26                                                )
+( Using RCS to automatically update the version prop? This prettifies the     )
+( result! FM-IDE 1998July26                                                   )
 : strip-rcs ( s -- s' )
   dup dup "$" instr dup if
     1 - strcut dup "$Revis" "ion$" strcat stringcmp if
@@ -372,7 +375,6 @@ lvar regprop
   regobj @ unparseobj strcat
   "^INFO^" swap strcat tell
 ;
-
 .
 c
 q
@@ -382,7 +384,7 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=/_version:FM$Revision: 1.20 $
-@set $cmd/register=/_/de:Use '@register #help' to get more information.
+@set $cmd/register=/_version:FM$Revision: 1.21 $
+@set $cmd/register=/_/de:Use '@register #help' or 'help @register' to get more information.
 @set $cmd/register=_docs:@register #help
 wh me=Installation of cmd-register finished.
