@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/04/07 21:19:48 $ $Revision: 1.15 $                    )
+( lib-edit: $Date: 2005/09/25 13:31:43 $ $Revision: 1.16 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -31,7 +31,8 @@ wh me=Beginning installation of lib-edit...
 (   Copies text within a string range from one line to another, inserting it  )
 (   in the new location.                                                      )
 (                                                                             )
-( EDIT-display: {range} --                                                    ) (   displays the range of strings on the stack to the user.                   )
+( EDIT-display: {range} --                                                    )
+(   displays the range of strings on the stack to the user.                   )
 (                                                                             )
 ( EDIT-fmt_rng: {range} ... offset cols start end -- {range'} ...             )
 (   Formats the given subrange in the string range to COLS columns. This is   )
@@ -93,49 +94,52 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.16  2005/09/25 13:31:43  feaelin
+  Documentation update.
+
   Revision 1.15  2005/04/07 21:19:48  feaelin
   Added Library Symbols
-
+ 
   Revision 1.14  2005/04/05 21:01:48  feaelin
   Corrected misspelled library calls
-
+ 
   Revision 1.13  2005/04/05 16:22:57  feaelin
   Fixed library calls to lib-strings and lib-stackrng
-
+ 
   Revision 1.12  2005/04/05 15:51:48  feaelin
   Added word aliases for library words to fit the new standard.
-
+ 
   Revision 1.11  2005/04/04 14:11:51  feaelin
   Documentation updated. Removed extraneous whitespace.
   Removed unnecessary call to lib-glow-standard
-
+ 
   Revision 1.10  2005/03/21 01:31:42  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.9  2005/01/18 16:23:46  feaelin
   Corrected problem that would crash the editor when formatting lines with
   ANSI codes in them.
-
+ 
   Revision 1.8  2004/04/03 05:09:00  feaelin
   Fixed .split and .format so that they preserve color on lines that they split
-
+ 
   Revision 1.7  2004/04/01 05:39:12  feaelin
   Added feature which allows the user to prepend each line in a range with
   a color code. Updated documentation for recent changes.
-
+ 
   Revision 1.6  2004/02/27 17:36:40  feaelin
   Fixed format and right justify to be ansi_aware.
-
+ 
   Revision 1.5  2004/02/20 17:08:44  feaelin
   Added ansi versions of EDITdisplay and EDITlist,
   EDITansi_display and EIDTansi_list respectively.
-
+ 
   Revision 1.4  2000/01/10 20:54:44  feaelin
   Minor documentation fixes.
-
+ 
   Revision 1.3  1998/07/29 17:24:16  feaelin
   Put back in a missing 'swap' in EDITjoin.
-
+ 
   Revision 1.2  1998/07/29 16:47:50  feaelin
   Cleaned up documentation.
 )
@@ -597,6 +601,6 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.15 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.16 $
 @set $lib/edit=/_lib-symbol:EDIT
 wh me=Installation of lib-edit complete.

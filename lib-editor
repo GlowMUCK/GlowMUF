@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/04/22 15:15:21 $ $Revision: 1.24 $             )
+( lib-editor: $Date: 2005/09/25 13:36:41 $ $Revision: 1.25 $                  )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,65 +55,68 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.25  2005/09/25 13:36:41  feaelin
+  Documentation update.
+
   Revision 1.24  2005/04/22 15:15:21  feaelin
   Output to the lsedit user wasn't formatted properly for 'say in the editor'
   messages.
-
+ 
   Revision 1.23  2005/04/07 21:21:56  feaelin
   Corrected typo in library symbol property
-
+ 
   Revision 1.22  2005/04/07 21:19:49  feaelin
   Added Library Symbols
-
+ 
   Revision 1.21  2005/04/05 21:04:46  feaelin
   Corrected misspelled library calls
-
+ 
   Revision 1.20  2005/04/05 19:50:50  feaelin
   Revised library word names and library calls to reflect standards change.
-
+ 
   Revision 1.19  2005/04/04 14:31:05  feaelin
   Documentation and script updated.
-
+ 
   Revision 1.18  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.17  2005/03/14 02:55:28  feaelin
   Changed the 'in the editor' say/pose to use the default colors.
-
+ 
   Revision 1.16  2005/01/18 16:23:46  feaelin
   Corrected problem that would crash the editor when formatting lines with
   ANSI codes in them.
-
+ 
   Revision 1.15  2005/01/14 06:55:14  feaelin
   Entering a command string starting with a period and a space no longer
   generates a program error.
-
+ 
   Revision 1.14  2005/01/14 06:37:48  feaelin
   Entering a period without any commands no longer results in an program
   error.
-
+ 
   Revision 1.13  2004/04/16 02:03:22  feaelin
   Fixed bug in EDITORargument that caused the editor to crash after being
   passed certain combinations of "invalid line references".
-
+ 
   Revision 1.12  2004/04/05 01:34:02  feaelin
   Wizbit change.
-
+ 
   Revision 1.11  2004/04/03 05:44:11  feaelin
   Added the .ruler command.
   Spotted a minor bug in .color that would allow you to 'color' with
   things like 'r' and 'f' ...because it thought they were red and flash.
-
+ 
   Revision 1.10  2004/04/03 00:07:11  feaelin
   Fixed yet another bug in the new .color command.
-
+ 
   Revision 1.9  2004/04/01 23:13:38  feaelin
   You'd think I'd have learned by now to not put parens in my RCS log entries.
-
+ 
   Revision 1.8  2004/04/01 23:11:31  feaelin
   Fixed issue where .color # # [no color specified] would cause the editor
   to crash.
-  
+   
   Revision 1.7  2004/04/01 05:39:12  feaelin
   Added feature which allows the user to prepend each line in a range with
   a color code. Updated documentation for recent changes.
@@ -683,6 +686,6 @@ q
 @set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
 @set $lib/editor=/_docs:@list $lib/editor=1-51
 @set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
-@set $lib/editor=/_lib-version:FM$Revision: 1.24 $
+@set $lib/editor=/_lib-version:FM$Revision: 1.25 $
 @set $lib/editor=/_lib-symbol:EDITOR
 wh me=Installation of lib-editor complete.
