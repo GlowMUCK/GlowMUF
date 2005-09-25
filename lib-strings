@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/04/07 21:08:58 $ $Revision: 1.20 $                 )
+( lib-strings: $Date: 2005/09/25 13:07:10 $ $Revision: 1.21 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -43,36 +43,36 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.21  2005/09/25 13:07:10  feaelin
+  Changelog update
+
   Revision 1.20  2005/04/07 21:08:58  feaelin
   Library Symbol added
-
-  Revision 1.19  2005/04/05 16:42:56  feaelin
-  *** empty log message ***
-
+ 
   Revision 1.18  2005/04/05 15:31:20  feaelin
   Updated documentation in light of the new library word name standard
-
+ 
   Revision 1.17  2005/04/05 15:23:19  feaelin
   Provided more aliases of the library words
-
+ 
   Revision 1.16  2005/04/03 15:02:27  feaelin
   Simple whitespace changes.
-
+ 
   Revision 1.15  2005/04/03 14:55:01  feaelin
   Fixed installer script
-
+ 
   Revision 1.14  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.13  2004/08/06 14:12:22  feaelin
   Minor documentation corrections.
-
+ 
   Revision 1.12  2004/04/22 17:25:53  feaelin
   Documentation Cleanup
-
+ 
   Revision 1.11  2001/02/22 20:46:31  feaelin
   Documentation correction.
-  
+   
   Revision 1.10  2001/02/22 20:39:56  feaelin
   Added support to STRfillfield, STRcenter STRleft, STRright to detect
   and handle correctly strings with ANSI codes in them.  Credit goes to
@@ -182,7 +182,7 @@ wh me=Beginning installation of lib-strings...
     then
     strip sms rot
 ;
-  
+ 
 public split
 public rsplit
 public sms
@@ -250,8 +250,8 @@ q
 @set $lib/strings=/_defs/STR-splitargs:"$lib/strings" match "splitargs" call
 @set $lib/strings=/_defs/STR-strip:strip
 @set $lib/strings=/_defs/STR-sts:striptail
-@set $lib/strings=/_docs:@list $lib/strings=1-37
-@set $lib/strings=/_/de:lib-strings: List lines 1-37 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.20 $
+@set $lib/strings=/_docs:@list $lib/strings=1-39
+@set $lib/strings=/_/de:lib-strings: List lines 1-39 for documentation.
+@set $lib/strings=/_lib-version:FM$Revision: 1.21 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
