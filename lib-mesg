@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-mesg...
 @prog lib-mesg
 1 99999 d
 1 i
-( lib-mesg: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                     )
+( lib-mesg: $Date: 2005/09/25 13:46:29 $ $Revision: 1.8 $                     )
 ( Purpose: Provides routines for handling messages                            )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -61,23 +61,26 @@ wh me=Beginning installation of lib-mesg...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-mesg,v $
+  Revision 1.8  2005/09/25 13:46:29  feaelin
+  Documentation update.
+
   Revision 1.7  2005/04/07 21:20:00  feaelin
   Added Library Symbols
-
+ 
   Revision 1.6  2005/04/04 16:19:32  feaelin
   Replaced .setpropstr call to $lib/glow with the equivalent primitives.
   Updated documentation and installer scripting.
-
+ 
   Revision 1.5  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.4  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
-
+ 
   Revision 1.3  2004/03/26 03:18:15  feaelin
   Upgraded wizprop so you can store messages in @ props.
-
+ 
   Revision 1.2  1998/08/22 19:36:27  feaelin
   Finished RCS-ifying.
 )
@@ -274,6 +277,6 @@ q
 @set $lib/mesg=/_defs/MSGsetitem:"$lib/mesg" match "MSG-setitem" call
 @set $lib/mesg=/_/de:lib-mesg: List lines 1-57 for documentation.
 @set $lib/mesg=/_docs:@list $lib/mesg=1-57
-@set $lib/mesg=/_lib-version:FM$Revision: 1.7 $
+@set $lib/mesg=/_lib-version:FM$Revision: 1.8 $
 @set $lib/mesg=/_lib-symbol:MSG
 wh me=Installation of lib-mesg complete.

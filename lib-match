@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/09/13 15:01:34 $ $Revision: 1.15 $                   )
+( lib-match: $Date: 2005/09/25 13:46:29 $ $Revision: 1.16 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -64,49 +64,52 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.16  2005/09/25 13:46:29  feaelin
+  Documentation update.
+
   Revision 1.15  2005/09/13 15:01:34  feaelin
   Updated documentation strings.
-
+ 
   Revision 1.14  2005/04/07 21:20:00  feaelin
   Added Library Symbols
-
+ 
   Revision 1.13  2005/04/06 04:10:57  feaelin
   Added some colorization.
-
+ 
   Revision 1.12  2005/04/05 21:08:02  feaelin
   Removed unneeded $include of lib-stackrng
-
+ 
   Revision 1.11  2005/04/04 16:11:50  feaelin
   Documentation Update
-
+ 
   Revision 1.10  2005/04/04 15:14:30  feaelin
   Forgot the _defs entry for pmatch.
-
+ 
   Revision 1.9  2005/04/04 15:05:26  feaelin
   Moved pmatch to this library from lib-glow-standard
   Revised noisy_pmatch to use the local word
   Updated Documentation and installer script
-
+ 
   Revision 1.8  2005/03/23 17:25:08  feaelin
   Updated documentation strings.
-
+ 
   Revision 1.7  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.6  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
-
+ 
   Revision 1.5  2004/08/04 14:12:21  feaelin
   Updated header documentation. Updated library entries to add the new
   LIBNAMEfuncname format for function names.
-
+ 
   Revision 1.4  2000/01/10 21:23:33  feaelin
   Fixed .controls backward compatibility
-
+ 
   Revision 1.3  1998/08/22 19:03:51  feaelin
   Oops. Remembered why I had already taken .controls out of lib-match.
-
+ 
   Revision 1.2  1998/08/22 18:57:08  feaelin
   Added .controls from fbmuf.
 )
@@ -254,6 +257,6 @@ q
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-60 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-60
-@set $lib/match=/_lib-version:FM$Revision: 1.15 $
+@set $lib/match=/_lib-version:FM$Revision: 1.16 $
 @set $lib/match=/_lib-symbol:MATCH
 wh me=Installation of lib-match completed.
