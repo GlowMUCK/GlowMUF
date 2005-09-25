@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/09/09 22:17:20 $ $Revision: 1.35 $                )
+( cmd/lib-look: $Date: 2005/09/25 23:14:27 $ $Revision: 1.36 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -97,88 +97,91 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.36  2005/09/25 23:14:27  feaelin
+  Formatting cleanup.
+
   Revision 1.35  2005/09/09 22:17:20  feaelin
   Sticky/Silent now hides dark items, regardless of control.
-
+ 
   Revision 1.34  2005/04/21 18:04:34  feaelin
   Fixed logic flaw. If a player is viewed that has stuff, it potentially will
   bomb when trying to show the contents.
-
+ 
   Revision 1.33  2005/04/21 03:25:05  feaelin
   Add support for the contents of containers.
-
+ 
   Revision 1.32  2005/04/20 01:17:24  feaelin
   Fixed issue where on mu*s that aren't using the contents-handler, that
   the look errors when it reaches the contents lister.
-
+ 
   Revision 1.31  2005/04/19 22:12:37  feaelin
   Sigh. Updated _docs property again.
-
+ 
   Revision 1.30  2005/04/19 22:11:04  feaelin
   Rearranged documentation
   Updated description and _docs property.
-
+ 
   Revision 1.29  2005/04/19 20:04:29  feaelin
   Amazing how one 'pop' in the wrong place does so much damage.
-
+ 
   Revision 1.28  2005/04/19 19:34:50  feaelin
   Added a feature by which a muck can make local changes to the contents list
   withouth changing lib-look.
-
+ 
   Revision 1.27  2005/04/07 21:19:52  feaelin
   Added Library Symbols
-
+ 
   Revision 1.26  2005/04/06 19:28:19  feaelin
   Documented the ~look property directory feature.
-
+ 
   Revision 1.25  2005/04/05 21:32:48  feaelin
   Removed unneeded $include statements ...no actual calls to those libraries.
   Revised library words to be in line with the standard and fixed calls to
   lib-strings and lib-unparseobj as well.
-
+ 
   Revision 1.24  2005/04/05 13:42:16  feaelin
   General documentation cleanup.
   Improvements made to the installer script.
-
+ 
   Revision 1.23  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.22  2005/01/15 06:35:18  feaelin
   Fixed the problem where programs relying on lib-reflist were expecting
   non feni'd and non-colorized output.
-
+ 
   Revision 1.21  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
-
+ 
   Revision 1.20  2004/08/04 18:50:53  feaelin
   Missed part of the calls when checking for #0.
-
+ 
   Revision 1.19  2004/08/04 18:41:15  feaelin
   Fix so that if you have an @ sign in your desc it doesn't try to use it
   to call #0 as a program.
-
+ 
   Revision 1.18  2004/05/19 18:50:10  feaelin
   Removed erroneous striplead and striptail, which would mess carefully spaced
   descriptions and lsedit lists.
-
+ 
   Revision 1.17  2004/04/22 19:44:21  feaelin
   Fixed issue where darked players were hidden from wizards.
-
+ 
   Revision 1.16  2004/04/22 17:25:53  feaelin
   Documentation Cleanup
-
+ 
   Revision 1.15  2004/04/22 17:16:22  feaelin
   Added support for player darking via the /@/dark:yes prop
-
+ 
   Revision 1.14  2004/04/22 01:52:09  feaelin
   Fixed issues with LOOKshort-list where it wasn't colorizing as you might
   expect it to.
-
+ 
   Revision 1.13  2004/04/20 22:05:52  feaelin
   Okay. This time, I REALLY made std-filter public. And fixed the docs up
   properly.
-
+ 
   Revision 1.12  2004/04/20 21:55:45  feaelin
   Made the standard filter [LOOKstd-filter] public so extended filters can be
   written without having to recreate the functionality of std-filter.
@@ -260,7 +263,7 @@ lvar realtrig
   scommand @ command !
   depth 2 + sdepth @ - popn
 ;
-
+ 
 : control? ( d -- i )
   me @ swap controls me @ "silent" flag? not and
 ;
@@ -796,7 +799,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-93
 @set $lib/look=/_/de:lib-look:List lines 1-93 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.35 $
-@set $lib/look=/_version:1.31FM$Revision: 1.35 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.36 $
+@set $lib/look=/_version:1.31FM$Revision: 1.36 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
