@@ -2,12 +2,11 @@ wh me=Beginning installation of lib-stackrng...
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2005/04/07 21:11:11 $ $Revision: 1.14 $                )
+( lib-stackrng: $Date: 2005/09/25 13:20:40 $ $Revision: 1.15 $                )
 ( Purpose: Stack manipulation of an entire range                              )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: None                                                          )
-( Originally from the FuzzBall MUF distribution				      )
 ( --------------------------------------------------------------------------- )
 ( Stack based range handling -- SRNG                                          )
 ( 'offset' is how many stack items are between range and parameters           )
@@ -46,47 +45,50 @@ wh me=Beginning installation of lib-stackrng...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.15  2005/09/25 13:20:40  feaelin
+  Documentation updates.
+
   Revision 1.14  2005/04/07 21:11:11  feaelin
   Library Symbol Added
-
+ 
   Revision 1.13  2005/04/05 15:38:24  feaelin
   Added aliases for library words to make the library use the new
   word-name standard.
-
+ 
   Revision 1.12  2005/04/03 15:43:46  feaelin
   Documentation cleanup, whitespace fixes, script updated.
-
+ 
   Revision 1.11  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.10  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
-
+ 
   Revision 1.9  2004/03/26 03:16:32  feaelin
   Fixed bug with 'swaprange' where it didn't finish
   properly.
-
+ 
   Revision 1.8  2004/03/02 03:26:22  feaelin
   Fixed bugs in swaprng. It now works as advertised.
-
+ 
   Revision 1.7  2004/03/01 23:31:43  feaelin
   Fixed logic flaws in filterrange
-
+ 
   Revision 1.6  2004/03/01 16:58:26  feaelin
   Added SRNGxxx entries, so future uses can be more obvious.
-
+ 
   Revision 1.5  2001/02/23 16:18:39  feaelin
   Fixed incompatibility problem with older versions that have been upgraded
   Required adding a 'removal' of a definition to insure that a conflict
   between the stackrng def of popn didn't interfere with the inserver one.
-
+ 
   Revision 1.4  2000/01/10 18:53:35  feaelin
   Fixed documentation...not all lines were being listed.
-
+ 
   Revision 1.3  1998/07/28 19:22:05  feaelin
   Fixed _lib-version number.
-
+ 
   Revision 1.2  1998/07/28 19:21:11  feaelin
   Removed popoffn and replaced the definition of sr-poprng with it simply
   calling the inserver 'popn'.
@@ -129,7 +131,7 @@ wh me=Beginning installation of lib-stackrng...
 ;
  
 : extractrange ( {rng} ... offset num pos -- {rng'} ... {subrng} )
-    0 -4 rotate extract-loop
+  0 -4 rotate extract-loop
 ;
  
 : swapranges ( {rng1} {rng2} -- {rng2} {rng1} )
@@ -210,8 +212,8 @@ q
 @set $lib/stackrng=/_defs/SRNG-insertrng:"$lib/stackrng" match "insertrange" call
 @set $lib/stackrng=/_defs/SRNG-poprng:popn
 @set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
-@set $lib/stackrng=/_docs:@list $lib/stackrng=1-42
-@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-42 for documentation.
-@set $lib/stackrng=/_lib-version:FM$Revision: 1.14 $
+@set $lib/stackrng=/_docs:@list $lib/stackrng=1-41
+@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-41 for documentation.
+@set $lib/stackrng=/_lib-version:FM$Revision: 1.15 $
 @set $lib/stackrng=/_lib-symbol:SRNG
 wh me=Installation of lib-stackrng completed
