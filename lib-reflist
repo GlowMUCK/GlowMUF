@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-reflist...
 @prog lib-reflist
 1 99999 d
 1 i
-( lib-reflist: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                  )
+( lib-reflist: $Date: 2005/09/25 23:24:53 $ $Revision: 1.8 $                  )
 ( Purpose: Handles a string property that contains a list of dbrefs           )
 ( Author: Unknown                                                             )
 ( Contributors: None                                                          )
@@ -59,26 +59,29 @@ wh me=Beginning installation of lib-reflist...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-reflist,v $
+  Revision 1.8  2005/09/25 23:24:53  feaelin
+  Documentation update.
+
   Revision 1.7  2005/04/07 21:20:00  feaelin
   Added Library Symbols
-
+ 
   Revision 1.6  2005/04/05 22:21:34  feaelin
   Fixed library calls. Eliminated the need for the library to include
   lib-glow-standard. Added in REF-count from legacy's reflist.
   Made corrections to the installer script.
   Cleaned up documentation.
-
+ 
   Revision 1.5  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.4  2005/01/15 06:35:18  feaelin
   Fixed the problem where programs relying on lib-reflist were expecting
   non feni'd and non-colorized output.
-
+ 
   Revision 1.3  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
-
+ 
   Revision 1.2  2000/01/10 21:34:22  feaelin
   Documentation update.
 )
@@ -262,7 +265,7 @@ q
 @set $lib/reflist=/_defs/REF-filter:"$lib/reflist" match "REF-filter" call
 @set $lib/reflist=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
 @set $lib/reflist=/_/de:lib-reflist: List lines 1-52 for documentation.
-@set $lib/reflist=/_docs:@list $lib/reflist=1-52
-@set $lib/reflist=/_lib-version:FM$Revision: 1.7 $
+@set $lib/reflist=/_docs:@list $lib/reflist=1-55
+@set $lib/reflist=/_lib-version:FM$Revision: 1.8 $
 @set $lib/reflist=/_lib-symbol:REF
 wh me=Installation of lib-reflist complete.
