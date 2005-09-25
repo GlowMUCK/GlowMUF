@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-mesgbox...
 @prog lib-mesgbox
 1 99999 d
 1 i
-( lib-mesgbox: $Date: 2005/04/07 21:20:00 $ $Revision: 1.8 $                  )
+( lib-mesgbox: $Date: 2005/09/25 23:03:12 $ $Revision: 1.9 $                  )
 ( Purpose: Handles a collection of messages created by lib-mesg               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -69,22 +69,25 @@ wh me=Beginning installation of lib-mesgbox...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-mesgbox,v $
+  Revision 1.9  2005/09/25 23:03:12  feaelin
+  Documentation update.
+
   Revision 1.8  2005/04/07 21:20:00  feaelin
   Added Library Symbols
-
+ 
   Revision 1.7  2005/04/04 16:34:14  feaelin
   Cleaned up installer script and documentation.
-
+ 
   Revision 1.6  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+ 
   Revision 1.5  2004/04/17 17:47:08  feaelin
   Fixed bug in MBOX-insmesg that caused it to overwrite the mesg at the
   position you are inserting at, instead of inserting.
-
+ 
   Revision 1.4  2004/03/26 03:23:07  feaelin
   Upgraded W-bit so @ props can be used.
-  
+   
   Revision 1.3  2001/02/23 15:41:03  feaelin
   Corrected version info.
   
@@ -105,97 +108,97 @@ $include $lib/mesg
 lvar n2r_num
 lvar n2r_cnt
 : MBOX-num2ref (mesgnum base dbref -- refnum)
-    rot n2r_num !
-    over over MBOX-count n2r_cnt !
-    1 begin
-	dup n2r_cnt @ <= while
-	dup 4 pick 4 pick MBOX-ref2num
-	n2r_num @ >= if
-	    rot rot pop pop exit
-	then
-	1 +
-    repeat
-    pop pop pop 0
+  rot n2r_num !
+  over over MBOX-count n2r_cnt !
+  1 begin
+    dup n2r_cnt @ <= while
+    dup 4 pick 4 pick MBOX-ref2num
+    n2r_num @ >= if
+      rot rot pop pop exit
+    then
+    1 +
+  repeat
+  pop pop pop 0
 ;
  
 : MBOX-ref2prop (refnum base dbref -- base' dbref)
-    rot 3 pick 3 pick MBOX-ref2num intostr
-    rot "/" strcat swap strcat swap
+  rot 3 pick 3 pick MBOX-ref2num intostr
+  rot "/" strcat swap strcat swap
 ;
  
 : MBOX-delmesg (refnum base dbref -- )
-    3 pick 3 pick 3 pick MBOX-ref2prop
-    MSG-destroy MSG-delitem
+  3 pick 3 pick 3 pick MBOX-ref2prop
+  MSG-destroy MSG-delitem
 ;
  
 : MBOX-destroy-loop (base dbref cnt -- )
-    dup not if pop pop pop exit then
-    dup 4 pick 4 pick MBOX-delmesg
-    1 - MBOX-destroy-loop
+  dup not if pop pop pop exit then
+  dup 4 pick 4 pick MBOX-delmesg
+  1 - MBOX-destroy-loop
 ;
  
 : MBOX-destroy (base dbref -- )  
-    over over over over MBOX-count
-    MBOX-destroy-loop
-    MSG-destroy
+  over over over over MBOX-count
+  MBOX-destroy-loop
+  MSG-destroy
 ;
  
 : MBOX-create ( base dbref -- )
-    over over MBOX-destroy
-    0 "0" 4 rotate 4 rotate MSG-create
+  over over MBOX-destroy
+  0 "0" 4 rotate 4 rotate MSG-create
 ;
  
 : MBOX-append ({strrange} infostr base dbref -- refnum)
-    over over MSG-info
-    ({strrange} infostr base dbref next)
-    dup atoi 1 + intostr 4 pick 4 pick MSG-setinfo
-    ({strrange} infostr base dbref next)
-    3 pick 3 pick MSG-append
-    ({strrange} infostr base dbref)
-    over over MSG-count
-    ({strrange} infostr base dbref ref)
-    dup 6 pick 6 + -1 * rotate
-    (ref {strrange} infostr base dbref ref)
-    rot rot MBOX-ref2prop
-    (ref {strrange} infostr mbase dbref)
-    MSG-create
-    (ref)
+  over over MSG-info
+  ({strrange} infostr base dbref next)
+  dup atoi 1 + intostr 4 pick 4 pick MSG-setinfo
+  ({strrange} infostr base dbref next)
+  3 pick 3 pick MSG-append
+  ({strrange} infostr base dbref)
+  over over MSG-count
+  ({strrange} infostr base dbref ref)
+  dup 6 pick 6 + -1 * rotate
+  (ref {strrange} infostr base dbref ref)
+  rot rot MBOX-ref2prop
+  (ref {strrange} infostr mbase dbref)
+  MSG-create
+  (ref)
 ;
  
 : MBOX-insmesg ({strrange} infostr refnum base dbref -- refnum)
-    over over MSG-info dup "" strcmp not if pop "0" then
-    dup atoi 1 + intostr
-    4 pick 4 pick MSG-setinfo
-    ({strrange} infostr refnum base dbref next)
-    3 pick 3 pick MBOX-count
-    ({strrange} infostr refnum base dbref next cnt)
-    5 rotate over over > if swap then pop swap
-    ({strrange} infostr base dbref refnum next)
-    dup rot 5 pick 5 pick MSG-insitem
-    ({strrange} infostr base dbref next)
-    rot "/" strcat swap strcat swap 
-    ({strrange} infostr mbase dbref)
-    MSG-create
+  over over MSG-info dup "" strcmp not if pop "0" then
+  dup atoi 1 + intostr
+  4 pick 4 pick MSG-setinfo
+  ({strrange} infostr refnum base dbref next)
+  3 pick 3 pick MBOX-count
+  ({strrange} infostr refnum base dbref next cnt)
+  5 rotate over over > if swap then pop swap
+  ({strrange} infostr base dbref refnum next)
+  dup rot 5 pick 5 pick MSG-insitem
+  ({strrange} infostr base dbref next)
+  rot "/" strcat swap strcat swap 
+  ({strrange} infostr mbase dbref)
+  MSG-create
 ;
  
 : MBOX-setmesg ({strrange} infostr refnum base dbref -- )
-    MBOX-ref2prop MSG-create
+  MBOX-ref2prop MSG-create
 ;
  
 : MBOX-msginfo (refnum base dbref -- infostr)
-    MBOX-ref2prop MSG-info
+  MBOX-ref2prop MSG-info
 ;
  
 : MBOX-setinfo (infostr refnum base dbref -- )
-    MBOX-ref2prop MSG-setinfo
+  MBOX-ref2prop MSG-setinfo
 ;
  
 : MBOX-message (refnum base dbref -- {strrange})
-    MBOX-ref2prop MSG-message
+  MBOX-ref2prop MSG-message
 ;
  
 : MBOX-badref? (refnum base dbref -- bad?)
-    MBOX-count over < swap 1 < or
+  MBOX-count over < swap 1 < or
 ;
  
 PUBLIC MBOX-ref2prop
@@ -248,6 +251,6 @@ q
 @set $lib/mesgbox=/_defs/MBOXsetmesg:"$lib/mesgbox" match "MBOX-setmesg" call
 @set $lib/mesgbox=/_/de:lib-mesgbox: List lines 1-65 for documentation.
 @set $lib/mesgbox=/_docs:@list $lib/mesgbox=1-65
-@set $lib/mesgbox=/_lib-version:1.2FM$Revision: 1.8 $
+@set $lib/mesgbox=/_lib-version:1.2FM$Revision: 1.9 $
 @set $lib/mesgbox=/_lib-symbol:MBOX
 wh me=Installation of lib-mesgbox complete.
