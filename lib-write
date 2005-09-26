@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-write...
 @prog lib-write
 1 99999 d
 1 i
-( lib-write: $Date: 2005/04/08 01:30:38 $ $Revision: 1.4 $                    )
+( lib-write: $Date: 2005/09/26 02:56:23 $ $Revision: 1.5 $                    )
 ( Purpose: MUF based line editor                                              )
 ( Author: Merlin <of Chaos> <Earl Miles>                                      )
 ( Contributors: None                                                          )
@@ -19,20 +19,23 @@ wh me=Beginning installation of lib-write...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-write,v $
+  Revision 1.5  2005/09/26 02:56:23  feaelin
+  Corrected help and _docs property.
+
   Revision 1.4  2005/04/08 01:30:38  feaelin
   Eliminated dependency on lib-glow-standard
   Updated documentation.
   Updated installer script.
-
+  
   Revision 1.3  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
-
+  
   Revision 1.2  2005/01/14 16:32:13  feaelin
   Broad sweep to clear up terminology usage in regards to database
   item/object/thing
 )
 ( --------------------------------------------------------------------------- )
-  
+ 
 lvar linenums
 lvar property
 lvar where
@@ -351,7 +354,7 @@ q
 @register lib-write=lib/write
 @set $lib/write=L
 @set $lib/write=M3
-@set $lib/write=/_lib-version:FM$Revision: 1.4 $
-@set $lib/write=/_docs:@list $lib/write=
-@set $lib/write=/_/de:Use @list $lib/write= for documentation.
+@set $lib/write=/_lib-version:FM$Revision: 1.5 $
+@set $lib/write=/_docs:@list $lib/write=1-15
+@set $lib/write=/_/de:Use @list $lib/write=1-15 for documentation.
 wh me=Installation of lib-write complete.
