@@ -2,10 +2,10 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/09/25 13:07:10 $ $Revision: 1.21 $                 )
+( lib-strings: $Date: 2005/09/26 16:18:53 $ $Revision: 1.22 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
-( Contributors: Feaelin                                                       )
+( Contributors: Feaelin, Andy                                                 )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( These routines deal with spaces in strings.                                 )
@@ -36,6 +36,9 @@ wh me=Beginning installation of lib-strings...
 ( This routine is useful for parsing command line input:                      )
 ( STR-parse    [      str -- str1 str2 str3 ] " #X Y  y = Z" -> "X" "Y y" " Z")
 (                                                                             )
+( STR-cleancommas [   str  -- str           ] Adds commas to a space-delimited)
+(                                             string of items                 )
+(                                                                             )
 ( The following routines are deprecated, do not use them.                     )
 ( STR-sls      [       str -- str'          ]  use 'striplead'                )
 ( STR-sts      [       str -- str'          ]  use 'striptail'                )
@@ -43,6 +46,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.22  2005/09/26 16:18:53  feaelin
+  Ported cleancommas from lib-glow-standard
+
   Revision 1.21  2005/09/25 13:07:10  feaelin
   Changelog update
 
@@ -94,6 +100,17 @@ wh me=Beginning installation of lib-strings...
   Corrected wiz-level.
 )  
 ( --------------------------------------------------------------------------- )
+: cleancommas ( s -- s )
+  dup not if exit then
+  dup strlen 1 - over ", " rinstr = if dup strlen 2 - strcut pop then
+  dup strlen over "," rinstr = if dup strlen 1 - strcut pop then
+  dup " " 1 strncmp not if 1 strcut swap pop then
+  dup ", " rinstr dup if
+     over swap 1 - strcut pop ", " rinstr if
+  dup ", " rinstr strcut " and" swap strcat strcat
+  else " and " ", " subst then else pop then
+;
+ 
 : split ( s si -- s s )
    over over instr dup if
       rot swap 1 - strcut rot strlen strcut swap pop
@@ -238,6 +255,7 @@ q
 @set $lib/strings=/_defs/STR-blank?:striplead not
 @set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
+@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
 @set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
 @set $lib/strings=/_defs/STR-left:"$lib/strings" match "left" call
 @set $lib/strings=/_defs/STR-parse:"$lib/strings" match "STRparse" call
@@ -252,6 +270,6 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-39
 @set $lib/strings=/_/de:lib-strings: List lines 1-39 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.21 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.22 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
