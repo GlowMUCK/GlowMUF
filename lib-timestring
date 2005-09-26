@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-timestring...
 @prog lib-timestring
 1 99999 d
 1 i
-( lib-timestring: $Date: 2005/04/08 00:11:20 $ $Revision: 1.5 $               )
+( lib-timestring: $Date: 2005/09/26 02:51:05 $ $Revision: 1.6 $               )
 ( Purpose: Time related words                                                 )
 ( Author: Unknown                                                             )
 ( Contributors: None                                                          )
@@ -14,10 +14,13 @@ wh me=Beginning installation of lib-timestring...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-timestring,v $
+  Revision 1.6  2005/09/26 02:51:05  feaelin
+  Fixed _docs property.
+
   Revision 1.5  2005/04/08 00:11:20  feaelin
   Script installer update
   Documentation updates
-
+  
   Revision 1.4  2005/03/21 01:31:43  feaelin
   General maintenance and documentation updates
 )
@@ -69,8 +72,8 @@ q
 @set $lib/timestring=/_defs/time_string:"$lib/timestring" match call
 @set $lib/timestring=/_defs/timestring:"$lib/timestring" match call
 @set $lib/timestring=/_defs/TIME-timestring:"$lib/timestring" match call
-@set $lib/timestring=/_lib-version:FM$Revision: 1.5 $
+@set $lib/timestring=/_lib-version:FM$Revision: 1.6 $
 @set $lib/timestring=/_lib-symbol:TIME
-@set $lib/timestring=/_docs:@list $lib/timestring=1-10
-@set $lib/timestring=/_/de:Use @list $lib/timestring=1-10 for documentation
+@set $lib/timestring=/_docs:@list $lib/timestring=1-9
+@set $lib/timestring=/_/de:Use @list $lib/timestring=1-9 for documentation
 wh me=Installation of lib-timestring complete.
