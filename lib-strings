@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2005/09/26 16:18:53 $ $Revision: 1.22 $                 )
+( lib-strings: $Date: 2006/01/18 01:01:21 $ $Revision: 1.23 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -46,6 +46,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.23  2006/01/18 01:01:21  feaelin
+  Whoops. Forgot to make cleancommas public.
+
   Revision 1.22  2005/09/26 16:18:53  feaelin
   Ported cleancommas from lib-glow-standard
 
@@ -211,6 +214,7 @@ public STRasc
 public STRchr
 public STRparse
 public splitargs
+public cleancommas
 .
 c
 q
@@ -270,6 +274,6 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-39
 @set $lib/strings=/_/de:lib-strings: List lines 1-39 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.22 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.23 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
