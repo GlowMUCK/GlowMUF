@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2005/09/25 13:31:43 $ $Revision: 1.16 $                    )
+( lib-edit: $Date: 2006/07/10 03:06:51 $ $Revision: 1.17 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -94,6 +94,9 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.17  2006/07/10 03:06:51  feaelin
+  Added error checking for EDIT-ansi_display
+
   Revision 1.16  2005/09/25 13:31:43  feaelin
   Documentation update.
 
@@ -466,10 +469,15 @@ $endif
 ;
  
 : EDITansi_display ( {str_rng} -- )
-    dup if
-        dup 1 + rotate me @ swap ansi_notify
-        1 - EDITansi_display exit
-    then pop
+  dup int? not if
+    "lib-edit: EDIT-ansi_display called without an integer on top of the stack."
+    abort
+  then 
+  dup intostr "s" swap strcat checkargs
+  dup if
+    dup 1 + rotate me @ swap ansi_notify
+    1 - EDITansi_display exit
+  then pop
 ;
  
 : EDITleft-func (string null -- string )
@@ -601,6 +609,6 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.16 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.17 $
 @set $lib/edit=/_lib-symbol:EDIT
 wh me=Installation of lib-edit complete.
