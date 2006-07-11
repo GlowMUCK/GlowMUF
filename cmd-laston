@@ -1,8 +1,8 @@
-"Beginning installation of cmd-laston...
+wh me=Beginning installation of cmd-laston...
 @prog cmd-laston
 1 99999 d
 1 i
-( cmd-laston: $Date: 2000/01/27 20:00:55 $ $Revision: 1.2 $ )
+( cmd-laston: $Date: 2006/07/11 03:16:32 $ $Revision: 1.3 $ )
 ( Author: PakRat
 ( New Global @last by PakRat -- stores disconnects and connects on the )
 ( connection system programs, this way people can't be shown as online )
@@ -18,37 +18,37 @@
 ( @link @last=$cmd/laston                                       )
 ( @desc @last=@$cmd/laston -help                                )
 
-$include $lib/glow
+$include $lib/strings
+$include $lib/match
   
 $def BLOCKPROP "_prefs/block/last-on"
 $def CONPROP "@/lc"
 $def DISPROP "@/ld"
 $def OCONPROP "_/lc"
 $def ODISPROP "_/ld"
-$def a me @ swap ansi_notify
-  
+
 : Last-Title
-  "  " .tell
-  "^YELLOW^Last-On Info: ^BLUE^Muck Local Time (CST)" a
-  "^RED^~~~~~~~~~~~~" a
+  me @ "  " ansi_notify
+  me @ "^YELLOW^Last-On Info: ^BLUE^Muck Local Time (CST)" ansi_notify
+  me @ "^RED^~~~~~~~~~~~~" ansi_notify
 ;
   
 : Last-Help
   Last-Title
-  "^BROWN^Usage: ^YELLOW^@last names    ^AQUA^-- ^CYAN^Shows when player last connected" a
-  "       ^YELLOW^@last #help    ^AQUA^-- ^CYAN^Shows help screen" a
-  "       ^YELLOW^@last #block   ^AQUA^-- ^CYAN^Blocks others from seeing your @last" a
-  "       ^YELLOW^@last #unblock ^AQUA^-- ^CYAN^Restores it so others can see it" a
+  me @ "^BROWN^Usage: ^YELLOW^@last names    ^AQUA^-- ^CYAN^Shows when player last connected" ansi_notify
+  me @ "       ^YELLOW^@last #help    ^AQUA^-- ^CYAN^Shows help screen" ansi_notify
+  me @ "       ^YELLOW^@last #block   ^AQUA^-- ^CYAN^Blocks others from seeing your @last" ansi_notify
+  me @ "       ^YELLOW^@last #unblock ^AQUA^-- ^CYAN^Restores it so others can see it" ansi_notify
 ;
   
 : Last-Block ( -- )
   me @ BLOCKPROP "yes" 0 addprop
-  "^GREEN^Only you and wizards can see your Last-On information now." a
+  me @ "^GREEN^Only you and wizards can see your Last-On information now." ansi_notify
 ;
   
 : Last-Unblock ( -- )
   me @ BLOCKPROP remove_prop
-  "^GREEN^Anyone can now see your Last-On information now." a
+  me @ "^GREEN^Anyone can now see your Last-On information now." ansi_notify
 ;
   
 : AddNum ( s i s i -- s i )
@@ -73,18 +73,18 @@ $def a me @ swap ansi_notify
     then
   then
   pop 
-  .cleancommas
+  STR-cleancommas
 ;
   
 : Last-Check ( d -- )
   dup awake? if
-    name " is online now." strcat "^YELLOW^" swap strcat a
+    name " is online now." strcat "^YELLOW^" swap strcat me @ swap ansi_notify
     exit
   then
-  dup BLOCKPROP getpropstr .yes? if
-    dup me @ dbcmp me @ .mage? or not if
+  dup BLOCKPROP getpropstr 1 strcut pop "y" strcmp not if
+    dup me @ dbcmp me @ "MAGE" flag? or not if
       name " wishes to keep their Last-On information private."
-      strcat "^RED^" swap strcat a exit
+      strcat "^RED^" swap strcat me @ swap ansi_notify exit
     then
   then
   dup DISPROP getpropval
@@ -95,13 +95,16 @@ $def a me @ swap ansi_notify
     " on %A, %b " 3 pick timefmt strcat
     "%e, %Y."
     3 pick timefmt striplead strcat
-    over systime swap - Tell-Time
+    over 4 pick 
+    dup CONPROP getpropval
+    dup not if pop dup OCONPROP getpropval then
+    - Tell-Time
     " ago at " strcat
     swap strcat
     3 pick name
     " left " strcat
     swap strcat
-    "^AQUA^" swap strcat a
+    "^AQUA^" swap strcat me @ swap ansi_notify
     ( d i )
     over CONPROP getpropval
     dup not if pop over OCONPROP getpropval then
@@ -113,12 +116,12 @@ $def a me @ swap ansi_notify
       "-- " swap strcat
       " was online for " strcat 
       swap strcat
-      "." strcat "^YELLOW^" swap strcat a
+      "." strcat "^YELLOW^" swap strcat me @ swap ansi_notify
     else ( d i i )
       pop pop pop
     then
   else
-    pop name " hasn't been on for a while." strcat "^YELLOW^" swap strcat a
+    pop name " hasn't been on for a while." strcat "^YELLOW^" swap strcat me @ swap ansi_notify
   then
 ;
   
@@ -126,13 +129,30 @@ $def a me @ swap ansi_notify
   "$cmd/page" match dup if
     0 "" 4 rotate 4 rotate "get-playerdbrefs" call pop
   else
-    .pmatch dup if 1 else pop 0 then
+    MATCH-noisy_pmatch dup if 1 else pop 0 then
   then
 ;
-  
+
+( These aren't used yet ) 
+: Set-Connect-Systime ( -- )
+  me @ CONPROP systime setprop
+;
+ 
+: Set-Disconnect-Systime ( -- )
+  me @ DISPROP systime setprop
+;
+ 
 : Last-Main ( s -- )
+  dup "Connect" strcmp not if
+    pop Set-Connect-Systime exit
+  then
+  dup "Disconnect" strcmp not if
+    pop Set-Disconnect-Systime exit
+  then
   dup if
-    .noguest
+    me @ dup "guest" flag? swap "mage" flag? not and if
+      me @ "^FAIL^This command is unavailable to guests." ansi_notify pop exit 
+    then
     dup "#" 1 strncmp not if
       1 strcut swap pop ( com )
       dup "help" stringcmp not if
@@ -171,14 +191,15 @@ $def a me @ swap ansi_notify
     repeat
     swap pop
     dup if 
-      .cleancommas
+      STR-cleancommas
       dup " and " instr if " are." else " is." then strcat
-      "I don't know who " swap strcat "^RED^" swap strcat a
+      "I don't know who " swap strcat "^RED^" swap strcat me @ swap ansi_notify
     else
       pop
     then
   else
-  .noguest
+  me @ dup "guest" flag? swap "mage" flag? not and if
+    me @ "^FAIL^This command is unavailable to guests." ansi_notify pop exit then
     pop Last-Help
   then
 ;
@@ -194,5 +215,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/laston
-@set $tmp/prog1=_version:FM$Revision: 1.2 $
-"Installation of cmd-laston complete.
+@set $tmp/prog1=_version:FM$Revision: 1.3 $
+wh me=Installation of cmd-laston complete.
