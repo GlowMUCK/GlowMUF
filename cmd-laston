@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-laston...
 @prog cmd-laston
 1 99999 d
 1 i
-( cmd-laston: $Date: 2006/07/11 03:16:32 $ $Revision: 1.3 $ )
+( cmd-laston: $Date: 2006/07/12 18:58:12 $ $Revision: 1.4 $ )
 ( Author: PakRat
 ( New Global @last by PakRat -- stores disconnects and connects on the )
 ( connection system programs, this way people can't be shown as online )
@@ -95,10 +95,7 @@ $def ODISPROP "_/ld"
     " on %A, %b " 3 pick timefmt strcat
     "%e, %Y."
     3 pick timefmt striplead strcat
-    over 4 pick 
-    dup CONPROP getpropval
-    dup not if pop dup OCONPROP getpropval then
-    - Tell-Time
+    over systime swap - Tell-Time
     " ago at " strcat
     swap strcat
     3 pick name
@@ -215,5 +212,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/laston
-@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@set $tmp/prog1=_version:FM$Revision: 1.4 $
 wh me=Installation of cmd-laston complete.
