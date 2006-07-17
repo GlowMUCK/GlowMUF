@@ -1,0 +1,106 @@
+wh me=Beginning installation of look-show-exits
+@prog look-show-exits
+1 99999 d
+1 i
+( look-show-exits: $Date: 2006/07/17 19:23:56 $ $Revision: 1.1 $                )
+( Purpose: To display exits in a given room when called by lib-look           )
+( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Contributors:                                                               )
+( Dependencies: lib-wordwrap, lib-edit                                        )
+( --------------------------------------------------------------------------- )
+(
+  $Log: look-show-exits,v $
+  Revision 1.1  2006/07/17 19:23:56  feaelin
+  Initial code. Basic exit showing fully implemented.
+
+)
+
+$include $lib/strings
+$include $lib/wordwrap
+$include $lib/edit
+ 
+( Sets up either the configured prefix or the default string ) 
+: get-prefix ( -- s )
+  prog "_prefix" getpropstr dup "" strcmp not if
+    pop "^CYAN^You can go: "
+  then
+;
+ 
+: get-prefix-len ( -- i )
+  get-prefix ansi_strlen
+;
+ 
+( What is our wrap point? )
+: get-wrap-length ( -- i )
+  prog "_wrap" getpropval dup 0 = if
+    pop 78
+  then
+;
+ 
+: show-exits ( -- )
+  get-prefix
+  ( This shouldn't happen, but just in case )
+  trigger @ room? not if
+    #673 trigger !
+  then
+  0 trigger @ exits
+  dup ok? if 
+    begin
+      ( 
+        Confirm that: 
+        a. valid dbref
+        b. actual exit
+        c. exit does link to a room, instead of program/action
+      )
+      dup ok? over exit? and over getlink room? and if
+        swap 1 + 
+        dup 1 > if
+          3 pick ", " strcat 3 put
+        then
+        swap
+        ( We want only the first name )
+        dup name ";" explode over over 2 + 0 swap - rotate popn
+        "^AQUA^" swap strcat
+        "^BROWN^<^YELLOW^" "<" subst
+        "^BROWN^>" ">" subst
+        4 rotate swap strcat -3 rotate
+      then
+      next
+    dup ok? not until
+    pop
+  else
+    pop
+  then
+  0 = if
+   ( No exits to list )
+  else
+    get-wrap-length swap WRAP-wordwrap
+    swap me @ swap ansi_notify
+    1 - dup 0 = not if
+      begin
+        swap
+        "" " " get-prefix-len STRfillfield swap strcat
+        me @ swap ansi_notify
+      1 - dup 0 = until
+    then
+  then
+
+;
+ 
+: main ( s -- )
+  ( I know this is pointless. Its here just in case I need it later )
+  dup "(Look)" strcmp not if ( If called by lib-look, pop, if not, pop )
+    pop
+  else
+    pop
+  then
+  show-exits
+;
+.
+c
+q
+@register look-show-exits=look/show-exits
+@set $look/show-exits=/_docs:@list $look/show-exits=1-1
+@set $look/show-exits=/_lib-version:FM$Revision: 1.1 $
+@set $look/show-exits=/_version:FM$Revision: 1.1 $
+wh me=Installation of look-show-exits complete.
