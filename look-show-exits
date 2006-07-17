@@ -2,17 +2,38 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/17 19:37:30 $ $Revision: 1.2 $              )
+( look-show-exits: $Date: 2006/07/17 20:38:30 $ $Revision: 1.3 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
 ( Dependencies: lib-wordwrap, lib-edit                                        )
 ( --------------------------------------------------------------------------- )
+( Obvious exits lister. Intended for use with lib-look, but will work as an   )
+( @succ if preferred. Lists all not-dark exits not regarded as actions.       )
+( Actions are any exit that is not linked to a room. To force an action to be )
+( displayed, you can @set <action>=_action?:yes                               )
+( To force all actions in a given room or area, @set <room>=_showactions?:yes )
+( A wrapping point can be set either on the program or in the environment by: )
+( @set <program>=_wrap:78, or @set <room>=_wrap:78, etc.                      )
+( To change the prefix on the exit list, @set <program>=_prefix:You can go:...)
+( --------------------------------------------------------------------------- )
+(
+  TBD:
+       See old "official" one cmd-showexits for other features to incorp.
+  Additionally:
+       Add customization of the colors.
+)
 (
   $Log: look-show-exits,v $
+  Revision 1.3  2006/07/17 20:38:30  feaelin
+  Added support for the _action? property to force an action to be shown.
+  Added support for the _showactions? property force actions to be shown.
+  Added support for the wrap point to be settable in the environment.
+  Added support for legacy (deprecated) properties.
+
   Revision 1.2  2006/07/17 19:37:30  feaelin
   Added exit darking and fixed my testing shim so it isn't there anymore.
-
+  
   Revision 1.1  2006/07/17 19:23:56  feaelin
   Initial code. Basic exit showing fully implemented.
 )
@@ -28,15 +49,44 @@ $include $lib/edit
   then
 ;
  
+( Substitutions to prettify the output )
+: do-substitutions ( s -- s )
+  "^BROWN^<^YELLOW^" "<" subst
+  "^BROWN^>" ">" subst
+  "^BROWN^(^YELLOW^" "(" subst
+  "^BROWN^)" ")" subst
+  "^BROWN^[^YELLOW^" "[" subst
+  "^BROWN^]" "]" subst
+  "^BROWN^{^YELLOW^" "{" subst
+  "^BROWN^}" "}" subst
+;
+ 
 : get-prefix-len ( -- i )
   get-prefix ansi_strlen
 ;
  
 ( What is our wrap point? )
 : get-wrap-length ( -- i )
-  prog "_wrap" getpropval dup 0 = if
+  prog "_wrap" getprop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  trigger @ "_wrap" envprop swap pop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  prog "contents/width" getprop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  trigger @ "contents/width" envprop swap pop dup string? if atoi then
+  dup 0 = if
     pop 78
   then
+;
+ 
+( check an action/exit for either being an exit or being ok )
+: action_ok? ( d -- i )
+  dup getlink room? if pop 1 exit then
+  dup "_action?" getpropstr "y" instr if pop 1 exit then
+  "_showactions?" envpropstr swap pop "y" instr
 ;
  
 : show-exits ( -- )
@@ -48,14 +98,7 @@ $include $lib/edit
   0 trigger @ exits
   dup ok? if 
     begin
-      ( 
-        Confirm that: 
-        a. valid dbref
-        b. actual exit
-        c. exit does link to a room, instead of program/action
-        d. is the exit dark?
-      )
-      dup ok? over exit? and over getlink room? and 
+      dup ok? over exit? and over action_ok? and 
       over "DARK" flag? not and if
         swap 1 + 
         dup 1 > if
@@ -65,8 +108,7 @@ $include $lib/edit
         ( We want only the first name )
         dup name ";" explode over over 2 + 0 swap - rotate popn
         "^AQUA^" swap strcat
-        "^BROWN^<^YELLOW^" "<" subst
-        "^BROWN^>" ">" subst
+        do-substitutions
         4 rotate swap strcat -3 rotate
       then
       next
@@ -76,7 +118,7 @@ $include $lib/edit
     pop
   then
   0 = if
-   ( No exits to list )
+   pop me @ "You can see no obvious way out." ansi_notify
   else
     get-wrap-length swap WRAP-wordwrap
     swap me @ swap ansi_notify
@@ -105,5 +147,5 @@ c
 q
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-1
-@set $look/show-exits=/_version:FM$Revision: 1.2 $
+@set $look/show-exits=/_version:FM$Revision: 1.3 $
 wh me=Installation of look-show-exits complete.
