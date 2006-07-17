@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/17 19:23:56 $ $Revision: 1.1 $                )
+( look-show-exits: $Date: 2006/07/17 19:37:30 $ $Revision: 1.2 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
@@ -10,9 +10,11 @@ wh me=Beginning installation of look-show-exits
 ( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.2  2006/07/17 19:37:30  feaelin
+  Added exit darking and fixed my testing shim so it isn't there anymore.
+
   Revision 1.1  2006/07/17 19:23:56  feaelin
   Initial code. Basic exit showing fully implemented.
-
 )
 
 $include $lib/strings
@@ -41,7 +43,7 @@ $include $lib/edit
   get-prefix
   ( This shouldn't happen, but just in case )
   trigger @ room? not if
-    #673 trigger !
+    exit
   then
   0 trigger @ exits
   dup ok? if 
@@ -51,8 +53,10 @@ $include $lib/edit
         a. valid dbref
         b. actual exit
         c. exit does link to a room, instead of program/action
+        d. is the exit dark?
       )
-      dup ok? over exit? and over getlink room? and if
+      dup ok? over exit? and over getlink room? and 
+      over "DARK" flag? not and if
         swap 1 + 
         dup 1 > if
           3 pick ", " strcat 3 put
@@ -101,6 +105,5 @@ c
 q
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-1
-@set $look/show-exits=/_lib-version:FM$Revision: 1.1 $
-@set $look/show-exits=/_version:FM$Revision: 1.1 $
+@set $look/show-exits=/_version:FM$Revision: 1.2 $
 wh me=Installation of look-show-exits complete.
