@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-find...
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2006/01/18 01:31:20 $ $Revision: 1.10 $                     )
+( cmd-find: $Date: 2006/07/18 13:25:23 $ $Revision: 1.11 $                     )
 ( Author: PakRat                                                              )
 ( Contributors: Regabyr, Feaelin                                              )
 ( Dependencies: lib-strings, lib-match                                        )
@@ -44,6 +44,9 @@ wh me=Beginning installation of cmd-find...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
+  Revision 1.11  2006/07/18 13:25:23  feaelin
+  Some basic capitalization.
+
   Revision 1.10  2006/01/18 01:31:20  feaelin
   Missing delimiter for split.
 
@@ -372,7 +375,7 @@ lvar step
     pronoun_sub me @ swap ansi_notify exit
   then
   over not over and if
-    pop pop "^YELLOW^%s has company."
+    pop pop "^YELLOW^%S has company."
     pronoun_sub 1 strcut
     swap toupper swap
     strcat me @ swap ansi_notify exit
@@ -510,7 +513,7 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0FM" "$Revision: 1.10 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  "Find 2.0FM" "$Revision: 1.11 $" 11 strcut swap pop dup strlen 1 - strcut pop
   " by PakRat" strcat strcat me @ swap notify
   "~~~~~~~~~~~~~~~~~~" me @ swap notify
   "Find lists information about where players are on the game." me @ swap
@@ -639,6 +642,6 @@ q
 @link $tmp/exit1=$cmd/find
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $cmd/find=_version:2.0FM$Revision: 1.10 $
+@set $cmd/find=_version:2.0FM$Revision: 1.11 $
 @set $cmd/find=_docs:@list 1-40
 wh me=Installation of cmd-find complete.
