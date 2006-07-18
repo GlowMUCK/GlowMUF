@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/18 03:07:11 $ $Revision: 1.4 $              )
+( look-show-exits: $Date: 2006/07/18 21:03:08 $ $Revision: 1.5 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
@@ -22,12 +22,22 @@ wh me=Beginning installation of look-show-exits
 ( @set <program or environment>=_show-exit-color-2: bracket color             )
 ( @set <program or environment>=_show-exit-color-3: dir letter color          )
 ( --------------------------------------------------------------------------- )
+( If you want to instead use a signpost, you can set the following properties )
+( @set <room>=_Signpost:yes ...to turn on the signpost                        )
+( @set <room>=_north:Description to set what the sign says pointing north     )
+( @set <room>=_south (and so on, for each direction you want represented any  )
+( of the following: north, northeast, east, southeast, south, southwest, west,)
+( and northwest.                                                              )
+( --------------------------------------------------------------------------- )
 (
   TBD:
        See old "official" one cmd-showexits for other features to incorp.
 )
 (
   $Log: look-show-exits,v $
+  Revision 1.5  2006/07/18 21:03:08  feaelin
+  Added in the signpost code and customizations.
+
   Revision 1.4  2006/07/18 03:07:11  feaelin
   Added color-customization.
 
@@ -47,7 +57,49 @@ wh me=Beginning installation of look-show-exits
 $include $lib/strings
 $include $lib/wordwrap
 $include $lib/edit
- 
+
+( Crossroads lifted from Andy's old version of show-exits ) 
+: gname ( sp -- sn i ) 
+   trigger @ swap getpropstr dup strlen dup 14 < and 
+;
+: doubleloop 1 - swap over strcut " " swap strcat strcat swap
+  dup 1 > if doubleloop else pop then 
+;
+: double dup strlen dup if doubleloop else pop then ;
+: addspaces "         " swap strcut pop swap over strcat strcat ;
+: stretch ( s -- s ) double dup strlen 2 / 12 swap - addspaces ; 
+: top  me @ "^BLUE^                   _" ansi_notify ;
+: topr me @ "^BLUE^     _____________|_|____________" ansi_notify ;
+: botr me @ "^BLUE^     ~~~~~~~~~~~~~|~|~~~~~~~~~~~~" ansi_notify ;
+: topl me @ "^BLUE^      ____________|_|_____________" ansi_notify ;
+: botl me @ "^BLUE^      ~~~~~~~~~~~~|~|~~~~~~~~~~~~~" ansi_notify ;
+: bare me @ "^BLUE^                  | |" ansi_notify ;
+: grass me @ "^GREEN^|||||||||||||||||||||||||||||||||||||||" ansi_notify ;
+: dop ( sn sb se -- )
+  rot stretch "^WHITE^^BBLUE^" swap strcat "^RESET^" strcat
+  swap strcat strcat me @ swap ansi_notify 
+;
+:  pn "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^N" dop ;
+:  pe "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^E" dop ;
+: pne "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^NE" dop ;
+: pse "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^SE" dop ;
+:  ps "   ^WHITE^S ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+:  pw "   ^WHITE^W ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: pnw "  ^WHITE^NW ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: psw "  ^WHITE^SW ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: crossroads top
+  "_north" gname if topr pn botr else pop then
+  "_northeast" gname if topr pne botr else pop then
+  "_east" gname if topr pe botr else pop then
+  "_southeast" gname if topr pse botr else pop then
+  "_south" gname if topl ps botl else pop then
+  "_southwest" gname if topl psw botl else pop then
+  "_west" gname if topl pw botl else pop then
+  "_northwest" gname if topl pnw botl else pop then
+   bare bare bare grass	
+;
+ ( End of Crossroads lifted code )
+
 ( Sets up either the configured prefix or the default string ) 
 : get-prefix ( -- s )
   prog "_prefix" getpropstr dup "" strcmp not if
@@ -181,12 +233,20 @@ $include $lib/edit
   else
     pop
   then
+  trigger @ "DARK" flag? if
+    me @ trigger @ controls not if
+      exit
+    then
+  then 
+  trigger @ "_SignPost" getpropstr "y" instr if
+    crossroads exit
+  then
   show-exits
 ;
 .
 c
 q
 @register look-show-exits=look/show-exits
-@set $look/show-exits=/_docs:@list $look/show-exits=1-1
-@set $look/show-exits=/_version:FM$Revision: 1.4 $
+@set $look/show-exits=/_docs:@list $look/show-exits=1-27
+@set $look/show-exits=/_version:FM$Revision: 1.5 $
 wh me=Installation of look-show-exits complete.
