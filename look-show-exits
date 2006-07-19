@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/19 02:56:29 $ $Revision: 1.6 $              )
+( look-show-exits: $Date: 2006/07/19 03:01:47 $ $Revision: 1.7 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
@@ -29,14 +29,23 @@ wh me=Beginning installation of look-show-exits
 ( of the following: north, northeast, east, southeast, south, southwest, west,)
 ( and northwest.                                                              )
 ( --------------------------------------------------------------------------- )
+( If you or a player wants to have more detailed exit information, they may   )
+( @set me=_BigExit:yes or @set <room or environment>=_BigExit:yes, and they   )
+( will exit strings such as:                                                  )
+( South Lawn <S> to South Lawn                                                )
+( --------------------------------------------------------------------------- )
 (
   TBD: Help, and interface for player to set big exit?
 )
 (
   $Log: look-show-exits,v $
+  Revision 1.7  2006/07/19 03:01:47  feaelin
+  Updated documentation.
+  Added check for dark rooms.
+
   Revision 1.6  2006/07/19 02:56:29  feaelin
   Added support for extended/big exit information.
-
+ 
   Revision 1.5  2006/07/18 21:03:08  feaelin
   Added in the signpost code and customizations.
  
@@ -273,7 +282,13 @@ $include $lib/edit
         get-color-1 swap strcat
         do-substitutions
         "    " swap strcat " to " strcat get-color-4 strcat
-        over getlink name strcat
+        over getlink
+        dup "DARK" flag? me @ "MAGE" flag? not and if
+          pop "Unknown"
+        else
+          name
+        then
+        strcat
         me @ swap ansi_notify
       then
       next
@@ -314,6 +329,6 @@ $include $lib/edit
 c
 q
 @register look-show-exits=look/show-exits
-@set $look/show-exits=/_docs:@list $look/show-exits=1-27
-@set $look/show-exits=/_version:FM$Revision: 1.6 $
+@set $look/show-exits=/_docs:@list $look/show-exits=1-32
+@set $look/show-exits=/_version:FM$Revision: 1.7 $
 wh me=Installation of look-show-exits complete.
