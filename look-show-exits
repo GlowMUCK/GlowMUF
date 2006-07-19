@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/19 03:01:47 $ $Revision: 1.7 $              )
+( look-show-exits: $Date: 2006/07/19 04:36:04 $ $Revision: 1.8 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
@@ -39,6 +39,9 @@ wh me=Beginning installation of look-show-exits
 )
 (
   $Log: look-show-exits,v $
+  Revision 1.8  2006/07/19 04:36:04  feaelin
+  Replaced wizard checks with 'controls' which is the correct way.
+
   Revision 1.7  2006/07/19 03:01:47  feaelin
   Updated documentation.
   Added check for dark rooms.
@@ -208,7 +211,8 @@ $include $lib/edit
   dup ok? if ( Must be a valid database item )
     dup exit? if ( Must be an exit )
       dup action_ok? if ( Our test to see if it is an action )
-        dup "DARK" flag? not me @ "mage" flag? or if ( if not dark or I'm wiz )
+        dup "DARK" flag? not ( if not dark... )
+        over me @ swap controls or if ( or I control it )
           pop 1 exit
         else
           pop 0 exit
@@ -283,7 +287,7 @@ $include $lib/edit
         do-substitutions
         "    " swap strcat " to " strcat get-color-4 strcat
         over getlink
-        dup "DARK" flag? me @ "MAGE" flag? not and if
+        dup "DARK" flag? over me @ swap controls not and if
           pop "Unknown"
         else
           name
@@ -330,5 +334,5 @@ c
 q
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.7 $
+@set $look/show-exits=/_version:FM$Revision: 1.8 $
 wh me=Installation of look-show-exits complete.
