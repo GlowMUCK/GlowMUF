@@ -2,11 +2,12 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/20 22:58:06 $ $Revision: 1.9 $              )
+( look-show-exits: $Date: 2006/07/20 23:27:47 $ $Revision: 1.10 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
-( Dependencies: lib-case, lib-edit, lib-strings, lib-wordwrap                 )
+( Dependencies: lib-case, lib-edit, lib-match, lib-strings, lib-unparseobj    )
+(               lib-wordwrap                                                  )
 ( --------------------------------------------------------------------------- )
 ( Obvious exits lister. Intended for use with lib-look, but will work as an   )
 ( @succ if preferred. Lists all not-dark exits not regarded as actions.       )
@@ -42,10 +43,10 @@ wh me=Beginning installation of look-show-exits
 ( #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt
 ( --------------------------------------------------------------------------- )
 (
-  TBD: Help, and interface for player to set big exit?
-)
-(
   $Log: look-show-exits,v $
+  Revision 1.10  2006/07/20 23:27:47  feaelin
+  Added toggles for some of the configuration options.
+
   Revision 1.9  2006/07/20 22:58:06  feaelin
   ZMUD support added.
 
@@ -80,8 +81,10 @@ wh me=Beginning installation of look-show-exits
 
 $include $lib/strings
 $include $lib/case
+$include $lib/match
 $include $lib/wordwrap
 $include $lib/edit
+$include $lib/unparseobj
 
 ( Crossroads lifted from Andy's old version of show-exits ) 
 : gname ( sp -- sn i ) 
@@ -398,6 +401,33 @@ $include $lib/edit
   ansi_notify
 ;
  
+: toggle-big-exit-mode ( s -- )
+  dup " " instr dup 0 = if
+    me @
+    "^FAIL^show-exits: Specify a target: me, here, or a room/parent dbref."
+    ansi_notify
+    exit
+  then
+  strcut swap pop
+  MATCH-noisy_match dup ok? not if exit then
+  dup me @ dbcmp over room? or not if
+    me @ "^FAIL^show-exits: Invalid target." ansi_notify
+    pop exit
+  then
+  me @ over controls not if
+    me @ "^FAIL^show-exits: Permission Denied!" ansi_notify
+  then
+  dup "_prefs/look-show-exits/big-exit-mode" getpropstr "y" instr if
+    dup "_prefs/look-show-exits/big-exit-mode" "no" setprop
+    me @ "^SUCC^show-exits: Big Exit mode turned off for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  else
+    dup "_prefs/look-show-exits/big-exit-mode" "yes" setprop
+    me @ "^SUCC^show-exits: Big Exit mode turned on for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  then
+;
+ 
 : toggle-zmud-mode ( -- )
   prog "_allow_zmud_output" getpropstr "y" instr not if
     me @ "^FAIL^show-exits: ZMUD Output not allowed on this muck." ansi_notify
@@ -446,7 +476,7 @@ $include $lib/edit
 ;
 : show-help ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.9 $ $Date: 2006/07/20 22:58:06 $"
+  "^FOREST^Show Exits: $Revision: 1.10 $ $Date: 2006/07/20 23:27:47 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -456,6 +486,7 @@ $include $lib/edit
   me @ "archwizard" flag? if
   "show-exits #allow-zmud          Allows players to user zmud-mode"
   then
+  "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>"
   "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black"
   "show-exits #zmud-mode           Toggles ZMUD Output on or off."
   "^WHITE^------------------------------------------------------------------------------"
@@ -479,6 +510,13 @@ $include $lib/edit
     trigger @ "_BigExits" envpropstr swap pop "y" instr if
       show-extended-exits zmud-output-handler exit
     then
+    me @ "_prefs/look-show-exits/big-exit-mode" getpropstr "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    trigger @ "_prefs/look-show-exits/big-exit-mode" envpropstr swap pop
+    "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
     show-exits
     zmud-output-handler
     exit
@@ -490,12 +528,17 @@ $include $lib/edit
     ansi_notify
     exit
   then
-  swap pop
+  swap pop tolower
+  dup
   case
-    "allow-zmud" strcmp not when toggle-allow-zmud-mode exit end
-    "help"      strcmp not when show-help exit end
-    "zmud-black" strcmp not when toggle-zmud-black exit end
-    "zmud-mode" strcmp not when toggle-zmud-mode exit end
+  ( These take an arguement )
+    "big" 3 strncmp not when toggle-big-exit-mode exit end
+    "ext" 3 strncmp not when toggle-big-exit-mode exit end
+  ( These do not take an argument )
+    "all" 3 strncmp not when pop toggle-allow-zmud-mode exit end
+    "hel" 3 strncmp not when pop show-help exit end
+    "zmud-b" 6 strncmp not when pop toggle-zmud-black exit end
+    "zmud-m" 6 strncmp not when pop toggle-zmud-mode exit end
   endcase
 ;
 .
@@ -504,7 +547,7 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.9 $
+@set $look/show-exits=/_version:FM$Revision: 1.10 $
 wh me=Installation of look-show-exits complete.
 #@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here
 #@link exits=$look/show-exits
