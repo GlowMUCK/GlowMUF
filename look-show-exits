@@ -2,11 +2,11 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/19 04:36:04 $ $Revision: 1.8 $              )
+( look-show-exits: $Date: 2006/07/20 22:58:06 $ $Revision: 1.9 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
-( Dependencies: lib-wordwrap, lib-edit                                        )
+( Dependencies: lib-case, lib-edit, lib-strings, lib-wordwrap                 )
 ( --------------------------------------------------------------------------- )
 ( Obvious exits lister. Intended for use with lib-look, but will work as an   )
 ( @succ if preferred. Lists all not-dark exits not regarded as actions.       )
@@ -21,6 +21,7 @@ wh me=Beginning installation of look-show-exits
 ( @set <program or environment room>=_show-exit-color-1: for the exit name    )
 ( @set <program or environment>=_show-exit-color-2: bracket color             )
 ( @set <program or environment>=_show-exit-color-3: dir letter color          )
+( @set <program or environment>=_show-exit-color-4: extended exit color       )
 ( --------------------------------------------------------------------------- )
 ( If you want to instead use a signpost, you can set the following properties )
 ( @set <room>=_Signpost:yes ...to turn on the signpost                        )
@@ -34,18 +35,27 @@ wh me=Beginning installation of look-show-exits
 ( will exit strings such as:                                                  )
 ( South Lawn <S> to South Lawn                                                )
 ( --------------------------------------------------------------------------- )
+( There is now a special widget that will allow ZMUD's automapper to work.    )
+( On the ZMUD side you will need to set the following triggers:               )
+( You will need to replace <> with parentheses.                               )
+( #TRIGGER ~[ZMUD: <*> ~[<*>~] ~#<*>~] #TAG name,exit,vnum {%1} {%2} {%3}     )
+( #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt
+( --------------------------------------------------------------------------- )
 (
   TBD: Help, and interface for player to set big exit?
 )
 (
   $Log: look-show-exits,v $
+  Revision 1.9  2006/07/20 22:58:06  feaelin
+  ZMUD support added.
+
   Revision 1.8  2006/07/19 04:36:04  feaelin
   Replaced wizard checks with 'controls' which is the correct way.
-
+ 
   Revision 1.7  2006/07/19 03:01:47  feaelin
   Updated documentation.
   Added check for dark rooms.
-
+ 
   Revision 1.6  2006/07/19 02:56:29  feaelin
   Added support for extended/big exit information.
  
@@ -69,6 +79,7 @@ wh me=Beginning installation of look-show-exits
 )
 
 $include $lib/strings
+$include $lib/case
 $include $lib/wordwrap
 $include $lib/edit
 
@@ -212,7 +223,10 @@ $include $lib/edit
     dup exit? if ( Must be an exit )
       dup action_ok? if ( Our test to see if it is an action )
         dup "DARK" flag? not ( if not dark... )
-        over me @ swap controls or if ( or I control it )
+        over me @ swap controls ( or I control it )
+        me @ "silent" flag? not and ( and I want to see hidden things )
+        me @ "quell" flag? not and  ( and I want to see hidden things )
+        or if ( or I control it )
           pop 1 exit
         else
           pop 0 exit
@@ -268,6 +282,7 @@ $include $lib/edit
       1 - dup 0 = until
     then
   then
+  pop
 ;
  
 : show-extended-exits ( -- )
@@ -306,33 +321,190 @@ $include $lib/edit
   then
 ;
  
-: main ( s -- )
-  ( I know this is pointless. Its here just in case I need it later )
-  dup "(Look)" strcmp not if ( If called by lib-look, pop, if not, pop )
+: remove-extras ( s1 s2 ... si i i -- s )
+  1 + pick ( grab a copy of the one we want )
+  over 2 + 0 swap - rotate ( move the one we want to keep to the bottom )
+  popn
+;
+  
+: pick-simple-exit ( s1 s2 ... si i -- s )
+  dup begin
+    dup 2 + pick
+    case
+      "n" strcmp not when remove-extras exit end
+      "s" strcmp not when remove-extras exit end
+      "w" strcmp not when remove-extras exit end
+      "e" strcmp not when remove-extras exit end
+      "nw" strcmp not when remove-extras exit end
+      "ne" strcmp not when remove-extras exit end
+      "sw" strcmp not when remove-extras exit end
+      "se" strcmp not when remove-extras exit end
+      "u"  strcmp not when remove-extras exit end
+      "d"  strcmp not when remove-extras exit end
+(      "1"  strcmp not when remove-extras exit end )
+      default pop end
+    endcase
+  1 - dup 0 = until
+  pop popn ""
+;
+ 
+: zmud-output-handler
+  ( This shouldn't happen, but just in case )
+  trigger @ room? not if
+    exit
+  then
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    exit
+  then
+  me @ "_prefs/look-show-exits/zmud-output" getpropstr "y" instr not if
+    exit
+  then
+  "[ZMUD: " trigger @ name strcat " [" strcat
+  0 trigger @ exits
+  dup ok? if 
+    begin
+      dup show_exit? if
+        dup name tolower ";" explode pick-simple-exit
+        dup "" strcmp not if
+          pop
+        else
+          4 pick 4 pick 0 > if "," strcat then
+          swap strcat 3 put
+          swap 1 + swap
+        then
+      then
+      next
+    dup ok? not until
     pop
   else
     pop
   then
-  trigger @ "DARK" flag? if
-    me @ trigger @ controls not if
-      exit
+  0 = if
+    "None!" strcat
+  then
+  "] " strcat
+  me @ trigger @ controls if
+    "#" strcat trigger @ int intostr strcat
+  then
+  "]" strcat
+  me @ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+     "^BBLACK^^BLACK^" swap strcat "^RESET^" strcat 
+  then
+  me @ swap ansi_notify
+  me @ "[ZMUD-PROMPT]"
+  me @ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+     "^BBLACK^^BLACK^" swap strcat "^RESET^" strcat 
+  then
+  ansi_notify
+;
+ 
+: toggle-zmud-mode ( -- )
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    me @ "^FAIL^show-exits: ZMUD Output not allowed on this muck." ansi_notify
+    exit
+  then
+  me @ "_prefs/look-show-exits/zmud-output" getpropstr "y" instr if
+    me @ "^SUCC^show-exits: ZMUD Output turned off." ansi_notify
+    me @ "_prefs/look-show-exits/zmud-output" "no" setprop
+  else
+    me @ "^SUCC^show-exits: ZMUD Output turned on." ansi_notify
+    me @ "_prefs/look-show-exits/zmud-output" "yes" setprop
+  then
+;
+ 
+: toggle-zmud-black ( -- )
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    me @ "^FAIL^show-exits: ZMUD Output not allowed on this muck." ansi_notify
+    exit
+  then
+  me @ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+    me @ "^SUCC^show-exits: ZMUD Output Blackening turned off.." ansi_notify
+    me @ "_prefs/look-show-exits/zmud-black" "no" setprop
+  else
+    me @ "^SUCC^show-exits: ZMUD Output is now Blackened." ansi_notify
+    me @ "_prefs/look-show-exits/zmud-black" "yes" setprop
+  then
+;
+ 
+: toggle-allow-zmud-mode ( -- )
+  me @ "ARCHWIZARD" flag? not if
+    me @ "^FAIL^show-exits: You must be an arch-wizard to toggle that setting."
+    ansi_notify
+    exit
+  then
+  prog "_allow_zmud_output" getpropstr "y" instr if
+    me @
+    "^SUCC^show-exits: ZMUD Output is now ^FAIL^disabled^SUCC^ on this muck."
+    ansi_notify
+    prog "_allow_zmud_output" "no" setprop
+  else
+    me @
+    "^SUCC^show-exits: ZMUD Output is now ^FAIL^enabled^SUCC^ on this muck."
+    ansi_notify
+    prog "_allow_zmud_output" "yes" setprop
+  then
+;
+: show-help ( -- )
+  me @
+  "^FOREST^Show Exits: $Revision: 1.9 $ $Date: 2006/07/20 22:58:06 $"
+  begin
+    dup "$" instr while
+    "$" STRsplit strcat
+  repeat
+  "^FOREST^By Feaelin Moilar (Iain E. Davis)"
+  "^WHITE^------------------------------------------------------------------------------"
+  me @ "archwizard" flag? if
+  "show-exits #allow-zmud          Allows players to user zmud-mode"
+  then
+  "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black"
+  "show-exits #zmud-mode           Toggles ZMUD Output on or off."
+  "^WHITE^------------------------------------------------------------------------------"
+  7 EDIT-ansi_display
+;
+  
+: main ( s -- )
+  dup "" strcmp not over "(Look)" strcmp not or if
+    pop
+    trigger @ "DARK" flag? if
+      me @ trigger @ controls not if
+        exit
+      then
+    then 
+    trigger @ "_SignPost" getpropstr "y" instr if
+      crossroads zmud-output-handler exit
     then
-  then 
-  trigger @ "_SignPost" getpropstr "y" instr if
-    crossroads exit
+    me @ "_BigExits" getpropstr "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    trigger @ "_BigExits" envpropstr swap pop "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    show-exits
+    zmud-output-handler
+    exit
   then
-  me @ "_BigExits" getpropstr "y" instr if
-    show-extended-exits exit
+  dup STR-command
+  dup "" strcmp not if
+    2 popn
+    me @ "^FAIL^show-exits: I don't understand what you're trying to do."
+    ansi_notify
+    exit
   then
-  trigger @ "_BigExits" envpropstr swap pop "y" instr if
-    show-extended-exits exit
-  then
-  show-exits
+  swap pop
+  case
+    "allow-zmud" strcmp not when toggle-allow-zmud-mode exit end
+    "help"      strcmp not when show-help exit end
+    "zmud-black" strcmp not when toggle-zmud-black exit end
+    "zmud-mode" strcmp not when toggle-zmud-mode exit end
+  endcase
 ;
 .
 c
 q
+@register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.8 $
+@set $look/show-exits=/_version:FM$Revision: 1.9 $
 wh me=Installation of look-show-exits complete.
+#@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here
+#@link exits=$look/show-exits
