@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/20 23:27:47 $ $Revision: 1.10 $              )
+( look-show-exits: $Date: 2006/07/21 22:12:16 $ $Revision: 1.11 $              )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors:                                                               )
@@ -24,26 +24,13 @@ wh me=Beginning installation of look-show-exits
 ( @set <program or environment>=_show-exit-color-3: dir letter color          )
 ( @set <program or environment>=_show-exit-color-4: extended exit color       )
 ( --------------------------------------------------------------------------- )
-( If you want to instead use a signpost, you can set the following properties )
-( @set <room>=_Signpost:yes ...to turn on the signpost                        )
-( @set <room>=_north:Description to set what the sign says pointing north     )
-( @set <room>=_south (and so on, for each direction you want represented any  )
-( of the following: north, northeast, east, southeast, south, southwest, west,)
-( and northwest.                                                              )
-( --------------------------------------------------------------------------- )
-( If you or a player wants to have more detailed exit information, they may   )
-( @set me=_BigExit:yes or @set <room or environment>=_BigExit:yes, and they   )
-( will exit strings such as:                                                  )
-( South Lawn <S> to South Lawn                                                )
-( --------------------------------------------------------------------------- )
-( There is now a special widget that will allow ZMUD's automapper to work.    )
-( On the ZMUD side you will need to set the following triggers:               )
-( You will need to replace <> with parentheses.                               )
-( #TRIGGER ~[ZMUD: <*> ~[<*>~] ~#<*>~] #TAG name,exit,vnum {%1} {%2} {%3}     )
-( #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt
-( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.11  2006/07/21 22:12:16  feaelin
+  Added toggles for big exit and signpost
+  Added support for the standard glow help functionality
+  Updated help.
+
   Revision 1.10  2006/07/20 23:27:47  feaelin
   Added toggles for some of the configuration options.
 
@@ -280,7 +267,7 @@ $include $lib/unparseobj
     1 - dup 0 = not if
       begin
         swap
-        "" " " get-prefix-len STRfillfield swap strcat
+        "" " " get-prefix-len STR-fillfield swap strcat
         me @ swap ansi_notify
       1 - dup 0 = until
     then
@@ -401,6 +388,37 @@ $include $lib/unparseobj
   ansi_notify
 ;
  
+: toggle-signpost-mode ( s -- )
+  dup " " instr dup 0 = if
+    me @
+    "^FAIL^show-exits: Specify a target: here or a room/parent dbref."
+    ansi_notify
+    exit
+  then
+  strcut swap pop
+  MATCH-noisy_match dup ok? not if exit then
+  dup room? not if
+    me @ "^FAIL^show-exits: Invalid target." ansi_notify
+    pop exit
+  then
+  me @ over controls not if
+    me @ "^FAIL^show-exits: Permission Denied!" ansi_notify
+  then
+  dup "_prefs/look-show-exits/signpost-mode" getpropstr "y" instr if
+    dup "_prefs/look-show-exits/signpost-mode" "no" setprop
+    me @ "^SUCC^show-exits: Big Exit mode turned off for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  else
+    dup "_prefs/look-show-exits/signpost-mode" "yes" setprop
+    "^SUCC^show-exits: Big Exit mode turned on for: " swap
+    UPO-color-unparseobj strcat
+    "^INFO^show-exits: Don't forget to set the various direction exits: _north, _south,"
+    "^INFO^show-exits: _west, _east, _northwest, _northeast, _southwest, and/or"
+    "^INFO^show-exits: _southeast"
+    4 EDIT-ansi_display
+  then
+;
+ 
 : toggle-big-exit-mode ( s -- )
   dup " " instr dup 0 = if
     me @
@@ -474,9 +492,36 @@ $include $lib/unparseobj
     prog "_allow_zmud_output" "yes" setprop
   then
 ;
-: show-help ( -- )
+ 
+: show-help-zmud ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.10 $ $Date: 2006/07/20 23:27:47 $"
+  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
+  begin
+    dup "$" instr while
+    "$" STR-split strcat
+  repeat
+  "^FOREST^By Feaelin Moilar (Iain E. Davis)"
+  "^WHITE^------------------------------------------------------------------------------"
+"ZMUD, a mud client primarily designed for prompted worlds has an automapper"
+"which has trouble understanding the exits on most tinymu*s. To compensate for"
+"this, you can turn on zmud-mode which puts out two lines of text after the"
+"exits that ZMUD can understand."
+" "
+"This means when you are using ZMUD's automapper or autowalk features, it will"
+"correctly understand what room you are in, its name, and its exits. In"
+"addition,it will record the room's dbref in the vnum field in the automapper."
+" "
+"To make this work on the ZMUD end you will need the following two triggers:"
+"    #TRIGGER ~[ZMUD: (*) ~[(*)~] ~#(*)~] #TAG name,exit,vnum {%1} {%2} {%3}"
+"    #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt"
+  "^WHITE^------------------------------------------------------------------------------"
+  16 EDIT-ansi_display
+;
+ 
+: show-help ( s -- )
+  " " instr if show-help-zmud exit then
+  me @
+  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -484,13 +529,17 @@ $include $lib/unparseobj
   "^FOREST^By Feaelin Moilar (Iain E. Davis)"
   "^WHITE^------------------------------------------------------------------------------"
   me @ "archwizard" flag? if
-  "show-exits #allow-zmud          Allows players to user zmud-mode"
+    "show-exits #allow-zmud          Allows players to user zmud-mode."
   then
-  "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>"
-  "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black"
-  "show-exits #zmud-mode           Toggles ZMUD Output on or off."
+  "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>."
+  "show-exits #signpost ^YELLOW^<^RESET^room^YELLOW^>^RESET^     Toggles signpost mode for <room>"
+  prog "_allow_zmud_output" getpropstr "y" instr if
+    "show-exits #help zmud           Displays information about zmud-mode."
+    "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black."
+    "show-exits #zmud-mode           Toggles ZMUD Output on or off."
+  then
   "^WHITE^------------------------------------------------------------------------------"
-  7 EDIT-ansi_display
+  9 EDIT-ansi_display
 ;
   
 : main ( s -- )
@@ -501,6 +550,10 @@ $include $lib/unparseobj
         exit
       then
     then 
+    trigger @ "_prefs/look-show-exits/signpost-mode" envpropstr swap pop
+    "y" instr if
+      crossroads zmud-output-handler exit
+    then
     trigger @ "_SignPost" getpropstr "y" instr if
       crossroads zmud-output-handler exit
     then
@@ -534,9 +587,10 @@ $include $lib/unparseobj
   ( These take an arguement )
     "big" 3 strncmp not when toggle-big-exit-mode exit end
     "ext" 3 strncmp not when toggle-big-exit-mode exit end
+    "sig" 3 strncmp not when toggle-signpost-mode exit end
+    "hel" 3 strncmp not when show-help exit end
   ( These do not take an argument )
     "all" 3 strncmp not when pop toggle-allow-zmud-mode exit end
-    "hel" 3 strncmp not when pop show-help exit end
     "zmud-b" 6 strncmp not when pop toggle-zmud-black exit end
     "zmud-m" 6 strncmp not when pop toggle-zmud-mode exit end
   endcase
@@ -547,7 +601,9 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.10 $
+@set $look/show-exits=/_version:FM$Revision: 1.11 $
 wh me=Installation of look-show-exits complete.
-#@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here
-#@link exits=$look/show-exits
+@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
+@set $tmp/exit1=M2
+@desc $tmp/exit1=@$look/show-exits #help
+@link exits=$look/show-exits
