@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-stackrng...
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2005/09/25 13:20:40 $ $Revision: 1.15 $                )
+( lib-stackrng: $Date: 2006/07/24 13:42:38 $ $Revision: 1.16 $                )
 ( Purpose: Stack manipulation of an entire range                              )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -34,6 +34,12 @@ wh me=Beginning installation of lib-stackrng...
 (   If the integer is non-zero, it pulls that data item out of the range and  )
 (   puts it into the filtered range. The data items can be of any type.       )
 (                                                                             )
+( SRNG-uniquerng: {range} -- {original-range} {unique-range} {duplicate-range})
+(   Takes the given range and identifies duplicate items. Returns the original)
+(   range [note that the order may change], a range containing all items      )
+(   without duplicates, and a third range containing the items that were      )
+(   removed.                                                                  )
+(                                                                             )
 ( SRNG-catrng: {range1} {range2} -- {range}                                   )
 (   concatenates two ranges into one range.                                   )
 (                                                                             )
@@ -45,9 +51,12 @@ wh me=Beginning installation of lib-stackrng...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.16  2006/07/24 13:42:38  feaelin
+  Added SRNG-uniquerng which filters ranges for the unique items in the range.
+
   Revision 1.15  2005/09/25 13:20:40  feaelin
   Documentation updates.
-
+ 
   Revision 1.14  2005/04/07 21:11:11  feaelin
   Library Symbol Added
  
@@ -173,6 +182,83 @@ wh me=Beginning installation of lib-stackrng...
 : filterrange ( {rng} funcaddr -- {rng'} {filtrdrng} )
    0 swap 3 pick filterrange-loop
 ;
+
+( This is needed because the sort prim sorts dbref by name, which won't work ) 
+: dbref-sort ( d1 d2 ... di i -- d1 d2 ... di i )
+  dup begin
+    dup 2 + pick intostr over 2 + put
+  1 - dup 0 = until
+  pop
+  0 sort
+  dup begin
+    dup 2 + pick atoi dbref over 2 + put
+  1 - dup 0 = until
+  pop
+;
+
+( Sort prim doesn't support integers? Why...)
+: integer-sort ( d1 d2 ... di i -- d1 d2 ... di i )
+  dup begin
+    dup 2 + pick intostr over 2 + put
+  1 - dup 0 = until
+  pop
+  0 sort
+  dup begin
+    dup 2 + pick atoi over 2 + put
+  1 - dup 0 = until
+  pop
+;
+
+: string-compare
+  strcmp not
+;
+ 
+: dbref-compare
+  dbcmp
+;
+ 
+: int-compare
+  =
+;
+ 
+: SRNG-uniquerange ( range -- orig-range unique-range duplicates-range )
+  dup int? not if
+    "lib-stackrng: SRNG-uniquerng called without an integer on top of the stack."
+    abort
+  then 
+  dup not if exit then
+  dup intostr "?" swap strcat " i" strcat checkargs
+  over 
+  dup string? if
+    pop 0 sort 'string-compare
+  else
+    dup dbref? if 
+      pop dbref-sort 'dbref-compare
+    else
+      int? if integer-sort 'int-compare then
+    then
+  then
+  over 2 + pick 1 0 4 rotate ( range unique-range dup-range address )
+  5 pick 1 - ( rng rng rng a count )
+  begin
+    3 pick ( rng rng rng a count dup-range-cnt )
+    dup 5 + pick ( rng rng rng a count dup-range-cnt uniqu-range-cnt )
+    ( rng rng a count dup-range-cnt uniqu-range-cnt d )
+    dup 3 pick + 7 + 4 pick + pick 
+    dup 4 rotate 8 + pick
+    6 pick execute
+    if ( 0 = no match, 1 = match )
+      swap pop -4 rotate 3 pick 1 + 3 put
+    else
+      swap pop 4 pick 5 + 0 swap - rotate 3 pick 
+      4 + pick 1 + 
+      4 pick 4 + put
+    then
+    1 -
+  dup 0 = until  
+  pop pop
+; public SRNG-uniquerange
+
  
 public catranges
 public extractrange
@@ -210,10 +296,11 @@ q
 @set $lib/stackrng=/_defs/SRNG-extractrng:"$lib/stackrng" match "extractrange" call
 @set $lib/stackrng=/_defs/SRNG-filterrng:"$lib/stackrng" match "filterrange" call
 @set $lib/stackrng=/_defs/SRNG-insertrng:"$lib/stackrng" match "insertrange" call
+@set $lib/stackrng=/_defs/SRNG-uniquerng:"$lib/stackrng" match "SRNG-uniquerange" call
 @set $lib/stackrng=/_defs/SRNG-poprng:popn
 @set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
-@set $lib/stackrng=/_docs:@list $lib/stackrng=1-41
-@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-41 for documentation.
-@set $lib/stackrng=/_lib-version:FM$Revision: 1.15 $
+@set $lib/stackrng=/_docs:@list $lib/stackrng=1-47
+@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-47 for documentation or use @view $lib/stackrng
+@set $lib/stackrng=/_lib-version:FM$Revision: 1.16 $
 @set $lib/stackrng=/_lib-symbol:SRNG
 wh me=Installation of lib-stackrng completed
