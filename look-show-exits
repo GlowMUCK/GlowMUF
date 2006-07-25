@@ -2,10 +2,10 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/21 22:12:16 $ $Revision: 1.11 $              )
+( look-show-exits: $Date: 2006/07/25 16:27:49 $ $Revision: 1.12 $             )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
-( Contributors:                                                               )
+( Contributors: Andy, Syvel                                                   )
 ( Dependencies: lib-case, lib-edit, lib-match, lib-strings, lib-unparseobj    )
 (               lib-wordwrap                                                  )
 ( --------------------------------------------------------------------------- )
@@ -26,6 +26,10 @@ wh me=Beginning installation of look-show-exits
 ( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.12  2006/07/25 16:27:49  feaelin
+  Fixed bug where using the exit without parameters did nothing, instead of
+  displaying the exit list as if it had been called by look or a succ.
+
   Revision 1.11  2006/07/21 22:12:16  feaelin
   Added toggles for big exit and signpost
   Added support for the standard glow help functionality
@@ -117,7 +121,7 @@ $include $lib/unparseobj
 
 ( Sets up either the configured prefix or the default string ) 
 : get-prefix ( -- s )
-  prog "_prefix" getpropstr dup "" strcmp not if
+  prog "_prefix" getpropstr dup STR-blank? if
     pop "^CYAN^You can go: "
   then
 ;
@@ -355,7 +359,7 @@ $include $lib/unparseobj
     begin
       dup show_exit? if
         dup name tolower ";" explode pick-simple-exit
-        dup "" strcmp not if
+        dup STR-blank? if
           pop
         else
           4 pick 4 pick 0 > if "," strcat then
@@ -495,7 +499,7 @@ $include $lib/unparseobj
  
 : show-help-zmud ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
+  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
   begin
     dup "$" instr while
     "$" STR-split strcat
@@ -521,7 +525,7 @@ $include $lib/unparseobj
 : show-help ( s -- )
   " " instr if show-help-zmud exit then
   me @
-  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
+  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -544,7 +548,9 @@ $include $lib/unparseobj
   
 : main ( s -- )
   dup "" strcmp not over "(Look)" strcmp not or if
-    pop
+    "" strcmp not if
+      me @ location trigger !
+    then
     trigger @ "DARK" flag? if
       me @ trigger @ controls not if
         exit
@@ -575,7 +581,7 @@ $include $lib/unparseobj
     exit
   then
   dup STR-command
-  dup "" strcmp not if
+  dup STR-blank? if
     2 popn
     me @ "^FAIL^show-exits: I don't understand what you're trying to do."
     ansi_notify
@@ -601,7 +607,7 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.11 $
+@set $look/show-exits=/_version:FM$Revision: 1.12 $
 wh me=Installation of look-show-exits complete.
 @action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
 @set $tmp/exit1=M2
