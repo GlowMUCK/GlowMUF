@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/25 16:27:49 $ $Revision: 1.12 $             )
+( look-show-exits: $Date: 2006/07/28 21:03:57 $ $Revision: 1.13 $             )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors: Andy, Syvel                                                   )
@@ -26,21 +26,26 @@ wh me=Beginning installation of look-show-exits
 ( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.13  2006/07/28 21:03:57  feaelin
+  Dark exits you control now show [Dark] next to their name.
+  On extended output, if the destination is dark, it also shows [Dark]
+  next to the name.
+
   Revision 1.12  2006/07/25 16:27:49  feaelin
   Fixed bug where using the exit without parameters did nothing, instead of
   displaying the exit list as if it had been called by look or a succ.
-
+ 
   Revision 1.11  2006/07/21 22:12:16  feaelin
   Added toggles for big exit and signpost
   Added support for the standard glow help functionality
   Updated help.
-
+ 
   Revision 1.10  2006/07/20 23:27:47  feaelin
   Added toggles for some of the configuration options.
-
+ 
   Revision 1.9  2006/07/20 22:58:06  feaelin
   ZMUD support added.
-
+ 
   Revision 1.8  2006/07/19 04:36:04  feaelin
   Replaced wizard checks with 'controls' which is the correct way.
  
@@ -254,6 +259,9 @@ $include $lib/unparseobj
         ( We want only the first name )
         dup name ";" explode over over 2 + 0 swap - rotate popn
         get-color-1 swap strcat
+	over "dark" flag? if
+	  " [Dark]" strcat
+	then
         do-substitutions
         4 rotate swap strcat -3 rotate
       then
@@ -293,13 +301,20 @@ $include $lib/unparseobj
         ( We want only the first name )
         dup name ";" explode over over 2 + 0 swap - rotate popn
         get-color-1 swap strcat
+        over "DARK" flag? if
+	  " [Dark]" strcat
+        then
         do-substitutions
-        "    " swap strcat " to " strcat get-color-4 strcat
+        "    " swap strcat
+        " to " strcat get-color-4 strcat
         over getlink
         dup "DARK" flag? over me @ swap controls not and if
           pop "Unknown"
         else
-          name
+          dup name swap
+	  "DARK" flag? if
+	    " [Dark]" do-substitutions strcat
+          then
         then
         strcat
         me @ swap ansi_notify
@@ -499,7 +514,7 @@ $include $lib/unparseobj
  
 : show-help-zmud ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
+  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
   begin
     dup "$" instr while
     "$" STR-split strcat
@@ -525,7 +540,7 @@ $include $lib/unparseobj
 : show-help ( s -- )
   " " instr if show-help-zmud exit then
   me @
-  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
+  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -607,7 +622,7 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.12 $
+@set $look/show-exits=/_version:FM$Revision: 1.13 $
 wh me=Installation of look-show-exits complete.
 @action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
 @set $tmp/exit1=M2
