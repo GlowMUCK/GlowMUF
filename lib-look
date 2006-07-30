@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2005/09/25 23:14:27 $ $Revision: 1.36 $                )
+( cmd/lib-look: $Date: 2006/07/30 19:44:20 $ $Revision: 1.37 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -94,9 +94,25 @@ wh me=Beginning installation of lib-look...
 ( LOOK-cmd-look:  s --                                                        )
 (      Does a match function, then calls db-desc with the results.  This      )
 (      will simulate the usual 'look' command.                                )
+(                                                                             )
+(      This now includes support for FENI [Fully Extensible Name Interface]   )
+(      programs. If you set following properties on the program database item:)
+(        @set <program>=_feni-lib:$lib/<some-feni-library>                    )
+(        @set <program>=_feni-match-word:<name of public word>                )
+(      Look will call the word in specified in the property with the string   )
+(      to be matched on the top of the stack. It will expect a database ref   )
+(      to be returned by the word. So the prototype for your feni-match word  )
+(      should be: [ s -- d ]. Return any 'negative' database reference number )
+(      to indicate there wasn't a match or it was ambiguous. In other words,  )
+(      your feni-match word should parallel 'match' in the way it operates.   )
+(      If your feni-match word doesn't, I recommend creating another word to  )
+(      rearrange the stack appropiately around your actual feni-match word.   )
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.37  2006/07/30 19:44:20  feaelin
+  Added support for various FENI programs.
+
   Revision 1.36  2005/09/25 23:14:27  feaelin
   Formatting cleanup.
 
@@ -712,14 +728,47 @@ lvar realtrig
   pop 0 exit
 ; PUBLIC detail-desc
  
+: get-feni-lib ( -- s )
+  prog "_feni-lib" getpropstr dup "" strcmp not if
+     pop #0 "_feni-lib" getpropstr
+  then
+;
+ 
+: get-feni-match-word ( -- s )
+  prog "_feni-match-word" getpropstr dup "" strcmp not if
+     pop #0 "_feni-match-word" getpropstr
+  then
+;
+ 
+( If there is a FENI program out there, make use of it. ) 
+: look-feni-match ( s -- d )
+  ( We should check depth and use checkargs? )
+  get-feni-lib dup "" strcmp not if
+    pop #-1 exit
+  then
+  match program? if
+    get-feni-lib match
+    get-feni-match-word dup "" strcmp not if
+      pop #-1 exit
+    then
+    call
+  else
+    #-1
+  then
+;
+ 
 : cmd-look ( s -- )
   dup not
   if
     pop "here"
   then
-  dup match dup
-  #-1 dbcmp if
-    pop detail-desc not if
+  dup match
+  dup ok? not if
+    pop dup look-feni-match dup ok? if
+      db-desc exit
+    then
+    pop
+    detail-desc not if
       pop me @ "^FAIL^I don't see that here." ansi_notify
     then
   else
@@ -798,8 +847,8 @@ q
 @set $lib/look=/_defs/LOOK-str-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-93
-@set $lib/look=/_/de:lib-look:List lines 1-93 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.36 $
-@set $lib/look=/_version:1.31FM$Revision: 1.36 $
+@set $lib/look=/_/de:lib-look:List lines 1-110 for documentation.
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.37 $
+@set $lib/look=/_version:1.31FM$Revision: 1.37 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
