@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2006/01/18 01:01:21 $ $Revision: 1.23 $                 )
+( lib-strings: $Date: 2006/08/02 13:25:08 $ $Revision: 1.24 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -34,6 +34,8 @@ wh me=Beginning installation of lib-strings...
 ( STR-char     [         i -- char          ]  convert number to character    )
 (                                                                             )
 ( This routine is useful for parsing command line input:                      )
+( STR-command  [      str -- str            ] "#he" or "-he" or "/he"-> "he"  )
+(                                             Returns "" if no #, -, or /     )
 ( STR-parse    [      str -- str1 str2 str3 ] " #X Y  y = Z" -> "X" "Y y" " Z")
 (                                                                             )
 ( STR-cleancommas [   str  -- str           ] Adds commas to a space-delimited)
@@ -46,15 +48,19 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.24  2006/08/02 13:25:08  feaelin
+  Added STR-command...converts a string of '#help' or '/help' or '-help' to
+  simply 'help'.
+
   Revision 1.23  2006/01/18 01:01:21  feaelin
   Whoops. Forgot to make cleancommas public.
-
+ 
   Revision 1.22  2005/09/26 16:18:53  feaelin
   Ported cleancommas from lib-glow-standard
-
+ 
   Revision 1.21  2005/09/25 13:07:10  feaelin
   Changelog update
-
+ 
   Revision 1.20  2005/04/07 21:08:58  feaelin
   Library Symbol added
  
@@ -189,6 +195,17 @@ wh me=Beginning installation of lib-strings...
     then
 ;
  
+: STR-command ( s -- s )
+  dup
+  "#" 1 strncmp
+  over "-" 1 strncmp and
+  over "/" 1 strncmp and
+  if
+    pop "" 
+  then
+  1 strcut swap pop
+; public STR-command
+ 
 : STRparse ( s -- s1 s2 s3 ) (
     Before: " #option  tom dick  harry = message "
     After:  "option" "tom dick harry" " message "
@@ -260,6 +277,7 @@ q
 @set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
+@set $lib/strings=/_defs/STR-command:"$lib/strings" match "STR-command" call
 @set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
 @set $lib/strings=/_defs/STR-left:"$lib/strings" match "left" call
 @set $lib/strings=/_defs/STR-parse:"$lib/strings" match "STRparse" call
@@ -274,6 +292,6 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-39
 @set $lib/strings=/_/de:lib-strings: List lines 1-39 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.23 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.24 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
