@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2006/07/30 19:44:20 $ $Revision: 1.37 $                )
+( cmd/lib-look: $Date: 2006/08/02 13:17:23 $ $Revision: 1.38 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.38  2006/08/02 13:17:23  feaelin
+  Updated documentation.
+
   Revision 1.37  2006/07/30 19:44:20  feaelin
   Added support for various FENI programs.
 
@@ -846,9 +849,9 @@ q
 @set $lib/look=/_defs/LOOK-std-filter:"$lib/look" match "std-filter" call
 @set $lib/look=/_defs/LOOK-str-desc:"$lib/look" match "str-desc" call
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
-@set $lib/look=/_docs:@list $lib/look=1-93
-@set $lib/look=/_/de:lib-look:List lines 1-110 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.37 $
-@set $lib/look=/_version:1.31FM$Revision: 1.37 $
+@set $lib/look=/_docs:@list $lib/look=1-106
+@set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.38 $
+@set $lib/look=/_version:1.31FM$Revision: 1.38 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
