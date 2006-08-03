@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-glow-standard...
 @prog lib-glow-standard
 1 99999 d
 1 i
-( lib-glow-standard: $Date: 2005/09/22 20:30:24 $ $Revision: 1.25 $          )
+( lib-glow-standard: $Date: 2006/08/03 19:52:24 $ $Revision: 1.26 $          )
 ( Author: Various                                                            )
 ( Contributors: Feaelin, Various                                             )
 ( Dependencies: None                                                         )
@@ -53,6 +53,9 @@ wh me=Beginning installation of lib-glow-standard...
   
 (
   $Log: lib-glow-standard,v $
+  Revision 1.26  2006/08/03 19:52:24  feaelin
+  Registration update
+
   Revision 1.25  2005/09/22 20:30:24  feaelin
   Removed duplicative library functions from lib-glow-standard:
   .debug-on, .debug-off, .debug-line. All are now inserver defines without
@@ -270,6 +273,7 @@ q
 @register lib-glow-standard=null
 @register lib-glow-standard=nothing
 @register lib-glow-standard=lib/glowstandard
+@register lib-glow-standard=lib/glow-standard
 @register lib-glow-standard=lib/glow
 @register lib-glow-standard=lock/true
 @register #me lib-glow-standard=tmp/prog1
@@ -376,5 +380,5 @@ q
 @set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
 @set $tmp/prog1=/_de:lib-glow:@list lines 1-48 for documentation.
 @set $tmp/prog1=/_docs:@list $lib/glow=1-48
-@set $tmp/prog1=/_lib-version:FM$Revision: 1.25 $
+@set $tmp/prog1=/_lib-version:FM$Revision: 1.26 $
 wh me=Installation of lib-glow-standard completed.
