@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2006/08/02 13:17:23 $ $Revision: 1.38 $                )
+( cmd/lib-look: $Date: 2006/08/03 19:57:53 $ $Revision: 1.39 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.39  2006/08/03 19:57:53  feaelin
+  No longer needed the include to the glow lib.
+
   Revision 1.38  2006/08/02 13:17:23  feaelin
   Updated documentation.
 
@@ -252,7 +255,7 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 $include $lib/strings
 $include $lib/unparseobj
-$include $lib/glow 
+
 lvar sme
 lvar sloc
 lvar strigger
@@ -851,7 +854,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.38 $
-@set $lib/look=/_version:1.31FM$Revision: 1.38 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.39 $
+@set $lib/look=/_version:1.31FM$Revision: 1.39 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
