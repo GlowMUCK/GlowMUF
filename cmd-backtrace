@@ -1,18 +1,20 @@
-"Beginning installation of cmd-backtrace...
+wh me=Beginning installation of cmd-backtrace...
 @prog cmd-backtrace
 1 99999 d
 1 i
-( cmd-backtrace : $Date: 1999/04/18 01:33:58 $ $Revision: 1.1 $
+( cmd-backtrace : $Date: 2006/08/15 14:06:23 $ $Revision: 1.2 $
   Author: ???
   --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-backtrace,v $
+  Revision 1.2  2006/08/15 14:06:23  feaelin
+  Removed dependence on lib-glow-standard.
+  Added some color to output
+
   Revision 1.1  1999/04/18 01:33:58  feaelin
   Initial revision
 
 )
-
-$include $lib/glow
 
 : CountARoom ( Tally Room# -- Tally Room# )
   dup contents dup if 0 swap ( T R# T C# )
@@ -20,36 +22,34 @@ $include $lib/glow
       CountARoom swap 1 + swap next
     repeat ( T R# T C# ) pop
     dup if ( only do this if we got rooms )
-      over .private? me @ .wizard? not and if
+      over "_private" getpropstr "y" instr
+      me @ "MAGE" flag? not and if
         "A private room" else over unparseobj then
       " run by " strcat 3 pick owner name strcat " has " strcat
-      over intostr strcat " rooms." strcat .tell rot + swap
+      over intostr strcat " rooms." strcat me @ swap ansi_notify rot + swap
     else pop then 
   else ( NothingInRoom ) pop then
 ;
 : Count-Main
-  .initialize
-  me @ .wizard? loc @ owner me @ dbcmp or if
+  "me" match dup me ! location loc !
+  me @ "MAGE" flag? loc @ owner me @ dbcmp or if
     "Descendents of " loc @ unparseobj ":" strcat strcat
     0 loc @ CountARoom pop pop
-    "Done." .tell
+    me @ "^SUCC^Done." ansi_notify
   else
-    "You don't own this room." .tell
+    me @ "^FAIL^You don't own this room." ansi_notify
   then
 ;
 .
 c
 q
 @register cmd-backtrace=cmd/backtrace
-@register #me cmd-backtrace=tmp/prog1
-@set $tmp/prog1=M3
+@set $cmd/backtrace=M3
 @action backtrace=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
+@link $tmp/exit1=$cmd/backtrace
 @lock $tmp/exit1=#0
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Backtrace lists all rooms in the current room and their descendants.
-@set $tmp/exit1=/_/fl:Permission denied.
-@set $tmp/exit1=/_/lok:lock-mage(#323FLM1)
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
-"Installation of cmd-backtrace complete.
+@set $cmd/backtrace=_version:FM$Revision: 1.2 $
+wh me=Installation of cmd-backtrace complete.
