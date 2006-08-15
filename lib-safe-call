@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-safe-call
 @prog lib-safe-call
 1 99999 d
 1 i
-( lib-safe-call: $Date: 2006/08/15 13:10:51 $ $Revision: 1.1 $                )
+( lib-safe-call: $Date: 2006/08/15 14:10:00 $ $Revision: 1.2 $                )
 ( Purpose: Safely call another program by storing the current stack in props  )
 ( Authors: Feaelin                                                            )
 ( Contributors: None                                                          )
@@ -42,6 +42,9 @@ wh me=Beginning installation of lib-safe-call
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-safe-call,v $
+  Revision 1.2  2006/08/15 14:10:00  feaelin
+  One small cut and paste error...
+
   Revision 1.1  2006/08/15 13:10:51  feaelin
   Added the new safe call library to the repository.
 
@@ -223,6 +226,6 @@ q
 @set $lib/safe-call=/_defs/SAFECALL-full:"$lib/safe-call" match "safe-call-full" call
 @set $lib/safe-call=/_/de:lib-case:List lines 1-38 for documentation.
 @set $lib/safe-call=/_docs:@list $lib/safe-call=1-38
-@set $lib/safe-call=/_lib-version:FM$Revision: 1.1 $
-@set $lib/editor=/_lib-symbol:SAFECALL
+@set $lib/safe-call=/_lib-version:FM$Revision: 1.2 $
+@set $lib/safe-call=/_lib-symbol:SAFECALL
 wh me=Installation of lib-safe-call completed.
