@@ -2,11 +2,16 @@ wh me=Beginning installation of cmd-backtrace...
 @prog cmd-backtrace
 1 99999 d
 1 i
-( cmd-backtrace : $Date: 2006/08/15 14:06:23 $ $Revision: 1.2 $
-  Author: ???
-  --------------------------------------------------------------------------- )
+( cmd-backtrace : $Date: 2006/08/15 15:05:17 $ $Revision: 1.3 $               )
+( Purpose: Lists child rooms that are also parents and lists how many rooms   )
+(          are below that parent.                                             )
+( Author: Unknown                                                             )
+( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-backtrace,v $
+  Revision 1.3  2006/08/15 15:05:17  feaelin
+  Updated header.
+
   Revision 1.2  2006/08/15 14:06:23  feaelin
   Removed dependence on lib-glow-standard.
   Added some color to output
@@ -47,9 +52,8 @@ q
 @set $cmd/backtrace=M3
 @action backtrace=here=tmp/exit1
 @link $tmp/exit1=$cmd/backtrace
-@lock $tmp/exit1=#0
 @set $tmp/exit1=D
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:Backtrace lists all rooms in the current room and their descendants.
-@set $cmd/backtrace=_version:FM$Revision: 1.2 $
+@set $cmd/backtrace=_version:FM$Revision: 1.3 $
 wh me=Installation of cmd-backtrace complete.
