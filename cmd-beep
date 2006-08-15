@@ -1,46 +1,56 @@
-"Beginning installation of cmd-beep...
+wh me=Beginning installation of cmd-beep...
 @prog cmd-beep
 1 99999 d
 1 i
-( cmd-beep: $Date: 1999/04/18 17:15:41 $ $Revision: 1.1 $
-  Author: Andy/Pakrat
-  --------------------------------------------------------------------------- )
+( cmd-beep: $Date: 2006/08/15 15:02:45 $ $Revision: 1.2 $                     )
+( Purpose: Sends a beep message with a ansi-beep tone to a player or room     )
+( Author: Andy/Pakrat                                                         )
+( --------------------------------------------------------------------------- )
 (
   $Log: cmd-beep,v $
+  Revision 1.2  2006/08/15 15:02:45  feaelin
+  Updated header.
+  Eliminated dependence on lib-glow-standard.
+  Colorized.
+
   Revision 1.1  1999/04/18 17:15:41  feaelin
   Initial revision
 
 )
 
-$include $lib/glow
-
+$include $lib/match
+ 
+: private? ( -- i )
+  "_private" getpropstr "y" instr
+;
+ 
 : cmd-beep ( s -- )
-  .noguest
+  me @ "GUEST" flag? if
+    "^FAIL^Beep cannot be used by guests." ansi_notify
+  then
   dup not if pop
-    "Usage: beep <player> or beep here -- sends ##beep## to player or room"
-    .tellme exit
+    me @ "^SUCC^Usage: beep <player> or beep here -- sends ##beep## to player or room"
+    ansi_notify exit
   then
   dup "here" stringcmp not if pop
-    loc @ #-1 "^beep^" ansi_notify_except
-    loc @ #-1 "##Beep##" notify_except
+    loc @ #-1 "^beep^^SUCC^##Beep##" ansi_notify_except
     exit
   then
-  .pmatch dup not if pop
-    "I don't know who that is." .tellme exit
+  MATCH-pmatch dup not if pop
+    me @ "^FAIL^I don't know who that is." ansi_notify exit
   then
   dup awake? not if pop
-    "They are sleeping." .tellme exit
+    me @ "^INFO^They are sleeping." ansi_notify exit
   then
   dup "HAVEN" flag? if pop
-    "They are set haven." .tellme exit
+    me @ "^INFO^They are set haven." ansi_notify exit
   then
-  dup .private? over location .private? or if
-    "They wish for privacy." .tellme exit
+  dup private? over location private? or if
+    me @ "^INFO^They wish for privacy." ansi_notify exit
   then
   dup "From " me @ name strcat "..." strcat notify
-  dup "^beep^" ansi_notify
-  "##Beep##" notify
-  "Beeped." .tellme
+  dup "^beep^^SUCC^##Beep##" ansi_notify
+  me @ "^SUCC^Beeped." ansi_notify
 ;
 .
 c
@@ -52,5 +62,5 @@ q
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:@$cmd/beep
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
-"Installation of cmd-beep complete.
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
+wh me=Installation of cmd-beep complete.
