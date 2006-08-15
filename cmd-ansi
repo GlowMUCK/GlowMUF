@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-ansi...
 @prog cmd-ansi
 1 99999 d
 1 i
-( cmd-ansi: $Date: 2005/09/22 19:55:30 $ $Revision: 1.5 $                     )
+( cmd-ansi: $Date: 2006/08/15 13:51:13 $ $Revision: 1.6 $                     )
 ( Purpose: Prettily turn and off ANSI color and/or 256 xterm colors           )
 ( Author: Andy/Pakrat                                                         )
 ( Contributors: Feaelin                                                       )
@@ -10,6 +10,9 @@ wh me=Beginning installation of cmd-ansi...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-ansi,v $
+  Revision 1.6  2006/08/15 13:51:13  feaelin
+  Added 'colorlist' feature for 256 color mode.
+
   Revision 1.5  2005/09/22 19:55:30  feaelin
   Added notification of the 'alternate color' feature.
 
@@ -37,6 +40,8 @@ lvar blue
   me @ "color on       -- turn on color" notify
   me @ "color off      -- turn off color" notify
   me @ "colors         -- show color combinations" notify
+  me @ "colors2        -- how to use 256 color" notify
+  me @ "colorlist      -- show 256 color combinations" notify
 ;
  
 : show-colors ( -- )
@@ -128,11 +133,37 @@ $ifdef __pref_256colors
 ;
 $endif
  
+: color-list ( -- )
+  0 red !
+  ""
+  begin
+    0 green !
+    begin
+      0 blue !
+      begin
+        " ^256FG-"
+        red @ intostr strip strcat
+        green @ intostr strip strcat
+        blue @ intostr strip strcat
+        "^" strcat strcat
+        red @ intostr strip strcat
+        green @ intostr strip strcat
+        blue @ intostr strip strcat
+        blue @ 1 + blue !
+      blue @ 6 = until
+      green @ 1 + green !
+      me @ swap ansi_notify ""
+    green @ 6 = until
+    red @ 1 + red !
+  red @ 6 = until
+;
+ 
 : ansi ( s -- )
   "me" match dup location loc ! me !
   command @ "colors" stringcmp not if pop show-colors exit then
 $ifdef __pref_256colors
   command @ "colors2" stringcmp not if pop colors2 exit then
+  command @ "colorlist" stringcmp not if pop color-list exit then
 $endif  
   dup if
     dup "help" stringcmp not if pop do-help exit then
@@ -186,8 +217,8 @@ q
 @register cmd-ansi=cmd/ansi
 @set $cmd/ansi=V
 @set $cmd/ansi=M3
-@set $cmd/ansi=_version:FM$Revision: 1.5 $
-@action color;ansi;colors;colors2;@ansi=here=tmp/exit1
+@set $cmd/ansi=_version:FM$Revision: 1.6 $
+@action color;ansi;colors;colors2;@ansi;colorlist=here=tmp/exit1
 @link $tmp/exit1=$cmd/ansi
 @set $tmp/exit1=M1
 @set $tmp/exit1=/_/de:Type 'color on' to turn color on.  'color off' turns it off.  'colors' lists available colors.
