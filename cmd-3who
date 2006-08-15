@@ -2,14 +2,20 @@ wh me=Beginning installation of cmd-3who...
 @prog cmd-3who
 1 99999 d
 1 i
-( cmd-3who: $Date: 2005/04/08 18:44:02 $ $Revision: 1.4 $                     )
+( cmd-3who: $Date: 2006/08/15 13:49:08 $ $Revision: 1.5 $                     )
 ( Purpose: Provides a who list in 3 column format                             )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
+( If the "who_hides_dark" sysparm is set, players who are set /@/dark:yes     )
+( will not be listed by cmd-3who                                              )
+( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-3who,v $
+  Revision 1.5  2006/08/15 13:49:08  feaelin
+  Made 3who respect the 'who_hides_dark' sysparm.
+
   Revision 1.4  2005/04/08 18:44:02  feaelin
   Fixed flaws in the dark hiding prop detection.
 
@@ -57,8 +63,10 @@ wh me=Beginning installation of cmd-3who...
  
 : collate-entry (i -- s)
     dup condbref 
-    dup "/@/dark" getpropstr 
-    "yes" strcmp not if pop pop 0 exit then
+    "who_hides_dark" sysparm "yes" strcmp not if
+      dup "/@/dark" getpropstr 
+      "yes" strcmp not if pop pop 0 exit then
+    then
     name
     over contime mtimestr
     over strlen over strlen +
@@ -127,7 +135,7 @@ c
 q
 @register cmd-3who=cmd/3who
 @set $cmd/3who=W3
-@set $cmd/3who=_version:FM$Revision: 1.4 $
+@set $cmd/3who=_version:FM$Revision: 1.5 $
 @action 3who;who3;3w=here=tmp/exit1
 @link $tmp/exit1=$cmd/3who
 @set $tmp/exit1=M3
