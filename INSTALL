@@ -1,6 +1,6 @@
-INSTALL $Date: 2005/04/07 13:03:14 $ $Revision: 1.16 $
+INSTALL $Date: 2006/08/15 13:10:51 $ $Revision: 1.17 $
 ---------------------------------------------------------------------------
-FMMUF 1.0.1
+Glow Distribution of "Standard" Programs
 -----------
 I. How to install a MUF program to the muck
 -------------------------------------------
@@ -12,9 +12,9 @@ I. How to install a MUF program to the muck
     2. That the player installing them is currently located in #0, or the
        "top level" environment/parent room.
   B. Specific Client Example: TinyFugue
-    Tinyfugue makes this process particularly easy.  Simply type:
-    /quote -S 'path-to-source-file to install a given file.  For example:
-    /quote -S '~/cmd-register would install cmd-register.
+     Tinyfugue makes this process particularly easy.  Simply type:
+     /quote -S 'path-to-source-file to install a given file.  For example:
+     /quote -S '~/cmd-register would install cmd-register.
   C. Specific Client Example: SimpleMU
      In most cases, you can open the file in a text editor (such as notepad)
      and highlight the _entire_ file and use the classic windows copy-and-paste
@@ -38,6 +38,7 @@ lib-glow-standard
 lib-strings
 lib-stackrng
 lib-lmgr
+lib-safe-call
 lib-edit
 lib-editor
 lib-match
@@ -56,8 +57,9 @@ lib-userprop
 lib-wordwrap
 lib-write
 
-III. cmd-path
+III. cmd-path (deprecated)
 ------------
+(Not recommended, but provided if you want to)
 At this point, if you're going to install cmd-path, you should do so now.
 Then you can install the rest of the programs as you wish.  
   A. Install the cmd-path muf.
