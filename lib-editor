@@ -2,7 +2,7 @@ wh me=Installing lib-editor...
 @prog lib-editor
 1 99999 d
 1 i
-( lib-editor: $Date: 2005/09/25 13:36:41 $ $Revision: 1.25 $                  )
+( lib-editor: $Date: 2006/08/15 14:13:23 $ $Revision: 1.26 $                  )
 ( Purpose:                                                                    )
 ( Author: Foxen                                                               )
 ( Contributors: Feaelin                                                       )
@@ -55,6 +55,9 @@ wh me=Installing lib-editor...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-editor,v $
+  Revision 1.26  2006/08/15 14:13:23  feaelin
+  Added the ability to run external commands from the editor.
+
   Revision 1.25  2005/09/25 13:36:41  feaelin
   Documentation update.
 
@@ -139,7 +142,8 @@ wh me=Installing lib-editor...
 $include $lib/strings
 $include $lib/stackrng
 $include $lib/edit
- 
+$include $lib/safe-call
+  
 : EDITORerror ( errnum -- )
     dup       1 = if pop "Invalid line reference."
     else dup  2 = if pop "Error: Line referred to is before first line."
@@ -243,6 +247,23 @@ $include $lib/edit
     "i#end#abort#h#i#l#p#al#ap#del#copy#move#find#repl#join#split#left#center#right#color#indent#format#ruler#ruler1#ruler2#ruler3#sort"
     swap instr not if
       dup 5 pick swap instr not if
+        dup match dup ok? if
+          dup exit? if
+            getlink dup program? if
+              "mycmd" 4 rotate
+              me @ "^SUCC^Launching external program..." ansi_notify
+              SAFECALL-arg-cmd
+              me @ "^SUCC^Returning to editor..." ansi_notify
+              pop pop 1 exit
+            else
+              pop
+            then
+          else
+            pop
+          then
+        else
+          pop
+        then
         pop pop 8 EDITORerror 1 exit
       then
     then
@@ -686,6 +707,6 @@ q
 @set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
 @set $lib/editor=/_docs:@list $lib/editor=1-51
 @set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
-@set $lib/editor=/_lib-version:FM$Revision: 1.25 $
+@set $lib/editor=/_lib-version:FM$Revision: 1.26 $
 @set $lib/editor=/_lib-symbol:EDITOR
 wh me=Installation of lib-editor complete.
