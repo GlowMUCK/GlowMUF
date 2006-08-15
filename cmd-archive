@@ -1,12 +1,17 @@
-"Beginning installation of cmd-archive...
+wh me=Beginning installation of cmd-archive...
 @prog cmd-archive
 1 99999 d
 1 i
-( cmd-archive: $Date: 2005/09/22 20:10:44 $ $Revision: 1.3 $
+( cmd-archive: $Date: 2006/08/15 13:56:13 $ $Revision: 1.4 $
   Author: ????
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-archive,v $
+  Revision 1.4  2006/08/15 13:56:13  feaelin
+  Eliminated dependence on lib-glow-standard.
+  Updated library calls to new standard.
+  Fixed permissions issue for wizards archiving wizard perm'd database items.
+
   Revision 1.3  2005/09/22 20:10:44  feaelin
   Purely cosmetic change in log entries.
 
@@ -25,7 +30,6 @@
 ( @cre thingname=value=regname )
 ( @reg object=regname          )
   
-$include $lib/glowstandard
 $include $lib/strings
 $include $lib/match
 $include $lib/edit
@@ -156,7 +160,7 @@ lvar check
   "/_/de:/_/sc:/_/fl:/_/dr" 3 pick tolower instr if
     dup "@" 1 strncmp not if
       1 strcut dup number? if
-        " " .split swap atoi dbref
+        " " STR-split swap atoi dbref
         dup get-refname dup not if swap intostr then
         swap pop " " strcat swap strcat
       then
@@ -218,7 +222,7 @@ lvar check
   dup "*UNLOCKED*" stringcmp not if pop pop pop exit then
   begin
     dup "#" instr over or while
-    "#" .split
+    "#" STR-split
     rot rot strcat swap
     dup atoi intostr strlen
     strcut swap atoi dbref
@@ -455,14 +459,17 @@ $def dump-one dup originalobj ! 1 one? ! dump-obj
 ;
   
 : archiver
-  .noguest
+  me @ "GUEST" flag? if
+    me @
+    "^FAIL^Sorry, guests are not permitted to use this program." ansi_notify
+  then
   clear-refnames
-  "=" .split strip swap strip
+  "=" STR-split strip swap strip
   dup not if pop pop show-help exit then
-  .match_controlled
+  MATCH-match_controlled
   dup not if pop pop exit then
   swap tolower
-  me @ .mage? not if "" "a" subst "" "g" subst then
+  me @ "MAGE" flag? not if "" "a" subst "" "g" subst then
   dup "e" instr here? !
   dup "a" instr not owned? !
   dup "c" instr nocontents? !
@@ -492,11 +499,11 @@ $def dump-one dup originalobj ! 1 one? ! dump-obj
 c
 q
 @register cmd-archive=cmd/archive
-@register #me cmd-archive=tmp/prog1
-@set $tmp/prog1=W4
+@set $cmd/archive=W4
+@set $cmd/archive=S
 @action @archive;@arc;@arch=here=tmp/exit1
-@link $tmp/exit1=$tmp/prog1
+@link $tmp/exit1=$cmd/archive
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/archive 
-@set $tmp/prog1=/_version:FM$Revision: 1.3 $
-"Installation of cmd-archive complete.
+@set $cmd/archive=/_version:FM$Revision: 1.4 $
+wh me=Installation of cmd-archive complete.
