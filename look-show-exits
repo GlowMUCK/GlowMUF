@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/07/28 21:03:57 $ $Revision: 1.13 $             )
+( look-show-exits: $Date: 2006/08/15 14:20:11 $ $Revision: 1.14 $             )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors: Andy, Syvel                                                   )
@@ -26,6 +26,10 @@ wh me=Beginning installation of look-show-exits
 ( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.14  2006/08/15 14:20:11  feaelin
+  Corrected bug where the program crashes if you're in a room with no visible
+  exits.
+
   Revision 1.13  2006/07/28 21:03:57  feaelin
   Dark exits you control now show [Dark] next to their name.
   On extended output, if the destination is dark, it also shows [Dark]
@@ -272,7 +276,7 @@ $include $lib/unparseobj
     pop
   then
   0 = if
-   pop me @ "^CYAN^You see no obvious way out." ansi_notify
+    me @ "^CYAN^You see no obvious way out." ansi_notify
   else
     get-wrap-length swap WRAP-wordwrap
     swap me @ swap ansi_notify
@@ -326,7 +330,7 @@ $include $lib/unparseobj
     pop
   then
   0 = if
-    pop me @ "^CYAN^You see no obvious way out." ansi_notify
+    me @ "^CYAN^You see no obvious way out." ansi_notify
   then
 ;
  
@@ -514,7 +518,7 @@ $include $lib/unparseobj
  
 : show-help-zmud ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
+  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
   begin
     dup "$" instr while
     "$" STR-split strcat
@@ -540,7 +544,7 @@ $include $lib/unparseobj
 : show-help ( s -- )
   " " instr if show-help-zmud exit then
   me @
-  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
+  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -622,7 +626,7 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.13 $
+@set $look/show-exits=/_version:FM$Revision: 1.14 $
 wh me=Installation of look-show-exits complete.
 @action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
 @set $tmp/exit1=M2
