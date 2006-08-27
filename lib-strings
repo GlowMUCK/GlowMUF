@@ -2,15 +2,17 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2006/08/02 13:25:08 $ $Revision: 1.24 $                 )
+( lib-strings: $Date: 2006/08/27 00:15:40 $ $Revision: 1.25 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( These routines deal with spaces in strings.                                 )
-( STR-blank?   [       str -- bool          ]  true if str null or only spaces)
-( STR-sms      [       str -- str'          ]  strips mult. internal spaces   )
+( STR-blank?   [       str -- bool          ]  true if str is null or contains)
+(                                              only spaces and glow-ansi codes)
+( STR-null?    [       str -- bool          ]  returns true if str is null    )
+( STR-sms      [       str -- str'          ]  strips multiple internal spaces)
 (                                                                             )
 ( These two are routines to split a string on a substring, non-inclusively.   )
 ( STR-split    [ str delim -- prestr postr  ]  splits str on first delim.     )
@@ -48,10 +50,17 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.25  2006/08/27 00:15:40  feaelin
+  Corrected definition of STR-blank?. It now handles strings with glow-ansi
+  codes in them correctly by stripping them first.
+
+  Added STR-null? to parallel STR-blank?. STR-null? will only be true if the
+  string is entirely empty.
+
   Revision 1.24  2006/08/02 13:25:08  feaelin
   Added STR-command...converts a string of '#help' or '/help' or '-help' to
   simply 'help'.
-
+ 
   Revision 1.23  2006/01/18 01:01:21  feaelin
   Whoops. Forgot to make cleancommas public.
  
@@ -239,7 +248,7 @@ q
 @set $lib/strings=L
 @set $lib/strings=W
 @set $lib/strings=/_defs/.asc:"$lib/strings" match "STRasc" call
-@set $lib/strings=/_defs/.blank?:striplead not
+@set $lib/strings=/_defs/.blank?:ansi_strip striplead "" strcmp not
 @set $lib/strings=/_defs/.center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/.chr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/.command_parse:"$lib/strings" match "STRparse" call
@@ -257,7 +266,7 @@ q
 @set $lib/strings=/_defs/.stripspaces:strip
 @set $lib/strings=/_defs/.strcutat:"$lib/strings" match "splitargs" call
 @set $lib/strings=/_defs/STRasc:"$lib/strings" match "STRasc" call
-@set $lib/strings=/_defs/STRblank?:striplead not
+@set $lib/strings=/_defs/STRblank?:ansi_strip striplead "" strcmp not
 @set $lib/strings=/_defs/STRcenter:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STRchr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/STRfillfield:"$lib/strings" match "fillfield" call
@@ -273,7 +282,8 @@ q
 @set $lib/strings=/_defs/STRstrip:strip
 @set $lib/strings=/_defs/STRsts:striptail
 @set $lib/strings=/_defs/STR-asc:"$lib/strings" match "STRasc" call
-@set $lib/strings=/_defs/STR-blank?:striplead not
+@set $lib/strings=/_defs/STR-blank?:ansi_strip striplead "" strcmp not
+@set $lib/strings=/_defs/STR-null?:"" strcmp not
 @set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
@@ -290,8 +300,8 @@ q
 @set $lib/strings=/_defs/STR-splitargs:"$lib/strings" match "splitargs" call
 @set $lib/strings=/_defs/STR-strip:strip
 @set $lib/strings=/_defs/STR-sts:striptail
-@set $lib/strings=/_docs:@list $lib/strings=1-39
-@set $lib/strings=/_/de:lib-strings: List lines 1-39 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.24 $
+@set $lib/strings=/_docs:@list $lib/strings=1-46
+@set $lib/strings=/_/de:lib-strings: List lines 1-46 for documentation.
+@set $lib/strings=/_lib-version:FM$Revision: 1.25 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
