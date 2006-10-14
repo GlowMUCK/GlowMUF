@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-stackrng...
 @prog lib-stackrng
 1 99999 d
 1 i
-( lib-stackrng: $Date: 2006/07/24 13:42:38 $ $Revision: 1.16 $                )
+( lib-stackrng: $Date: 2006/10/14 17:23:05 $ $Revision: 1.17 $                )
 ( Purpose: Stack manipulation of an entire range                              )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -51,6 +51,10 @@ wh me=Beginning installation of lib-stackrng...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-stackrng,v $
+  Revision 1.17  2006/10/14 17:23:05  feaelin
+  Fixed flaw in uniquerng that didn't allow for ranges containing only one
+  element.
+
   Revision 1.16  2006/07/24 13:42:38  feaelin
   Added SRNG-uniquerng which filters ranges for the unique items in the range.
 
@@ -226,7 +230,10 @@ wh me=Beginning installation of lib-stackrng...
     "lib-stackrng: SRNG-uniquerng called without an integer on top of the stack."
     abort
   then 
-  dup not if exit then
+  dup 1 = if 
+    over 1 0 exit
+  then
+  dup not if 0 0 exit then
   dup intostr "?" swap strcat " i" strcat checkargs
   over 
   dup string? if
@@ -301,6 +308,6 @@ q
 @set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
 @set $lib/stackrng=/_docs:@list $lib/stackrng=1-47
 @set $lib/stackrng=/_/de:lib-stackrng: List lines 1-47 for documentation or use @view $lib/stackrng
-@set $lib/stackrng=/_lib-version:FM$Revision: 1.16 $
+@set $lib/stackrng=/_lib-version:FM$Revision: 1.17 $
 @set $lib/stackrng=/_lib-symbol:SRNG
 wh me=Installation of lib-stackrng completed
