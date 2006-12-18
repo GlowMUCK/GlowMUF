@@ -2,7 +2,7 @@ wh me=Beginning installation of look-show-exits
 @prog look-show-exits
 1 99999 d
 1 i
-( look-show-exits: $Date: 2006/08/15 14:20:11 $ $Revision: 1.14 $             )
+( look-show-exits: $Date: 2006/12/18 03:13:51 $ $Revision: 1.15 $             )
 ( Purpose: To display exits in a given room when called by lib-look           )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Contributors: Andy, Syvel                                                   )
@@ -26,6 +26,10 @@ wh me=Beginning installation of look-show-exits
 ( --------------------------------------------------------------------------- )
 (
   $Log: look-show-exits,v $
+  Revision 1.15  2006/12/18 03:13:51  feaelin
+  Corrected spelling in #help and fixed it so it showed all the help lines
+  correctly.
+
   Revision 1.14  2006/08/15 14:20:11  feaelin
   Corrected bug where the program crashes if you're in a room with no visible
   exits.
@@ -518,7 +522,7 @@ $include $lib/unparseobj
  
 : show-help-zmud ( -- )
   me @
-  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
+  "^FOREST^Show Exits: $Revision: 1.15 $ $Date: 2006/12/18 03:13:51 $"
   begin
     dup "$" instr while
     "$" STR-split strcat
@@ -544,7 +548,7 @@ $include $lib/unparseobj
 : show-help ( s -- )
   " " instr if show-help-zmud exit then
   me @
-  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
+  "^FOREST^Show Exits: $Revision: 1.15 $ $Date: 2006/12/18 03:13:51 $"
   begin
     dup "$" instr while
     "$" STRsplit strcat
@@ -552,7 +556,7 @@ $include $lib/unparseobj
   "^FOREST^By Feaelin Moilar (Iain E. Davis)"
   "^WHITE^------------------------------------------------------------------------------"
   me @ "archwizard" flag? if
-    "show-exits #allow-zmud          Allows players to user zmud-mode."
+    "show-exits #allow-zmud          Allows players to use zmud-mode."
   then
   "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>."
   "show-exits #signpost ^YELLOW^<^RESET^room^YELLOW^>^RESET^     Toggles signpost mode for <room>"
@@ -562,7 +566,7 @@ $include $lib/unparseobj
     "show-exits #zmud-mode           Toggles ZMUD Output on or off."
   then
   "^WHITE^------------------------------------------------------------------------------"
-  9 EDIT-ansi_display
+  10 EDIT-ansi_display
 ;
   
 : main ( s -- )
@@ -626,7 +630,7 @@ q
 @register look-show-exits=cmd/show-exits
 @register look-show-exits=look/show-exits
 @set $look/show-exits=/_docs:@list $look/show-exits=1-32
-@set $look/show-exits=/_version:FM$Revision: 1.14 $
+@set $look/show-exits=/_version:FM$Revision: 1.15 $
 wh me=Installation of look-show-exits complete.
 @action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
 @set $tmp/exit1=M2
