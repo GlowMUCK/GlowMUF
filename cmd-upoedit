@@ -2,12 +2,17 @@ wh me=Beginning installation of cmd-upoedit...
 @prog cmd-upoedit
 1 10000 d
 i
-( cmd-upoedit: $Revision: 1.1 $ $Date: 2007/04/20 21:58:21 $              )
+( cmd-upoedit: $Revision: 1.2 $ $Date: 2007/04/20 22:10:08 $                  )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Purpose: Allow a user to edit unparseobj settings on database items they    )
+(          control.
 ( Dependencies: lib-strings, lib-match, lib-unparseobj, lib-case              )
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-upoedit,v $
+  Revision 1.2  2007/04/20 22:10:08  feaelin
+  Documentation update
+
   Revision 1.1  2007/04/20 21:58:21  feaelin
   Initial checkin
 
@@ -219,7 +224,7 @@ $def C2W 18
 c
 q
 @register cmd-upoedit=cmd/upoedit
-@set $cmd/upoedit=/_version:FM$Revision: 1.1 $
+@set $cmd/upoedit=/_version:FM$Revision: 1.2 $
 @set $cmd/upoedit=/_/de:Use @list $lib/unparseobj=1-82 for documentation.
 @action @upoedit=here
 @link @upoedit=$cmd/upoedit
