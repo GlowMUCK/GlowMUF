@@ -1,23 +1,47 @@
-CHANGES $Date: 2005/04/07 13:03:39 $ $Revision: 1.20 $
+CHANGES $Date: 2007/04/20 03:45:28 $ $Revision: 1.21 $
 Author: Feaelin
 -------------------------------------------------------------------------------
 I try to keep all the changes on a by program basis, so that you can install
 the individual programs to keep up-to-date. I don't always succeed in getting
-all the changes in, so it is wise to check the webpage that lists the programs
+all the changes in, so it is wise to check the CVS repository for each program
 and their current versions, or check the version number in the individual files
 and compare it to the version shown by @register.
 -------------------------------------------------------------------------------
+2007 April 19: FM 1.1.1
 -------------------------------------------------------------------------------
 00) Most Programs:Various updates to documentation and installation scripts.
                   General reduction of dependency on lib-glow-standard
 01) cmd-page:     Replaced the built-in editor with appropiate calls to
                   lib-editor. Revised front end so p #mail <name> <name>...
                   worked correctly. Added back in the #changes support and the
-                  "page has upgraded warning.
+                  "page has upgraded warning. Fixed issue which would cause
+                  page to bomb with empty messages. Added support so that
+                  wizards can control whether guests can page, and who.
 02) lib-editor,   Using period without any other text after it, or using period
-    lib-edit,      and a space no longer results in the program failing.
-    cmd-lsedit
-
+    lib-edit,     and a space no longer results in the program failing. Fixed
+    cmd-lsedit    bug which let you get into the editor prematurely.
+                  Fixed various bugs in the display commands. Added ability to
+                  run MUF programs from within the editor.
+03) cmd-ansi      Updated to use 256 color mode with notifications
+04) cmd-archive   Fixed permission issues when archiving wizard owned items.
+05) cmd-bbs       Character limit added for subject lines
+06) cmd-find      Fixed bug where STR-split was called incorrectly. 
+07) lib-glow-std  Remove .debug-xxx commands, there are now inserver versions
+08) cmd-laston    Fixed error which would present negative last on times
+09) cmd-mv-cp     Library words documented
+10) cmd-who       Fixed issue which would cause problems if all people 
+                  present were 'dozing/asleep'. Grammar errors fixed.
+11) lib-look		  Fixed bug which caused lib-look to fail with certain contents
+                  Added support for contents of containers
+                  Fixed interpretive issues with sticky/silent flag
+12) lib-stackrng  Added SRNG-uniquerng which produces a range of unique items
+                  from the given range.
+13) lib-strings   Added STR-command. Converts #help, -help, or /help to 'help'
+                  Added STR-null? to check to see if a string is null.
+                  Fixed STR-blank? so a string with ansi codes only was 
+                  considered blank.
+14) lib-wordwrap  Better error checking
+15) look-show-exits Exits lister designed to be used with look's, ~look props
 -------------------------------------------------------------------------------
 2004 May 08: FM 1.0.2
 -------------------------------------------------------------------------------
@@ -27,9 +51,9 @@ and compare it to the version shown by @register.
                   Fixed .split and .format so that they correctly preserve
                   colorization. Added the .ruler command. Upgraded to more
                   easily handle @props.
-		  Fixed bug in EDITORarguement that would cause the editor
+            		  Fixed bug in EDITORarguement that would cause the editor
                   to crash after being passed certain combinations of invalid
-		  line references.
+            		  line references. 
 02) cmd-roomcheck:Is now more intelligent about checking desc's when
                   @tune transparent_paths is turned on.
 03) cmd-emotion:  Fixed issue where a custom look program will cause the
@@ -47,11 +71,11 @@ and compare it to the version shown by @register.
                   Added additional library calls to the new @detail related
                   words. General documentation cleanup. Support for @idesc
                   added. Fixed 'me' & 'here'matching to work as you might
-		  expect. FAIL messages now use ^FAIL^ to colorize.
-		  Fixed colorization issues with LOOKshort-list*. WARNING!
-		  This has a hidden side-effect. lib-reflist relies on this
-		  public library word to generate a formatted list.  Any
-	          program relying on lib-reflist may generate colorized strings
+  		  					expect. FAIL messages now use ^FAIL^ to colorize.
+								  Fixed colorization issues with LOOKshort-list*. WARNING!
+								  This has a hidden side-effect. lib-reflist relies on this
+								  public library word to generate a formatted list.  Any
+				          program relying on lib-reflist may generate colorized strings
                   where they didn't before. Unfortunately, many of those same
                   programs do not use ansi_notify, which means instead of
                   seeing colored text, you see '^RED^Fred rides away' etc.
@@ -61,9 +85,9 @@ and compare it to the version shown by @register.
                   New Feature: ~look props. If a ~look/something:ref prop is
                   set anywhere in the environment, the program 'ref' will be
                   called by lib-look, with (Look) on top of the stack.
-		  New Feature: Made the standard filter public so that extended
-		  filters can be written without having to recreate the
-		  functionality of the standard filter yourself.
+            		  New Feature: Made the standard filter public so that extended
+            		  filters can be written without having to recreate the
+            		  functionality of the standard filter yourself.
                   Added support for Wixenstyx's FENI library. If it exists on
                   the server, lib-look will use it.
 05) cmd-teleport: Added define to allow customization of the format of the
@@ -84,7 +108,7 @@ and compare it to the version shown by @register.
                   "listeners" didn't see spoofs.
 13) cmd-register: Documentation update.
 14) lib-glow-...: Fixed documentation for compatibility with the MUF editor's
-		  view command.
+            		  view command.
 
 2004 March 14: FM 1.0.1 (1st sourceforge package)
 -------------------------------------------------------------------------------
