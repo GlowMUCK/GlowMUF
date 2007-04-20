@@ -1,0 +1,226 @@
+wh me=Beginning installation of cmd-upoedit...
+@prog cmd-upoedit
+1 10000 d
+i
+( cmd-upoedit: $Revision: 1.1 $ $Date: 2007/04/20 21:58:21 $              )
+( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Dependencies: lib-strings, lib-match, lib-unparseobj, lib-case              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-upoedit,v $
+  Revision 1.1  2007/04/20 21:58:21  feaelin
+  Initial checkin
+
+)
+( --------------------------------------------------------------------------- )
+$include $lib/strings
+$include $lib/match
+$include $lib/unparseobj
+$include $lib/edit
+$include $lib/case
+
+$def C1W 28
+$def C2W 18
+ 
+: build-status-string ( d s -- s )
+  UPO-color-setting ( d s )
+  "" "^" subst dup ( d s s )
+  "^" swap strcat "^" strcat ( d s s )
+  swap ( d s s )
+  strcat dup " " C2W STR-fillfield strcat
+  swap "%P" UPO-special-unparseobj strcat ( s )
+;
+ 
+: main-menu-display ( -- )
+  me @ "^SUCC^Current Settings For: " 3 pick "%P(%D%T)"
+  UPO-special-unparseobj strcat ansi_notify
+  me @ "^WHITE^    Item" dup " " C1W STR-fillfield strcat
+  "Color" dup " " C2W STR-fillfield strcat strcat
+  "Property Set On" strcat ansi_notify
+  " 1. Color Forced Off:" dup " " C1W STR-fillfield strcat
+  over UPO-color-allowed-setting
+  dup " " C2W STR-fillfield strcat swap
+  "%P" UPO-special-unparseobj strcat strcat
+  me @ swap ansi_notify
+  " 2. Format String:" dup " " C1W STR-fillfield strcat
+  over UPO-format-setting
+  dup " " C2W STR-fillfield strcat swap
+  "%P" UPO-special-unparseobj strcat strcat
+  me @ swap ansi_notify
+  dup "dbref" build-status-string
+  " 3. Database Reference:" dup " " C1W STR-fillfield strcat swap strcat 
+  me @ swap ansi_notify
+  dup "exit" build-status-string
+  " 4. Exit Name & Exit Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "program" build-status-string
+  " 5. Program Name & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "room" build-status-string
+  " 6. Room Name & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "thing" build-status-string
+  " 7. Thing Name & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "player" build-status-string
+  " 8. Player Name & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "sleeper" build-status-string
+  " 9. Sleeper Name & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "guest" build-status-string
+  "10. Guest Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "builder" build-status-string
+  "11. Builder-Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "meeper" build-status-string
+  "12. Meeper Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "mucker" build-status-string
+  "13. Mucker Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "flag" build-status-string
+  "14. Misc Flags:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "wizard" build-status-string
+  "15. Wizard Flags:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "paren" build-status-string
+  "16. Parentheses:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "slash" build-status-string
+  "17. Slash:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "unknown" build-status-string
+  "18. Garbage Item & Flag:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  dup "feni" build-status-string
+  "19. FENI Name:" dup " " C1W STR-fillfield strcat swap strcat
+  me @ swap ansi_notify
+  me @ " " notify
+  me @ "^INFO^Select the setting to modify (Q to quit): " ansi_notify
+;
+ 
+: toggle-color-allowed ( d -- )
+  dup UPO-NOCOLORPROP getpropstr "Y" instring if
+    UPO-NOCOLORPROP "No" setprop exit
+  else
+    UPO-NOCOLORPROP "Yes" setprop exit
+  then
+;
+ 
+: edit-format-string ( d -- )
+  "^SUCC^Use these format specifiers and examples to create a format: "
+  "^WHITE^  %N %n Name of Object.       'One'"
+  "^WHITE^  %P    Name of Object        'One' (No upper or lower adjustment)"
+  "^WHITE^  %D %d DBref of Object.      '#1'"
+  "^WHITE^  %T %t Type Flag.            'P'"
+  "^WHITE^  %F %f General Flags         'CT'"
+  "^WHITE^  %B %b Builder Flag          'B'"
+  "^WHITE^  %L %l Mucker/Wizard Levels  'W4'"
+  "^WHITE^  %M %m Meeper Flag           'M'"
+  "^WHITE^  %/    Conditional Slash     '/' or nothing if appropiate."
+  "^WHITE^  %Q %q is equivalent to %P(%D%T%/%F%/%B%M%L) shown as: 'One(#1P/CI/BMW4)'"
+  "^WHITE^  %X %x is equivalent to %T%/%F%/%B%M%L shown as: 'P/CI/BMW4'"
+  "^WHITE^  %Y %y is equivalent to %F%/%B%M%L shown as: 'CI/BMW4'"
+  "^WHITE^  %Z %z is equivalent to %/%B%M%L shown as: '/BMW4'"
+  14 EDIT-ansi_display
+  me @ "" notify
+  me @ over UPO-FORMATPROP getpropstr "Current Format: " swap strcat notify
+  me @ "Enter your new format string, a space to clear the setting, "
+  ansi_notify
+  me @ "or a period to keep the current setting: " ansi_notify
+  read
+  dup "." strcmp not if
+    pop exit
+  then
+  dup strip "" strcmp not if
+    pop dup UPO-FORMATPROP remove_prop exit
+  then
+  UPO-FORMATPROP swap setprop
+;
+ 
+: do-color-set ( d s -- )
+  UPO-COLORPROPDIR swap strcat
+  over over getpropstr "^^" "^" subst 
+  "^INFO^Current setting: " swap strcat
+  me @ swap ansi_notify
+  me @ "^WHITE^Enter the new color code, a space to clear the setting, "
+  ansi_notify
+  me @ "^WHITE^or a period to keep the current setting: " ansi_notify
+  read
+  dup "." strcmp not if
+    pop pop pop exit
+  then
+  dup strip "" strcmp not if
+    pop remove_prop exit
+  then
+  setprop
+;
+ 
+: do-quit ( -- )
+  pop
+  me @ "^SUCC^Exited." ansi_notify
+;
+
+: main-menu ( d -- )
+  begin
+    main-menu-display
+    read atoi
+    case
+       1 = when dup toggle-color-allowed 0 end
+       2 = when dup edit-format-string 0 end
+       3 = when dup "dbref" do-color-set 0 end
+       4 = when dup "exit" do-color-set 0 end
+       5 = when dup "program" do-color-set 0 end
+       6 = when dup "room" do-color-set 0 end
+       7 = when dup "thing" do-color-set 0 end
+       8 = when dup "player" do-color-set 0 end
+       9 = when dup "sleeper" do-color-set 0 end
+      10 = when dup "guest" do-color-set 0 end
+      11 = when dup "builder" do-color-set 0 end
+      12 = when dup "meeper" do-color-set 0 end
+      13 = when dup "mucker" do-color-set 0 end
+      14 = when dup "flag" do-color-set 0 end
+      15 = when dup "wizard" do-color-set 0 end
+      16 = when dup "paren" do-color-set 0 end
+      17 = when dup "slash" do-color-set 0 end
+      18 = when dup "unknown" do-color-set 0 end
+      19 = when dup "feni" do-color-set 0 end
+      default do-quit 1 end
+    endcase
+  until
+;
+ 
+: main ( s -- )
+  dup STR-blank? if
+    pop
+    me @ "^FAIL^You must specify a target database item." ansi_notify
+    me @ "^FAIL^Specified item must be a room, parent room, or player."
+    ansi_notify
+    exit
+  then
+  MATCH-match_controlled
+  dup ok? not if
+    pop
+    exit
+  then
+  dup room? over player? or not if
+    pop
+    me @
+    "^FAIL^Specified database item must be a room, parent room, or player."
+    ansi_notify
+    exit
+  then
+  main-menu
+;
+.
+c
+q
+@register cmd-upoedit=cmd/upoedit
+@set $cmd/upoedit=/_version:FM$Revision: 1.1 $
+@set $cmd/upoedit=/_/de:Use @list $lib/unparseobj=1-82 for documentation.
+@action @upoedit=here
+@link @upoedit=$cmd/upoedit
+wh me=Installation complete.
