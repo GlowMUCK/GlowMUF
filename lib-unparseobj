@@ -2,17 +2,19 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.16 $ $Date: 2005/09/25 23:10:37 $              )
+( lib-unparseobj: $Revision: 1.17 $ $Date: 2007/04/20 22:08:42 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Purpose: Provides more sophisticated unparseobj with color and flagging.    )
 ( Contributors: Syvel                                                         )
 ( Dependencies: lib-case                                                      )
+( Dependents: lib-look, cmd-find, look-show-exits                             )
 ( --------------------------------------------------------------------------- )
 ( Inspired By Syvel's glow-color-unparseobj                                   )
 ( Dedicated to Syvel...Syvel contributed extensively to the FB/Glow           )
 ( community. If you ever see her, give her the appreciation she deserves.     )
 ( Thank you, Syvel!                                                           )
 ( --------------------------------------------------------------------------- )
-( This library provides three publicly accessible routines:                   )
+( This library provides four publicly accessible routines:                    )
 (                                                                             )
 ( UPO-special-unparseobj: d formatstr -- s                                    )
 (   Takes format string formstr and generates a formatted string: see format  )
@@ -25,6 +27,15 @@ i
 ( UPO-color-query: s1 s2 -- s                                                 )
 (   Takes string 's1' looks up color 's2' and prepends the appropiate color   )
 (   code                                                                      )
+(                                                                             )
+( UPO-color-query-d: s1 s2 -- s d                                             )
+(   Takes string 's1' looks up color 's2', prepends s1 with the color code.   )
+(   Returns database reference of database item the code was found on.        )
+(                                                                             )
+( UPO-color-setting: startref prefprop -- dbref-color-found-on color          )
+(   Takes dbref 'startref' and looks up color preference 'prefprop' and       )
+(   searches up the environment to find where that color preference is set    )
+(   and what it is set to.                                                    )
 (                                                                             )
 ( Format Specifiers:                                                          )
 ( %N %n Name of Object.      'One'                                            )
@@ -76,6 +87,7 @@ i
 (       mucker:^RED^     -- The color of the "mucker" flags.                  )
 (       paren:^GREY^     -- The color of the parentheses.                     )
 (       player:^GREEN^   -- The color of the player name and type flag.       )
+(       feni:^GREEN^     -- The color of the player's feni-name.              )
 (       sleeper:^FOREST^ -- The color of the sleeper name and type flag.      )
 (       program:^RED^    -- The color of the program name and type flag.      )
 (       room:^CYAN^      -- The color of the room name and type flag.         )
@@ -86,6 +98,10 @@ i
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.17  2007/04/20 22:08:42  feaelin
+  Added support for FENI and added the UPO-color-setting word which searches
+  environment for color code settings.
+
   Revision 1.16  2005/09/25 23:10:37  feaelin
   Revised documentation.
 
@@ -140,24 +156,72 @@ i
 )
 ( -------------------------------------------------------------------------- )
 $include $lib/case
- 
+
+$def NOCOLORPROP   "_prefs/unparse/nocolor?"
+$def COLORPROPDIR  "_prefs/unparse/colors/"
+$def FORMATPROP    "/_prefs/unparse/format"
+$def DEFAULTFORMAT "%P(%D%T%/%F%Z)"
+
 ( color selection handling )
 : color-query (s s -- s )
   ( string-to-color prefprop -- resultstring )
-  me @ "_prefs/unparse/nocolor?" envpropstr swap pop
+  me @ NOCOLORPROP envpropstr swap pop
   "y" instring if
     pop ""
   else
-    me @ "_prefs/unparse/colors/" 3 pick strcat envpropstr swap pop
+    me @ COLORPROPDIR 3 pick strcat envpropstr swap pop
     dup "" strcmp not if
       pop prog "_colors/" rot strcat getpropstr
     else
-      rot pop
+      swap pop
     then
     "" "^" subst "^" swap strcat "^" strcat
   then
   swap strcat
 ; PUBLIC color-query
+ 
+: color-setting (d s -- d s )
+ ( startref prefprop -- dbref-color-found-on color )
+  over NOCOLORPROP envpropstr
+  "y" instring if
+    swap pop swap pop "Color Disabled" exit
+  else
+    pop
+    swap over COLORPROPDIR swap strcat envpropstr 
+    dup "" strcmp not if
+      pop pop prog "_colors/" rot strcat getpropstr prog swap
+      exit
+    else
+      rot pop      
+    then
+  then
+; PUBLIC color-setting
+ 
+: format-setting ( d -- d s )
+  ( startref -- dbref-format-found-on formatstr )
+  FORMATPROP envpropstr
+  dup "" strcmp not if
+    pop pop prog DEFAULTFORMAT
+    exit
+  then
+; PUBLIC format-setting
+ 
+: color-allowed-setting ( d -- d s )
+  ( startref -- dbref-found-on yes/no-str )
+  NOCOLORPROP envpropstr
+  dup "" strcmp not if
+    pop pop prog "Yes"
+    exit
+  else
+    dup "y" instring if
+      pop "Yes"
+      exit
+    else
+      pop "No"
+      exit
+    then
+  then	
+; PUBLIC color-allowed-setting
  
 : name-color ( s d -- s )
   case
@@ -176,6 +240,7 @@ $include $lib/case
   ( We should check depth and use checkargs? )
   "$lib/feni" match program? if
     me @ swap "$lib/feni" match "FENI-Name" call
+    "feni" color-query
   else
     name
   then
@@ -309,7 +374,7 @@ $include $lib/case
 : color-unparseobj ( d -- s )
   dup "/_prefs/unparse/format" envpropstr swap pop
   dup "" strcmp not if
-    pop "%P(%D%T%/%F%Z)"
+    pop DEFAULTFORMAT
   then
   special-unparseobj
 ; PUBLIC color-unparseobj
@@ -318,8 +383,14 @@ c
 q
 @reg lib-unparseobj=lib/unparseobj
 @set $lib/unparseobj=L
+@set $lib/unparseobj=/_defs/UPO-NOCOLORPROP:"_prefs/unparse/nocolor?"
+@set $lib/unparseobj=/_defs/UPO-FORMATPROP:"/_prefs/unparse/format"
+@set $lib/unparseobj=/_defs/UPO-COLORPROPDIR:"_prefs/unparse/colors/"
+@set $lib/unparseobj=/_defs/UPO-color-allowed-setting:"$lib/unparseobj" match "color-allowed-setting" call
 @set $lib/unparseobj=/_defs/UPO-color-query:"$lib/unparseobj" match "color-query" call
+@set $lib/unparseobj=/_defs/UPO-color-setting:"$lib/unparseobj" match "color-setting" call
 @set $lib/unparseobj=/_defs/UPO-color-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
+@set $lib/unparseobj=/_defs/UPO-format-setting:"$lib/unparseobj" match "format-setting" call
 @set $lib/unparseobj=/_defs/UPO-special-unparseobj:"$lib/unparseobj" match "special-unparseobj" call
 @set $lib/unparseobj=/_defs/UPOcolor-query:"$lib/unparseobj" match "color-query" call
 @set $lib/unparseobj=/_defs/UPOcolor-unparseobj:"$lib/unparseobj" match "color-unparseobj" call
@@ -336,6 +407,7 @@ q
 @set $lib/unparseobj=/_colors/mucker:^RED^
 @set $lib/unparseobj=/_colors/paren:^GREY^
 @set $lib/unparseobj=/_colors/player:^GREEN^
+@set $lib/unparseobj=/_colors/feni:^GREEN^
 @set $lib/unparseobj=/_colors/sleeper:^FOREST^
 @set $lib/unparseobj=/_colors/program:^RED^
 @set $lib/unparseobj=/_colors/room:^CYAN^
@@ -343,8 +415,8 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:$Revision: 1.16 $
-@set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-82 for documentation.
-@set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-82
+@set $lib/unparseobj=/_lib-version:FM$Revision: 1.17 $
+@set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-94 for documentation.
+@set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-94
 @set $lib/unparseobj=/_lib-symbol:UPO
 wh me=Installation Complete.
