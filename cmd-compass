@@ -1,12 +1,17 @@
-"Beginning installation of cmd-compass...
+wh me=Beginning installation of cmd-compass...
 @prog cmd-compass
 1 99999 d
 1 i
-( cmd-compass: $Date: 1999/04/18 20:16:35 $ $Revision: 1.1 $
-  Author: Andy/Pakrat
-  --------------------------------------------------------------------------- )
+( cmd-compass: $Date: 2007/04/20 22:15:49 $ $Revision: 1.2 $                  )
+( Author: Andy/Pakrat                                                         )
+( Purpose: Displays exits from local area in a compass format                 )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
 (
   $Log: cmd-compass,v $
+  Revision 1.2  2007/04/20 22:15:49  feaelin
+  Silent installation and documentation update
+
   Revision 1.1  1999/04/18 20:16:35  feaelin
   Initial revision
 
@@ -244,5 +249,5 @@ q
 @action compass;@compass;co;com;comp;exits;@exits;@exit=here=tmp/exit1
 @link $tmp/exit1=$tmp/prog1
 @set $tmp/exit1=/_/de:@$cmd/compass
-@set $tmp/prog1=_version:FM$Revision: 1.1 $
-"Installation of cmd-compass complete.
+@set $tmp/prog1=_version:FM$Revision: 1.2 $
+wh me=Installation of cmd-compass complete.
