@@ -2,11 +2,11 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2008/02/08 06:38:10 $ $Revision: 1.40 $                )
+( cmd/lib-look: $Date: 2008/06/14 14:06:56 $ $Revision: 1.41 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
-( Dependencies: lib-strings, lib-unparseobj                                   )
+( Dependencies: lib-strings, lib-match, lib-unparseobj                        )
 ( --------------------------------------------------------------------------- )
 ( Features to be aware of:                                                    )
 (                                                                             )
@@ -110,6 +110,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.41  2008/06/14 14:06:56  feaelin
+  Corrected bug in db-desc where it left items on the stack.
+  Added support for 'look at ...' to work more or less like Foxen's look at.
+
   Revision 1.40  2008/02/08 06:38:10  feaelin
   Repaired issues where the contents-handler didn't operate correctly.
 
@@ -257,6 +261,7 @@ wh me=Beginning installation of lib-look...
 )
 ( --------------------------------------------------------------------------- )
 $include $lib/strings
+$include $lib/match
 $include $lib/unparseobj
 
 lvar sme
@@ -530,7 +535,7 @@ lvar realtrig
     long-display
     list-objects
   else
-    pop pop
+    3 popn
   then
 ;
  
@@ -766,9 +771,76 @@ lvar realtrig
 ;
  
 : cmd-look ( s -- )
-  dup not
-  if
+  command @ "lookat" stringcmp not if
+    "look" command ! "at " swap strcat
+  then
+  ( If no arguement, assume looking at the current room )
+  dup STR-blank? if
     pop "here"
+  else ( otherwise, check for 'lookat' functionality )
+    strip ( cleanup extraneous whitespace )
+    dup " " STR-split swap strip ( split first arg: "joeplayer's foo..." "at" )
+    "at" stringcmp not if ( If it is an at, proceed )
+      dup STR-blank? if ( if the rest is empty, then bail out )
+        me @ "^FAIL^Look at what?!" ansi_notify
+        pop pop exit
+      then
+      " " STR-split swap ( split off 2nd arg: "foo..." "Joeplayer's" )
+      dup "'" instr if ( is the apostrophe present? )
+        "'" STR-split ( toss the "'s": "foo..." "joeplayer" "s")
+        dup "s" strcmp swap "" strcmp and if
+          3 popn
+          me @ "^FAIL^Whatever do you mean?!" ansi_notify
+          exit
+        else
+          MATCH-noisy_pmatch ( find the player )
+          dup #-1 dbcmp if ( oh. noisy-pmatch complained, bail )
+            2 popn exit ( clean up and exit )
+          then
+          over STR-blank? if ( is the target item not specified? )
+            name me @ swap "^FAIL^Look at " swap strcat "'s what?" strcat ansi_notify
+            pop pop
+            exit
+          then
+          swap over over rmatch ( search for the target in player's inventory )
+          dup ok? if
+            dup "_remote_look?" getpropstr tolower ( found it, is it remotelookable? )
+            "y" 1 strncmp not if
+              dup "_remote_desc" getpropstr ( it is, does it have a remote desc? )
+              dup STR-blank? if
+                pop db-desc 3 popn exit ( display normal desc )
+              else
+                dbstr-desc 3 popn exit ( display remote desc )
+              then
+            else
+              ( not remote lookable, but is there a detail with same name? )
+              pop detail-dbmatch dup if
+                me @ swap ansi_notify ( haha! display the detail )
+                pop exit
+              else
+                ( Ah. Nothing actually there at all )
+                pop pop
+                me @ "^FAIL^I don't see that here." ansi_notify 
+                exit
+              then
+            then
+          else ( no 'thing' found, see if there is a @detail/@object )
+            pop detail-dbmatch dup if
+              me @ swap ansi_notify ( haha! display the detail )
+              pop exit
+            else
+              ( Ah. Nothing actually there at all )
+              pop me @ "^FAIL^I don't see that here." ansi_notify 
+              exit
+            then
+          then
+        then
+      else
+        swap pop swap pop
+      then
+    else ( not an "at", proceed to normal processing )
+      pop
+    then
   then
   dup match
   dup ok? not if
@@ -856,7 +928,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.40 $
-@set $lib/look=/_version:1.31FM$Revision: 1.40 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.41 $
+@set $lib/look=/_version:1.31FM$Revision: 1.41 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
