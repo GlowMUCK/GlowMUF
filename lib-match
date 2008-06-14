@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2008/06/14 04:48:01 $ $Revision: 1.17 $                   )
+( lib-match: $Date: 2008/06/14 16:40:55 $ $Revision: 1.18 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -26,8 +26,18 @@ wh me=Begining installation of lib-match...
 (   then it tells the user that it doesn't know who that is, and it returns   )
 (   #-1.                                                                      )
 (                                                                             )
+( MATCH-noisy_plmatch: dbref itemname -- itemdbref                            )
+(   Identical to MATCH-noisy_pmatch, except restricts matching to players     )
+(   local to the triggering player, e.g., in the same room.                   )
+(                                                                             )
+( MATCH-noisy_rmatch: dbref itemname -- itemdbref                             )
+(   Searches dbref for "itemname" and returns matching dbref if found. If it  )
+(   is not found, it tells the user that it doesn't see that here and returns )
+(   #-1. If it finds several matches it tells the user that it doesn't know   )
+(   which item was meant, and returns #-2.                                    )
+(                                                                             )
 ( MATCH-match_controlled: itemname -- itemdbref                               )
-(   This routine basically does a .noisy_match, and checks that what is       )
+(   This routine basically does a noisy_match, and checks that what is        )
 (   returned is controlled by the user. If it is not, then it tells the user  )
 (   Permission Denied, and returns #-1. Otherwise it returns the dbref of the )
 (   item matched.                                                             )
@@ -64,13 +74,19 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.18  2008/06/14 16:40:55  feaelin
+  Fixed bug in noisy_pmatch where passing a string like "*joeplayer" would not
+  work as expected.
+
+  Add noisy_plmatch.
+
   Revision 1.17  2008/06/14 04:48:01  feaelin
   Colorized error messages for noisy matches.
   Added MATCH-noisy_rmatch
-
+ 
   Revision 1.16  2005/09/25 13:46:29  feaelin
   Documentation update.
-
+ 
   Revision 1.15  2005/09/13 15:01:34  feaelin
   Updated documentation strings.
  
@@ -144,14 +160,33 @@ wh me=Begining installation of lib-match...
 ;
  
 : pmatch ( d -- s )
-  dup "me" strcmp not if pop "me" match exit then
-    "*" swap strcat match
+  tolower dup "me" strcmp not if
+    match exit
+  then
+  "*" swap strcat
+  "*" "**" subst match
 ; PUBLIC pmatch
  
 : noisy_pmatch ( s -- d )
   pmatch dup not if
     me @ "^FAIL^I don't recognize anyone by that name." ansi_notify
   then
+;
+ 
+: noisy_plmatch ( s -- d )
+  tolower dup "me" strcmp not if
+    match exit
+  then
+  dup "*" 1 strncmp if
+    match dup if
+      exit
+    then
+  else
+    me @ "mage" flag? if
+      match exit
+    then
+  then
+  me @ "^FAIL^I don't see them here." ansi_notify
 ;
  
 : match_controlled (s -- d)
@@ -243,6 +278,7 @@ wh me=Begining installation of lib-match...
  
 PUBLIC noisy_match
 PUBLIC noisy_pmatch
+PUBLIC noisy_plmatch
 PUBLIC noisy_rmatch
 PUBLIC match_controlled
 PUBLIC table_match
@@ -272,12 +308,13 @@ q
 @set $lib/match=/_defs/MATCH-match_controlled:"$lib/match" match "match_controlled" call
 @set $lib/match=/_defs/MATCH-noisy_match:"$lib/match" match "noisy_match" call
 @set $lib/match=/_defs/MATCH-noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@set $lib/match=/_defs/MATCH-noisy_plmatch:"$lib/match" match "noisy_plmatch" call
 @set $lib/match=/_defs/MATCH-noisy_rmatch:"$lib/match" match "noisy_rmatch" call
 @set $lib/match=/_defs/MATCH-std_table_match:"$lib/match" match "std_table_match" call
 @set $lib/match=/_defs/MATCH-table_match:"$lib/match" match "table_match" call
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-60 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-60
-@set $lib/match=/_lib-version:FM$Revision: 1.17 $
+@set $lib/match=/_lib-version:FM$Revision: 1.18 $
 @set $lib/match=/_lib-symbol:MATCH
 wh me=Installation of lib-match completed.
