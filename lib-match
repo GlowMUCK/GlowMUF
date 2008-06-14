@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2005/09/25 13:46:29 $ $Revision: 1.16 $                   )
+( lib-match: $Date: 2008/06/14 04:48:01 $ $Revision: 1.17 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -64,6 +64,10 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.17  2008/06/14 04:48:01  feaelin
+  Colorized error messages for noisy matches.
+  Added MATCH-noisy_rmatch
+
   Revision 1.16  2005/09/25 13:46:29  feaelin
   Documentation update.
 
@@ -118,10 +122,24 @@ wh me=Begining installation of lib-match...
 : noisy_match (s -- d)
   dup if match else pop #-1 then
   dup not if
-    me @ "I don't see that here!" notify exit
+    me @ "^FAIL^I don't see that here!" ansi_notify exit
   then
   dup #-2 dbcmp if
-    me @ "I don't know which one you mean!" notify exit
+    me @ "^FAIL^I don't know which one you mean!" ansi_notify exit
+  then
+;
+ 
+: noisy_rmatch (d s -- d)
+  dup if
+    rmatch 
+  else
+    pop pop #-1 me @ "^FAIL^I don't see that here!" ansi_notify exit
+  then
+  dup #-1 dbcmp if
+    me @ "^FAIL^I don't see that here!" ansi_notify exit
+  then
+  dup #-2 dbcmp if
+    me @ "^FAIL^I don't know which one you mean!" ansi_notify exit
   then
 ;
  
@@ -139,7 +157,8 @@ wh me=Begining installation of lib-match...
 : match_controlled (s -- d)
   noisy_match dup ok? if
     me @ over controls not if
-      pop #-1 me @ "Permission denied." notify
+      name #-1 me @ "^FAIL^You do not control " 4 rotate strcat
+      "." strcat ansi_notify
     then
   then
 ;
@@ -224,6 +243,7 @@ wh me=Begining installation of lib-match...
  
 PUBLIC noisy_match
 PUBLIC noisy_pmatch
+PUBLIC noisy_rmatch
 PUBLIC match_controlled
 PUBLIC table_match
 PUBLIC std_table_match
@@ -252,11 +272,12 @@ q
 @set $lib/match=/_defs/MATCH-match_controlled:"$lib/match" match "match_controlled" call
 @set $lib/match=/_defs/MATCH-noisy_match:"$lib/match" match "noisy_match" call
 @set $lib/match=/_defs/MATCH-noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@set $lib/match=/_defs/MATCH-noisy_rmatch:"$lib/match" match "noisy_rmatch" call
 @set $lib/match=/_defs/MATCH-std_table_match:"$lib/match" match "std_table_match" call
 @set $lib/match=/_defs/MATCH-table_match:"$lib/match" match "table_match" call
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-60 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-60
-@set $lib/match=/_lib-version:FM$Revision: 1.16 $
+@set $lib/match=/_lib-version:FM$Revision: 1.17 $
 @set $lib/match=/_lib-symbol:MATCH
 wh me=Installation of lib-match completed.
