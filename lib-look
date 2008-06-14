@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2008/06/14 14:06:56 $ $Revision: 1.41 $                )
+( cmd/lib-look: $Date: 2008/06/14 16:41:59 $ $Revision: 1.42 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.42  2008/06/14 16:41:59  feaelin
+  Revised to use noisy_plmatch instead of noisy_pmatch so that far-looking is
+  properly restricted to wizards.
+
   Revision 1.41  2008/06/14 14:06:56  feaelin
   Corrected bug in db-desc where it left items on the stack.
   Added support for 'look at ...' to work more or less like Foxen's look at.
@@ -793,7 +797,7 @@ lvar realtrig
           me @ "^FAIL^Whatever do you mean?!" ansi_notify
           exit
         else
-          MATCH-noisy_pmatch ( find the player )
+          MATCH-noisy_plmatch ( find the player )
           dup #-1 dbcmp if ( oh. noisy-pmatch complained, bail )
             2 popn exit ( clean up and exit )
           then
@@ -928,7 +932,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.41 $
-@set $lib/look=/_version:1.31FM$Revision: 1.41 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.42 $
+@set $lib/look=/_version:1.31FM$Revision: 1.42 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
