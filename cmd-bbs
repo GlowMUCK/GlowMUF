@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-bbs...
 @prog cmd-bbs
 1 99999 d
 1 i
-( cmd-bbs: $Date: 2005/04/17 20:36:41 $ $Revision: 1.11 $                     )
+( cmd-bbs: $Date: 2008/06/16 12:57:01 $ $Revision: 1.12 $                     )
 ( Purpose: Provides 'bulletin board' style messaging                          )
 ( Author: Garth Minette                                                       )
 ( Contributors: Feaelin, Wixenstyx                                            )
@@ -45,6 +45,9 @@ wh me=Beginning installation of cmd-bbs...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-bbs,v $
+  Revision 1.12  2008/06/16 12:57:01  feaelin
+  Fixed lingering references to 'object' instead of 'database item'.
+
   Revision 1.11  2005/04/17 20:36:41  feaelin
   Added character limit for message subjects.
   Eliminated need to use lib-glow-standard
@@ -91,7 +94,7 @@ $def IndexDir     "_bbs/"
 $def BanProp      "~/ban/bbs"
 $def BanWriteProp "~/ban/bbswrite"
  
-( ***** Misc. Object ***** )
+( ***** Misc. ***** )
  
 lvar theboard lvar bbsindexprog
  
@@ -150,7 +153,7 @@ lvar theboard lvar bbsindexprog
     systime dup 86400 % time 60 * + 60 * + - - 86400 /
 ;
  
-( ***** Message Board Object -- MBRD *****
+( ***** Message Board Datbase Item -- MBRD *****
     Display  [parm base dbref -- err]
     Add      [parm base dbref -- err]
     Kill     [parm base dbref -- err]
@@ -494,7 +497,7 @@ lvar theboard lvar bbsindexprog
   "^GREEN^bbkeep <m> ^WHITE^ -- Keep a message from expiring" mytell
 ;
   
-( ***** Interface Object *****)
+( ***** Interface *****)
 : basename "_bbs/msgs" ;
  
 : handle-errs ( i -- )
@@ -640,5 +643,5 @@ q
 @link $tmp/exit1=$cmd/bbs
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/bbs
-@set $cmd/bbs=_version:0.80FM$Revision: 1.11 $
+@set $cmd/bbs=_version:0.80FM$Revision: 1.12 $
 wh me=Installation of cmd-bbs complete.
