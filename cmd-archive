@@ -2,11 +2,15 @@ wh me=Beginning installation of cmd-archive...
 @prog cmd-archive
 1 99999 d
 1 i
-( cmd-archive: $Date: 2006/08/15 13:56:13 $ $Revision: 1.4 $
+( cmd-archive: $Date: 2008/06/16 12:55:22 $ $Revision: 1.5 $
   Author: ????
   --------------------------------------------------------------------------- )
 (
   $Log: cmd-archive,v $
+  Revision 1.5  2008/06/16 12:55:22  feaelin
+  The help still had lingering references to 'object' instead of using
+  the clearer terminology 'database item'.
+
   Revision 1.4  2006/08/15 13:56:13  feaelin
   Eliminated dependence on lib-glow-standard.
   Updated library calls to new standard.
@@ -24,7 +28,6 @@ wh me=Beginning installation of cmd-archive...
 
 )
 
-( @const object=aefi           )
 ( @dig roomname=parent=regname )
 ( @act exitname=source=regname )
 ( @cre thingname=value=regname )
@@ -36,14 +39,14 @@ $include $lib/edit
   
 : show-help
 "Syntax: @archive <database item>[=1acefgilop]"
-" @archive <database item>=1  Archive only that object."
+" @archive <database item>=1  Archive only that database item."
 " @archive <database item>=a  Archive all, regardless of owner.(W1+)."
 " @archive <database item>=c  Don't archive contents."
-" @archive <database item>=e  Don't archive objects not in this room's "
+" @archive <database item>=e  Don't archive database items not in this room's "
 "                             environment."
 " @archive <database item>=f  Don't archive floater child rooms unless linked"
 " @archive <database item>=g  Include exits linked to programs if wizard owned."
-" @archive <database item>=i  Don't archive globally registered objects."
+" @archive <database item>=i  Don't archive globally registered database items."
 " @archive <database item>=l  Don't follow links or droptos in archiving."
 " @archive <database item>=o  Archive everything you own. (New feature!)"
 " @archive <database item>=p  Don't archive programs."
@@ -505,5 +508,5 @@ q
 @link $tmp/exit1=$cmd/archive
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/archive 
-@set $cmd/archive=/_version:FM$Revision: 1.4 $
+@set $cmd/archive=/_version:FM$Revision: 1.5 $
 wh me=Installation of cmd-archive complete.
