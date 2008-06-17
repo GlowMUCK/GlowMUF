@@ -2,7 +2,7 @@ wh me=Begining installation of lib-match...
 @prog lib-match
 1 99999 d
 1 i
-( lib-match: $Date: 2008/06/14 16:40:55 $ $Revision: 1.18 $                   )
+( lib-match: $Date: 2008/06/17 13:08:10 $ $Revision: 1.19 $                   )
 ( Purpose: Provides various words to match a string to a database item's dbref)
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -74,6 +74,9 @@ wh me=Begining installation of lib-match...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-match,v $
+  Revision 1.19  2008/06/17 13:08:10  feaelin
+  noisy_plmatch was matching more than just players. Corrected.
+
   Revision 1.18  2008/06/14 16:40:55  feaelin
   Fixed bug in noisy_pmatch where passing a string like "*joeplayer" would not
   work as expected.
@@ -174,18 +177,11 @@ wh me=Begining installation of lib-match...
 ;
  
 : noisy_plmatch ( s -- d )
-  tolower dup "me" strcmp not if
-    match exit
+  noisy_pmatch
+  dup location me @ location dbcmp if
+    exit
   then
-  dup "*" 1 strncmp if
-    match dup if
-      exit
-    then
-  else
-    me @ "mage" flag? if
-      match exit
-    then
-  then
+  pop #-1 
   me @ "^FAIL^I don't see them here." ansi_notify
 ;
  
@@ -315,6 +311,6 @@ q
 @set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
 @set $lib/match=/_/de:lib-match: List lines 1-60 to see documentation.
 @set $lib/match=/_docs:@list $lib/match=1-60
-@set $lib/match=/_lib-version:FM$Revision: 1.18 $
+@set $lib/match=/_lib-version:FM$Revision: 1.19 $
 @set $lib/match=/_lib-symbol:MATCH
 wh me=Installation of lib-match completed.
