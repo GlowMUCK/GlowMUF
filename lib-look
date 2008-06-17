@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2008/06/14 16:41:59 $ $Revision: 1.42 $                )
+( cmd/lib-look: $Date: 2008/06/17 13:15:18 $ $Revision: 1.43 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,32 +110,35 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.43  2008/06/17 13:15:18  feaelin
+  Added the @lookatallow and @lookatdesc commands. Cleaned up notify's.
+
   Revision 1.42  2008/06/14 16:41:59  feaelin
   Revised to use noisy_plmatch instead of noisy_pmatch so that far-looking is
   properly restricted to wizards.
-
+ 
   Revision 1.41  2008/06/14 14:06:56  feaelin
   Corrected bug in db-desc where it left items on the stack.
   Added support for 'look at ...' to work more or less like Foxen's look at.
-
+ 
   Revision 1.40  2008/02/08 06:38:10  feaelin
   Repaired issues where the contents-handler didn't operate correctly.
-
+ 
   Revision 1.39  2006/08/03 19:57:53  feaelin
   No longer needed the include to the glow lib.
-
+ 
   Revision 1.38  2006/08/02 13:17:23  feaelin
   Updated documentation.
-
+ 
   Revision 1.37  2006/07/30 19:44:20  feaelin
   Added support for various FENI programs.
-
+ 
   Revision 1.36  2005/09/25 23:14:27  feaelin
   Formatting cleanup.
-
+ 
   Revision 1.35  2005/09/09 22:17:20  feaelin
   Sticky/Silent now hides dark items, regardless of control.
- 
+
   Revision 1.34  2005/04/21 18:04:34  feaelin
   Fixed logic flaw. If a player is viewed that has stuff, it potentially will
   bomb when trying to show the contents.
@@ -268,21 +271,15 @@ $include $lib/strings
 $include $lib/match
 $include $lib/unparseobj
 
+$def REMOTE_ALLOW_PROP "_remote_look?"
+$def REMOTE_DESC_PROP "_remote_desc"
+
 lvar sme
 lvar sloc
 lvar strigger
 lvar scommand
 lvar sdepth
 lvar realtrig
- 
-: otell
-  ( Display string to everyone in my room except me )
-  loc @ me @ rot ansi_notify_except ( s -- )
-;
- 
-: tell
-  me @ swap ansi_notify
-;
  
 : safecall  ( x d -- )
   me @ sme !
@@ -455,7 +452,7 @@ lvar realtrig
       dup unparse
       swap unparse-secondary
     then
-    tell
+    me @ swap ansi_notify
   repeat
   pop
 ;
@@ -507,9 +504,9 @@ lvar realtrig
 : short-display ( d... i -- )
   short-list dup
   if
-    "You see " swap strcat "." strcat tell
+    "You see " swap strcat "." strcat me @ swap ansi_notify
   else
-    "You see nothing." tell
+    "You see nothing." me @ swap ansi_notify
   then
 ;  
  
@@ -525,7 +522,7 @@ lvar realtrig
         "^YELLOW^(detail)" strcat
       then
     then
-    tell
+    me @ swap ansi_notify
     over swap nextprop
   repeat
   pop pop
@@ -535,7 +532,7 @@ lvar realtrig
   dup "_obj/" nextprop STR-blank? not swap
   dup get-contents dup dup 4 + rotate or
   if
-    dup 3 + rotate tell
+    dup 3 + rotate me @ swap ansi_notify
     long-display
     list-objects
   else
@@ -609,7 +606,7 @@ lvar realtrig
   if
     dup "@" 1 strncmp
     if
-      tell
+      me @ swap ansi_notify
     else
       1 strcut swap pop " " STR-split striplead striptail swap
       dup "$" 1 strncmp
@@ -624,14 +621,14 @@ lvar realtrig
         if
           safecall
         else
-          pop pop "Permission Denied" tell
+          pop pop "Permission Denied" me @ swap ansi_notify
         then
       else
-        pop tell
+        pop me @ swap ansi_notify
       then
     then
   else
-    pop "You see nothing special." tell
+    pop "You see nothing special." me @ swap ansi_notify
   then
 ;
  
@@ -644,16 +641,16 @@ lvar realtrig
 : db-desc ( d -- )
   dup #-1 dbcmp
   if
-    pop "^FAIL^I don't see that here." tell exit
+    pop "^FAIL^I don't see that here." me @ swap ansi_notify exit
   then
   dup #-2 dbcmp
   if
-    pop "^FAIL^I don't know which one you mean!" tell exit
+    pop "^FAIL^I don't know which one you mean!" me @ swap ansi_notify exit
   then
   dup trigger @ realtrig ! trigger !
   dup room? over me @ location dbcmp or
   if
-    dup unparse tell
+    dup unparse me @ swap ansi_notify
   then
   dup me @ location dbcmp over room? not and
   over "/_/ide" getpropstr STR-blank? not and if
@@ -675,7 +672,7 @@ lvar realtrig
       then
       dup "/_/ofl" "(@OFail)" 1 parseprop dup
       if
-        otell
+        loc @ me @ rot ansi_notify_except
       else
         pop
       then
@@ -688,7 +685,7 @@ lvar realtrig
       then
       dup "/_/osc" "(@OSucc)" 1 parseprop dup
       if
-        otell
+        loc @ me @ rot ansi_notify_except
       else
         pop
       then
@@ -774,7 +771,51 @@ lvar realtrig
   then
 ;
  
+( Handles setting of a remote description )
+: handle-remote-desc ( s -- )
+  dup STR-blank? not if
+    STR-splitargs swap MATCH-noisy_match 
+    dup #-1 dbcmp not if ( hmm. is it a valid item? )
+      ( Valid, proceed with describing )
+      swap REMOTE_DESC_PROP swap setprop
+      me @ "^SUCC^Done." ansi_notify
+      exit
+    then
+  then
+  ( Add help here )
+;
+ 
+( Handles toggling of allowing lookat on a given database item )
+: handle-allow ( s -- )
+  dup STR-blank? not if
+    MATCH-noisy_match 
+    dup #-1 dbcmp not if ( hmm. is it a valid item? )
+      dup REMOTE_ALLOW_PROP getpropstr tolower
+      "y" 1 strncmp not if
+        dup REMOTE_ALLOW_PROP remove_prop
+        me @ "^SUCC^Players are now UNABLE to 'lookat' "
+        rot UPO-color-unparseobj strcat "." strcat
+        ansi_notify
+        exit
+      else   
+        dup REMOTE_ALLOW_PROP "yes" setprop
+        me @ "^SUCC^Players are now ABLE to 'lookat' "
+        rot UPO-color-unparseobj strcat "." strcat
+        ansi_notify
+        exit
+      then
+    then
+  then
+  ( Add help here )
+;
+ 
 : cmd-look ( s -- )
+  command @ "@lookatallow" stringcmp not if
+    handle-allow exit
+  then
+  command @ "@lookatdesc" stringcmp not if
+    handle-remote-desc exit
+  then
   command @ "lookat" stringcmp not if
     "look" command ! "at " swap strcat
   then
@@ -808,9 +849,9 @@ lvar realtrig
           then
           swap over over rmatch ( search for the target in player's inventory )
           dup ok? if
-            dup "_remote_look?" getpropstr tolower ( found it, is it remotelookable? )
+            dup REMOTE_ALLOW_PROP getpropstr tolower ( found it, is it remotelookable? )
             "y" 1 strncmp not if
-              dup "_remote_desc" getpropstr ( it is, does it have a remote desc? )
+              dup REMOTE_DESC_PROP getpropstr ( it is, does it have a remote desc? )
               dup STR-blank? if
                 pop db-desc 3 popn exit ( display normal desc )
               else
@@ -932,7 +973,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.42 $
-@set $lib/look=/_version:1.31FM$Revision: 1.42 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.43 $
+@set $lib/look=/_version:1.31FM$Revision: 1.43 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
