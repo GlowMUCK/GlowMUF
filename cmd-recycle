@@ -1,0 +1,75 @@
+wh me=Beginning installation of cmd-recycle...
+@prog cmd-recycle
+1 99999 d
+1 i
+( cmd-recycle: $Date: 2008/06/27 21:45:44 $ $Revision: 1.1 $                 )
+( Purpose: A safer recycler, with various frills                              )
+( Author: Feaelin Moilar                                                      )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+ 
+(
+  $Log: cmd-recycle,v $
+  Revision 1.1  2008/06/27 21:45:44  feaelin
+  For those that like 'prompted' recycling.
+
+)
+ 
+$def PROP_SAFERECYCLE    "_prefs/saferecycle?"
+ 
+$include $lib/strings
+$include $lib/match
+$include $lib/unparseobj
+ 
+: main ( string -- )
+  dup STR-blank? if ( Did user provide an argument? -- string )
+    pop me @ "^FAIL^What do you want to recycle?" ansi_notify exit
+  then
+  MATCH-noisy_match ( string -- database-ref )
+  dup ok? not if ( if invalid ref or garbage ref, just exit )
+    pop exit
+  then ( -- database-ref )
+  dup player? if
+    pop me @ "^FAIL^Players cannot be recycled." ansi_notify
+    exit
+  then
+  dup owner me @ dbcmp not if ( if not the owner, check perms )
+    me @ "MAGE" flag? if ( With a wizard, we'll see if they 'control' it )
+      me @ over controls if ( Does the wizard control it? )
+        me @ "^INFO^^FLASH^WARNING:^RESET^^FAIL^ YOU DO NOT OWN IT."
+        ansi_notify
+      else ( Wizard doesn't control it, inform the wizard )
+        pop me @ "^FAIL^You do not control that database item."
+        ansi_notify exit
+      then
+    else ( mortal, inform that they don't own it )
+      pop me @ "^FAIL^You do not own that database item."
+      ansi_notify exit
+    then
+  then
+  command @ "!" instr not if ( If there is a !, don't ask. )
+    me @ PROP_SAFERECYCLE getpropstr striplead 1 strcut pop
+    tolower "n" strcmp if
+      me @ "^INFO^Recycle " 3 pick UPO-color-unparseobj strcat
+      "^INFO^?^RESET^" strcat ansi_notify
+      read
+      1 strcut pop tolower "y" strcmp if
+        me @ "^INFO^Canceled." ansi_notify pop exit
+      then
+    then
+  then
+  dup UPO-color-unparseobj "^SUCC^ recycled." strcat me @ swap
+  ansi_notify
+  recycle
+;
+.
+c
+q
+@register cmd-recycle=cmd/recycle
+@action @recycle;@recycl;@recyc;@recy;@rec;@recycle!;@rec!=here=tmp/exit1
+@link $tmp/exit1=$cmd/recycle
+@set $cmd/recycle=W4
+@set $cmd/recycle=/_docs:@list $cmd/recycle=1-5
+@set $cmd/recycle=/_/de:Type 'help recycle' for help.
+@set $cmd/recycle=/_version:FM$Revision: 1.1 $
+wh me=Installation of cmd-recycle complete.
