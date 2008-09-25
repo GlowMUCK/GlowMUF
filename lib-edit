@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-edit...
 @prog lib-edit
 1 99999 d
 1 i
-( lib-edit: $Date: 2006/07/24 13:36:07 $ $Revision: 1.20 $                    )
+( lib-edit: $Date: 2008/09/25 17:08:03 $ $Revision: 1.21 $                    )
 ( Purpose: Provides editing routines for stack based string ranges            )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -94,6 +94,9 @@ wh me=Beginning installation of lib-edit...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-edit,v $
+  Revision 1.21  2008/09/25 17:08:03  feaelin
+  Bad indentation.
+
   Revision 1.20  2006/07/24 13:36:07  feaelin
   Missing 'then' in EDITdisplay
 
@@ -388,13 +391,16 @@ $endif
         EDITsplit dup 2 + rotate + 1 - swap
         ( {rng} splitchars rmargin wrapmargin {rng2} string )
         over 6 + pick dup if
-            3 pick + 6 + pick
-            dup STR-blank?
-        else pop "" 1
+          3 pick + 6 + pick
+          dup STR-blank?
+        else
+	  pop "" 1
         then
         ( {rng} splitchars rmargin wrapmargin {rng2} string nocat? )
-        if pop swap 1 +
-        else 2 EDITjoin over 6 + pick 3 pick + 5 + put
+        if 
+          pop swap 1 +
+        else
+          2 EDITjoin over 6 + pick 3 pick + 5 + put
         then
         ( {rng} splitchars rmargin wrapmargin {rng2} )
     else
@@ -638,6 +644,6 @@ q
 @set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
 @set $lib/edit=/_docs:@list $lib/edit=1-90
 @set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
-@set $lib/edit=/_lib-version:FM$Revision: 1.20 $
+@set $lib/edit=/_lib-version:FM$Revision: 1.21 $
 @set $lib/edit=/_lib-symbol:EDIT
 wh me=Installation of lib-edit complete.
