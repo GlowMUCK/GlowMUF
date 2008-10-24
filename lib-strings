@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2008/06/16 02:49:31 $ $Revision: 1.26 $                 )
+( lib-strings: $Date: 2008/10/24 02:26:18 $ $Revision: 1.27 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -25,6 +25,9 @@ wh me=Beginning installation of lib-strings...
 ( STR-sms       [ string -- boolean ]                                         )
 (     Reduces multiple contiguous spaces to single spaces: "foo  bar   baz"   )
 (     becomes "foo bar baz".                                                  )
+( STR-countOccurence [ string1 string2 -- count ]                             )
+(     Counts the number of times string2 appears in string1. If string2 is    )
+(     the empty string, countOccurrence returns the length of string1.        )
 ( STR-split     [ string delimiter -- left-string right-string ]              )
 (     Splits string into two strings at the first occurence of 'delimiter'.   )
 (     "Foo#Bar#Baz" "#" STR-split yields: "Foo" "Bar#Baz"                     )
@@ -61,20 +64,23 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.27  2008/10/24 02:26:18  feaelin
+  Added STR-countOccurrence
+
   Revision 1.26  2008/06/16 02:49:31  feaelin
   Rewrote documentation to be more comprehensible.
-
+  
   Revision 1.25  2006/08/27 00:15:40  feaelin
   Corrected definition of STR-blank?. It now handles strings with glow-ansi
   codes in them correctly by stripping them first.
-
+  
   Added STR-null? to parallel STR-blank?. STR-null? will only be true if the
   string is entirely empty.
-
+  
   Revision 1.24  2006/08/02 13:25:08  feaelin
   Added STR-command...converts a string of '#help' or '/help' or '-help' to
   simply 'help'.
- 
+  
   Revision 1.23  2006/01/18 01:01:21  feaelin
   Whoops. Forgot to make cleancommas public.
  
@@ -218,6 +224,18 @@ wh me=Beginning installation of lib-strings...
     then
 ;
  
+: STR-countOccurrence ( s s -- i )
+  dup "" strcmp if
+    dup strlen -3 rotate ( s2len s1 s2 )
+    over strlen -3 rotate ( s2len s1len s1 s2 )
+    "" swap subst strlen ( s2len s1len s1cutlen )
+    - swap /
+  else
+    "STR-countOccurrence cannot count empty strings." abort
+  then
+;
+public STR-countOccurrence
+
 : STR-command ( s -- s )
   dup
   "#" 1 strncmp
@@ -302,6 +320,7 @@ q
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
 @set $lib/strings=/_defs/STR-command:"$lib/strings" match "STR-command" call
+@set $lib/strings=/_defs/STR-countOccurrence:"$lib/strings" match "STR-countOccurrence" call
 @set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
 @set $lib/strings=/_defs/STR-left:"$lib/strings" match "left" call
 @set $lib/strings=/_defs/STR-parse:"$lib/strings" match "STRparse" call
@@ -316,6 +335,6 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-57
 @set $lib/strings=/_/de:lib-strings: List lines 1-57 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.26 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.27 $
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
