@@ -6,9 +6,10 @@ $def message if "succeeded!" strcat "^GREEN^" swap strcat me @ swap ansi_notify 
 $def message2 depth if me @ "^RED^But unexpected stuff left on the stack." ansi_notify else depth popn then
 : main
   depth popn
-  "Testing STRblank? with a null string..." "" STRblank? message message2
-  "Testing STRblank? with a empty string..." " " STRblank? message message2
-  "Testing STRblank? with a non-empty string..." dup STRblank? not message message2
+  "Testing STR-blank? with a null string..." "" STR-blank? message message2
+  "Testing STR-blank? with a empty string..." " " STR-blank? message message2
+  "Testing STR-blank? with a non-empty string..." dup STR-blank? not message message2
+  "Testing STR-blank? with a empty w/color string..." "^RED^" STR-blank? message message2
   "Testing STRsls with leading spaces..." "    ^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message message2
   "Testing STRsls without leading spaces..." "^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message message2
   "Testing STRsts with trailing spaces..." "  ^PURPLE^cow  " STRsts "  ^PURPLE^cow" strcmp not message message2
@@ -26,6 +27,9 @@ $def message2 depth if me @ "^RED^But unexpected stuff left on the stack." ansi_
   "Testing STRasc..." "A" STRasc 65 = "B" STRasc 66 = and message message2
   "Testing STRchr..." 65 STRchr "A" strcmp not 66 STRchr "B" strcmp not and message message2
   "Testing STRparse..." "#cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STR-countOccurrence with an empty string to search" "" "A" STR-countOccurrence 0 = message message2
+   "Testing STR-countOccurrence with # of f's in Baffled" "Baffled" "f" STR-countOccurrence 2 = message message2
+  "Testing STR-countOccurrence with # of f's in Beta" "Beta" "f" STR-countOccurrence 0 = message message2
 ;
 .
 c
