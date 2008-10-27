@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-recycle...
 @prog cmd-recycle
 1 99999 d
 1 i
-( cmd-recycle: $Date: 2008/06/27 21:45:44 $ $Revision: 1.1 $                 )
+( cmd-recycle: $Date: 2008/10/27 22:49:52 $ $Revision: 1.2 $                 )
 ( Purpose: A safer recycler, with various frills                              )
 ( Author: Feaelin Moilar                                                      )
 ( Dependencies: None                                                          )
@@ -10,6 +10,10 @@ wh me=Beginning installation of cmd-recycle...
  
 (
   $Log: cmd-recycle,v $
+  Revision 1.2  2008/10/27 22:49:52  feaelin
+  If you don't own the item, it displays the owner when informing you that
+  you don't own it if you are a wizard that controls the item.
+
   Revision 1.1  2008/06/27 21:45:44  feaelin
   For those that like 'prompted' recycling.
 
@@ -36,7 +40,8 @@ $include $lib/unparseobj
   dup owner me @ dbcmp not if ( if not the owner, check perms )
     me @ "MAGE" flag? if ( With a wizard, we'll see if they 'control' it )
       me @ over controls if ( Does the wizard control it? )
-        me @ "^INFO^^FLASH^WARNING:^RESET^^FAIL^ YOU DO NOT OWN IT."
+        me @ "^INFO^^FLASH^WARNING:^RESET^^FAIL^ YOU DO NOT OWN IT. "
+        3 pick owner UPO-color-unparseobj strcat " is the owner." strcat
         ansi_notify
       else ( Wizard doesn't control it, inform the wizard )
         pop me @ "^FAIL^You do not control that database item."
@@ -71,5 +76,5 @@ q
 @set $cmd/recycle=W4
 @set $cmd/recycle=/_docs:@list $cmd/recycle=1-5
 @set $cmd/recycle=/_/de:Type 'help recycle' for help.
-@set $cmd/recycle=/_version:FM$Revision: 1.1 $
+@set $cmd/recycle=/_version:FM$Revision: 1.2 $
 wh me=Installation of cmd-recycle complete.
