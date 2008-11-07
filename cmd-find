@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-find...
 @prog cmd-find
 1 99999 d
 1 i
-( cmd-find: $Date: 2006/07/18 13:25:23 $ $Revision: 1.11 $                     )
+( cmd-find: $Date: 2008/11/07 18:51:24 $ $Revision: 1.12 $                     )
 ( Author: PakRat                                                              )
 ( Contributors: Regabyr, Feaelin                                              )
 ( Dependencies: lib-strings, lib-match                                        )
@@ -44,6 +44,11 @@ wh me=Beginning installation of cmd-find...
 ( --------------------------------------------------------------------------- )
 (
   $Log: cmd-find,v $
+  Revision 1.12  2008/11/07 18:51:24  feaelin
+  Cleaned up leading spaces so that there is more room in the fields.
+  Adjusted default field widths so that name fully accomadates standard name
+  length, adjusted all so the whole thing fits nicely on 80 col terminals.
+
   Revision 1.11  2006/07/18 13:25:23  feaelin
   Some basic capitalization.
 
@@ -104,21 +109,21 @@ $define allprop   "_prefs/find/all"  $enddef
 : Maxroom
   prog "_column-length-room" getprop
   dup 0 = if
-    pop 37
+    pop 33
   then
 ;
  
 : Maxname
   prog "_column-length-name" getprop
   dup 0 = if
-    pop 13
+    pop 16
   then
 ;
  
 : Maxarea
   prog "_column-length-area" getprop
   dup 0 = if
-    pop 14
+    pop 19
   then
 ;
  
@@ -192,16 +197,18 @@ lvar step
 ;
   
 : ShowLine0 ( s -- )
+  debug-on
   ( s --> *Name Area Room )
   1 strcut swap pop
   MaxWorld ansi_strcut swap pop
   MaxArea ansi_strcut swap "^RED^" swap strcat swap
   MaxRoom ansi_strcut swap "^CYAN^" swap strcat swap
-  MaxName ansi_strcut swap "^GREEN^" swap strcat swap
+  MaxName ansi_strcut swap "^GREEN^" swap strcat swap pop ""
   ( area room name * )
   swap strcat " " strcat
   rot strcat " " strcat
   swap strcat me @ swap ansi_notify
+  debug-off
 ;
   
 : ShowLine1 ( s -- )
@@ -210,7 +217,7 @@ lvar step
   MaxWorld ansi_strcut swap "^PURPLE^" swap strcat swap
   MaxArea ansi_strcut swap pop
   MaxRoom ansi_strcut swap "^CYAN^" swap strcat swap
-  MaxName ansi_strcut swap "^GREEN^" swap strcat swap
+  MaxName ansi_strcut swap "^GREEN^" swap strcat swap pop ""
   ( World Room Name * )
   swap strcat " " strcat
   rot strcat " " strcat
@@ -223,7 +230,7 @@ lvar step
   MaxWorld MaxArea
   + strcut swap pop
   MaxRoom ansi_strcut swap "^CYAN^" swap strcat swap
-  MaxName ansi_strcut swap "^GREEN^" swap strcat swap
+  MaxName ansi_strcut swap "^GREEN^" swap strcat swap pop ""
   ( Room Name * )
   swap strcat " " strcat
   swap strcat me @ swap ansi_notify
@@ -235,7 +242,7 @@ lvar step
   MaxWorld ansi_strcut swap "^PURPLE^" swap strcat swap
   MaxArea ansi_strcut swap "^RED^" swap strcat swap
   MaxRoom ansI_strcut swap "^CYAN^" swap strcat swap
-  MaxName ansi_strcut swap "^GREEN^" swap strcat swap
+  MaxName ansi_strcut swap "^GREEN^" swap strcat swap pop ""
   ( world area room name * )
   swap strcat " " strcat
   4 rotate strcat " " strcat
@@ -418,7 +425,7 @@ lvar step
   SSort
   namename dup " " maxname STR-fillfield strcat "^FOREST^" swap strcat
   " " strcat
-  "  " swap strcat
+(  "  " swap strcat )
   ftype @ dup
   0 = not swap
   2 = not and if
@@ -513,7 +520,7 @@ public FindDbrefList
   then
 ;
 : Find-Help (--)
-  "Find 2.0FM" "$Revision: 1.11 $" 11 strcut swap pop dup strlen 1 - strcut pop
+  "Find 2.0FM" "$Revision: 1.12 $" 11 strcut swap pop dup strlen 1 - strcut pop
   " by PakRat" strcat strcat me @ swap notify
   "~~~~~~~~~~~~~~~~~~" me @ swap notify
   "Find lists information about where players are on the game." me @ swap
@@ -642,6 +649,6 @@ q
 @link $tmp/exit1=$cmd/find
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/find #help
-@set $cmd/find=_version:2.0FM$Revision: 1.11 $
+@set $cmd/find=_version:2.0FM$Revision: 1.12 $
 @set $cmd/find=_docs:@list 1-40
 wh me=Installation of cmd-find complete.
