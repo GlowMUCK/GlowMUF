@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2008/06/17 13:15:18 $ $Revision: 1.43 $                )
+( cmd/lib-look: $Date: 2009/03/19 22:22:27 $ $Revision: 1.44 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,9 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.44  2009/03/19 22:22:27  feaelin
+  Fixed security issue where mortals could far-look.
+
   Revision 1.43  2008/06/17 13:15:18  feaelin
   Added the @lookatallow and @lookatdesc commands. Cleaned up notify's.
 
@@ -887,7 +890,12 @@ lvar realtrig
       pop
     then
   then
-  dup match
+  me @ "MAGE" flag? not if
+    "" "*" subst
+    "" "#" subst
+  then
+  dup
+  match
   dup ok? not if
     pop dup look-feni-match dup ok? if
       db-desc exit
@@ -973,7 +981,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.43 $
-@set $lib/look=/_version:1.31FM$Revision: 1.43 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.44 $
+@set $lib/look=/_version:1.31FM$Revision: 1.44 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
