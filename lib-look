@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2009/03/19 22:22:27 $ $Revision: 1.44 $                )
+( cmd/lib-look: $Date: 2009/10/18 23:53:54 $ $Revision: 1.45 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.45  2009/10/18 23:53:54  feaelin
+  Fixed issue where lack of Look on the top of the stack when a content
+  handler is called breaks the content handler.
+
   Revision 1.44  2009/03/19 22:22:27  feaelin
   Fixed security issue where mortals could far-look.
 
@@ -334,7 +338,11 @@ lvar realtrig
 	  trigger @ strigger !
 	  command @ scommand !
 	  depth sdepth !
-	  3 pick swap "(Look)" command ! call
+      ( I'm just not sure what this line is supposed to look like anymore,
+        apparently at some point I decided to change it storing Look in 
+        the command variable, but that broke programs for some folks.
+        changing back here, perhaps later I'll remember what I intended.)
+	  3 pick swap "(Look)" swap (command !) call
 	  sme @ me !
 	  sloc @ loc !
 	  strigger @ trigger !
@@ -483,6 +491,9 @@ lvar realtrig
 ;
  
 : short-list-n ( d... i -- s )
+  dup 1 < if
+    pop "" exit
+  then
   dup 3 <
   if
     1 - dup 2 + rotate name over
@@ -981,7 +992,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.44 $
-@set $lib/look=/_version:1.31FM$Revision: 1.44 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.45 $
+@set $lib/look=/_version:1.31FM$Revision: 1.45 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
