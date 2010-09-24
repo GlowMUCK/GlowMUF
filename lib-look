@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2009/10/18 23:53:54 $ $Revision: 1.45 $                )
+( cmd/lib-look: $Date: 2010/09/24 14:53:27 $ $Revision: 1.46 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.46  2010/09/24 14:53:27  feaelin
+  * lib-look needs to be W4
+  * made it more obvious what an object is.
+
   Revision 1.45  2009/10/18 23:53:54  feaelin
   Fixed issue where lack of Look on the top of the stack when a content
   handler is called breaks the content handler.
@@ -533,7 +537,7 @@ lvar realtrig
     "thing" UPO-color-query
     me @ "silent" flag? not if
       3 pick control? if
-        "^YELLOW^(detail)" strcat
+        "^YELLOW^(object-detail)" strcat
       then
     then
     me @ swap ansi_notify
@@ -941,7 +945,7 @@ q
 @set $lib/look=L
 @set $lib/look=S
 @set $lib/look=H
-@set $lib/look=W3
+@set $lib/look=W4
 @set $lib/look=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
 @set $lib/look=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
 @set $lib/look=/_defs/.db-desc:"$lib/look" match "db-desc" call
@@ -992,7 +996,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.45 $
-@set $lib/look=/_version:1.31FM$Revision: 1.45 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.46 $
+@set $lib/look=/_version:1.31FM$Revision: 1.46 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
