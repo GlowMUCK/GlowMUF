@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-wordwrap.muf...
 @prog lib-wordwrap
 1 10000 d
 i
-( lib-wordwrap: $Date: 2006/08/15 14:15:19 $ $Revision: 1.5 $                 )
+( lib-wordwrap: $Date: 2010/09/24 16:28:11 $ $Revision: 1.6 $                 )
 ( Purpose: Reformat a single string into multiple lines                       )
 ( Author: Feaelin Moilar                                                      )
 ( Contributors: None                                                          )
@@ -13,9 +13,16 @@ i
 (   Wordwraps string 's' to 'i' characters, allowing for ansi codes and word  )
 (   breaks. Returns each line as a separate string with the number of lines   )
 (   on top.                                                                   )
+( WRAP-wordwrap_reverse: i s -- s1 ... sn n                                   )
+(   As WRAP-wordwrap, except the order of the lines is reversed. If you want  )
+(   to follow a wordwrap with EDIT-ansi_display or EDIT-display, you'l want   )
+(   this version of the word-wrapping algorithm.                              )
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-wordwrap,v $
+  Revision 1.6  2010/09/24 16:28:11  feaelin
+  Added WRAP-wordwrap_reverse
+
   Revision 1.5  2006/08/15 14:15:19  feaelin
   Error checking so the caller has a better idea of why their program fails.
 
@@ -73,7 +80,20 @@ lvar line_count
   0 line_count ! wraploop 0 line_count @ - rotate line_count @
 ;
  
+lvar lines
+: wordwrap_reverse ( i s -- sn ... s2 s1 n )
+  "is" checkargs
+  wordwrap
+  dup lines ! line_count ! 
+  BEGIN
+    0 line_count @ - rotate
+    line_count @ 1 - dup line_count ! not
+  UNTIL
+  lines @
+;
+ 
 public wordwrap
+public wordwrap_reverse
 .
 c
 q
@@ -81,8 +101,9 @@ q
 @set $lib/wordwrap=W3
 @set $lib/wordwrap=/_/de:Use @list $lib/wordwrap=1-12 for documentation.
 @set $lib/wordwrap=/_docs:@list $lib/wordwrap=1-12
-@set $lib/wordwrap=/_lib-version:$Revision: 1.5 $
+@set $lib/wordwrap=/_lib-version:$Revision: 1.6 $
 @set $lib/wordwrap=/_lib-symbol:WRAP
 @set $lib/wordwrap=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
 @set $lib/wordwrap=/_defs/WRAP-wordwrap:"$lib/wordwrap" match "wordwrap" call
+@set $lib/wordwrap=/_defs/WRAP-wordwrap_reverse:"$lib/wordwrap" match "wordwrap_reverse" call
 wh me=Installation completed.
