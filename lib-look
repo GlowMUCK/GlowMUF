@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-look...
 @prog lib-look
 1 99999 d
 1 i
-( cmd/lib-look: $Date: 2010/09/24 14:53:27 $ $Revision: 1.46 $                )
+( cmd/lib-look: $Date: 2011/02/18 16:56:52 $ $Revision: 1.47 $                )
 ( Purpose: Replicate and enhance the inserver look routine                    )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -110,6 +110,10 @@ wh me=Beginning installation of lib-look...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: lib-look,v $
+  Revision 1.47  2011/02/18 16:56:52  feaelin
+  The error when a program is not link_ok and you don't control it wasn't
+  explicit enough. For mages+, it now explains why the permission is denied.
+
   Revision 1.46  2010/09/24 14:53:27  feaelin
   * lib-look needs to be W4
   * made it more obvious what an object is.
@@ -639,7 +643,13 @@ lvar realtrig
         if
           safecall
         else
-          pop pop "Permission Denied" me @ swap ansi_notify
+	  pop pop me @
+	  me @ "MAGE" flag? if
+            "^FAIL^Permission Denied: Programs called by lib-look must be LINK_OK"
+          else
+            "^FAIL^Permission Denied" 
+          then
+          ansi_notify
         then
       else
         pop me @ swap ansi_notify
@@ -996,7 +1006,7 @@ q
 @set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
 @set $lib/look=/_docs:@list $lib/look=1-106
 @set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
-@set $lib/look=/_lib-version:1.31FM$Revision: 1.46 $
-@set $lib/look=/_version:1.31FM$Revision: 1.46 $
+@set $lib/look=/_lib-version:1.31FM$Revision: 1.47 $
+@set $lib/look=/_version:1.31FM$Revision: 1.47 $
 @set $lib/look=/_lib-symbol:LOOK
 wh me=Installation of lib-look complete.
