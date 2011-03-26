@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @program cmd-page
 1 99999 delete
 1 insert
-( cmd-page: $Date: 2011/03/26 16:56:05 $ $Revision: 1.27 $                    )
+( cmd-page: $Date: 2011/03/26 17:11:33 $ $Revision: 1.28 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,9 +15,12 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
-  Revision 1.27  2011/03/26 16:56:05  feaelin
-  Documentation cleanup.
+  Revision 1.28  2011/03/26 17:11:33  feaelin
+  Fixed problem where new players are notified that page has changed.
 
+  Revision 1.27  2011/03/26 16:56:05  feaelin
+  * Documentation cleanup.
+ 
   Revision 1.26  2011/03/26 16:52:41  feaelin
   * Got my logic flipped.
  
@@ -34,10 +37,10 @@ wh me=Beginning installation of cmd-page...
   * Also, left out a key getpropstr in dark checking. Fixed.
  
   Revision 1.22  2011/03/26 15:43:29  feaelin
-  cmd-page now treats /@/dark:yes players as 'sleeping'
+  * cmd-page now treats /@/dark:yes players as 'sleeping'
  
   Revision 1.21  2005/09/22 20:21:19  feaelin
-  Reduced dependency on lib-glow
+  * Reduced dependency on lib-glow
  
   Revision 1.20  2005/04/29 17:09:21  feaelin
   * Fixed problem where page would bomb on an empty message
@@ -46,64 +49,64 @@ wh me=Beginning installation of cmd-page...
   * Colorized some of the fail messages.
 
   Revision 1.19  2005/02/01 16:46:39  feaelin
-  Fixed problem where very long messages will make 'mail old' fail.
+  * Fixed problem where very long messages will make 'mail old' fail.
  
   Revision 1.18  2005/01/21 16:43:48  feaelin
-  Added output that displays the addressee list in the message header
+  * Added output that displays the addressee list in the message header
  
   Revision 1.17  2005/01/14 02:34:30  feaelin
-  Correct problem where 'mail to <name>' no longer worked after 1.15.
+  * Correct problem where 'mail to <name>' no longer worked after 1.15.
  
   Revision 1.16  2005/01/12 20:03:15  feaelin
-  Never put a smiley in a comment.
+  * Never put a smiley in a comment.
  
   Revision 1.15  2005/01/12 19:52:38  feaelin
-  Corrected problem where if you mistakenly used *name instead of name, page
-  would blow up. It now assumes that if it can't find an alias named 'name'
-  that its a username, and if it can't find the player, simply reports that
-  it can't find the player.
+  * Corrected problem where if you mistakenly used *name instead of name, page
+    would blow up. It now assumes that if it can't find an alias named 'name'
+    that its a username, and if it can't find the player, simply reports that
+    it can't find the player.
  
   Revision 1.14  2005/01/11 19:26:30  feaelin
-  More colorization
+  * More colorization
  
   Revision 1.12  2005/01/11 19:19:16  feaelin
-  Revised mail check to have the blinking feature and be colorized.
+  * Revised mail check to have the blinking feature and be colorized.
  
   Revision 1.11  2005/01/11 17:00:33  feaelin
-  Fixed errors in the version matching and the #changes display.
+  * Fixed errors in the version matching and the #changes display.
  
   Revision 1.10  2005/01/11 15:53:45  feaelin
-  Changed p #mail so that p #mail <name> <name>... works correctly. Added
-  back in the p #changes command and notification that the version has
-  changed.
+  * Changed p #mail so that p #mail <name> <name>... works correctly.
+  * Added back in the p #changes command and notification that the version has
+  * changed.
  
   Revision 1.9  2004/12/12 18:10:02  feaelin
-  Fixed bug that introduced extra curly-braces in a multi-line message
+  * Fixed bug that introduced extra curly-braces in a multi-line message
  
   Revision 1.8  2004/12/12 17:00:35  feaelin
-  A quick hack to force page to use lib-editor.
+  * A quick hack to force page to use lib-editor.
  
   Revision 1.7  2004/09/05 13:29:49  feaelin
-  Fixed issue where wizards couldn't override the guest? flag to page guests
+  * Fixed issue where wizards couldn't override the guest? flag to page guests
  
   Revision 1.6  2004/08/22 15:44:16  feaelin
-  Finished updating help.
+  * Finished updating help.
  
   Revision 1.5  2004/08/22 15:31:29  feaelin
-  Further work on the help header
+  * Further work on the help header
  
   Revision 1.4  2004/08/22 15:07:19  feaelin
-  Fixed bug in the Connect setup. Adjusted help.
+  * Fixed bug in the Connect setup. Adjusted help.
  
   Revision 1.3  2004/04/13 17:19:23  feaelin
-  Added the appropiate _defs/ props so that you can make library calls to
-  $cmd/page.
+  * Added the appropiate _defs/ props so that you can make library calls to
+    $cmd/page.
  
   Revision 1.2  2004/03/26 03:19:50  feaelin
-  Doc cleanup
+  * Doc cleanup
  
   Revision 1.1  1999/04/18 22:04:50  feaelin
-  Initial revision
+  * Initial revision
 )
 ( Include files )
 $include $lib/glow
@@ -1917,11 +1920,11 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2011/03/26 16:56:05 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                 Updated  ^INFO^$Date: 2011/03/26 17:11:33 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
-  dup strlen 10 - strcut pop
+  dup strlen 9 - strcut pop
   ansi_notify
   me @
   "^YELLOW^----------------------------------------------------------------------------"
@@ -1930,16 +1933,19 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
  
 : show-changes ( -- )
   "Changes" show-header
-  (------------------------------------------------------------------------------)
+  (----------------------------------------------------------------------------)
+  "MUFpage v2.5FM1.28 Fixed problem where page would notify new players that"
+  "                   page had changed."
   "MUFpage v2.5FM1.27 Documentation update."
   "MUFpage v2.5FM1.26 One final fix for the mail check on connect errors."
-  "MUFpage v2.5FM1.25 Fixed issue where page would give an error during checking"
-  "                   for mail during the connecting process."
+  "MUFpage v2.5FM1.25 Fixed issue where page would give an error during"
+  "                   checking for mail during the connecting process."
   "                   Fixed issue where there was a required library missing."
   "MUFpage v2.5FM1.24 Reduced page dependency on lib-glow-standard."
   "                   One final fix in the sleeper removal routine."
   "MUFpage v2.5FM1.23 Fixed crashing bug introduced in v2.5FM1.21."
-  "MUFpage v2.5FM1.22 Fixed issue where page would fail to remove some sleepers."
+  "MUFpage v2.5FM1.22 Fixed issue where page would fail to remove some"
+  "                   sleepers."
   "MUFpage v2.5FM1.21 Reduced page dependency on lib-glow-standard."
   "MUFpage v2.5FM1.20 Fixed problem where page would bomb on an empty message."
   "                   Added feature so that Archwizards can control whether"
@@ -2849,7 +2855,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.27 $"
+  "MUFpage v2.5FM$Revision: 1.28 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2876,10 +2882,19 @@ public check
   
   command @ 1 strcut pop "m" stringcmp if
   page-main else mail-main then
-  me @ get-last-version current-version @ strcmp if
+  me @ get-last-version
+  
+  ( Prevents new players from being notified that page has changed. )
+  dup STR-blank? if
+    pop
+    current-version @ me @ set-last-version
+    me @ get-last-version
+  then
+  
+  current-version @ strcmp if
     "^INFO^Page has been upgraded.  Type '^SUCC^page #changes^INFO^' to see the latest mods." tell
     me @ get-last-version dup if
-      "^SUCC^You last used " swap strcat tell
+      "^SUCC^You last used ^INFO^" swap strcat tell
     else
       pop
     then
@@ -3047,5 +3062,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.27 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.28 $
 wh me=Installation of cmd-page complete.
