@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @program cmd-page
 1 99999 delete
 1 insert
-( cmd-page: $Date: 2011/03/26 15:43:29 $ $Revision: 1.22 $                    )
+( cmd-page: $Date: 2011/03/26 16:15:14 $ $Revision: 1.23 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,6 +15,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.23  2011/03/26 16:15:14  feaelin
+  Whoops. Committed prematurely and trashed the install scripting. Also, left out a key getpropstr in dark checking. Fixed.
+
   Revision 1.22  2011/03/26 15:43:29  feaelin
   cmd-page now treats /@/dark:yes players as 'sleeping'
 
@@ -1188,7 +1191,7 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
 : remove-sleepers (dbrefrange count nullstr -- dbrefrange sleeperstr)
   over not if swap pop sort-stringwords exit then
   3 pick 3 + rotate dup awake?
-  over "/@/dark" "y" instr not and if
+  over "/@/dark" getpropstr "y" instr not and if
     -4 rotate
   else
     dup get-sleepmsg dup if
@@ -1897,7 +1900,7 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2011/03/26 15:43:29 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2011/03/26 16:15:14 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -2818,7 +2821,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.22 $"
+  "MUFpage v2.5FM$Revision: 1.23 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2864,4 +2867,154 @@ public check
 .
 c
 q
+@register cmd-page=cmd/mail
+@register cmd-page=cmd/page
+@register cmd-page=lib/page
+@set $cmd/page=L
+@set $cmd/page=V
+@set $cmd/page=W3
+@set $cmd/page=/_/de:@$cmd/page #help
+@set $cmd/page=/_defs/PAGEcheck:"$lib/page" match "check" call
+@set $cmd/page=/_defs/PAGEmail:"$lib/page" match "mail" call
+@set $cmd/page=/_defs/PAGEpage:"$lib/page" match "page" call
+@set $cmd/page=/_help1#:20
+@set $cmd/page=/_help1#/1:To give your location to another player:     'page <player>'
+@set $cmd/page=/_help1#/2:To send a message to another player:         'page <player> = <message>'
+@set $cmd/page=/_help1#/3:To send a pose style page to a player:       'page <player> = :<pose>'
+@set $cmd/page=/_help1#/4:To page multiple people:                     'page <plyr> <plyr> [= <msg>]'
+@set $cmd/page=/_help1#/5:To send another mesg to the last players:    'page = <message>'
+@set $cmd/page=/_help1#/6:To send your loc to the last players paged:  'page'
+@set $cmd/page=/_help1#/7:To send a message in a different format:     'page !<fmt> <plyrs> = <msg>'
+@set $cmd/page=/_help1#/8:To reply to a page sent to you:              'page #r [= <message>]'
+@set $cmd/page=/_help1#/9:To reply to all the people in a multi-page:  'page #R [= <message>]'
+@set $cmd/page=/_help1#/10:To leave a page-mail message for someone:    'page #mail <players>=<mesg>'
+@set $cmd/page=/_help1#/11:To leave a multi-line message for someone:   'page #mail to <players>'
+@set $cmd/page=/_help1#/12:To list page-mail messages left for you:     'page #mail'
+@set $cmd/page=/_help1#/13:To read page-mail messages left for you:     'page #mail read'
+@set $cmd/page=/_help1#/14:To list old saved page-mail messages:        'page #old'
+@set $cmd/page=/_help1#/15:To read old saved page-mail messages:        'page #old <msgnumber>'
+@set $cmd/page=/_help1#/16:To delete old saved page-mail messages:      'page #del <msgnumber>'
+@set $cmd/page=/_help1#/17:To erase a message you sent to a player:     'page #erase <players>'
+@set $cmd/page=/_help1#/18:To list who you last paged and other info:   'page #who'
+@set $cmd/page=/_help1#/19:To display the next help screen:             'page #help2'
+@set $cmd/page=/_help1#/20:-- Words in <> are parameters.  Parameters in [] are optional. --
+@set $cmd/page=/_help2#:22
+@set $cmd/page=/_help2#/1:To test if you can page a player:          'page #ping <players>'
+@set $cmd/page=/_help2#/2:To refuse pages from specific players:     'page #ignore <players>'
+@set $cmd/page=/_help2#/3:To set the mesg all ignored players see:   'page #ignore [<plyrs>]=<mesg>'
+@set $cmd/page=/_help2#/4:To accept pages from a player again:       'page #!ignore <player>'
+@set $cmd/page=/_help2#/5:To let players page you despite haven:     'page #priority <players>'
+@set $cmd/page=/_help2#/6:To remove players from your priority list: 'page #!priority <players>'
+@set $cmd/page=/_help2#/7:To page a group of people in an alias:     'page *<aliasname> = <message>'
+@set $cmd/page=/_help2#/8:To set a personal page alias:              'page #alias <alias>=<players>'
+@set $cmd/page=/_help2#/9:To clear a personal page alias:            'page #alias <alias>='
+@set $cmd/page=/_help2#/10:To list who is in an alias:                'page #alias <alias>'
+@set $cmd/page=/_help2#/11:To list all your personal aliases:         'page #alias'
+@set $cmd/page=/_help2#/12:To set an alias to the players last paged: 'page &<aliasname>'
+@set $cmd/page=/_help2#/13:To make an alias that everyone can use:    'page #global <alias>=<players>'
+@set $cmd/page=/_help2#/14:To clear a global page alias:              'page #global <alias>='
+@set $cmd/page=/_help2#/15:To list all the global aliases:            'page #global'
+@set $cmd/page=/_help2#/16:To list all aliases with a player in them: 'page #lookup <playername>'
+@set $cmd/page=/_help2#/17:To see the time (useful with %w subs):     'page #time'
+@set $cmd/page=/_help2#/18:To set the max# of plyrs in a page to you: 'page #multimax <max#players>'
+@set $cmd/page=/_help2#/19:To see your multimax setting:              'page #multimax'
+@set $cmd/page=/_help2#/20:To set the your 'Sleeping' message:        'page #sleepmsg <message>'
+@set $cmd/page=/_help2#/21:To clear the your 'Sleeping' message:      'page #sleepmsg #clear'
+@set $cmd/page=/_help2#/22:To display the third help screen:          'page #help3'
+@set $cmd/page=/_help3#:18
+@set $cmd/page=/_help3#/1:To haven yourself so you are unpagable:      'page #haven'"
+@set $cmd/page=/_help3#/2:To set your 'havened' message:               'page #haven <message>'"
+@set $cmd/page=/_help3#/3:To clear your 'havened' message:             'page #haven #clear'"
+@set $cmd/page=/_help3#/4:To unhaven yourself so you can be paged:     'page #!haven'"
+@set $cmd/page=/_help3#/5:To set yourself so guests can't page you:    'page #noguest'
+@set $cmd/page=/_help3#/6:To allow guests to page you again:           'page #!noguest'
+@set $cmd/page=/_help3#/7:To turn on echoing of your message:          'page #echo'"
+@set $cmd/page=/_help3#/8:To turn off echoing of your message:         'page #!echo'"
+@set $cmd/page=/_help3#/9:To be informed when a page to you fails:     'page #inform'"
+@set $cmd/page=/_help3#/10:To be turn off failed-page informing:        'page #!inform'"
+@set $cmd/page=/_help3#/11:To see another player's formatted pages:     'page #formatted'"
+@set $cmd/page=/_help3#/12:To prepend a format string to other's pages: 'page #prepend'"
+@set $cmd/page=/_help3#/13:To set your prepended format string:         'page #prepend <formatstr>'"
+@set $cmd/page=/_help3#/14:To force other's pages to a standard format: 'page #standard'"
+@set $cmd/page=/_help3#/15:To set the standard format you receive in:   'page #standard <formatstr>'"
+@set $cmd/page=/_help3#/16:To set a format that you see when paging:    'page #format <fmtname>=<fmt>'"
+@set $cmd/page=/_help3#/17:To set a format that others receive:         'page #oformat <fmtname>=<fmt>'"
+@set $cmd/page=/_help3#/18:To display the fourth help screen:           'page #help4'
+@set $cmd/page=/_help4#:15
+@set $cmd/page=/_help4#/1:To mark yourself away:                       'page #away'
+@set $cmd/page=/_help4#/2:To set your away flag and message:           'page #away <message>'
+@set $cmd/page=/_help4#/3:To clear your away message:                  'page #away #clear'
+@set $cmd/page=/_help4#/4:To reset your away flag:                     'page #!away'
+@set $cmd/page=/_help4#/5:To set your idle message:                    'page #idlemsg <message>'
+@set $cmd/page=/_help4#/6:To clear your idle message:                  'page #idlemsg #clear'
+@set $cmd/page=/_help4#/7:To view what your current idle timeout is:   'page #idletime'
+@set $cmd/page=/_help4#/8:To set how long your idle timeout is:        'page #idletime <minutes>'
+@set $cmd/page=/_help4#/9:To turn off your idle messages:              'page #idletime #off'
+@set $cmd/page=/_help4#/10:To forward page-mail to another player:      'page #forward <players>'"
+@set $cmd/page=/_help4#/11:To stop forwarding page-mail:                'page #forward #'"
+@set $cmd/page=/_help4#/12:To see who page-mail to you is forwarded to: 'page #forward'"
+@set $cmd/page=/_help4#/13:To see if page-mail is waiting for a player: 'page #check [players]'"
+@set $cmd/page=/_help4#/14:To disallow guests from paging mortals:      'page #mortalnoguest'"
+@set $cmd/page=/_help4#/15:To allow guests to page mortals:             'page #!mortalnoguest'"
+@set $cmd/page=/_helpm#:19
+@set $cmd/page=/_helpm#/1:Command -- Usage -- Type 'mail ' then the command below to use it.
+@set $cmd/page=/_helpm#/2:~~~~~~~    ~~~~~
+@set $cmd/page=/_helpm#/3:Sending    You send mail using one of two ways: (send and to are the same)
+@set $cmd/page=/_helpm#/4:Mail:      The first way is just like page mail: 'mail PakRat=hi!'
+@set $cmd/page=/_helpm#/5:Use        The second way is using the Multi-Line editor in Mail,
+@set $cmd/page=/_helpm#/6:'send'     type 'mail to PakRat' and the editor comes up.
+@set $cmd/page=/_helpm#/7:or         Now type in your message, (hit return after each line)
+@set $cmd/page=/_helpm#/8:'to'       then send it with a '.' alone on a line, or 'XXX' to nuke it.
+@set $cmd/page=/_helpm#/9:           You can use more than one name to send with both methods.
+@set $cmd/page=/_helpm#/10: 
+@set $cmd/page=/_helpm#/11:help    -- This help screen
+@set $cmd/page=/_helpm#/12:read    -- Read your new mail and save important or harrassing mail
+@set $cmd/page=/_helpm#/13:new     -- Peek at your new mail before actually reading it
+@set $cmd/page=/_helpm#/14:old     -- List or read your saved mail
+@set $cmd/page=/_helpm#/15:forward -- Forward a saved message to others, ie 'mail forward 1 to PakRat'
+@set $cmd/page=/_helpm#/16:set     -- Set your forwarding address, ie 'mail set Artie'
+@set $cmd/page=/_helpm#/17:del     -- Delete a saved message
+@set $cmd/page=/_helpm#/18:kill    -- Delete the newest message you sent to a person or people
+@set $cmd/page=/_helpm#/19:check   -- See how many new & saved messages someone has
+@set $cmd/page=/_hint1#:17
+@set $cmd/page=/_hint1#/1:All page commands can be used abbreviated to unique identifiers."
+@set $cmd/page=/_hint1#/2:  For example: 'page #gl' is the same as 'page #global'"
+@set $cmd/page=/_hint1#/3:If you page to a name it doesn't recognize, it will check to see if it is"
+@set $cmd/page=/_hint1#/4:  a personal alias.  If it isn't, it checks to see if it is a global alias."
+@set $cmd/page=/_hint1#/5:  For example: If there is a global alias 'tyg' defined as 'Tygryss', then"
+@set $cmd/page=/_hint1#/6:  'page tyg=test' will page 'test' to Tygryss."
+@set $cmd/page=/_hint1#/7:In format strings, %n will be replaced by the name of the player(s) receiv-"
+@set $cmd/page=/_hint1#/8:  ing the page.  %m will be replaced by the message.  %i will be replaced"
+@set $cmd/page=/_hint1#/9:  by your name.  %w gets replaced by the time.  These messages are what are"
+@set $cmd/page=/_hint1#/10:  shown to you when you page to someone."
+@set $cmd/page=/_hint1#/11:In oformat strings, %n will be replaced by your name, %m by the message,"
+@set $cmd/page=/_hint1#/12:  and %l by your location.  %t will be replaced with the names of all the"
+@set $cmd/page=/_hint1#/13:  people in a multi-page.  %w will be replaced with the current time."
+@set $cmd/page=/_hint1#/14:  These messages are what is shown to the player you are paging."
+@set $cmd/page=/_hint1#/15:If you have a #prepend or #standard format with a %w, it shows you the time"
+@set $cmd/page=/_hint1#/16:  when a player paged you."
+@set $cmd/page=/_hint1#/17:Use 'page #hints2' to show the next hints screen."
+@set $cmd/page=/_hint2#:13
+@set $cmd/page=/_hint2#/1:There are two standard formats with page: the 'page' format, and the 'pose'
+@set $cmd/page=/_hint2#/2:  format.  There are matching #oformats to go with them as well.
+@set $cmd/page=/_hint2#/3:If you really dislike having your pages that begin with colon's parsed as
+@set $cmd/page=/_hint2#/4:  page-poses, then you can 'page #oformat pose=%n pages: :%m'
+@set $cmd/page=/_hint2#/5:  or alternately, you can simply use 'page ! <players>=<mesg>'
+@set $cmd/page=/_hint2#/6:One good way to have all the pages to you beeped and hilighted is to do:
+@set $cmd/page=/_hint2#/7:  'page #prepend ##page>' and then set up the this trigger in tinyfugue:
+@set $cmd/page=/_hint2#/8:  '/def -p15 -fg -t\"##page> *\" = /beep 3%;/echo %e[7m%-1%e[0m'
+@set $cmd/page=/_hint2#/9:  If you want bold hilites instead, use '%e[1m' instead of '%e[7m'
+@set $cmd/page=/_hint2#/10:  This only works if you have version 1.5.0 or later of tinyfugue and a
+@set $cmd/page=/_hint2#/11:  vt100 terminal type.
+@set $cmd/page=/_hint2#/12:TinyTalk users, to make your pages always beep, use 'page #standard'
+@set $cmd/page=/_hint2#/13:  Then all pages to you will be in standard page format.
+@action page;p;mail;m;pag;pa;mai;ma=here=tmp/exit1
+@link $tmp/exit1=$cmd/page
+@set $tmp/exit1=M3
+@set $tmp/exit1=/@u/p/formats/opage:%n pages, "%m" to %t.
+@set $tmp/exit1=/@u/p/formats/opose:In a page-pose to %t, %n %m
+@set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
+@set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
+@set $tmp/exit1=/_/de:@$cmd/page #help
+@set $cmd/page=/_version:2.5FM$Revision: 1.23 $
 wh me=Installation of cmd-page complete.
