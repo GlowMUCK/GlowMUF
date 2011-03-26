@@ -2,11 +2,11 @@ wh me=Beginning installation of cmd-page...
 @program cmd-page
 1 99999 delete
 1 insert
-( cmd-page: $Date: 2011/03/26 16:23:51 $ $Revision: 1.24 $                    )
+( cmd-page: $Date: 2011/03/26 16:46:58 $ $Revision: 1.25 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
-(               lib-edit                                                      )
+(               lib-edit, lib-match                                           )
 ( --------------------------------------------------------------------------- )
 ( Coding: Pak, Artie & Co. -- Original MufPage by Foxen                       )
 ( Hi's to everyone who doesn't hate me! :-> -- makes it simple doesn't it?    )
@@ -15,6 +15,9 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.25  2011/03/26 16:46:58  feaelin
+  Fixed where I left lib-match out. Fixed issue where guest characters would get an error during connecting.
+
   Revision 1.24  2011/03/26 16:23:51  feaelin
   Fixed problem with wizards not being able to page darked wizards. Reduced lib-glow-standard dependency.
 
@@ -102,6 +105,7 @@ $include $lib/userprop
 $include $lib/editor
 $include $lib/case
 $include $lib/edit
+$include $lib/match
   
 ( Local Variables )
 lvar current-version
@@ -1905,7 +1909,7 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2011/03/26 16:23:51 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                  Updated  $Date: 2011/03/26 16:46:58 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -1918,6 +1922,10 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
  
 : show-changes ( -- )
   "Changes" show-header
+  (------------------------------------------------------------------------------)
+  "MUFpage v2.5FM1.25 Fixed issue where page would give an error during checking"
+  "                   for mail during the connecting process."
+  "                   Fixed issue where there was a required library missing."
   "MUFpage v2.5FM1.24 Reduced page dependency on lib-glow-standard."
   "                   One final fix in the sleeper removal routine."
   "MUFpage v2.5FM1.23 Fixed crashing bug introduced in v2.5FM1.21."
@@ -2831,7 +2839,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.24 $"
+  "MUFpage v2.5FM$Revision: 1.25 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -2843,16 +2851,17 @@ public check
   UPrivilege? not if
     pop "I have no UserPropDir." tell exit
   then
-
+ 
   me @ player? not if pop exit then
-  
-  me @ guest? not if
-    depth 1 = if
-      dup string? if
-        dup "Connect" strcmp not if me @ check pop exit then
+ 
+  command @ "Queued Event." strcmp not if
+    dup "Connect" strcmp not if
+      me @ "GUEST" flag? not if
+        me @ check pop exit
       then
     then
   then
+  
   command @ 1 strcut pop "m" stringcmp if
   page-main else mail-main then
   me @ get-last-version current-version @ strcmp if
@@ -3026,5 +3035,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.24 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.25 $
 wh me=Installation of cmd-page complete.
