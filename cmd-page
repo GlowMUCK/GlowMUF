@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-page...
 @program cmd-page
 1 99999 delete
 1 insert
-( cmd-page: $Date: 2011/03/27 14:16:38 $ $Revision: 1.29 $                    )
+( cmd-page: $Date: 2011/03/27 14:20:10 $ $Revision: 1.30 $                    )
 ( Author: Foxen                                                               )
 ( Contributors: Pakrat, Artie, Andy, Maddax, Feaelin                          )
 ( Dependencies: lib-glow, lib-strings, lib-showlist, lib-userprop, lib-case   )
@@ -15,11 +15,14 @@ wh me=Beginning installation of cmd-page...
 (                                                            ~Maddax          )
 (
   $Log: cmd-page,v $
+  Revision 1.30  2011/03/27 14:20:10  feaelin
+  * Documentation update.
+
   Revision 1.29  2011/03/27 14:16:38  feaelin
-  Fixed issue where I had the case of 'Queued event.' incorrect.
+  * Fixed issue where I had the case of 'Queued event.' incorrect.
 
   Revision 1.28  2011/03/26 17:11:33  feaelin
-  Fixed problem where new players are notified that page has changed.
+  * Fixed problem where new players are notified that page has changed.
  
   Revision 1.27  2011/03/26 16:56:05  feaelin
   * Documentation cleanup.
@@ -1923,7 +1926,7 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
   "" "$" subst
   ansi_notify
   me @
-  "^FOREST^Contributions by Artie, Feaelin, & Maddax                 Updated  ^INFO^$Date: 2011/03/27 14:16:38 $"
+  "^FOREST^Contributions by Artie, Feaelin, & Maddax                 Updated  ^INFO^$Date: 2011/03/27 14:20:10 $"
   "" "Date: " subst
   "" " $" subst
   "" "$" subst
@@ -1937,19 +1940,18 @@ $def GUESTMORTALPROP "/_prefs/guestpagemortal?"
 : show-changes ( -- )
   "Changes" show-header
   (----------------------------------------------------------------------------)
+  "MUFpage v2.5FM1.30 Documentation update."
+  "MUFpage v2.5FM1.29 Connect event command variable had to be changed."
   "MUFpage v2.5FM1.28 Fixed problem where page would notify new players that"
   "                   page had changed."
-  "MUFpage v2.5FM1.27 Documentation update."
   "MUFpage v2.5FM1.26 One final fix for the mail check on connect errors."
   "MUFpage v2.5FM1.25 Fixed issue where page would give an error during"
   "                   checking for mail during the connecting process."
   "                   Fixed issue where there was a required library missing."
-  "MUFpage v2.5FM1.24 Reduced page dependency on lib-glow-standard."
-  "                   One final fix in the sleeper removal routine."
+  "MUFpage v2.5FM1.24 One final fix in the sleeper removal routine."
   "MUFpage v2.5FM1.23 Fixed crashing bug introduced in v2.5FM1.21."
   "MUFpage v2.5FM1.22 Fixed issue where page would fail to remove some"
   "                   sleepers."
-  "MUFpage v2.5FM1.21 Reduced page dependency on lib-glow-standard."
   "MUFpage v2.5FM1.20 Fixed problem where page would bomb on an empty message."
   "                   Added feature so that Archwizards can control whether"
   "                   mortals can page and paged by guests."
@@ -2858,7 +2860,7 @@ public mail
 public check
  
 : main
-  "MUFpage v2.5FM$Revision: 1.29 $"
+  "MUFpage v2.5FM$Revision: 1.30 $"
   "" "Revision: " subst
   "" " $" subst
   "" "$" subst
@@ -3065,5 +3067,5 @@ q
 @set $tmp/exit1=/@u/p/formats/page:You page, "%m" to %n.
 @set $tmp/exit1=/@u/p/formats/pose:You page-pose, "%i %m" to %n
 @set $tmp/exit1=/_/de:@$cmd/page #help
-@set $cmd/page=/_version:2.5FM$Revision: 1.29 $
+@set $cmd/page=/_version:2.5FM$Revision: 1.30 $
 wh me=Installation of cmd-page complete.
