@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2008/10/24 02:26:18 $ $Revision: 1.27 $                 )
+( lib-strings: $Date: 2012/03/20 14:43:56 $ $Revision: 1.28 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -32,7 +32,7 @@ wh me=Beginning installation of lib-strings...
 (     Splits string into two strings at the first occurence of 'delimiter'.   )
 (     "Foo#Bar#Baz" "#" STR-split yields: "Foo" "Bar#Baz"                     )
 ( STR-rsplit    [ string delimiter -- left-string right-string ]              )
-(     Splits string into two strings at the first occurence of 'delimiter'.   )
+(     Splits string into two strings at the last occurence of 'delimiter'.   )
 (     "Foo#Bar#Baz" "#" STR-rsplit yields: "Foo#Bar" "Baz"                    )
 ( STR-splitargs [ string -- string string ]                                   )
 (     Splits string into two strings at the first occurence of a space or an  )
@@ -55,6 +55,9 @@ wh me=Beginning installation of lib-strings...
 (     Returns the ASCII character code for 'character'.                       )
 ( STR-char      [ integer -- character ]                                      )
 (     Converts 'integer' into its ASCII character equivalent.                 )
+( STR-singlespace [ string -- string ]                                        )
+(     Compacts pairs of space characters into one space character             )
+(     "foo  bar" --> "foo bar"                                                )
 ( STR-cleancommas [ string -- string ]                                        )
 (     Under repair, check back later.                                         )
 ( The following routines are deprecated, do not use them.                     )
@@ -64,6 +67,10 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.28  2012/03/20 14:43:56  feaelin
+  * Modified STR-parse to handle -cmd /cmd in addition to #cmd
+  * Added STR-singlespace to the documentation
+
   Revision 1.27  2008/10/24 02:26:18  feaelin
   Added STR-countOccurrence
 
@@ -247,18 +254,20 @@ public STR-countOccurrence
   1 strcut swap pop
 ; public STR-command
  
-: STRparse ( s -- s1 s2 s3 ) (
+: STRparse ( s -- s1 s2 s3 )
+  (
     Before: " #option  tom dick  harry = message "
     After:  "option" "tom dick harry" " message "
-    )
-    "=" rsplit swap
-    striplead dup "#" 1 strncmp not if
-        1 strcut swap pop
-        " " split
-    else
-        "" swap
-    then
-    strip sms rot
+  )
+  "=" rsplit swap
+  striplead dup
+  "#" 1 strncmp not over "-" 1 strncmp not or over "/" 1 strncmp not or if
+    1 strcut swap pop
+    " " split
+  else
+    "" swap
+  then
+  strip sms rot
 ;
  
 public split
@@ -333,8 +342,9 @@ q
 @set $lib/strings=/_defs/STR-splitargs:"$lib/strings" match "splitargs" call
 @set $lib/strings=/_defs/STR-strip:strip
 @set $lib/strings=/_defs/STR-sts:striptail
-@set $lib/strings=/_docs:@list $lib/strings=1-57
-@set $lib/strings=/_/de:lib-strings: List lines 1-57 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.27 $
+@set $lib/strings=/_docs:@list $lib/strings=1-60
+@set $lib/strings=/_/de:lib-strings: List lines 1-60 for documentation.
+@set $lib/strings=/_lib-version:FM$Revision: 1.28 $
+@set $lib/strings=/_version:
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
