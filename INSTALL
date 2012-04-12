@@ -1,4 +1,4 @@
-INSTALL $Date: 2006/08/15 13:10:51 $ $Revision: 1.17 $
+INSTALL $Date: 2012/04/12 18:34:37 $ $Revision: 1.18 $
 ---------------------------------------------------------------------------
 Glow Distribution of "Standard" Programs
 -----------
@@ -160,11 +160,17 @@ IV. Comments about specific programs
     as par/misc (@reg <dbref>=par/misc).  Cleans up parents and drops extras
     in $par/misc.
 
-	The only one of these libraries or muf-programs I "wrote" is the
-lib-glow-standard one (which is mostly just a cut n' paste of the macros
-that are commonly used in the muf programs).  All others are either taken
-from the glowmuf distribution or the fbmuf distribution.  I'm leaving any
-existing credits/author/copyright information intact as well as adding any
-that I may discover or find out later on.
+  cmd-morph:
+    For now, cmd-morph relies on macro-longdesc to handle lsedit lists.
 
-   Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
+The only one of these libraries or muf-programs I "wrote" is the
+lib-glow-standard one (which is mostly just a cut n' paste of the macros that
+are commonly used in the muf programs). All others are either taken from the
+glowmuf distribution or the fbmuf distribution. I'm leaving any existing
+credits/author/copyright information intact as well as adding any that I may
+discover or find out later on.
+
+Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
+
+And much later, added lib-unparseobj, a fancier, colorful, unparseobj, inspired
+by a similar library written by Syvel.

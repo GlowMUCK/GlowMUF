@@ -2,9 +2,10 @@
 @prog cmd-morph
 1 99999 d
 1 i
-( cmd-morph: $Date: 2005/09/22 20:30:23 $ $Revision: 1.2 $                    )
+( cmd-morph: $Date: 2012/04/12 18:34:37 $ $Revision: 1.3 $                    )
 ( Author: PakRat                                                              )
 ( Contributors: Maddax                                                        )
+( Dependencies: lib-glow-standard, macro-longdesc                             )
 ( --------------------------------------------------------------------------- )
 ( MorphPro Copyright 1992 by PakRat Productions, all rights reserved.         )
 ( Type morph to see your current morph; morph -help for the help screen.      )
@@ -316,7 +317,7 @@ q
 @register #me cmd-morph=tmp/prog1
 @set $tmp/prog1=L
 @set $tmp/prog1=M2
-@set $tmp/prog1=_version:1.0AFM$Revision: 1.2 $
+@set $tmp/prog1=_version:1.0AFM$Revision: 1.3 $
 @action morph=here=tmp/exit1
 @link $tmp/exit1=$cmd/morph
 @set $tmp/exit1=M1
