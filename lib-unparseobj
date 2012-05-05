@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.17 $ $Date: 2007/04/20 22:08:42 $              )
+( lib-unparseobj: $Revision: 1.18 $ $Date: 2012/05/05 21:32:54 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Purpose: Provides more sophisticated unparseobj with color and flagging.    )
 ( Contributors: Syvel                                                         )
@@ -98,6 +98,13 @@ i
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.18  2012/05/05 21:32:54  feaelin
+  * special-unparseobj is too slow when called repeatedly by a large list of
+    items, for example. Frequently, the pattern for processing long lists
+    is merely %P, so I've put in a temporary bypass to speed up that
+    particular pattern. However, long term the whole thing needs redone
+    to speed it up.
+
   Revision 1.17  2007/04/20 22:08:42  feaelin
   Added support for FENI and added the UPO-color-setting word which searches
   environment for color code settings.
@@ -337,6 +344,11 @@ $def DEFAULTFORMAT "%P(%D%T%/%F%Z)"
 ;
  
 : special-unparseobj ( d s -- s )
+  dup "%P" stringcmp not if
+    pop
+    dup feni-name swap name-color
+    exit
+  then
   "%T" "%O" subst
   "%t" "%o" subst
   "%P(%D%T%/%F%/%B%M%L)" "%Q" subst
@@ -415,7 +427,7 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:FM$Revision: 1.17 $
+@set $lib/unparseobj=/_lib-version:FM$Revision: 1.18 $
 @set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-94 for documentation.
 @set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-94
 @set $lib/unparseobj=/_lib-symbol:UPO
