@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.18 $ $Date: 2012/05/05 21:32:54 $              )
+( lib-unparseobj: $Revision: 1.19 $ $Date: 2012/05/05 22:43:35 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Purpose: Provides more sophisticated unparseobj with color and flagging.    )
 ( Contributors: Syvel                                                         )
@@ -98,6 +98,9 @@ i
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-unparseobj,v $
+  Revision 1.19  2012/05/05 22:43:35  feaelin
+  Fixed bug in color-query
+
   Revision 1.18  2012/05/05 21:32:54  feaelin
   * special-unparseobj is too slow when called repeatedly by a large list of
     items, for example. Frequently, the pattern for processing long lists
@@ -182,7 +185,9 @@ $def DEFAULTFORMAT "%P(%D%T%/%F%Z)"
     else
       swap pop
     then
-    "" "^" subst "^" swap strcat "^" strcat
+    dup "" strcmp if
+      "" "^" subst "^" swap strcat "^" strcat
+    then
   then
   swap strcat
 ; PUBLIC color-query
@@ -419,7 +424,7 @@ q
 @set $lib/unparseobj=/_colors/mucker:^RED^
 @set $lib/unparseobj=/_colors/paren:^GREY^
 @set $lib/unparseobj=/_colors/player:^GREEN^
-@set $lib/unparseobj=/_colors/feni:^GREEN^
+#@set $lib/unparseobj=/_colors/feni:^GREEN^
 @set $lib/unparseobj=/_colors/sleeper:^FOREST^
 @set $lib/unparseobj=/_colors/program:^RED^
 @set $lib/unparseobj=/_colors/room:^CYAN^
@@ -427,7 +432,7 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:FM$Revision: 1.18 $
+@set $lib/unparseobj=/_lib-version:FM$Revision: 1.19 $
 @set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-94 for documentation.
 @set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-94
 @set $lib/unparseobj=/_lib-symbol:UPO
