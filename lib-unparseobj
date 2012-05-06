@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-unparseobj...
 @prog lib-unparseobj
 1 10000 d
 i
-( lib-unparseobj: $Revision: 1.19 $ $Date: 2012/05/05 22:43:35 $              )
+( lib-unparseobj: $Revision: 1.20 $ $Date: 2012/05/06 21:49:21 $              )
 ( Author: Feaelin Moilar AKA Iain E. Davis                                    )
 ( Purpose: Provides more sophisticated unparseobj with color and flagging.    )
 ( Contributors: Syvel                                                         )
@@ -61,10 +61,17 @@ i
 ( the Builder flag is set, while %b produces 'b'. To insert a slash           )
 ( intelligently, just use %/.                                                 )
 (                                                                             )
-( lib-unparseobj will attempt to use the FENI-name library call if there is   )
-( $lib/feni library and will call the FENI-name word in place of a normal     )
-( call to 'name'. It calls FENI-name with two dbrefs on the stack             )
-( [me @ database-item-dbref], which it expects the word to destroy.           )
+( This now includes support for FENI [Fully Extensible Name Interface]        )
+( programs. If you set following properties on #0 or on lib-unparseobj itself:)
+(                                                                             )
+(        @set <program>=_feni-lib:$lib/<some-feni-library>                    )
+(        @set <program>=_feni-name-word:<name of public word>                 )
+(                                                                             )
+( Properly set and lib-unparseobj will attempt to call the _feni-name-word in )
+( the library _feni-lib. It will place two database references on the stack   )
+( before calling feni: the dbref for the user and the dbref of the target     )
+( database item, i.e., the prototyep for the word should be:                  )
+( [ dbref dbref -- string ].                                                  )
 (                                                                             )
 (  This lib supports the following props:                                     )
 (  _prefs/unparse/format:       Format for full unparseobj                    )
@@ -97,7 +104,16 @@ i
 (       wizard:^PURPLE^  -- The color of the "wizard" flags.                  )
 ( --------------------------------------------------------------------------- )
 (
+  TODO:
+    * Determine how to optimize out the oodles of 'subst' commands used in
+      special-unparseobj. They dramatically slow the string processing.
+) 
+( --------------------------------------------------------------------------- )
+(
   $Log: lib-unparseobj,v $
+  Revision 1.20  2012/05/06 21:49:21  feaelin
+  Revised FENI support to be more flexible. However, this means that installation requires some configuration.
+
   Revision 1.19  2012/05/05 22:43:35  feaelin
   Fixed bug in color-query
 
@@ -248,13 +264,32 @@ $def DEFAULTFORMAT "%P(%D%T%/%F%Z)"
   swap strcat
 ;
  
+: get-feni-lib ( -- s )
+  prog "_feni-lib" getpropstr dup "" strcmp not if
+     pop #0 "_feni-lib" getpropstr
+  then
+;
+ 
+: get-feni-name-word ( -- s )
+  prog "_feni-name-word" getpropstr dup "" strcmp not if
+     pop #0 "_feni-name-word" getpropstr
+  then
+;
+ 
 : feni-name ( d -- s )
-  ( We should check depth and use checkargs? )
-  "$lib/feni" match program? if
-    me @ swap "$lib/feni" match "FENI-Name" call
-    "feni" color-query
+  get-feni-lib dup "" strcmp not if                ( d-target s-libame )
+    pop name                                       ( s-name )
   else
-    name
+    match dup program? if                          ( d-target d-lib )
+      get-feni-name-word dup "" strcmp not if      ( d-target d-lib s-libword )
+        pop pop name
+      else
+        me @ -4 rotate call
+        "feni" color-query
+      then
+    else
+      pop name
+    then
   then
 ;
  
@@ -432,8 +467,8 @@ q
 @set $lib/unparseobj=/_colors/thing:^PURPLE^
 @set $lib/unparseobj=/_colors/unknown:^GLOOM^
 @set $lib/unparseobj=/_colors/wizard:^PURPLE^
-@set $lib/unparseobj=/_lib-version:FM$Revision: 1.19 $
-@set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-94 for documentation.
-@set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-94
+@set $lib/unparseobj=/_lib-version:FM$Revision: 1.20 $
+@set $lib/unparseobj=/_/de:Use @list $lib/unparseobj=1-101 for documentation.
+@set $lib/unparseobj=/_docs:@list $lib/unparseobj=1-101
 @set $lib/unparseobj=/_lib-symbol:UPO
 wh me=Installation Complete.
