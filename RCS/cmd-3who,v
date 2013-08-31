@@ -1,0 +1,320 @@
+head	1.5;
+access;
+symbols
+	GlowMUF1-1-1:1.5
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.5
+date	2006.08.15.13.49.08;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.08.18.44.02;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.04.08.18.17.29;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2003.01.24.17.05.07;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.17.23.42.43;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.5
+log
+@Made 3who respect the 'who_hides_dark' sysparm.
+@
+text
+@wh me=Beginning installation of cmd-3who...
+@@prog cmd-3who
+1 99999 d
+1 i
+( cmd-3who: $Date: 2005/04/08 18:44:02 $ $Revision: 1.4 $                     )
+( Purpose: Provides a who list in 3 column format                             )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( If the "who_hides_dark" sysparm is set, players who are set /@@/dark:yes     )
+( will not be listed by cmd-3who                                              )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-3who,v $
+  Revision 1.4  2005/04/08 18:44:02  feaelin
+  Fixed flaws in the dark hiding prop detection.
+
+  Revision 1.3  2005/04/08 18:17:29  feaelin
+  Documentation and installer script updates.
+
+  Revision 1.2  2003/01/24 17:05:07  feaelin
+  Modified so it recognizes the /@@/dark prop
+
+  Revision 1.1  1999/04/17 23:42:43  feaelin
+  Initial revision
+
+)
+ 
+: stimestr (i -- s)
+    dup 86400 > if
+        86400 / intostr "d" strcat 
+    else dup 3600 > if
+            3600 / intostr "h" strcat
+        else dup 60 > if
+                60 / intostr "m" strcat
+            else
+                intostr "s" strcat
+            then
+        then
+    then
+    "    " swap strcat
+    dup strlen 4 - strcut swap pop
+;
+ 
+: mtimestr (i -- s)
+    "" over 86400 > if
+        over 86400 / intostr "d " strcat strcat
+        swap 86400 % swap
+    then
+    over 3600 / intostr
+    "00" swap strcat
+    dup strlen 2 - strcut
+    swap pop strcat ":" strcat
+    swap 3600 % 60 / intostr
+    "00" swap strcat
+    dup strlen 2 - strcut
+    swap pop strcat
+;
+ 
+: collate-entry (i -- s)
+    dup condbref 
+    "who_hides_dark" sysparm "yes" strcmp not if
+      dup "/@@/dark" getpropstr 
+      "yes" strcmp not if pop pop 0 exit then
+    then
+    name
+    over contime mtimestr
+    over strlen over strlen +
+    dup 19 < if
+        "                   " (19 spaces)
+        swap strcut swap pop
+    else
+        19 - rot dup strlen rot -
+        strcut pop swap ""
+    then
+    swap "^PURPLE^" swap strcat strcat strcat
+    "^GREEN^" swap strcat
+    swap conidle stimestr "^YELLOW^" swap strcat strcat
+    1
+;
+ 
+: get-namelist  ( -- {s})
+    0 concount
+    begin
+        dup 0 > while
+        dup collate-entry
+        if rot 1 + rot then
+        1 -
+    repeat
+    pop
+;
+ 
+lvar col
+: show-namelist ({s} -- )
+    begin
+        dup 3 >= while
+        swap "   " strcat
+        over 3 / 3 pick 3 % 2 + 3 / +
+        dup col ! 2 +
+        rotate strcat "   " strcat
+        over 3 / 3 pick 3 % 1 +
+        3 / + col @@ + 1 +
+        rotate strcat
+        me @@ swap ansi_notify 3 -
+    repeat
+    dup if
+        ""
+        begin
+            over 0 > while
+            rot strcat "   " strcat
+            swap 1 - swap
+        repeat
+        me @@ swap ansi_notify
+    then
+    pop
+;
+ 
+: show-who
+  preempt
+  pop
+  me @@ "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
+  "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat ansi_notify
+  get-namelist
+  show-namelist
+  concount intostr "^BLUE^" swap strcat
+  " players are connected."
+  strcat me @@ swap ansi_notify
+;
+.
+c
+q
+@@register cmd-3who=cmd/3who
+@@set $cmd/3who=W3
+@@set $cmd/3who=_version:FM$Revision: 1.4 $
+@@action 3who;who3;3w=here=tmp/exit1
+@@link $tmp/exit1=$cmd/3who
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:Same as the WHO list of everyone connected, except in three columns.
+wh me=Installation of cmd-3who complete.
+@
+
+
+1.4
+log
+@Fixed flaws in the dark hiding prop detection.
+@
+text
+@d5 1
+a5 1
+( cmd-3who: $Date: 2005/04/08 18:17:29 $ $Revision: 1.3 $                     )
+d11 3
+d16 3
+d63 4
+a66 2
+    dup "/@@/dark" getpropstr 
+    "yes" strcmp not if pop pop 0 exit then
+d135 1
+a135 1
+@@set $cmd/3who=_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Documentation and installer script updates.
+@
+text
+@d5 1
+a5 1
+( cmd-3who: $Date: 2003/01/24 17:05:07 $ $Revision: 1.2 $                     )
+d13 3
+d113 1
+d127 1
+a127 1
+@@set $cmd/3who=_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Modified so it recognizes the /@@/dark prop
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-3who...
+d5 6
+a10 3
+( cmd-3who: $Date: 1999/04/17 23:42:43 $ $Revision: 1.1 $
+  Author: ???
+  --------------------------------------------------------------------------- )
+d13 3
+d20 1
+a20 4
+
+  
+$def .atell me @@ swap ansi_notify
+  
+d36 1
+a36 2
+  
+  
+d51 1
+a51 2
+  
+  
+d71 1
+a71 3
+  
+  
+  
+d82 1
+a82 2
+  
+  
+d94 1
+a94 1
+        .atell 3 -
+d103 1
+a103 1
+        .atell
+d107 1
+a107 2
+  
+  
+d109 8
+a116 8
+    preempt
+    "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
+    "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat .atell
+    get-namelist
+    show-namelist
+    concount intostr "^BLUE^" swap strcat
+    " players are connected."
+    strcat .atell
+d122 2
+a123 2
+@@register #me cmd-3who=tmp/prog1
+@@set $tmp/prog1=W3
+d125 1
+a125 1
+@@link $tmp/exit1=$tmp/prog1
+d128 1
+a128 2
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-3who complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-3who: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d52 4
+a55 1
+    dup condbref name
+d68 1
+d78 1
+a78 1
+        rot 1 + rot
+d126 1
+a126 1
+@@set $tmp/prog1=W
+d131 1
+a131 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

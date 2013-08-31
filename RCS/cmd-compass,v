@@ -1,0 +1,304 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2007.04.20.22.15.49;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.18.20.16.35;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Silent installation and documentation update
+@
+text
+@wh me=Beginning installation of cmd-compass...
+@@prog cmd-compass
+1 99999 d
+1 i
+( cmd-compass: $Date: 1999/04/18 20:16:35 $ $Revision: 1.1 $                  )
+( Author: Andy/Pakrat                                                         )
+( Purpose: Displays exits from local area in a compass format                 )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-compass,v $
+  Revision 1.1  1999/04/18 20:16:35  feaelin
+  Initial revision
+
+)
+
+( Compass by PakRat, for use with paths and exits )
+( )
+(00                                                                           )
+(01           XXXXXXX                                       XXXXXXX           )
+(02                                                                           )
+(03             /|\                                           /|\             )
+(04             U|p                XXXXXXX                    I|n             )
+(05              |                                             |              )
+(06                                  /|\                                      )
+(07                     XXXXXXX       |       XXXXXXX                         )
+(08                              NW   N   NE                                  )
+(09                                 \ | /                                     )
+(10                 XXXXXXX  <----W---|---E---->  XXXXXXX                     )
+(11                                 / | \                                     )
+(12                              SW   S   SE                                  )
+(13                     XXXXXXX       |       XXXXXXX                         )
+(14                                  \|/                                      )
+(15              |                                             |              )
+(16            Do|wn               XXXXXXX                    Out             )
+(17             \|/                                           \|/             )
+(18                                                                           )
+(19           XXXXXXX                                       XXXXXXX           )
+(20                                                                           )
+( )
+lvar dirnorth  lvar dirsouth  lvar direast  lvar dirwest
+lvar dirne     lvar dirnw     lvar dirse    lvar dirsw
+lvar dirup     lvar dirdown   lvar dirin    lvar dirout
+( )
+$def stripend striptail dup not if pop " " then
+$def pad "                                                                 "
+$include $lib/glow
+( )
+: rname ( d -- s )
+  me @@ over controls not if
+    dup .private? if pop "*Private Room*" exit then
+  then name
+;
+  
+: padl ( s d -- s )
+  over strlen over < if
+    over strlen - pad swap strcut pop strcat
+  else strcut pop then
+;
+  
+: padr ( s d -- s )
+  over strlen over < if
+    over strlen - pad swap strcut pop swap strcat
+  else strcut pop then
+;
+  
+: padc ( s d -- s )
+  over strlen over < if
+    over strlen - pad swap strcut pop
+    dup strlen 2 / strcut swap
+    rot strcat swap strcat
+  else strcut pop then
+;
+  
+: dirfind ( s -- s )
+  striplead striptail dup not if exit then
+  "$cmd/path" match dup program? if
+    swap loc @@ swap 3 pick "path-match" call swap
+    over loc @@ swap rot "path-getlink" call
+    dup room? if
+      over loc @@ swap "$cmd/path" match "path-locked?" call if
+        swap pop rname exit
+      else pop then
+    else pop then
+  else pop then
+  loc @@ swap rmatch dup if
+    dup exit? if
+      me @@ over locked? if
+        getlink dup room? if
+          rname
+        else pop "" then
+      else pop "" then
+    else pop "" then
+  else pop "" then
+;
+  
+: compass ( s -- ) pop
+  "n"  dirfind dup dirnorth !
+  "s"  dirfind dup dirsouth ! strcat
+  "e"  dirfind dup direast  ! strcat
+  "w"  dirfind dup dirwest  ! strcat
+  "nw" dirfind dup dirnw    ! strcat
+  "ne" dirfind dup dirne    ! strcat
+  "sw" dirfind dup dirsw    ! strcat
+  "se" dirfind dup dirse    ! strcat
+  "i"  dirfind dup dirin    ! strcat
+  "o"  dirfind dup dirout   ! strcat
+  "u"  dirfind dup dirup    ! strcat
+  "d"  dirfind dup dirdown  ! strcat
+( )
+  not if "There are no cardinal exits here." .tell exit then   
+  
+  (00) " " .tell
+  
+dirup @@ dirin @@ or if 
+  (01) dirup @@ 39 padc " " strcat
+       dirin @@ if dirin @@ 39 padc strcat then
+       stripend .tell
+  (02) " " .tell
+  (03) dirup @@ if "/|\\" else "" then 39 padc " " strcat
+       dirin @@ if "/|\\" 39 padc strcat then
+       stripend .tell
+then ( up/in )
+  
+dirup @@ dirin @@ or dirnorth @@ or if
+  (04) dirup @@ if "U|p  " else "" then 23 padr
+       dirnorth @@ 33 padc strcat
+       dirin @@ if "  I|n" strcat then
+       stripend .tell
+  
+  (05) dirup @@ dirin @@ or if
+         dirup @@ if "|" else "" then 39 padc " " strcat
+         dirin @@ if "|" 39 padc strcat then
+       else " " then
+       stripend .tell
+then ( up/in )
+  
+dirnw @@ dirnorth @@ or dirne @@ or if
+  (06) dirnorth @@ if "/|\\" 41 padr else " " then
+       .tell  
+  
+  (07) dirnw @@ dirnorth @@ or dirne @@ or if
+         dirnw @@ 32 padr
+         dirnorth @@ if "|" else "" then 15 padc strcat
+         dirne @@ 32 padl strcat
+       else " " then
+       stripend .tell
+  
+  (08) dirnw @@ dirnorth @@ or dirne @@ or if
+         dirnw @@ if "NW" else "" then 36 padr
+         dirnorth @@ if "N" else "" then 4 padr strcat
+         dirne @@ if "NE" 5 padr strcat then
+       else " " then
+       stripend .tell
+  
+  (09) dirnw @@ if "\\" else "" then 38 padr
+       dirnorth @@ if "|" else "" then 3 padc strcat
+       dirne @@ if "/" strcat then
+       stripend .tell
+else
+  dirup @@ dirin @@ or dirwest @@ direast @@ or and if " " .tell then
+then ( nw/north/ne )
+  
+dirwest @@ direast @@ or if
+  (10) dirwest @@ if
+         dirwest @@ 28 padr
+         "  <----W---" strcat
+       then
+       direast @@ if
+         dirwest @@ not if
+           dirnorth @@ dirsouth @@ or if "|" else "" then 40 padr
+         else "|" strcat then
+         "---E---->  " strcat
+         direast @@ 28 padl strcat
+       else dirwest @@ dirnorth @@ dirsouth @@ or and if "|" strcat then then
+       stripend .tell
+then ( west/east )
+  
+dirsw @@ dirsouth @@ or dirse @@ or if
+  (11) dirsw @@ if "/" else "" then 38 padr
+       dirsouth @@ if "|" else "" then 3 padc strcat
+       dirse @@ if "\\" strcat then
+       stripend .tell
+  
+  (12) dirsw @@ dirsouth @@ or dirse @@ or if
+         dirsw @@ if "SW" else "" then 36 padr
+         dirsouth @@ if "S" else "" then 4 padr strcat
+         dirse @@ if "SE" 5 padr strcat then
+       else " " then
+       stripend .tell
+  
+  (13) dirsw @@ dirsouth @@ or dirse @@ or if
+         dirsw @@ 32 padr
+         dirsouth @@ if "|" else "" then 15 padc strcat
+         dirse @@ 32 padl strcat
+       else " " then
+       stripend .tell
+  
+  (14) dirsouth @@ if "\\|/" 41 padr else " " then
+       .tell
+else
+  dirdown @@ dirout @@ or dirwest @@ direast @@ or and if " " .tell then
+then ( sw/south/se )
+  
+dirdown @@ dirsouth @@ or dirout @@ or if
+  (15) dirdown @@ dirout @@ or if
+         dirdown @@ if "|" else "" then 39 padc " " strcat
+         dirout @@ if "|" 39 padc strcat then
+       else " " then
+       stripend .tell
+  
+  (16) dirdown @@ if "Do|wn  " else "" then 24 padr
+       dirsouth @@ 32 padc strcat
+       dirout @@ if "  Out" strcat then
+       stripend .tell
+then ( down/south/out )
+  
+dirdown @@ dirout @@ or if 
+  (17) dirdown @@ if "\\|/" else "" then 39 padc
+       dirout @@ if " " strcat
+         "\\|/" 39 padc strcat
+       then
+       stripend .tell
+  (18) " " .tell
+  (19) dirdown @@ 39 padc
+       " " strcat
+       dirout @@ if dirout @@ 39 padc strcat then
+       stripend .tell
+then ( down/out )
+  
+  (20) " " .tell
+;
+  
+: do-debug ( s -- )
+  compass
+  depth if
+    depth intostr "Bad stack depth " swap strcat "." strcat .tell
+  then
+;
+.
+c
+q
+@@register cmd-compass=cmd/compass
+@@register #me cmd-compass=tmp/prog1
+@@set $tmp/prog1=W3
+@@action compass;@@compass;co;com;comp;exits;@@exits;@@exit=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=/_/de:@@$cmd/compass
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+wh me=Installation of cmd-compass complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-compass...
+d5 5
+a9 3
+( cmd-compass: $Date$ $Revision$
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+d11 4
+a14 1
+  $Log$
+d249 2
+a250 2
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-compass complete.
+@
+

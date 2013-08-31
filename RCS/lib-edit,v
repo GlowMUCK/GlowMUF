@@ -1,0 +1,1645 @@
+head	1.21;
+access;
+symbols
+	GlowMUF1-1-1:1.20
+	GlowMUF102:1.8;
+locks; strict;
+comment	@# @;
+
+
+1.21
+date	2008.09.25.17.08.03;	author feaelin;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2006.07.24.13.36.07;	author feaelin;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2006.07.17.17.49.43;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2006.07.10.03.21.17;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2006.07.10.03.06.51;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.09.25.13.31.43;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.04.07.21.19.48;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.04.05.21.01.48;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2005.04.05.16.22.57;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2005.04.05.15.51.48;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2005.04.04.14.11.51;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.03.21.01.31.42;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.01.18.16.23.46;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2004.04.03.05.09.00;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.04.01.05.39.12;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2004.02.27.17.36.40;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2004.02.20.17.08.44;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.01.10.20.54.44;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.07.29.17.24.16;	author glow;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.29.16.47.50;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.29.01.30.37;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.21
+log
+@Bad indentation.
+@
+text
+@wh me=Beginning installation of lib-edit...
+@@prog lib-edit
+1 99999 d
+1 i
+( lib-edit: $Date: 2006/07/24 13:36:07 $ $Revision: 1.20 $                    )
+( Purpose: Provides editing routines for stack based string ranges            )
+( Author: Unknown                                                             )
+( Contributors: Andy, Feaelin                                                 )
+( Dependencies: lib-strings, lib-stackrng                                     )
+( --------------------------------------------------------------------------- )
+( Stack Based String Range Editing Routines                                   )
+( 'start', 'end', 'pos' are all relative to the start of the range that is    )
+( towards the bottom of the stack. A 1 means the first item of the range; the )
+( the item deepest in the stack. 'offset' is the number of stack items        )
+( between the top of the string range and the bottom parameter.               )
+(                                                                             )
+( EDIT-ansi_display: {range} --                                               )
+(   Replicates EDITdisplay except that it displays in color.                  )
+(                                                                             )
+( EDIT-ansi_list: {range} ... offset nums? start end -- {range} ...           )
+(   Replicates the functionality of EDITlist but displays in color.           )
+(                                                                             )
+( EDIT-center: {range} ... offset cols start end -- {range'} ...              )
+(   Center justify all the given lines within a string range.                 )
+(                                                                             )
+( EDIT-color: {range} ... offset cols start end newcol -- {range'} ...        )
+(   Prepends or replaces previously prepended color code on each line within  )
+(   a given string range.                                                     )
+(                                                                             )
+( EDIT-copy: {range} ... offset dest start end -- {range'} ...                )
+(   Copies text within a string range from one line to another, inserting it  )
+(   in the new location.                                                      )
+(                                                                             )
+( EDIT-display: {range} --                                                    )
+(   displays the range of strings on the stack to the user.                   )
+(                                                                             )
+( EDIT-fmt_rng: {range} ... offset cols start end -- {range'} ...             )
+(   Formats the given subrange in the string range to COLS columns. This is   )
+(   is similar to the UNIX format command, in that it splits long lines and   )
+(   joins short lines.  A line that contains only spaces is considered a      )
+(   paragraph delimiter, and is not joined.                                   )
+(                                                                             )
+( EDIT-format: {range} splitchars rmargin wrapmargin -- {range'}              )
+(   Takes a range and formats it similarly to the way that the UNIX fmt       )
+(   command would, splitting long lines, and joining short ones.              )
+(                                                                             )
+( EDIT-indent: {range} ... offset cols start end -- {range'} ...              )
+(   Indents all the given lines in a string range by COLS spaces.  if COLS is )
+(   a negative integer, it undents by that many spaces. It will never undent  )
+(   past left justification.                                                  )
+(                                                                             )
+( EDIT-join: {range} -- string                                                )
+(   Join a range of strings on the stack into one string.                     )
+(                                                                             )
+( EDIT-join_rng: {range} ... offset start end -- {range'} ...                 )
+(   Joins all the given lines in the string range together, and returns the   )
+(   string range that results.                                                )
+(                                                                             )
+( EDIT-left: {range} ... offset start end -- {range'} ...                     )
+(   Left justify all the given lines within a string range.                   )
+(                                                                             )
+( EDIT-list: {range} ... offset nums? start end -- {range} ...                )
+(   Lists the given set of lines within a string range, with an int telling   )
+(   it to prepending each line with a number and a colon. For example:        )
+(   "8: line eight."                                                          )
+(                                                                             )
+( EDIT-move: {range} ... offset dest start end -- {range'} ...                )
+(   Moves text within a string range from one line to another location,       )
+(   deleting the original.                                                    )
+(                                                                             )
+( EDIT-replace: {range} ... offset oldstr newstr start end -- {range'} ...    )
+(   Searches the range of strings for all occurences of a case sensitive      )
+(   substring, and replaces them with new text.                               )
+(                                                                             )
+( EDIT-right: {range} ... offset cols start end -- {range'} ...               )
+(   Right justify all the given lines within a string range.                  )
+(                                                                             )
+( EDIT-search: {range} ... offset string start -- {range} ... pos             )
+(   Searches a range of strings for the first occurence of a substring. This  )
+(   is case sensitive, and returns the line number of the first occurence     )
+(                                                                             )
+( EDIT-shuffle: {range} -- {range'}                                           )
+(   Take a range of items on the stack and randomize their order.             )
+(                                                                             )
+( EDIT-sort: {range} ascending? CaseSensitive? -- {range'}                    )
+(   Alphabetically sorts strings with integers telling it whether to sort in  )
+(   ascending or decending order, and if it should be case sensitive.         )
+(                                                                             )
+( EDIT-split: string splitchars rmargin wrapmargin -- {range}                 )
+(   splits a string up into several lines in a range. The criterion for where )
+(   to split each line are as follows: It splits at the last split character  )
+(   it can find between the rmargin and the wrapmargin. If it cannot find one,)
+(   then it splits at the rmargin.                                            )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-edit,v $
+  Revision 1.20  2006/07/24 13:36:07  feaelin
+  Missing 'then' in EDITdisplay
+
+  Revision 1.19  2006/07/17 17:49:43  feaelin
+  Better error checking for EDITdisplay
+
+  Revision 1.18  2006/07/10 03:21:17  feaelin
+  Fine tuned the error-checking EDIT-ansi_display.
+
+  Revision 1.17  2006/07/10 03:06:51  feaelin
+  Added error checking for EDIT-ansi_display
+
+  Revision 1.16  2005/09/25 13:31:43  feaelin
+  Documentation update.
+
+  Revision 1.15  2005/04/07 21:19:48  feaelin
+  Added Library Symbols
+ 
+  Revision 1.14  2005/04/05 21:01:48  feaelin
+  Corrected misspelled library calls
+ 
+  Revision 1.13  2005/04/05 16:22:57  feaelin
+  Fixed library calls to lib-strings and lib-stackrng
+ 
+  Revision 1.12  2005/04/05 15:51:48  feaelin
+  Added word aliases for library words to fit the new standard.
+ 
+  Revision 1.11  2005/04/04 14:11:51  feaelin
+  Documentation updated. Removed extraneous whitespace.
+  Removed unnecessary call to lib-glow-standard
+ 
+  Revision 1.10  2005/03/21 01:31:42  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.9  2005/01/18 16:23:46  feaelin
+  Corrected problem that would crash the editor when formatting lines with
+  ANSI codes in them.
+ 
+  Revision 1.8  2004/04/03 05:09:00  feaelin
+  Fixed .split and .format so that they preserve color on lines that they split
+ 
+  Revision 1.7  2004/04/01 05:39:12  feaelin
+  Added feature which allows the user to prepend each line in a range with
+  a color code. Updated documentation for recent changes.
+ 
+  Revision 1.6  2004/02/27 17:36:40  feaelin
+  Fixed format and right justify to be ansi_aware.
+ 
+  Revision 1.5  2004/02/20 17:08:44  feaelin
+  Added ansi versions of EDITdisplay and EDITlist,
+  EDITansi_display and EIDTansi_list respectively.
+ 
+  Revision 1.4  2000/01/10 20:54:44  feaelin
+  Minor documentation fixes.
+ 
+  Revision 1.3  1998/07/29 17:24:16  feaelin
+  Put back in a missing 'swap' in EDITjoin.
+ 
+  Revision 1.2  1998/07/29 16:47:50  feaelin
+  Cleaned up documentation.
+)
+( --------------------------------------------------------------------------- )
+( Previous change by Andy from FB's version is a $ifdef to check to see if    )
+( inserver prim 'sort' is available.  If you're installing this lib on a      )
+( server that does not have a 'sort' prim, uncomment the next line.           )
+( $def NOSORTPRIM )
+
+$include $lib/strings
+$include $lib/stackrng
+ 
+: EDITforeach ( {str_rng} ... offset 'function data start end -- {str_rng'} )
+              ( 'function must be addr of a [string data -- string] function)
+    5 pick 6 + pick dup 4 pick <
+    4 pick 4 pick > or if
+        pop pop pop pop pop pop exit
+    then
+    6 pick + 7 + 3 pick - dup 1 +
+    rotate 5 pick 7 pick execute
+    swap -1 * rotate
+    swap 1 + swap EDITforeach
+;
+ 
+: EDITcolor-func ( s newcol -- s )
+  swap dup ( preserve the string )
+  striplead "^" instr 1 = if
+    dup "^" instr strcut swap dup strlen 1 - 
+    dup 0 = if
+      pop pop ""
+    else
+      strcut pop
+    then
+    swap
+    dup "^" instr strcut 
+    swap pop rot swap strcat strcat
+  else
+    strcat
+  then
+;
+ 
+: EDITcolor ( {strrng} ... offset start end newcol -- {strrng'} ... )
+  'EDITcolor-func -4 rotate EDITforeach
+;
+ 
+: EDITsearch  ( {rng} ... offset string start -- {rng} pos )
+    dup 4 pick 5 + pick > if pop pop pop 0 exit then
+    3 pick 5 + dup pick + over - pick 3 pick
+    instr if rot rot pop pop exit then
+    1 + EDITsearch
+;
+ 
+: EDITreplace ( {rng} ... offset oldstr newstr start end -- {rng'} )
+    over 6 pick 7 + pick > 3 pick 3 pick > or if
+        pop pop pop pop pop exit
+    then
+    5 pick 7 + dup pick + 3 pick - dup 1 + rotate
+    5 pick 7 pick subst swap -1 * rotate
+    swap 1 + swap EDITreplace
+;
+ 
+: EDITmove    ( {rng} ... offset dest start end -- {rng'} )
+    3 pick over > if
+        rot over 4 pick - 1 + - rot rot
+    else
+        3 pick 3 pick >= if pop pop pop pop exit then
+    then
+    over - 1 + swap 4 pick 2 + rot rot SRNG-extractrng
+    ( {rng'} ... offset dest {subrng} )
+    dup 3 + rotate over 3 + rotate
+    ( {rng'} ... {rng2} offset dest )
+    SRNG-insertrng
+;
+ 
+: EDITcopy    ( {rng} ... offset dest start end -- {rng'} )
+    over - 1 + swap 4 pick 2 + rot rot SRNG-copyrng
+    dup 3 + rotate over 3 + rotate
+    SRNG-insertrng
+;
+  
+(
+  Shell Sort
+ 
+  This particular implementation is based on the version in
+  AHU's Data Structures and Algorithms, p.290
+ 
+  Takes  [ x1 x2 x3 ... xn n asc? insens? -- x1' x2' x3' ... xn' n ]
+ 
+  Requires tinyMUCK 2.2 or later
+ 
+  Stolen directly from Gazer's code, with a few mods.
+ 
+  Baseline version 1.0    04-Oct-90
+     Gazer   [dbriggs@@nrao.edu]
+)
+ 
+$ifdef NOSORTPRIM
+ 
+( These functions return a true flag when the data items )
+( should be swapped.  )
+ 
+: EDITsortCaseInsensAsc  stringcmp 0 > ;
+: EDITsortCaseSensAsc    strcmp 0 > ;
+: EDITsortCaseInsensDesc stringcmp 0 < ;
+: EDITsortCaseSensDesc   strcmp 0 < ;
+ 
+: EDITsortJLoop  ( <strings*n> n cmp inc i j -- <strings*n> n cmp inc i )
+    dup 0 <= if pop exit then     ( while j > 0 )
+    dup 5 + pick                  ( get A[j] )
+    over 5 pick + 6 + pick        ( get A[j+inc] )
+    6 pick execute if             ( do comparison )
+      dup 5 + pick                ( swap: get A[j] )
+      over 5 pick + 6 + pick      (   get A[j+inc] )
+      3 pick 6 + put              (   put into A[j] )
+      over 5 pick + 5 + put       (   put into A[j+inc] )
+      3 pick -                    ( j := j - inc )
+    else
+      pop exit then               ( break out if we don't swap )
+    EDITsortJLoop
+;
+ 
+: EDITsortILoop  ( <strings*n> n cmp inc i -- <strings*n> n cmp inc)
+    dup 5 pick > if pop exit then ( for i := inc + 1 to n )
+    over over swap - EDITsortJLoop    (   j := i - inc )
+    1 + EDITsortILoop                 (   while j > 0 )
+;
+ 
+: EDITsortIncLoop  ( <strings*n> n cmp inc --- <strings*n> n )
+    dup 0 <= if pop pop exit then ( while inc > 0)
+    dup 1 + EDITsortILoop             (   for i := inc + 1 to n )
+    2 / EDITsortIncLoop
+;
+$endif
+ 
+: EDITsort    ( {rng} ascending?  CaseSensitive? -- {rng'} )
+$ifdef NOSORTPRIM
+    if
+        if 'EDITsortCaseSensAsc
+        else 'EDITsortCaseSensDesc
+        then
+    else
+        if 'EDITsortCaseInsensAsc
+        else 'EDITsortCaseInsensDesc
+        then
+    then
+    over 2 / EDITsortIncLoop
+$else
+  2 * + sort
+$endif
+;
+ 
+: EDITjoin ( {rng} -- string )
+    dup 2 < if pop exit then
+    rot striptail rot striplead
+    over if
+      over dup strlen 1 - strcut swap pop
+      ".!?" swap instr if "  " else " " then
+      swap strcat
+    then
+    strcat swap
+    1 - EDITjoin
+;
+ 
+: check_ansi
+  ( {rng} excess splitchars rmargin wrapmargin string -- {rng} excess splitchars rmargin wrapmargin string )
+  dup "^" rinstr dup if
+    1 - over swap strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop toupper dup
+      "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
+      swap dup "" strcmp if
+        instr if 
+          "^" swap strcat "^" strcat 
+          6 pick strcat 5 put
+        else
+          pop
+        then
+      else
+        pop pop pop
+      then
+    else
+      pop pop
+    then
+  else
+    pop
+  then
+;
+ 
+: EDITsplit-splitloop (string splitchars last -- string string)
+    over not if
+        swap pop
+        dup not if pop dup ansi_strlen then
+        ansi_strcut exit
+    then
+    swap 1 ansi_strcut rot rot 4 pick dup rot rinstr 0 ansi_offset
+    over over < if swap then pop
+    EDITsplit-splitloop
+;
+ 
+: EDITsplit-split (string splitchars rmargin wrapmargin --
+                   excess splitchars rmargin wrapmargin string)
+    4 rotate 3 pick ansi_strcut swap 3 pick ansi_strcut
+    (splitchars rmargin wrapmargin excess str wrap)
+    6 pick 0 EDITsplit-splitloop
+    rot rot strcat rot rot swap strcat 
+    (splitchars rmargin wrapmargin str excess)
+    -5 rotate
+;
+ 
+: EDITsplit-loop ({rng} string splitchars rmargin wrapwargin -- {rng})
+    4 pick ansi_strlen 3 pick < if
+        pop pop pop
+        dup if swap 1 +
+        else pop
+        then exit
+    then
+    EDITsplit-split check_ansi -6 rotate 5 rotate 1 + -5 rotate
+    EDITsplit-loop
+;
+ 
+: EDITsplit   ( string splitchars rmargin wrapmargin -- {rng} )
+    0 -5 rotate EDITsplit-loop
+;
+ 
+: EDITformat-loop  ( {rng} splitchars rmargin wrapmargin {rng2} -- {rng'} )
+    dup 5 + pick not if
+        dup 3 + dup rotate pop dup rotate pop
+        dup rotate pop dup rotate pop pop exit
+    then
+    dup 4 + 1 1 SRNG-extractrng pop
+    ( {rng} splitchars rmargin wrapmargin {rng2} string )
+    dup STR-blank? not if
+        over 6 + dup pick swap dup pick swap 1 - pick
+        EDITsplit dup 2 + rotate + 1 - swap
+        ( {rng} splitchars rmargin wrapmargin {rng2} string )
+        over 6 + pick dup if
+          3 pick + 6 + pick
+          dup STR-blank?
+        else
+	  pop "" 1
+        then
+        ( {rng} splitchars rmargin wrapmargin {rng2} string nocat? )
+        if 
+          pop swap 1 +
+        else
+          2 EDITjoin over 6 + pick 3 pick + 5 + put
+        then
+        ( {rng} splitchars rmargin wrapmargin {rng2} )
+    else
+        pop "  " swap 1 +
+    then
+    EDITformat-loop
+;
+ 
+: EDITformat  ( {rng} splitchars rmargin wrapmargin -- {rng'} )
+    0 EDITformat-loop
+;
+ 
+: EDITfmt_rng ( {str_rng} ... offset cols start end -- {str_rng'} ... )
+    over - 1 + over swap
+    ({rng} ... off cols start start cnt )
+    5 pick 3 + swap rot SRNG-extractrng
+    ({rng'} ... off cols start {srng})
+    "- " over 4 + rotate dup 20 - EDITformat
+    ({rng'} ... off start {srng})
+    dup 3 + rotate over 3 + rotate
+    SRNG-insertrng
+;
+ 
+: EDITshuffle-innerloop ( {rng} shuffles loop -- {rng'} )
+    dup not if pop exit then
+    4 rotate 4 pick            ( {rng} shuffles loop item cnt )
+    random 256 / swap %        ( {rng} shuffles loop item rnd )
+    4 + -1 * rotate            ( {rng} shuffles loop )
+    1 - EDITshuffle-innerloop
+;
+ 
+: EDITshuffle-outerloop ( {rng} shuffles -- {rng'} )
+    dup not if pop exit then
+    over EDITshuffle-innerloop
+    1 - EDITshuffle-outerloop
+;
+ 
+: EDITshuffle ( {rng} -- {rng'} )
+    8 EDITshuffle-outerloop
+;
+ 
+: EDITlist    ( {rng} ... offset nums? start end -- {rng} ... )
+    over over >
+    3 pick 6 pick 7 + pick > or if
+        pop pop pop pop exit
+    then
+    4 pick 6 + dup pick + 3 pick - pick
+    4 pick if
+        "  " 4 pick intostr strcat
+        dup strlen 3 - strcut
+        swap pop ": " strcat
+        swap strcat
+    then
+    dup not if pop " " then
+    me @@ swap notify
+    swap 1 + swap EDITlist
+;
+ 
+: EDITansi_list    ( {rng} ... offset nums? start end -- {rng} ... )
+    over over >
+    3 pick 6 pick 7 + pick > or if
+        pop pop pop pop exit
+    then
+    4 pick 6 + dup pick + 3 pick - pick
+    4 pick if
+        "  " 4 pick intostr strcat
+        dup strlen 3 - strcut
+        swap pop ": " strcat
+        swap strcat
+    then
+    dup not if pop " " then
+    me @@ swap ansi_notify
+    swap 1 + swap EDITansi_list
+;
+ 
+: EDITdisplay ( {str_rng} -- )
+  dup int? not if
+    "lib-edit: EDIT-display called without an integer on top of the stack."
+    abort
+  then 
+  dup if
+    dup intostr "s" swap strcat " i" strcat checkargs
+    dup if
+        dup 1 + rotate me @@ swap notify
+        1 - EDITdisplay exit
+    then pop
+  then
+;
+ 
+: EDITansi_display ( {str_rng} -- )
+  dup int? not if
+    "lib-edit: EDIT-ansi_display called without an integer on top of the stack."
+    abort
+  then 
+  dup if
+    dup intostr "s" swap strcat " i" strcat checkargs
+    dup 1 + rotate me @@ swap ansi_notify
+    1 - EDITansi_display exit
+  then pop
+;
+ 
+ 
+: EDIT-ansi_display_r ( {str_rng} -- )
+  dup int? not if
+    "lib-edit: EDIT-ansi_display called without an integer on top of the stack."
+    abort
+  then 
+  dup if
+    dup intostr "s" swap strcat " i" strcat checkargs
+    dup 1 + rotate me @@ swap ansi_notify
+    1 - EDITansi_display exit
+  then pop
+; public EDIT-ansi_display_r
+ 
+: EDITleft-func (string null -- string )
+    pop striplead
+;
+ 
+: EDITleft ( {strrng} ... offset start end -- {strrng'} ... )
+    'EDITleft-func "" -4 rotate -4 rotate EDITforeach
+;
+ 
+: EDITcenter-func (string cols -- string )
+    swap strip dup ansi_strlen
+    dup 4 pick >= if
+        pop swap pop exit
+    then
+    rot swap - 2 /
+    "                                        "
+    dup strcat dup strcat
+    swap strcut pop swap strcat
+;
+ 
+: EDITcenter ( {strrng} ... offset cols start end -- {strrng'} ... )
+    'EDITcenter-func -4 rotate EDITforeach
+;
+ 
+: EDITright-func (string cols -- string )
+    swap strip dup ansi_strlen
+    dup 4 pick >= if
+        pop swap pop exit
+    then
+    rot swap -
+    "                                        "
+    dup strcat dup strcat
+    swap strcut pop swap strcat
+;
+ 
+: EDITright ( {strrng} ... offset cols start end -- {strrng'} ... )
+    'EDITright-func -4 rotate EDITforeach
+;
+ 
+: EDITindent-func (str cols -- str)
+    swap dup strlen swap striplead
+    dup strlen rot swap - rot +
+    dup 1 < if pop exit then
+    "                                        "
+    dup strcat dup strcat
+    swap strcut pop swap strcat
+;
+ 
+: EDITindent ( {str_rng} ... offset cols start end -- {str_rng'} ... )
+    'EDITindent-func -4 rotate EDITforeach
+;
+ 
+: EDITjoin_rng ( {str_rng} ... offset start end -- {str_rng'} ... )
+    over - 1 + over
+    ({rng} ... off start cnt start )
+    4 pick 2 + rot rot SRNG-extractrng
+    ({rng'} ... off start {srng})
+    EDITjoin 1 4 rotate 4 rotate
+    SRNG-insertrng
+;
+ 
+PUBLIC EDITsearch
+PUBLIC EDITreplace
+PUBLIC EDITmove
+PUBLIC EDITcopy
+PUBLIC EDITlist
+PUBLIC EDITansi_list
+PUBLIC EDITleft
+PUBLIC EDITcenter
+PUBLIC EDITright
+PUBLIC EDITindent
+PUBLIC EDITfmt_rng
+PUBLIC EDITjoin_rng
+  
+PUBLIC EDITshuffle
+PUBLIC EDITsort
+PUBLIC EDITjoin
+PUBLIC EDITdisplay
+PUBLIC EDITansi_display
+PUBLIC EDITsplit
+PUBLIC EDITformat
+PUBLIC EDITcolor
+.
+c
+q
+@@register lib-edit=lib/edit
+@@set $lib/edit=L
+@@set $lib/edit=W
+@@set $lib/edit=/_defs/EDITansi_display:"$lib/edit" match "EDITansi_display" call
+@@set $lib/edit=/_defs/EDITansi_list:"$lib/edit" match "EDITansi_list" call
+@@set $lib/edit=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
+@@set $lib/edit=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
+@@set $lib/edit=/_defs/EDITcolor:"$lib/edit" match "EDITcolor" call
+@@set $lib/edit=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
+@@set $lib/edit=/_defs/EDITfmt_rng:"$lib/edit" match "EDITfmt_rng" call
+@@set $lib/edit=/_defs/EDITformat:"$lib/edit" match "EDITformat" call
+@@set $lib/edit=/_defs/EDITindent:"$lib/edit" match "EDITindent" call
+@@set $lib/edit=/_defs/EDITjoin:"$lib/edit" match "EDITjoin" call
+@@set $lib/edit=/_defs/EDITjoin_rng:"$lib/edit" match "EDITjoin_rng" call
+@@set $lib/edit=/_defs/EDITleft:"$lib/edit" match "EDITleft" call
+@@set $lib/edit=/_defs/EDITlist:"$lib/edit" match "EDITlist" call
+@@set $lib/edit=/_defs/EDITmove:"$lib/edit" match "EDITmove" call
+@@set $lib/edit=/_defs/EDITreplace:"$lib/edit" match "EDITreplace" call
+@@set $lib/edit=/_defs/EDITright:"$lib/edit" match "EDITright" call
+@@set $lib/edit=/_defs/EDITsearch:"$lib/edit" match "EDITsearch" call
+@@set $lib/edit=/_defs/EDITshuffle:"$lib/edit" match "EDITshuffle" call
+@@set $lib/edit=/_defs/EDITsort:"$lib/edit" match "EDITsort" call
+@@set $lib/edit=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
+@@set $lib/edit=/_defs/EDIT-ansi_display:"$lib/edit" match "EDITansi_display" call
+@@set $lib/edit=/_defs/EDIT-ansi_list:"$lib/edit" match "EDITansi_list" call
+@@set $lib/edit=/_defs/EDIT-center:"$lib/edit" match "EDITcenter" call
+@@set $lib/edit=/_defs/EDIT-copy:"$lib/edit" match "EDITcopy" call
+@@set $lib/edit=/_defs/EDIT-color:"$lib/edit" match "EDITcolor" call
+@@set $lib/edit=/_defs/EDIT-display:"$lib/edit" match "EDITdisplay" call
+@@set $lib/edit=/_defs/EDIT-fmt_rng:"$lib/edit" match "EDITfmt_rng" call
+@@set $lib/edit=/_defs/EDIT-format:"$lib/edit" match "EDITformat" call
+@@set $lib/edit=/_defs/EDIT-indent:"$lib/edit" match "EDITindent" call
+@@set $lib/edit=/_defs/EDIT-join:"$lib/edit" match "EDITjoin" call
+@@set $lib/edit=/_defs/EDIT-join_rng:"$lib/edit" match "EDITjoin_rng" call
+@@set $lib/edit=/_defs/EDIT-left:"$lib/edit" match "EDITleft" call
+@@set $lib/edit=/_defs/EDIT-list:"$lib/edit" match "EDITlist" call
+@@set $lib/edit=/_defs/EDIT-move:"$lib/edit" match "EDITmove" call
+@@set $lib/edit=/_defs/EDIT-replace:"$lib/edit" match "EDITreplace" call
+@@set $lib/edit=/_defs/EDIT-right:"$lib/edit" match "EDITright" call
+@@set $lib/edit=/_defs/EDIT-search:"$lib/edit" match "EDITsearch" call
+@@set $lib/edit=/_defs/EDIT-shuffle:"$lib/edit" match "EDITshuffle" call
+@@set $lib/edit=/_defs/EDIT-sort:"$lib/edit" match "EDITsort" call
+@@set $lib/edit=/_defs/EDIT-split:"$lib/edit" match "EDITsplit" call
+@@set $lib/edit=/_docs:@@list $lib/edit=1-90
+@@set $lib/edit=/_/de:lib-edit: List lines 1-90 for documentation.
+@@set $lib/edit=/_lib-version:FM$Revision: 1.20 $
+@@set $lib/edit=/_lib-symbol:EDIT
+wh me=Installation of lib-edit complete.
+@
+
+
+1.20
+log
+@Missing 'then' in EDITdisplay
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2006/07/17 17:49:43 $ $Revision: 1.19 $                    )
+d97 3
+d391 4
+a394 3
+            3 pick + 6 + pick
+            dup STR-blank?
+        else pop "" 1
+d397 4
+a400 2
+        if pop swap 1 +
+        else 2 EDITjoin over 6 + pick 3 pick + 5 + put
+d644 1
+a644 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.19 $
+@
+
+
+1.19
+log
+@Better error checking for EDITdisplay
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2006/07/10 03:21:17 $ $Revision: 1.18 $                    )
+d97 3
+d481 1
+d496 13
+d638 1
+a638 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.18 $
+@
+
+
+1.18
+log
+@Fine tuned the error-checking EDIT-ansi_display.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2006/07/10 03:06:51 $ $Revision: 1.17 $                    )
+d97 3
+d468 6
+d621 1
+a621 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.17 $
+@
+
+
+1.17
+log
+@Added error checking for EDIT-ansi_display
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/09/25 13:31:43 $ $Revision: 1.16 $                    )
+d97 3
+a475 1
+  dup intostr "s" swap strcat checkargs
+d477 1
+d612 1
+a612 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.16 $
+@
+
+
+1.16
+log
+@Documentation update.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/04/07 21:19:48 $ $Revision: 1.15 $                    )
+d97 3
+d469 9
+a477 4
+    dup if
+        dup 1 + rotate me @@ swap ansi_notify
+        1 - EDITansi_display exit
+    then pop
+d609 1
+a609 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.15 $
+@
+
+
+1.15
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/04/05 21:01:48 $ $Revision: 1.14 $                    )
+d34 2
+a35 1
+( EDIT-display: {range} --                                                    ) (   displays the range of strings on the stack to the user.                   )
+d97 3
+d102 1
+a102 1
+
+d105 1
+a105 1
+
+d108 1
+a108 1
+
+d112 1
+a112 1
+
+d115 1
+a115 1
+
+d119 1
+a119 1
+
+d122 1
+a122 1
+
+d126 1
+a126 1
+
+d129 1
+a129 1
+
+d133 1
+a133 1
+
+d136 1
+a136 1
+
+d139 1
+a139 1
+
+d601 1
+a601 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Corrected misspelled library calls
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/04/05 16:22:57 $ $Revision: 1.13 $                    )
+d96 3
+d597 2
+a598 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Fixed library calls to lib-strings and lib-stackrng
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/04/05 15:51:48 $ $Revision: 1.12 $                    )
+d96 3
+d200 1
+a200 1
+    over - 1 + swap 4 pick 2 + rot rot SRNG-extract
+d204 1
+a204 1
+    SRNG-insert
+d208 1
+a208 1
+    over - 1 + swap 4 pick 2 + rot rot SRNG-copy
+d210 1
+a210 1
+    SRNG-insert
+d362 1
+a362 1
+    dup 4 + 1 1 SRNG-extract pop
+d391 1
+a391 1
+    5 pick 3 + swap rot SRNG-extract
+d396 1
+a396 1
+    SRNG-insert
+d519 1
+a519 1
+    4 pick 2 + rot rot SRNG-extract
+d522 1
+a522 1
+    SRNG-insert
+d594 1
+a594 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@Added word aliases for library words to fit the new standard.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/04/04 14:11:51 $ $Revision: 1.11 $                    )
+d9 1
+a9 1
+( Dependencies: lib-strings, lib-stackrng, lib-glow-standard                  )
+d34 1
+a34 2
+( EDIT-display: {range} --                                                    )
+(   displays the range of strings on the stack to the user.                   )
+d96 3
+a140 3
+$define SRNGextract sr-extractrng $enddef
+$define SRNGinsert  sr-insertrng  $enddef
+$define SRNGcopy    sr-copyrng    $enddef
+d197 1
+a197 1
+    over - 1 + swap 4 pick 2 + rot rot SRNGextract
+d201 1
+a201 1
+    SRNGinsert
+d205 1
+a205 1
+    over - 1 + swap 4 pick 2 + rot rot SRNGcopy
+d207 1
+a207 1
+    SRNGinsert
+d283 1
+a283 1
+    rot STRsts rot STRsls
+d359 1
+a359 1
+    dup 4 + 1 1 SRNGextract pop
+d361 1
+a361 1
+    dup STRblank? not if
+d367 1
+a367 1
+            dup STRblank?
+d388 1
+a388 1
+    5 pick 3 + swap rot SRNGextract
+d393 1
+a393 1
+    SRNGinsert
+d463 1
+a463 1
+    pop STRsls
+d471 1
+a471 1
+    swap STRstrip dup ansi_strlen
+d486 1
+a486 1
+    swap STRstrip dup ansi_strlen
+d501 1
+a501 1
+    swap dup strlen swap STRsls
+d516 1
+a516 1
+    4 pick 2 + rot rot SRNGextract
+d519 1
+a519 1
+    SRNGinsert
+d591 1
+a591 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@Documentation updated. Removed extraneous whitespace.
+Removed unnecessary call to lib-glow-standard
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2005/03/21 01:31:42 $ $Revision: 1.10 $                    )
+d17 1
+a17 1
+( EDITansi_display: {range} --                                                )
+d20 1
+a20 1
+( EDITansi_list: {range} ... offset nums? start end -- {range} ...            )
+d23 1
+a23 1
+( EDITcenter: {range} ... offset cols start end -- {range'} ...               )
+d26 1
+a26 1
+( EDITcolor: {range} ... offset cols start end newcol -- {range'} ...         )
+d30 1
+a30 1
+( EDITcopy: {range} ... offset dest start end -- {range'} ...                 )
+d34 1
+a34 1
+( EDITdisplay: {range} --                                                     )
+d37 1
+a37 1
+( EDITfmt_rng: {range} ... offset cols start end -- {range'} ...              )
+d43 1
+a43 1
+( EDITformat: {range} splitchars rmargin wrapmargin -- {range'}               )
+d47 1
+a47 1
+( EDITindent: {range} ... offset cols start end -- {range'} ...               )
+d52 1
+a52 1
+( EDITjoin: {range} -- string                                                 )
+d55 1
+a55 1
+( EDITjoin_rng: {range} ... offset start end -- {range'} ...                  )
+d59 1
+a59 1
+( EDITleft: {range} ... offset start end -- {range'} ...                      )
+d62 1
+a62 1
+( EDITlist: {range} ... offset nums? start end -- {range} ...                 )
+d67 1
+a67 1
+( EDITmove: {range} ... offset dest start end -- {range'} ...                 )
+d71 1
+a71 1
+( EDITreplace: {range} ... offset oldstr newstr start end -- {range'} ...     )
+d75 1
+a75 1
+( EDITright: {range} ... offset cols start end -- {range'} ...                )
+d78 1
+a78 1
+( EDITsearch: {range} ... offset string start -- {range} ... pos              )
+d82 1
+a82 1
+( EDITshuffle: {range} -- {range'}                                            )
+d85 1
+a85 1
+( EDITsort: {range} ascending? CaseSensitive? -- {range'}                     )
+d89 1
+a89 1
+( EDITsplit: string splitchars rmargin wrapmargin -- {range}                  )
+d97 4
+d570 20
+d592 1
+a592 1
+@@set $lib/edit=/_lib-version:FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-edit...
+d5 5
+a9 2
+( lib-edit: $Date: 2005/01/18 16:23:46 $ $Revision: 1.9 $
+  Originally from the FuzzBall MUF distribution                               )
+d11 83
+a93 91
+( Previous change by Andy from FB's version is a $ifdef to check to see if
+  inserver prim 'sort' is available.  If you're installing this lib on a server
+  that does not have a 'sort' prim, uncomment the next line.
+)
+
+( $def NOSORTPRIM )
+
+( Stack Based String Range Editing Routines
+  start, end, pos, and dest are all with reference to the start of the range
+  that is towards the bottom of the stack.  A 1 means the first item of the
+  range; the item deepest in the stack.  offset is the number of stack items
+  between the top of the string range and the bottom parameter.
+  
+    EDITsearch  [            {rng} ... offset string start -- {rng} ... pos ]
+      Searches a range of strings for the first occurence of a substring. This
+      is case sensitive, and returns the line number of the first occurence
+  
+    EDITreplace [ {rng} ... offset oldstr newstr start end -- {rng'} ...    ]
+      Searches the range of strings for all occurences of a case sensitive
+      substring, and replaces them with new text.
+  
+    EDITmove    [          {rng} ... offset dest start end -- {rng'} ...    ]
+      Moves text within a string range from one line to another location,
+      deleting the original.
+  
+    EDITcopy    [          {rng} ... offset dest start end -- {rng'} ...    ]
+      Copies text within a string range from one line to another, inserting it
+      in the new location.
+  
+    EDITlist    [         {rng} ... offset nums? start end -- {rng} ...     ]
+      Lists the given set of lines within a string range, with an int telling
+      it to prepending each line with a number and a colon.  Ie:
+      "8: line eight."
+
+    EDITansi_list[         {rng} ... offset nums? start end -- {rng} ...     ]
+      Replicates the functionality of EDITlist but displays in color.
+  
+    EDITleft    [               {rng} ... offset start end -- {rng'} ...    ]
+      Left justify all the given lines within a string range.
+  
+    EDITcenter  [          {rng} ... offset cols start end -- {rng'} ...    ]
+      Center justify all the given lines within a string range.
+  
+    EDITright   [          {rng} ... offset cols start end -- {rng'} ...    ]
+      Right justify all the given lines within a string range.
+
+    EDITcolor   [   {rng} ... offset cols start end newcol -- {rng'} ...    ]
+      Prepends or replaces previously prepended color code on each line
+      within a given string range.
+  
+    EDITindent  [          {rng} ... offset cols start end -- {rng'} ...    ]
+      Indents all the given lines in a string range by COLS spaces.  if COLS
+      is a negative integer, it undents by that many spaces.  It will never
+      undent past left justification.
+  
+    EDITfmt_rng [          {rng} ... offset cols start end -- {rng'} ...    ]
+      Formats the given subrange in the string range to COLS columns.  This
+      is similar to the UNIX fmt command, in that it splits long lines and
+      joins short lines.  A line that contains only spaces is considered a
+      paragraph delimiter, and is not joined.
+  
+    EDITjoin_rng [              {rng} ... offset start end -- {rng'} ...    ]
+      Joins all the given lines in the string range together, and returns the
+      string range that results.
+  
+    EDITshuffle [                                    {rng} -- {rng'}    ]
+      Take a range of items on the stack and randomize their order.
+  
+    EDITsort    [          {rng} ascending? CaseSensitive? -- {rng'}    ]
+      Alphabetically sorts strings with integers telling it whether to sort
+      in ascending or decending order, and if it should be case sensitive.
+  
+    EDITjoin    [                                    {rng} -- string    ]
+      Join a range of strings on the stack into one string.
+  
+    EDITdisplay [                                    {rng} --           ]
+      displays the range of strings on the stack to the user.
+
+    EDITansi_display[                                {rng} --           ]
+      Replicates EDITdisplay except that it displays in color.
+
+    EDITsplit   [     string splitchars rmargin wrapmargin -- {rng}     ]
+      splits a string up into several lines in a range.  The criterion
+      for where to split each line are as follows:  It splits at the last
+      split character it can find between the rmargin and the wrapmargin.
+      If it cannot find one, then it splits at the rmargin.
+  
+    EDITformat  [      {rng} splitchars rmargin wrapmargin -- {rng'}    ]
+      Takes a range and formats it similarly to the way that the UNIX fmt
+      command would, splitting long lines, and joining short ones.
+)
+d97 3
+d128 5
+a132 1
+$include $lib/glow
+d138 1
+a138 1
+  
+d150 1
+a150 1
+  
+d167 1
+a167 1
+  
+d171 1
+a171 1
+  
+d178 1
+a178 2
+  
+  
+d187 1
+a187 2
+  
+  
+d200 1
+a200 2
+  
+  
+a206 1
+  
+d209 1
+a209 1
+  
+d212 1
+a212 1
+  
+d214 1
+a214 1
+  
+d216 1
+a216 1
+  
+d218 1
+a218 1
+  
+d222 1
+a222 1
+
+d224 1
+a224 1
+  
+d227 1
+a227 1
+  
+d232 1
+a232 1
+  
+d247 1
+a247 1
+  
+d253 1
+a253 1
+  
+d260 1
+a260 1
+  
+d277 1
+a277 2
+  
+  
+d325 1
+a325 1
+  
+d335 1
+a335 1
+  
+d346 1
+a346 1
+  
+d350 1
+a350 2
+  
+  
+d377 1
+a377 1
+  
+d381 1
+a381 2
+  
+  
+d392 1
+a392 2
+  
+  
+d400 1
+a400 1
+  
+d406 1
+a406 1
+  
+d410 1
+a410 2
+  
+  
+d427 1
+a427 1
+
+d444 1
+a444 3
+    
+  
+  
+d451 1
+a451 2
+  
+  
+d458 1
+a458 2
+  
+  
+d462 1
+a462 1
+  
+d466 1
+a466 2
+  
+  
+d477 1
+a477 1
+  
+d481 1
+a481 2
+  
+  
+d492 1
+a492 1
+  
+d496 1
+a496 2
+  
+  
+d505 1
+a505 1
+  
+a508 1
+  
+d518 1
+d544 26
+a569 27
+@@register #me lib-edit=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W
+@@set $tmp/prog1=/_defs/EDITansi_display:"$lib/edit" match "EDITansi_display" call
+@@set $tmp/prog1=/_defs/EDITansi_list:"$lib/edit" match "EDITansi_list" call
+@@set $tmp/prog1=/_defs/EDITcenter:"$lib/edit" match "EDITcenter" call
+@@set $tmp/prog1=/_defs/EDITcopy:"$lib/edit" match "EDITcopy" call
+@@set $tmp/prog1=/_defs/EDITcolor:"$lib/edit" match "EDITcolor" call
+@@set $tmp/prog1=/_defs/EDITdisplay:"$lib/edit" match "EDITdisplay" call
+@@set $tmp/prog1=/_defs/EDITfmt_rng:"$lib/edit" match "EDITfmt_rng" call
+@@set $tmp/prog1=/_defs/EDITformat:"$lib/edit" match "EDITformat" call
+@@set $tmp/prog1=/_defs/EDITindent:"$lib/edit" match "EDITindent" call
+@@set $tmp/prog1=/_defs/EDITjoin:"$lib/edit" match "EDITjoin" call
+@@set $tmp/prog1=/_defs/EDITjoin_rng:"$lib/edit" match "EDITjoin_rng" call
+@@set $tmp/prog1=/_defs/EDITleft:"$lib/edit" match "EDITleft" call
+@@set $tmp/prog1=/_defs/EDITlist:"$lib/edit" match "EDITlist" call
+@@set $tmp/prog1=/_defs/EDITmove:"$lib/edit" match "EDITmove" call
+@@set $tmp/prog1=/_defs/EDITreplace:"$lib/edit" match "EDITreplace" call
+@@set $tmp/prog1=/_defs/EDITright:"$lib/edit" match "EDITright" call
+@@set $tmp/prog1=/_defs/EDITsearch:"$lib/edit" match "EDITsearch" call
+@@set $tmp/prog1=/_defs/EDITshuffle:"$lib/edit" match "EDITshuffle" call
+@@set $tmp/prog1=/_defs/EDITsort:"$lib/edit" match "EDITsort" call
+@@set $tmp/prog1=/_defs/EDITsplit:"$lib/edit" match "EDITsplit" call
+@@set $tmp/prog1=/_docs:@@list $lib/edit=9-82
+@@set $tmp/prog1=/_/de:lib-edit: List lines 9-82 for documentation.
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+"Installation of lib-edit complete.
+@
+
+
+1.9
+log
+@Corrected problem that would crash the editor when formatting lines with
+ANSI codes in them.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2004/04/03 05:09:00 $ $Revision: 1.8 $
+d102 4
+a127 4
+
+  Revision 1.1  1998/07/29 01:30:37  feaelin
+  Initial revision
+
+d583 1
+a583 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Fixed .split and .format so that they preserve color on lines that they split
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
+d102 3
+d300 7
+a306 3
+      swap instr if
+        "^" swap strcat "^" strcat 
+        6 pick strcat 5 put
+d308 1
+a308 1
+        pop
+d583 1
+a583 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Added feature which allows the user to prepend each line in a range with
+a color code. Updated documentation for recent changes.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2004/02/27 17:36:40 $ $Revision: 1.6 $
+d102 4
+d127 1
+d289 22
+a310 2
+  
+  
+d339 1
+a339 1
+    EDITsplit-split -6 rotate 5 rotate 1 + -5 rotate
+d576 1
+a576 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Fixed format and right justify to be ansi_aware.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2004/02/20 17:08:44 $ $Revision: 1.5 $
+d41 3
+d53 4
+d85 4
+a88 1
+  
+d102 3
+d112 1
+a112 1
+  Revision 1.3  1998/07/29 17:24:16  glow
+d115 1
+a115 1
+  Revision 1.2  1998/07/29 16:47:50  glow
+d118 1
+a118 1
+  Revision 1.1  1998/07/29 01:30:37  glow
+a128 1
+  
+d141 16
+d158 3
+d521 1
+d533 1
+d551 1
+a551 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Added ansi versions of EDITdisplay and EDITlist,
+EDITansi_display and EIDTansi_list respectively.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 2000/01/10 20:54:44 $ $Revision: 1.4 $
+d92 4
+d258 2
+a259 2
+        dup not if pop dup strlen then
+        strcut exit
+d261 1
+a261 1
+    swap 1 strcut rot rot 4 pick swap rinstr
+d268 1
+a268 1
+    4 rotate 3 pick strcut swap 3 pick strcut
+d277 1
+a277 1
+    4 pick strlen 3 pick < if
+d417 1
+a417 1
+    swap STRstrip dup strlen
+d433 1
+a433 1
+    swap STRstrip dup strlen
+d518 1
+a518 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Minor documentation fixes.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 1998/07/29 17:24:16 $ $Revision: 1.3 $
+d92 3
+d367 17
+d395 8
+d471 1
+d483 1
+d493 2
+d514 1
+a514 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Put back in a missing 'swap' in EDITjoin.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 1998/07/29 16:47:50 $ $Revision: 1.2 $
+d92 3
+a462 1
+@@set $tmp/prog1=/_/de:lib-edit: List lines 8-82 for documentation.
+d480 3
+a482 2
+@@set $tmp/prog1=/_docs:@@list $lib/edit=8-82
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Cleaned up documentation.
+@
+text
+@d5 1
+a5 1
+( lib-edit: $Date: 1998/07/29 01:30:37 $ $Revision: 1.1 $
+d92 3
+d236 1
+a236 1
+      over dup strlen 1 - strcut pop
+d479 1
+a479 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 3
+a7 3
+( lib-edit: $Date$ $Revision$
+  Originally from the FuzzBall MUF distribution                                 )
+( ----------------------------------------------------------------------------- )
+d10 2
+a11 1
+  that does not have a 'sort' prim, uncomment the next line.                    )
+d16 4
+a19 4
+start, end, pos, and dest are all with reference to the start of the range
+that is towards the bottom of the stack.  A 1 means the first item of the
+range; the item deepest in the stack.  offset is the number of stack items
+between the top of the string range and the bottom parameter.
+d89 1
+a89 1
+( ----------------------------------------------------------------------------- )
+d91 4
+a94 1
+  $Log$
+d96 1
+a96 1
+( ----------------------------------------------------------------------------- )
+d457 1
+a457 1
+@@set $tmp/prog1=/_/de:lib-edit: List lines 10-89 for documentation.
+d475 2
+a476 2
+@@set $tmp/prog1=/_docs:@@list $lib/edit=10-89
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+@

@@ -1,0 +1,2263 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2005.09.22.20.30.23;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.12.20.20.09.23;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.20.15.22.54;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Entry
+@
+
+
+1.3
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@"Beginning installation of cmd-cyberspace...
+@@prog cmd-cyberspace
+1 99999 d
+1 i
+( cmd-cyberspace: $Date: 2000/12/20 20:09:23 $ $Revision: 1.2 $
+  Author: Andy Nelson
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-cyberspace,v $
+  Revision 1.2  2000/12/20 20:09:23  feaelin
+  Conflicting definition of setpropstr. Corrected.
+
+  Revision 1.1  2000/12/20 15:22:54  feaelin
+  Initial revision
+
+)
+ 
+( CyberSpace v2.0 Copyright 1993 by Andy Nelson )
+ 
+( Link program to an action named c;cw;cs in your global )
+( room.  Then use either 'c command' with no quotes to   )
+( access the matrix.  'cs' allows a free speech system,  ) 
+( cw switches to a full blown reality switch if you own  )
+( the c; action. )
+
+$include $lib/glowstandard
+
+( *** Change for style *** )
+$def BUILDLEVEL 2
+$def prompt ( -- s ) "^YELLOW^<~> ^AQUA^"
+
+( $define macros )
+ 
+$define n ( s -- ) me @@ swap dn $enddef
+$define wn me @@ swap wdn $enddef
+$define RealName ( d -- s ) name $enddef
+ 
+( These must be functions )
+ 
+: Awake ( d -- i ) dup player? if awake? else pop 0 then ;
+: NotAwake ( d -- i ) Awake not ;
+ 
+( *Shortcuts and hacks* )
+
+: cpmatch ( s -- d )
+  dup "me" stringcmp if
+  dup "me" strcmp not if pop "me" match exit then
+    "*" swap strcat match
+  else match then
+;
+ 
+: dn ( d s -- )
+  prompt swap "^^" "^" subst strcat 
+  ansi_notify
+;
+ 
+: split ( s si -- s s )
+  over over instr
+  dup if
+    rot swap 1 - strcut
+    rot strlen strcut
+    swap pop
+  else pop pop "" then
+;
+ 
+: CleanCommas ( s -- s )
+  dup strlen 1 - 
+  over ", " rinstr 
+  = if
+    dup strlen 2 - 
+    strcut pop
+  then
+  dup strlen
+  over "," rinstr
+  = if
+    dup strlen 1 - 
+    strcut pop
+  then
+  dup " " 1 strncmp
+  not if
+    1 strcut
+    swap pop
+  then
+  dup ", " rinstr
+  dup if
+    over swap 1 - 
+    strcut pop 
+    ", " rinstr if
+      dup ", " rinstr 
+      strcut " and" 
+      swap strcat strcat
+    else
+      " and " ", " subst
+    then
+  else pop then
+;
+ 
+: yes? ( s -- i )
+  dup if
+    1 strcut pop 
+    "y" stringcmp not
+  else pop 0 then
+;
+ 
+: linotify ( d s -- )
+  dup "}{" instr
+  dup if
+    1 - strcut
+    2 strcut
+    swap pop
+    3 pick rot dn
+    ( "  " swap strcat )
+    linotify
+  else
+    pop dup if
+      dn
+    else pop then
+  then
+;
+ 
+: wraploop ( i d s -- d s )
+  dup strlen
+  4 pick > if
+    3 pick strcut
+    swap dup
+    " " rinstr
+    dup 0 > if
+      strcut
+      swap striptail
+      4 pick swap dn
+      striplead
+      swap strcat
+    else
+      pop 3 pick
+      swap dn
+    then 
+    wraploop 
+  else rot pop then
+;
+ 
+: cwrap ( d s -- )
+  over "_prefs/screenwidth" 
+  getpropstr dup if
+    atoi dup 
+    0 >= not if
+      pop 80
+    then
+  else pop 80 then
+  prompt ansi_strlen -
+  dup if
+    rot rot wraploop
+  else pop then
+  dn
+;
+ 
+: wdn ( d s -- )
+  dup "}{" instr if
+    linotify
+  else cwrap then
+;
+ 
+: gettext ( p -- s )
+  prog "_C/G/" rot strcat getpropstr
+;
+ 
+: gethelp ( p -- s )
+  prog "_C/G/help/" rot strcat getpropstr
+;
+ 
+: remsub ( s si -- s' )
+  over over instr dup if
+    rot swap
+    1 - strcut
+    ( si sb se )
+    3 pick strlen
+    strcut swap pop
+    strcat swap
+    remsub
+  else pop pop then
+;
+ 
+: NOJACK "That person is not jacked in." n ;
+ 
+: NOPERM "Permission denied." n ;
+ 
+: BANNED
+  "banned" gettext dup if
+    me @@ swap linotify
+  else pop then
+;
+ 
+: popn (xn...x i--)
+  dup not if pop exit then
+  swap pop 1 - popn
+;
+ 
+: pop1n (xn...x x2 i--x2)
+  dup not if pop exit then
+  rot pop 1 - pop1n
+;
+ 
+: pop2n (xn...x x2 x3 i--x2 x3)
+  dup not if pop exit then
+  4 rotate pop 1 - pop2n
+;
+ 
+: popxn ( xn ... x1n ... x1 i1n i -- x1n ... x1 )
+  dup not if pop pop exit then
+  over 2 + rotate pop 1 - popxn
+  ( i = numtopop, i1n = numtokeep )
+;
+ 
+: spacesplit ( s -- s1 ... sn n ) 
+  " " explode 1 - swap pop 
+;
+ 
+: split2 ( s -- s s )
+  striplead
+  dup " " instr if
+    dup "=" instr if
+      dup " " instr
+      over "=" instr
+      - 0 < if
+        " " split
+      else "=" split then
+    else " " split then
+  else "=" split then
+  striplead
+;
+ 
+: AddNum ( s i s i -- s i )
+  dup intostr rot strcat swap
+  ( s i s i )
+  dup 1 = not if
+    swap "s" strcat swap
+  then
+  0 = if pop "" then
+  ( s i s )
+  dup if ", " strcat then
+  rot swap strcat swap
+;
+ 
+: TellTime ( i -- s )
+  "" swap ( s i )
+  dup 2419200 / " moon" swap AddNum 2419200 %
+  dup   86400 /  " day" swap AddNum   86400 %
+  over "moon" instr not if
+    dup  3600 / " hour" swap AddNum    3600 %
+    over "day" instr not if
+      dup  60 /  " min" swap AddNum      60 %
+      over "hour" instr not if
+        dup " sec" swap AddNum
+      then
+    then
+  then
+  pop Cleancommas
+;
+ 
+( )
+( * Help Screens * )
+( )
+ 
+: Do-Logo
+  " " n
+  "Cyber-Eyes 2.0  <~>=<~>  Copyright 1993 PakRat" n
+  " " n
+;
+ 
+: Do-News ( l s -- )
+  pop pop
+  "news" gettext dup if
+  "The latest news" n 
+  "~~~~~~~~~~~~~~~" n 
+  me @@ swap linotify
+  else pop "No news now." n then
+;
+ 
+: listprops ( d sp -- s )
+  "/" strcat
+  over swap nextprop
+  "" begin over while
+    ( d sp s )
+    over dup "/" rinstr
+    strcut swap pop
+    ", " strcat strcat
+    3 pick rot nextprop
+    swap
+  repeat
+  swap pop swap pop
+;
+ 
+: Do-Index ( l s -- )
+  pop pop Do-Logo
+  prog "_C/G/help" listprops
+  dup if
+    Cleancommas
+    "Help Topics: " swap strcat
+    "." strcat wn " " n
+  else pop then
+  prog "_C/G/soc" listprops
+  dup if
+    Cleancommas
+    "Socials: " swap strcat
+    "." strcat wn " " n
+  else pop then
+  prog "_C/G/cmd" listprops
+  dup if
+    Cleancommas
+    "Shortcut Commands: " swap strcat
+    "." strcat wn " " n
+  else pop then
+  me @@ "_prefs/cyb/cmd" listprops
+  dup if
+    Cleancommas
+    "Personal Commands: " swap strcat
+    "." strcat wn " " n
+  else pop then
+  me @@ "_prefs/cyb/soc" listprops
+  dup if
+    Cleancommas
+    "Personal Socials: " swap strcat
+    "." strcat wn " " n
+  else pop then
+;
+ 
+: Do-Help ( l s -- )
+  swap pop Do-Logo
+  dup not if pop "help" then
+  dup "news" stringcmp not if
+    pop 0 "" Do-News exit
+  then
+  dup "index" stringcmp not if
+    pop 0 "" Do-Index exit
+  then
+  gethelp dup if
+    me @@ swap linotify
+  else
+    "Unknown topic. Type 'c help' for help."
+    n pop exit
+  then
+;
+ 
+( )
+ 
+: InList? ( s d -- i )
+  intostr " " swap strcat "," strcat instr
+;
+ 
+: AddToList ( s d -- s )
+  intostr " " swap strcat "," strcat strcat
+;
+ 
+: RemFromList ( s d -- s )
+  intostr " " swap strcat "," strcat over over
+  instr dup if rot swap 1 - strcut rot strlen
+  strcut swap pop strcat else pop pop then
+;
+ 
+: CountMembers ( s -- i )
+  spacesplit dup pop1n
+;
+ 
+: ListToNILoop ( 0 s -- dn ... d1 i )
+  dup not if pop exit then
+  dup "," instr strcut swap atoi dbref 
+  rot 1 + rot ListToNILoop
+;
+ 
+: atodn2loop ( sn ... s i n -- dn ... d i )
+  dup not if pop exit then
+  1 - over 2 + rotate atoi dbref 
+  rot rot atodn2loop
+;
+ 
+: ListToNI ( s -- dn ... d i )
+  spacesplit dup atodn2loop
+;
+ 
+: GetRoom ( i -- s )
+  intostr "_C/R/" swap strcat 
+  prog swap getpropstr
+;
+ 
+: SetRoom ( i s -- )
+  prog rot intostr "_C/R/" swap strcat 
+  rot setpropstr
+;
+ 
+: GetMatrix ( -- s )
+  prog "_C/G/M" getpropstr
+;
+ 
+: SetMatrix ( s -- )
+  prog "_C/G/M" rot setpropstr
+;
+ 
+: SetCrit ( -- i )
+  prog dup "_C/G/BUSY" 
+  getpropstr not if 
+    "_C/G/BUSY" "yes" setpropstr 1 
+  else 
+    pop "Cannot alter matrix list. -- Please tell " 
+    prog owner name strcat n 
+    "that you saw this. (Please retry the command.)" 
+    n 0 
+  then
+;
+ 
+: UnSetCrit ( -- )
+  prog "_C/G/BUSY" remove_prop
+;
+ 
+: CritAddToMatrix ( d -- )
+  SetCrit if 
+    GetMatrix swap AddToList 
+    SetMatrix UnSetCrit 
+  else pop then
+;
+ 
+: CritRemFromMatrix ( d -- )
+  SetCrit if 
+    GetMatrix swap RemFromList 
+    SetMatrix UnSetCrit 
+  else pop then
+;
+ 
+: GetAliasList ( -- s )
+  prog "_C/G/A" getpropstr
+;
+ 
+: SetAliasList ( s -- )
+  prog "_C/G/A" rot setpropstr
+;
+ 
+: SiftLoop ( sb se a i -- s i )
+  3 pick not if rot pop swap pop exit then 
+  rot dup "," instr 
+  strcut swap 
+  dup atoi dbref 
+  5 pick 
+  execute if
+    ( sb a i se sm )
+    5 rotate 
+    swap strcat swap 
+    ( a i sb se ) 
+    4 rotate 4 rotate 
+  else
+    pop -3 rotate 1 + 
+  then 
+  SiftLoop
+;
+ 
+: SiftList ( s a -- s i ) 
+  (a=<d--i> 1=keep,0=toss; i=#removed)
+  "" rot rot 0 SiftLoop
+;
+ 
+()
+ 
+: NotifyNI ( dn ... d i s -- )
+  swap dup not if pop pop exit then 
+  1 - swap rot over dn NotifyNI
+;
+ 
+: ExWrapNI ( dn ... d i s -- )
+  swap dup not if pop pop exit then 
+  1 - swap rot over wdn ExWrapNI
+;
+ 
+: ExSetup ( i d s -- dn ... d i s i )
+  dup not if pop pop pop 0 exit then 
+  rot GetRoom dup not if 
+    pop pop pop 0 exit 
+  then 
+  rot dup if 
+    RemFromList
+  else pop then 
+  ListToNI 
+  dup not if 
+    pop pop 0 exit 
+  then 
+  dup 2 + rotate 1
+;
+ 
+: ExceptRoom ( i d s -- )
+  ExSetup if NotifyNI then
+;
+ 
+: ExWrapRoom ( i d s -- )
+  ExSetup if ExWrapNI then
+;
+ 
+( )
+ 
+: SplitProps ( s -- sn ... s i )
+  ":" explode
+;
+ 
+: GetPropN ( s i -- s )
+  over not if pop exit then
+  swap ":" explode
+  dup 2 + rotate
+  dup 1 - pop2n - pop1n
+;
+ 
+: SplitNColon ( sb se n -- sb se )
+  dup not if pop exit then 
+  1 - rot rot 
+  dup ":" instr strcut 
+  rot rot strcat swap 
+  rot SplitNColon
+;
+ 
+: SetPropN ( sp s i -- sp )
+  1 - dup if 
+    rot "" swap rot SplitNColon 
+  else 
+    pop swap "" swap 
+  then
+  dup ":" instr dup if 
+    1 - strcut swap pop 
+  else pop pop "" then
+  rot swap strcat strcat
+;
+ 
+: GetPStats ( d -- s )
+  prog swap intostr 
+  "_C/P/" swap strcat getpropstr
+  dup "*:" 2 strncmp not if 
+    2 strcut swap pop
+    ":1:" swap strcat 
+    ":0:0:::::" strcat 
+  then
+;
+ 
+: GetRStats ( i -- s )
+  prog swap intostr "_C/RD/" 
+  swap strcat getpropstr
+;
+ 
+: SetPStats ( d s -- )
+  prog rot intostr "_C/P/" swap 
+  strcat rot setpropstr
+;
+ 
+: SetRStats ( i s -- )
+  prog rot intostr "_C/RD/" 
+  swap strcat rot setpropstr
+;
+ 
+( )
+ 
+: AliasToP ( s -- d )
+  tolower "," strcat 
+  ":" swap strcat 
+  GetAliasList 
+  dup rot instr 
+  dup not if 
+    pop pop #-1 exit 
+  then 
+  strcut pop 
+  dup " " rinstr 
+  strcut swap pop 
+  atoi dbref
+;
+ 
+: AddAlias ( d s -- )
+  swap intostr 
+  " " swap strcat 
+  ":" strcat 
+  swap strcat 
+  "," strcat 
+  SetCrit if
+    GetAliasList 
+    swap strcat 
+    SetAliasList 
+    UnSetCrit 
+  else pop then
+;
+ 
+: RemAlias ( d -- )
+  intostr 
+  " " swap strcat 
+  ":" strcat 
+  SetCrit if 
+    GetAliasList dup if 
+      dup rot instr 
+      dup not if 
+        pop pop 
+      else 
+        1 - strcut 
+        dup "," instr 
+        strcut swap
+        pop strcat 
+        SetAliasList 
+      then  
+    else pop pop then 
+    UnSetCrit 
+  else pop then
+;
+ 
+: FullMatch ( s -- d )
+  dup AliasToP 
+  dup if 
+    swap pop 
+  else 
+    pop cpmatch 
+  then
+;
+ 
+( )
+ 
+: PGet ( d i -- s )
+  swap GetPStats swap GetPropN
+;
+ 
+: PSet ( d s i -- )
+  3 pick GetPStats 
+  dup if 
+    rot ";" ":" subst 
+    rot SetPropN
+    SetPStats 
+  else 
+    "PSet:Can't set empty player." 
+    n pop pop pop pop 
+  then
+;
+ 
+: RGet ( ir ip -- s )
+  swap GetRStats swap GetPropN
+;
+ 
+: RSet ( ir s ip -- )
+  3 pick GetRStats 
+  dup if 
+    rot ";" ":" subst 
+    rot SetPropN
+    SetRStats 
+  else 
+    "RSet:Unknown system."
+    n pop pop pop pop 
+  then
+;
+ 
+: CName ( sp -- s )
+  dup ":" instr 
+  dup if 
+    1 - strcut pop 
+  else 
+    pop pop "*flatlined*" 
+  then
+;
+ 
+: CDesc ( sp -- s )
+  dup ":" rinstr 
+  strcut swap pop
+;
+ 
+()
+(Player=Alias:Level:I1:SystemIn:Home: )
+(       Page_Ok_List:Flags:S1:S2:Desc )
+(System=Name:Owner:LevelLock:         )
+(       Enter_Ok_Lock:Flags:S1:S2:Desc)
+()
+(-P-)
+ 
+: PName ( d -- s )
+  dup GetPStats CName 
+  dup if 
+    swap pop 
+  else 
+    pop name 
+  then
+;
+ 
+: PDesc ( d -- s )
+  GetPStats CDesc 
+  dup not if 
+    pop "A wilson." 
+  then
+;
+ 
+: PLevel ( d -- i )
+  dup 2 PGet dup if 
+    atoi 
+  else 
+    pop 1 
+  then 
+  prog owner 
+  rot dbcmp if
+   pop 10 
+  else 
+    dup 9 > if 
+      pop 1 
+    then 
+  then
+;
+ 
+: PLast ( d -- i ) 3 PGet atoi ;
+ 
+: PRoom ( d -- i ) 4 PGet atoi ;
+ 
+: PHome ( d -- i ) 5 PGet atoi ;
+ 
+: PLock ( d -- s ) 6 PGet ;
+ 
+: PFlags ( d -- s ) 7 PGet ;
+ 
+()
+ 
+: SetPName ( d s -- )
+  "_" " " subst 
+  "." "," subst 
+  over name 
+  over stringcmp not if 
+    pop dup 
+    "" 1 PSet 
+    RemAlias
+    exit 
+  then 
+  over RemAlias 
+  over over tolower 
+  AddAlias 1 PSet
+;
+ 
+: SetPDesc ( d s -- ) 10 PSet ;
+ 
+: SetPLevel ( d i -- ) 
+  dup 9 > if 
+    pop 1 
+  then 
+  intostr 2 PSet 
+;
+ 
+: SetPLast ( d -- ) 
+  systime intostr 3 PSet 
+;
+ 
+: SetPRoom ( d i -- ) intostr 4 PSet ;
+ 
+: SetPHome ( d i -- ) intostr 5 PSet ;
+ 
+: SetPLock ( d s -- ) 6 PSet ;
+ 
+: SetPFlags ( d s -- ) 7 PSet ;
+ 
+(-R-)
+ 
+: RName ( i -- s )
+  GetRStats CName 
+  dup not if 
+    pop "ACME" 
+  then
+;
+ 
+: RDesc ( i -- s )
+  GetRStats CDesc 
+  dup not if 
+    pop "A virtual void." 
+  then
+;
+ 
+: ROwner ( i -- d ) 2 RGet atoi dbref ;
+ 
+: RLevel ( i -- i ) 3 RGet atoi ;
+ 
+: RLock ( i -- s ) 4 RGet ;
+ 
+: RFlags ( i -- s ) 5 RGet ;
+ 
+()
+ 
+: SetRName ( i s -- ) 1 RSet ;
+ 
+: SetRDesc ( i s -- ) 8 RSet ;
+ 
+: SetROwner ( i d -- ) intostr 2 RSet ;
+ 
+: SetRLevel ( i i -- ) intostr 3 RSet ;
+ 
+: SetRLock ( i s -- ) 4 RSet ;
+ 
+: SetRFlags ( i s -- ) 5 RSet ;
+ 
+: RemakePStats ( d sn i i i i s s s s s -- )
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  swap intostr ":" strcat swap strcat
+  swap intostr ":" strcat swap strcat
+  swap intostr ":" strcat swap strcat
+  swap intostr ":" strcat swap strcat
+  ":" swap strcat strcat
+  prog rot intostr 
+  "_C/P/" swap strcat 
+  rot setpropstr
+;
+ 
+: RemakeRStats ( ri sn d i s s s s s -- )
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  ":" swap strcat strcat
+  swap intostr ":" strcat swap strcat
+  swap intostr ":" strcat swap strcat
+  ":" swap strcat strcat 
+  prog rot intostr 
+  "_C/RD/" swap strcat 
+  rot setpropstr
+;
+ 
+()
+ 
+: AddNewPlayer ( l -- )
+  me @@ ":" rot dup 9 > if
+    pop 1 
+  then 
+  intostr strcat
+  ":0:0:0:::::" strcat 
+  SetPStats
+  "vision" gethelp 
+  dup if 
+    me @@ swap linotify 
+  else pop then
+;
+ 
+: NITALoop ( dn ... d s i -- s )
+  dup not if pop exit then 
+  1 - rot PName 
+  ", " strcat 
+  rot swap strcat 
+  swap NITALoop
+;
+ 
+: NIToAliases ( dn ... d i -- s )
+  "" swap NITALoop
+;
+ 
+: InMatrix? ( d -- i )
+  GetMatrix swap InList?
+;
+ 
+: PassLock? ( s d -- i )
+  over if InList? else pop pop 1 then
+;
+ 
+: InRoom? ( i d -- i )
+  swap GetRoom swap InList?
+;
+ 
+: PPrivate? ( d -- i )
+  PFlags "P" instr
+;
+ 
+: PLook? ( d -- i )
+  PFlags "L" instr
+;
+ 
+: PrivateRoom? ( i -- i )
+  dup not if exit then 
+  RFlags "P" instr
+;
+ 
+: ControlRoom? ( i d -- i )
+  swap ROwner over dbcmp 
+  swap PLevel 9 >= or
+;
+ 
+: CanBeInRoom? ( i l d -- i )
+  3 pick not if 
+    pop pop pop 1 exit 
+  then (System 0) 
+  over 9 >= if 
+    pop pop pop 1 exit 
+  then (Wizard/Cowboy)
+  3 pick GetRStats not if 
+    pop pop pop 0 exit 
+  then (System doesn't exist)
+  3 pick ROwner over dbcmp if 
+    pop pop pop 1 exit 
+  then (d owns the system)
+  3 pick RLock over passlock? if 
+    pop pop pop 1 exit 
+  then (passes enter lock)
+  pop swap RLevel > if 
+    1 exit 
+  then  (passes level lock)
+  0
+;
+ 
+: MatrixMatch ( s -- d )
+  FullMatch dup InMatrix? not if 
+    pop #-1 
+  then
+;
+ 
+: RemFromRoom ( i d -- )
+  over GetRoom swap RemFromList SetRoom
+;
+ 
+: PutInRoom ( i d -- )
+  over GetRoom swap AddToList SetRoom
+;
+ 
+: MovePlayer ( i d -- )
+  over GetRStats not if 
+    "That system does not exist." 
+    n pop pop 0 exit 
+  then
+  over GetRoom CountMembers 400 > if 
+    "System is full." 
+    n pop pop 0 exit 
+  then
+  over GetRoom over InList? if 
+    "Already in system." 
+    n pop pop 0 exit 
+  then
+  dup PRoom over over swap RemFromRoom 
+  over PName " traverses out." strcat
+  #-1 swap ExceptRoom 
+  over over PName 
+  " traverses in." strcat 
+  #-1 swap ExceptRoom 
+  over over PutInRoom
+  swap SetPRoom 1
+;
+ 
+( )
+ 
+: Ghosts ( i -- )
+  dup not if 
+    pop "are no ghosts" 
+  else 
+    dup 1 = if 
+      pop "is 1 ghost" 
+    else 
+      intostr "are " 
+      swap strcat 
+      " ghosts" strcat 
+    then 
+  then
+  "There " swap strcat 
+  " in the matrix." strcat n
+;
+ 
+: MFLoop ( dn ... d l i -- )
+  dup not if pop pop exit then
+  1 - rot dup PName
+  "                " strcat
+  16 strcut pop
+  " | " strcat
+  over dup PPRivate? if
+    pop "" "Priv."
+  else
+    PRoom dup PrivateRoom? if
+      pop "" "Priv."
+    else
+      dup intostr
+      swap RName swap
+    then
+  then
+  "      " strcat
+  6 strcut pop
+  " | " strcat swap 
+  "                "
+  strcat 16 strcut pop
+  strcat strcat
+  4 pick 5 > if
+    " | " strcat 
+    over PLevel intostr 
+    dup strlen "     " 
+    5 rot - strcut
+    pop strcat strcat 
+    " | " strcat 
+    over RealName strcat
+  then n 
+  pop MFLoop
+;
+ 
+: MatrixFind ( l -- )
+  GetMatrix 'Awake SiftList
+  Ghosts dup not if
+    "You are the only one in the matrix." 
+    n pop pop exit
+  then
+  "_Name____________|_System_|_Sys_Name_________"
+  3 pick 5 > if
+    "|_Level_|_Name____" strcat
+  then n 
+  ListToNI 
+  dup 2 + rotate 
+  swap MFLoop
+;
+ 
+: Flatline ( d -- )
+  dup SetPLast 
+  dup PName " flatlined." strcat n
+  dup PRoom over 
+  RemFromRoom CritRemFromMatrix
+;
+ 
+: CleanFL ( d -- )
+  dup SetPLast 
+  dup PName " flatlined." strcat n
+  dup PRoom swap RemFromRoom
+;
+ 
+: FlatLineNI ( dn ... d i -- )
+  dup if 
+    1 - swap 
+    CleanFL FlatLineNI 
+  else pop then
+;
+ 
+: NextSleeper ( sb s -- se s i )
+  dup if 
+    dup "," instr strcut 
+    over atoi dbref 
+    awake if
+      rot rot strcat swap 
+      NextSleeper 
+    else swap atoi then 
+  else 0 then
+;
+ 
+: CleanLoop ( sb s -- )
+  NextSleeper 
+  dup if 
+    dbref CleanFL CleanLoop 
+  then
+;
+ 
+: FindFreeLoop ( i -- i )
+  dup GetRStats 
+  not if exit then 
+  1 + FindFreeLoop
+;
+ 
+: FindFreeRoom ( -- i ) 0 FindFreeLoop ;
+ 
+(-DO--COMMANDS-)
+ 
+: Do-Say ( l s -- )
+  swap pop
+  dup me @@ "_C/say" getpropstr
+  dup not if
+    pop "You say, \"%m\""
+  then
+  swap "%m" subst wn
+  me @@ "_C/osay" getpropstr
+  dup not if
+    pop "says, \"%m\""
+  then
+  me @@ PName " " strcat swap strcat
+  swap "%m" subst
+  me @@ PRoom
+  me @@ rot ExWrapRoom
+;
+ 
+: Do-Pose ( l s -- )
+  swap pop
+  me @@ "_C/pose" getpropstr
+  dup not if
+    pop "%m"
+  then
+  me @@ PName " " strcat
+  swap strcat swap "%m" subst
+  me @@ PRoom
+  #-1 rot ExWrapRoom
+;
+ 
+: Do-In ( l s -- )
+  pop
+  dup 1 < if
+    pop BANNED exit
+  then
+  me @@ InMatrix? not if
+    GetMatrix CountMembers 500 < if
+      GetMatrix me @@ AddToList SetMatrix
+      me @@ GetPStats not if
+        dup AddNewPlayer
+      then
+      me @@ PHome dup rot
+      me @@ CanBeInRoom? not if
+        pop 0
+      then
+      me @@ over SetPRoom
+      dup me @@ PutInRoom
+" " n
+"In the back of your mind a vision forms..." n
+" " n
+"        <~>. . . . . . . . . . . . .<~>. . . . . . ." n
+"       .       .       .      .      .       .       ." n
+"      . . . . . . . . <~> . . . . . . . . . . . . . . ." n
+"    .        .        .       .       .        .        ." n
+"   . . . . <~> . . . . . . . . . . . . . . . . <~> . . . ." n
+" .         .         .        .        .         .         ." n
+". . . . . . . . . . . . . . .<~>. . . . . . . . . . . . . .<~>" n
+" " n
+"A voice from afar whispers, \"Welcome Cowboy!\"" n
+      me @@ PName " jacks in." strcat
+      #-1 swap ExceptRoom
+      " " n
+      "motd" gettext dup if
+        "<~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~>" n
+        "In a flash, Matt Shaw appears before you..." n
+        " " n me @@ swap linotify
+        "<~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~> <~>" n
+      else pop then
+    else
+      pop 
+      "The matrix is full, ack!"
+      n
+    then
+  else
+    "You are already jacked into the matrix." 
+    pop n
+  then
+;
+ 
+: Do-Out ( l s -- )
+  pop pop
+  me @@ InMatrix? if
+    me @@ CritRemFromMatrix
+    me @@ PRoom dup
+    me @@ PName " jacks out." strcat
+    #-1 swap ExceptRoom
+    me @@ RemFromRoom
+    me @@ SetPLast
+    " " n
+    "A vision fades from your mind..." n
+    " " n
+  else
+    "You aren't jacked into the matrix." n
+  then
+;
+ 
+: Do-RoomWho ( l s -- )
+  pop pop
+  me @@ PRoom GetRoom
+  me @@ RemFromList
+  dup not if
+    "No one is here with you." 
+    n pop exit
+  then
+  'Awake SiftList
+  pop dup not if
+    "No one is here with you." 
+    n pop exit
+  then
+  ListToNI NIToAliases CleanCommas
+  dup " and " instr if
+    " are" else " is"
+  then strcat
+  " here with you." strcat
+  wn
+;
+ 
+: Do-Who ( l s -- )
+  GetMatrix 'Awake SiftList
+  Ghosts
+  ListToNI NIToAliases CleanCommas
+  dup " and " instr if
+    " are" else " is"
+  then strcat
+  " jacked into the matrix." strcat
+  wn Do-RoomWho
+;
+ 
+: Do-Look ( l s -- )
+  dup not if
+    pop
+    me @@ PRoom
+    dup GetRStats if
+      dup RName
+      over intostr
+      ")  Sysop: " strcat
+      " (System " swap strcat strcat
+      over ROwner PName strcat n
+      RDesc wn
+      "" Do-RoomWho
+    else
+      "You're in limbo!"
+      n pop pop
+    then
+    exit
+  then
+  swap pop
+  dup MatrixMatch
+  dup if
+    swap pop
+    me @@ PRoom GetRoom
+    over InList? if
+      dup PLook? if
+        dup me @@ PName
+        " looked at you." strcat dn
+      then
+      dup PName
+      "Alias: " swap strcat n
+      PDesc wn
+      exit
+    then
+  else
+    pop
+  then
+  " isn't here." strcat n
+;
+ 
+: Do-Find ( l s -- )
+  dup not if
+    pop MatrixFind exit
+  then
+  swap pop MatrixMatch
+  dup if
+    dup PName
+    over PPrivate? if
+      " is private." strcat
+    else
+      over PRoom
+      dup PrivateRoom? if
+        pop " is in a private site."
+      else
+        dup intostr swap RName
+        " is in " swap strcat
+        " (system " strcat swap strcat
+        ")." strcat
+      then
+      strcat
+    then n
+  else
+    NOJACK
+  then
+  pop
+;
+ 
+: Do-Traverse ( l i -- )
+  dup 3 pick
+  me @@ CanBeInRoom? if
+    dup PrivateRoom?
+    over me @@ ControlRoom?
+    not and if
+      "That system is private." 
+      n pop pop exit
+    then
+    me @@ MovePlayer if
+      "" Do-Look
+    else pop then
+  else
+    "You couldn't break the ice of that system."
+    n pop pop
+  then
+;
+ 
+: Do-Tele ( l s -- )
+  dup not if
+    "Usage: c tele Alias or SysNum" 
+    n pop pop exit
+  then
+  dup "0"
+  strcmp not if
+    pop 0
+    Do-Traverse exit
+  then
+  dup atoi dup if
+    swap pop
+    Do-Traverse exit
+  else
+    pop
+  then
+  dup MatrixMatch
+  dup if
+    swap pop
+    dup PFlags "P"
+    instr if
+      "That person is private."
+      n pop pop exit
+    then
+    PRoom Do-Traverse exit
+  else
+    pop pop pop
+    "Unknown system/not jacked in." n
+  then
+;
+ 
+: Go-Home ( l s -- )
+  pop
+  me @@ PHome
+  dup 3 pick
+  me @@ CanBeInRoom?
+  not if
+    pop 0
+  then
+  me @@ MovePlayer if
+    "There's no place like temperfoam..." n
+    "" Do-Look
+  else pop then
+;
+ 
+: Do-Alias ( l s -- )
+  split2 swap fullmatch
+  swap over over
+  and not if
+    "Usage: c set alias me=Alias"
+    n pop pop pop exit
+  then
+  rot 9 >= 3 pick
+  me @@ dbcmp
+  or not if
+    "You have no power over such a great cowboy!"
+    n pop pop pop exit
+  then
+  dup strlen
+  16 > if
+    "Name too long."
+    n pop pop exit
+  then
+  dup "*" strcmp not
+  over "me" strcmp not or
+  over "here" strcmp not or
+  if
+    "Invalid name." 
+    n pop pop exit
+  then
+  dup FullMatch
+  dup me @@ dbcmp
+  not and if
+    "Name already used." 
+    n pop pop exit
+  then
+  SetPName
+  "Alias set." n
+;
+ 
+: Do-RName ( l s -- )
+  swap pop
+  dup not if
+    "Usage: c set system name=System Name" 
+    n pop exit
+  then
+  me @@ PRoom
+  dup me @@ ControlRoom?
+  not if
+    pop pop NOPERM exit
+  then
+  swap SetRName
+  "System name set." n
+;
+ 
+: DSC ( i -- i )
+  "Description "
+  over if
+    "set." else "cleared."
+  then
+  strcat n
+;
+ 
+: Do-Desc ( l s -- )
+  swap pop DSC
+  me @@ swap SetPDesc
+;
+ 
+: Do-RDesc ( l s -- )
+  swap pop
+  me @@ PRoom
+  dup me @@ ControlRoom?
+  not if
+    NOPERM pop pop exit
+  then
+  swap DSC
+  SetRDesc
+;
+ 
+: Save-Text
+  prog "_C/G/"
+  4 pick strcat
+  rot setpropstr
+  " updated." strcat n
+;
+ 
+: Cmd-Write-Loop ( s -- s )
+  read
+  dup "." strcmp if
+    strcat "}{" strcat
+    Cmd-Write-Loop
+  else
+    pop "Editor exited." n
+  then
+;
+ 
+: Cmd-Write ( ? -- s )
+  "Cyberspace Editor" n
+  "~~~~~~~~~~~~~~~~~" n
+  "Enter text, use a '.' alone on a line to save." n
+  "" Cmd-Write-Loop
+  dup if
+    dup strlen
+    2 - strcut pop
+  then
+;
+ 
+: Do-Write ( l s -- )
+  dup "me" stringcmp
+  not if
+    pop
+    Cmd-Write
+    Do-Desc exit
+  then
+  dup "here" stringcmp
+  not if
+    pop pop
+    me @@ PRoom
+    dup me @@ ControlRoom?
+    not if
+      pop NOPERM
+    else
+      Cmd-Write
+      DSC SetRDesc
+    then
+    exit
+  then 
+  swap pop
+  me @@ prog owner dbcmp
+  over and if
+    Cmd-Write Save-Text exit
+  then
+  pop
+  "Usage: c write me or here" n
+;
+ 
+: Do-Level ( l s -- )
+  dup not 3 pick 2 < or if
+    pop
+    "Your skill level is "
+    swap intostr strcat
+    "." strcat n exit
+  then
+  split2
+  over over and not if
+    "Usage: c set level wilson=level"
+    n pop pop pop exit
+  then
+  atoi swap
+  FullMatch
+  dup not if
+    "That person does not exist."
+    n pop pop pop exit
+  then
+  dup GetPStats not if
+    "That person isn't settable." 
+    n pop pop pop exit
+  then
+  rot over PLevel
+  ( i d l pl )
+  over over <= if
+    "You have no power over such a great cowboy!"
+    n pop pop pop pop exit
+  then
+  not over 9 < and if
+    "You can't unban people."
+    n pop pop pop exit
+  then
+  ( i d l )
+  3 pick 1 <
+  over 9 <
+  and if
+    "You can't ban people." 
+    n pop pop pop exit
+  then
+  3 pick <= if
+    "You can't set someone that high." 
+    n pop pop exit
+  then
+  over over swap
+  SetPLevel
+  "Level set." n
+  swap 1 < if
+    "Wilson banned from matrix." n
+    dup PRoom
+    over RemFromRoom
+    CritRemFromMatrix
+  else
+    pop
+  then
+;
+ 
+: Do-MakeR ( l s -- )
+  dup not if
+    "Usage: c set system make=Name" 
+    n pop pop exit
+  then
+  FindFreeRoom
+  rot rot
+  ":" strcat
+  me @@ intostr strcat
+  ":" strcat
+  ( swap dup 9 > if pop 1 then )
+  swap pop
+  1 intostr strcat
+  ":::::" strcat
+  over swap
+  SetRStats
+  "System " swap intostr strcat
+  " created." strcat n
+;
+ 
+: Do-RLevl ( l s -- )
+  me @@ PRoom
+  dup me @@ ControlRoom?
+  not if
+    pop pop pop NOPERM exit
+  then
+  over
+  not if
+    RLevel intostr
+    "System level: " swap strcat
+    n pop pop exit
+  then
+  rot rot atoi
+  swap over >=
+  over 0 >
+  and not if
+    "You can only set levels from 1 to your level." 
+    n pop pop exit
+  then
+  SetRLevel
+  "System level set." n
+;
+ 
+: Do-Invite ( l s -- )
+  swap pop
+  me @@ PRoom
+  dup me @@ ControlRoom?
+  not if
+    pop pop NOPERM exit
+  then
+  over not if
+    swap pop
+    RLock
+    ListToNI NIToAliases
+    dup if
+      CleanCommas
+    else
+      pop "Everyone"
+    then
+    " can enter here."
+    strcat wn
+    exit
+  then
+  swap MatrixMatch
+  dup not if
+    pop pop NOJACK exit
+  then
+  over RLock
+  swap over
+  over InList?
+  not if
+    AddToList
+    SetRLock
+  else
+    pop pop pop
+  then
+  "Invited." n
+;
+ 
+: Do-Sweep ( l s -- )
+  swap pop
+  dup not if
+    "Usage: c sweep PlayerName" 
+    n pop exit
+  then
+  me @@ PRoom
+  dup me @@ ControlRoom?
+  not if
+    pop pop NOPERM exit
+  then
+  swap FullMatch
+  dup not if
+    "Unknown player." 
+    n pop pop exit
+  then
+  over RLock
+  over RemFromList
+  3 pick swap
+  SetRLock
+  over over
+  InRoom? if
+    0 over
+    MovePlayer pop
+  then
+  pop pop
+  "Swept." n
+;
+ 
+: Do-KillR ( l s -- )
+  swap pop
+  dup not if
+    "Usage: c set system kill=SysNum" 
+    n pop exit
+  then
+  atoi
+  dup not if
+    "You can't kill the root system!" 
+    n pop exit
+  then
+  dup GetRStats not if
+    "That system does not exist." 
+    n pop exit
+  then
+  dup me @@ ControlRoom?
+  not if
+    "You don't control that system." 
+    n pop exit
+  then
+  "Are you sure you want to kill system "
+  over intostr strcat
+  "?" strcat n
+  "Enter yes to confirm, anything else aborts:" n
+  read yes?
+  not if
+    "System spared." 
+    n pop exit
+  then
+  dup "" SetRStats
+  dup GetRoom
+  ListToNI FlatLineNI
+  "" SetRoom
+  "System killed." n
+;
+: Do-HouseClean ( l s -- )
+  pop pop
+  GetMatrix
+  "" swap CleanLoop
+  pop pop
+  SetMatrix
+  GetMatrix ListToNI
+  "An eerie chill runs up your spine."
+  NotifyNI
+;
+ 
+: Do-Spoof ( l s -- )
+  swap pop
+  GetMatrix ListToNI
+  dup 2 + rotate
+  NotifyNI
+;
+ 
+: Do-Chown ( l s -- )
+  swap pop
+  split2
+  over over and not if
+    "Usage: c set system owner SysNum=Player" 
+    n pop pop exit
+  then
+  MatrixMatch
+  dup not if
+    pop pop NOJACK exit
+  then
+  dup PLevel BUILDLEVEL < if
+    "That person can't have a system."
+    n pop pop exit
+  then
+  swap "here" over 
+  strcmp not if 
+    pop me @@ PRoom 
+  else atoi then 
+  me @@ over swap 
+  ControlRoom? not if 
+    pop pop NOPERM exit 
+  then 
+  swap SetROwner 
+  "System owner changed." n
+;
+ 
+: Do-Page ( l s -- ) 
+  swap pop
+  split2
+  swap MatrixMatch
+  dup not if
+    NOJACK pop pop exit
+  then
+  dup PFlags "H" instr if 
+    "That person does not wish to be paged." 
+    n pop pop exit 
+  then 
+  dup PLock 
+  me @@ Passlock? not if 
+    "That person does not wish to be paged." 
+    n pop pop exit 
+  then
+  over not if 
+    swap pop 
+    me @@ PName 
+    " pages you from system " 
+    strcat 
+    me @@ PRoom intostr strcat 
+    "." strcat dn 
+    "Paged." n exit 
+  then
+  swap dup 
+  ":" 1 strncmp not 
+  over ";" 1 strncmp not 
+  or if 
+    1 strcut swap pop
+    me @@ PName 
+    "In a pagepose, " swap strcat 
+    " " strcat swap strcat 
+  else
+    me @@ PName 
+    " pages, \"" strcat swap strcat 
+    "\"" strcat 
+  then dn
+  "Message sent." n 
+;
+ 
+: World-loop ( curworld numleft ) 
+  dup not if pop pop exit then 
+  1 - over 1 +
+  swap rot 
+  dup GetRStats if 
+    dup intostr "> " strcat 
+    over dup PrivateRoom? not if 
+      RName 30 strcut pop 
+    else 
+      pop "<Private Site>" 
+    then 
+    strcat " -- " strcat
+    over ROwner PName strcat n 
+  then 
+  pop World-loop 
+;
+ 
+: Do-World (l s--) 
+  swap pop
+  atoi 20 World-loop 
+  "--End of Systems--" n
+;
+ 
+: Flag-Make ( s -- "!" s ) 
+  1 strcut 
+  over "!" strcmp if 
+    pop "" swap 
+  else 
+    1 strcut pop 
+  then 
+  toupper 
+;
+ 
+: Add-Flag ( s s -- ) 
+  over over instr if 
+    "Flag already set." 
+    n pop exit 
+  then
+  strcat "Flag added." n 
+;
+ 
+: Rem-Flag ( s s -- ) 
+  over over instr not if 
+    "Flag already cleared." 
+    n pop exit
+  then 
+  dup instr 
+  1 - strcut 
+  1 strcut 
+  swap pop strcat 
+  "Flag removed." n 
+;
+ 
+: Do-Flag ( l s -- ) 
+  swap pop 
+  dup not if 
+    "Usage: c set flag=flag" 
+    n pop exit 
+  then
+  me @@ dup PFlags 
+  rot Flag-Make 
+  "HLP" over instr not if 
+    "Invalid flag." 
+    n pop pop pop pop exit 
+  then 
+  swap not if
+    Add-Flag 
+  else Rem-Flag then
+  SetPFlags 
+;
+ 
+: Do-RFlag ( l s -- ) 
+  swap pop 
+  dup not if 
+    "Usage: c set system flag=flag" 
+    n pop exit 
+  then 
+  me @@ PRoom 
+  dup me @@ controlroom? 
+  not if pop pop NOPERM exit then
+  dup RFlags 
+  rot Flag-Make 
+  "AP" over instr 
+  not if 
+    "Invalid system flag." 
+    n pop pop pop pop exit 
+  then 
+  swap not if 
+    Add-Flag 
+  else Rem-Flag then 
+  SetRFlags
+;
+ 
+: ATNLoop ( s s -- s ) 
+  dup not if pop exit then
+  dup " " instr 
+  dup if 
+    1 - strcut
+    1 strcut 
+    swap pop 
+  else 
+    pop "" 
+  then 
+  swap FullMatch 
+  dup if
+    intostr 
+    " " swap strcat 
+    "," strcat
+    rot swap strcat 
+    swap 
+  else pop then 
+  ATNLoop
+;
+ 
+: OneSpace ( s -- s )
+  dup "  " instr if 
+    " " "  " subst OneSpace 
+  then 
+;
+ 
+: AliasToNumList ( s -- s ) 
+  " " "," subst 
+  OneSpace 
+  striplead striptail 
+  "" swap ATNLoop 
+;
+ 
+: NumListToAlias ( s -- s ) 
+  ListToNI NIToAliases 
+;
+ 
+: Do-PLock ( l s--)
+  swap pop dup if AliasToNumList then 
+  me @@ over SetPLock
+  dup not if 
+    pop 
+    "Page lock cleared, anyone can page you now." 
+  else
+    NumListToAlias CleanCommas 
+    " can page you now." strcat 
+  then n
+;
+ 
+: Do-SHome ( l s -- ) 
+  pop pop 
+  me @@ PRoom 
+  dup me @@ ControlRoom? 
+  over RFlags "A" instr or 
+  over not or 
+  not if 
+    "This site can't be set as your home site."
+    n pop exit 
+  then 
+  me @@ swap SetPHome 
+  "This site is now your home site." n 
+;
+ 
+: Do-Set ( l s -- ) 
+  split2 swap
+  dup "system" strcmp not if 
+    pop
+    over BUILDLEVEL >= if
+    split2 swap ( system commands )
+    dup "name"  stringcmp not if pop Do-RName exit then
+    dup "desc"  stringcmp not if pop Do-RDesc exit then
+    dup "level" stringcmp not if pop Do-RLevl exit then
+    dup "flag"  stringcmp not if pop Do-RFlag exit then
+    dup "owner" stringcmp not if pop Do-Chown exit then
+    dup "make"  stringcmp not if pop Do-MakeR exit then
+    dup "kill"  stringcmp not if pop Do-KillR exit then
+    pop pop pop 
+    "Usage: set system propname=text or value" n
+    else 
+      pop pop "You must enhance your skills to control sites."
+    n then
+  else ( personal commands )
+    dup "alias" stringcmp not if pop Do-Alias exit then
+    dup "desc"  stringcmp not if pop Do-Desc  exit then
+    dup "level" stringcmp not if pop Do-Level exit then
+    dup "flag"  stringcmp not if pop Do-Flag  exit then
+    dup "home"  stringcmp not if pop Do-SHome exit then
+    dup "plock" stringcmp not if pop Do-PLock exit then
+    "Usage: set (system) propname=text or value"
+    n pop pop pop
+  then 
+;
+ 
+: Do-Stats ( l s -- ) 
+  dup not if 
+    "Usage: c stats sysnum, me, or here" 
+    n pop pop exit 
+  then 
+  dup "here" stringcmp not if 
+    pop me @@ PRoom intostr 
+  then
+  dup number? if 
+    atoi 
+    dup GetRStats not if 
+      "Invalid site number." 
+      n pop pop exit 
+    then
+    dup me @@ ControlRoom? not if 
+      pop pop NOPERM exit 
+    then
+    "System " over intostr strcat 
+    "'s stats:" strcat n
+    dup RName "Name: " swap strcat n 
+    dup RDesc wn
+    dup ROwner PName "Owner: " swap strcat n
+    dup RFlags "Flags: " swap strcat n
+    dup RLevel intostr "Level lock: " swap strcat n
+    dup RLock "Entry lock: " swap strcat wn
+    pop pop exit 
+  then
+  dup "me" stringcmp not rot 8 >= 
+  or if
+    FullMatch
+    dup not if
+      "Unknown player."
+      n pop exit
+    then
+    dup GetPStats not if
+      name " has never jacked into the matrix."
+      strcat n exit
+    then
+    dup name "'s personal stats:" strcat n
+    dup PName "Alias: " swap strcat n 
+    dup PDesc wn
+    dup RealName "Name: " swap strcat n
+    dup InMatrix? if 
+      "*YES*" 
+    else
+      dup PLast systime swap - 
+      TellTime " ago." strcat
+    then "Jacked In: " swap strcat n
+    dup PRoom intostr "In Site: " swap strcat n
+    dup PHome intostr "Home site: " swap strcat n
+    dup PFlags "Flags: " swap strcat n
+    dup PLevel intostr "Skill level: " swap strcat n
+    dup PLock "Page lock: " swap strcat wn
+  else 
+    "Usage: c stats sysnum, me, or here" n 
+  then 
+  pop
+;
+ 
+: scn ( s s -- s i ) 
+  over strlen strcut pop over stringcmp not
+;
+: fscn ( s s -- s i )
+  over stringcmp not
+;
+  
+: no-ats ( s -- s )
+  dup not if exit then
+  1 strcut swap
+  dup  "@@" strcmp not
+  over "." strcmp not or if
+    pop
+  else swap strcat then
+;
+  
+( -MAIN- )
+ 
+: MainCommandInterpreter ( s -- )
+  dup not if
+    "No command given."
+    n pop exit
+  then
+  me @@ PLevel swap ( l s -- )
+  dup "enter" strcmp
+  over "in" strcmp
+  and not if
+    me @@ InMatrix? if
+      pop pop
+    else
+      Do-In
+    then
+    exit
+  then
+  me @@ InMatrix?
+  not if
+    "You're not jacked in. ( Type 'c in' )"
+    n pop pop exit
+  then
+ 
+( Cookies: l s )
+ 
+  1 strcut swap ( l sa sC -- )
+ 
+  dup "'" strcmp not
+  over "\"" strcmp not
+  or if
+    pop Do-Say exit
+  then
+  dup ":" strcmp not
+  over ";"  strcmp not
+  or if
+    pop Do-Pose exit
+  then   
+  dup "?" strcmp
+  not if
+    pop Do-Help exit
+  then
+  swap strcat
+ 
+( Commands )
+ 
+  split2 swap ( l sa sc -- )
+  striplead striptail no-ats
+  dup "" strcmp not if
+    pop "nocmd"
+  then 
+  ( Alias expansion )
+  prog "_C/G/cmd/" 3 pick
+  strcat getpropstr
+  dup not if
+    pop prog "_C/G/soc/" 3 pick
+    strcat getpropstr
+  then
+  dup not if
+    pop me @@ "_prefs/cyb/cmd/" 3 pick
+    strcat getpropstr
+  then
+  dup not if
+    pop me @@ "_prefs/cyb/soc/" 3 pick
+    strcat getpropstr
+  then
+  dup if
+    swap pop
+    dup "%%" instr if
+      over if
+        swap "%%" subst
+      else
+        swap pop
+        "%%" remsub
+      then
+    else swap pop then
+    split2 swap
+  else pop then
+ 
+  "look"     scn if pop Do-Look  exit then
+  "who"      scn if pop Do-Who   exit then
+  "help"     scn if pop Do-Help  exit then
+  "say"      scn if pop Do-Say   exit then
+  "page"     scn if pop Do-Page  exit then
+  "pose"     scn if pop Do-Pose  exit then
+  "teleport" scn if pop Do-Tele  exit then
+  "worlds"   scn if pop Do-World exit then
+ 
+  "0"      scn if pop pop 0 Do-Traverse exit then
+  dup atoi dup 0 > if
+    swap pop swap pop
+    Do-Traverse exit
+  else pop then
+ 
+  "find"   scn if pop Do-Find   exit then
+  "home"   scn if pop Go-Home   exit then
+  "index"  scn if pop Do-Index  exit then
+  "invite" scn if pop Do-Invite exit then
+  "news"   scn if pop Do-News   exit then
+  "out"    scn if pop Do-Out    exit then
+  "set"    scn if pop Do-Set    exit then
+  "stats"  scn if pop Do-Stats  exit then
+  "sweep"  scn if pop Do-Sweep  exit then
+  "write"  scn if pop Do-Write  exit then
+ 
+  3 pick 9 >= if
+    "houseclean" fscn if pop Do-HouseClean exit then
+    "wall"       fscn if pop Do-Spoof      exit then
+  then
+ 
+  ( level args cmd ) pop pop pop
+ 
+  "Hmm?  Type 'c help' for cyberspace commands." n
+;
+$define CyProg MainCommandInterpreter $enddef
+$define firstname name dup ";" instr dup if strcut then pop $enddef
+ 
+: CySim ( s -- )
+  trig firstname
+  swap dup if
+    " " swap
+    strcat strcat
+  else pop then
+  CyProg
+;
+ 
+: CheckCS
+  dup not if Cysim exit then
+  dup "look" stringcmp not if pop "look" CyProg exit then
+  dup "who"  stringcmp not if pop "who"  CyProg exit then
+  dup "find" stringcmp not if pop "find" CyProg exit then
+  dup "help" stringcmp not if pop "help" CyProg exit then
+  dup 1 strcut pop ":;" swap instr if
+    1 strcut swap pop "pose " swap strcat
+    CyProg exit
+  then
+    "say " swap strcat CyProg 
+;
+ 
+: CheckCP ( s -- )
+  "page " swap strcat CyProg
+;
+ 
+: CyCom ( s -- )
+  command @@ "cs" stringcmp not if CheckCS exit then
+  command @@ "cp" stringcmp not if CheckCP exit then
+  command @@ "c"  stringcmp not if CyProg  exit then   
+ 
+  dup "disconnect" stringcmp not if pop "out" CyProg exit then
+  dup "depart"     stringcmp not if pop "out" CyProg exit then
+  dup "arrive"     stringcmp not if pop "in"  CyProg exit then
+  dup "connect"    stringcmp not if pop "in"  CyProg exit then
+  dup "in"         stringcmp not if pop "in"  CyProg exit then
+  dup "out"        stringcmp not if pop "out" CyProg exit then
+ 
+  CySim ( switched cmds )
+;
+ 
+: CyDebug ( s -- )
+  CyCom
+  depth if debug-line then
+;
+ 
+( Coding: PakRat )
+( I love you Katie! )
+.
+c
+q
+@@register cmd-cyberspace=cmd/cyberspace
+@@register #me cmd-cyberspace=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=S
+@@set $tmp/prog1=M2
+@@set $tmp/prog1=/_C/G/banned:  You try to visualize the matrix but the surgery you were put}{through in Chiba City keeps you from seeing the matrix clearly.}{A sharp pain runs up your spine.
+@@set $tmp/prog1=/_C/G/cmd/!haven:set flag !h
+@@set $tmp/prog1=/_C/G/cmd/!private:set plane flag !p
+@@set $tmp/prog1=/_C/G/cmd/flags:help flags
+@@set $tmp/prog1=/_C/G/cmd/haven:set flag h
+@@set $tmp/prog1=/_C/G/cmd/private:set plane flag p
+@@set $tmp/prog1=/_C/G/cmd/public:set plane flag !p
+@@set $tmp/prog1=/_C/G/cmd/setup:help setup
+@@set $tmp/prog1=/_C/G/cmd/unhaven:set flag !h
+@@set $tmp/prog1=/_C/G/cmd/where:find
+@@set $tmp/prog1=/_C/G/help/flags:Flags for people (c set flag=... or c set flag=!...)}{  H -- Haven, you can't be paged}{  L -- Look-Notify, tells when others look at you}{  P -- Private, you can't be teleported to or found}{  }{Flags for systems (c set system flag=... or c set system flag=!...)}{  A -- Abode, lets people set here as their home site}{  P -- Private, site can't be teleported to or found}{  
+@@set $tmp/prog1=/_C/G/help/help:Use a command by typing 'c ' then the command and arguments.}{  }{If you're in a CyberRoom (a special room with it's say, pose, etc.}{actions linked to CyberSpace) you don't need to use the 'c ' part.}{  }{  say  " ' -- Say something -- You can also use ' or " -- c 'Hi!}{  pose ; : -- Strike a pose -- You can also use ; or : -- c ;waves.}{  }{  look  -- See the system you're in or the people there}{  who   -- List who else is in your system}{  find  -- Find where someone or everyone is in the matrix}{  world -- List 20 site names starting with given number}{  tele  -- Go to another system}{  write -- me or here -- multi-line @@desc editor}{  stats -- Examine yourself or a site if you own it}{  home  -- Go to your home system (ALWAYS USE 'c home'!!!)}{  out   -- Jack out to the real world}{  index -- Get an index of help, socials, aliases, and commands}{  
+@@set $tmp/prog1=/_C/G/help/setup:Personal Settings: (use c set prop=...)}{  alias -- Change your handle -- c set alias=Mr.Wilson}{  desc  -- Fiddle with your CyberDesc -- c set desc=I'm a wilson!}{  level -- Set another user's level -- c set level Joe_Smith=3}{  flag  -- Set a flag on yourself, !flag removes it.}{  plock -- Set your page lock -- c set plock=me Artie PakRat}{  home  -- Sets current site as your home site}{  }{System Commands: (You must own the system)}{  invite -- Allow someone to enter (Adds to entry lock) -- c invite Joey}{  sweep  -- Kick someone out of your system (Removes from entry lock)}{  }{Use c set system prop=... for these: (current system for 1st 4)}{  name  -- Set the system name -- c set system name=Metro Holografix}{  desc  -- Describe the system -- c set system desc=A big empty void.}{  level -- Set the system's access level, from 1 to your skill level}{  flag  -- Set a system flag, !flag removes it.}{  make  -- Create a new system (@@dig) -- c set system make=New Name}{  kill 
+@@set $tmp/prog1=/_C/G/help/socials:Socials and Macro Aliases:}{  }{  Cyberspace allows special commands to be added that are shortcuts}{  for normal commands.  You can add personal commands with:}{  }{  @@set me=_prefs/c/cmd/somenewcommand:look smurfberry}{  }{  This would make it so everytime you type 'somenewcommand', you would}{  actually do a 'look smurfberry'.}{  }{  You can also add socials this way.}{  }{  @@set me=_prefs/c/soc/boogle:pose boogles %% and tickles them silly!}{  }{  You can use the %% to be whatever argument you use for the command.}{  So if you type 'boogle Papa_Smurf' you'd see something like}{  Brainy_Smurf boogles Papa_Smurf and tickles them silly!}{  }{  There is no real difference between socials and aliases, both can use %%.}{  
+@@set $tmp/prog1=/_C/G/help/vision:  }{A new vision...}{  }{  Your eyes take a moment to adjust to the new dual reality you see.}{In the back of your mind you can now clearly see the matrix of the}{other reality known as CyberSpace.  To access it use a 'c ' like you}{would a with a thinknet.  To say things use c 'Hi!  For help type c ?}{In CyberRooms on the muck, you don't need to type the 'c ' part.}{  }{  CyberSpace is like a muck within a muck, with its own systems (rooms),}{but no things.  You move around using thought alone, your physical body}{is gone.  To go to another system, just enter the system number, but your}{skills level must be high enough to enter.  Anyone can enter Count Zero,}{the public system.  Ask a cowboy how to make your own personal system.}{  
+@@set $tmp/prog1=/_C/G/soc/bonk:pose bonks %% on the nose.
+@@set $tmp/prog1=/_C/G/soc/hug:pose hugs %% tightly!
+@@set $tmp/prog1=/_C/G/soc/kiss:pose kisses %% on the cheek.
+@@set $tmp/prog1=/_C/G/soc/tickle:pose tickles %% mercilessly!
+@@set $tmp/prog1=/_version:2.0FM$Revision: 1.2 $
+@@action c;cs;cw=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/cyberspace
+"Installation of cmd-cyberspace complete.
+@
+
+
+1.2
+log
+@Conflicting definition of setpropstr. Corrected.
+@
+text
+@d5 1
+a5 1
+( cmd-cyberspace: $Date: 2000/12/20 15:22:54 $ $Revision: 1.1 $
+d10 3
+d2138 1
+a2138 1
+  depth if .debug-line then
+d2170 1
+a2170 1
+@@set $tmp/prog1=/_version:2.0FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-cyberspace: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d22 2
+a23 1
+ 
+a53 8
+: setpropstr ( d s s -- )
+  dup if 
+    1 addprop 
+  else 
+    pop remove_prop 
+  then
+;
+ 
+a1977 1
+ 
+d2167 1
+a2167 1
+@@set $tmp/prog1=/_version:2.0FM$Revision$
+@

@@ -1,0 +1,194 @@
+head	1.4;
+access;
+symbols
+	GlowMUF1-1-1:1.4
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2005.04.06.16.42.50;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.01.11.15.23.07;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.16.45.24;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@Documentation updates
+@
+text
+@wh me=Beginning installation of lib-mpi...
+@@program lib-mpi
+1 9999 d
+1 i
+( lib-MPI: $Date: 2005/03/21 01:31:43 $ $Revision: 1.3 $                      )
+( Purpose: Library of replacements for desc/succ/etc. prims that parse mpi    )
+( Author: Foxen                                                               )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Version Created 2/7/94 by Foxen                                             )
+(                                                                             )
+( A library to facilitate parsing of MPI within the standard @@desc, @@succ,    )
+( etc. messages. These are drop in replacements for the DESC, SUCC, etc.      )
+( primitives.                                                                 )
+(                                                                             )
+( PARSE_DESC: d -- s  Like DESC, but parses embedded MPI and returns result.  )
+( PARSE_IDESC d -- s  Like IDESC, but parses embedded MPI and returns result. )
+( PARSE_SUCC  d -- s  Like SUCC, but parses embedded MPI and returns result.  )
+( PARSE_OSUCC d -- s  Like OSUCC, but parses embedded MPI and returns result. )
+( PARSE_FAIL  d -- s  Like FAIL, but parses embedded MPI and returns result.  )
+( PARSE_OFAIL d -- s  Like OFAIL, but parses embedded MPI and returns result. )
+( PARSE_DROP  d -- s  Like DROP, but parses embedded MPI and returns result.  )
+( PARSE_ODROP d -- s  Like ODROP, but parses embedded MPI and returns result. )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-mpi,v $
+  Revision 1.3  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
+  Revision 1.2  2000/01/11 15:23:07  feaelin
+  Documentation corrections.
+)
+( --------------------------------------------------------------------------- )
+: parse_desc  "_/de"  "(@@Desc)"  1 parseprop ;
+: parse_idesc "_/ide" "(@@Idesc)" 1 parseprop ;
+: parse_succ  "_/sc"  "(@@Succ)"  1 parseprop ;
+: parse_osucc "_/osc" "(@@Osucc)" 0 parseprop ;
+: parse_fail  "_/fl"  "(@@Fail)"  1 parseprop ;
+: parse_ofail "_/ofl" "(@@Ofail)" 0 parseprop ;
+: parse_drop  "_/dr"  "(@@Drop)"  1 parseprop ;
+: parse_odrop "_/odr" "(@@Odrop)" 0 parseprop ;
+public parse_desc
+public parse_idesc
+public parse_succ
+public parse_osucc
+public parse_fail
+public parse_ofail
+public parse_drop
+public parse_odrop
+.
+c
+q
+@@register lib-mpi=lib/mpi
+@@set $lib/mpi=L
+@@set $lib/mpi=W
+@@set $lib/mpi=_defs/parse_desc:"$lib/mpi" match "parse_desc" call
+@@set $lib/mpi=_defs/parse_idesc:"$lib/mpi" match "parse_idesc" call
+@@set $lib/mpi=_defs/parse_succ:"$lib/mpi" match "parse_succ" call
+@@set $lib/mpi=_defs/parse_osucc:"$lib/mpi" match "parse_osucc" call
+@@set $lib/mpi=_defs/parse_fail:"$lib/mpi" match "parse_fail" call
+@@set $lib/mpi=_defs/parse_ofail:"$lib/mpi" match "parse_ofail" call
+@@set $lib/mpi=_defs/parse_drop:"$lib/mpi" match "parse_drop" call
+@@set $lib/mpi=_defs/parse_odrop:"$lib/mpi" match "parse_odrop" call
+@@set $lib/mpi=_defs/MPI-parse_desc:"$lib/mpi" match "parse_desc" call
+@@set $lib/mpi=_defs/MPI-parse_idesc:"$lib/mpi" match "parse_idesc" call
+@@set $lib/mpi=_defs/MPI-parse_succ:"$lib/mpi" match "parse_succ" call
+@@set $lib/mpi=_defs/MPI-parse_osucc:"$lib/mpi" match "parse_osucc" call
+@@set $lib/mpi=_defs/MPI-parse_fail:"$lib/mpi" match "parse_fail" call
+@@set $lib/mpi=_defs/MPI-parse_ofail:"$lib/mpi" match "parse_ofail" call
+@@set $lib/mpi=_defs/MPI-parse_drop:"$lib/mpi" match "parse_drop" call
+@@set $lib/mpi=_defs/MPI-parse_odrop:"$lib/mpi" match "parse_odrop" call
+@@set $lib/mpi=/_/de:lib-mpi:List lines 1-21 for documentation.
+@@set $lib/mpi=/_docs:@@list $lib/mpi=1-21
+@@set $lib/mpi=/_lib-version:1.0FM$Revision: 1.3 $
+wh me=Installation of lib-mpi complete.
+@
+
+
+1.3
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-mpi...
+d5 5
+a9 3
+( lib-MPI: $Date: 2000/01/11 15:23:07 $ $Revision: 1.2 $
+  Originally taken from the FuzzBall MUF Library
+  Author: Foxen                                                               )
+d11 14
+a24 14
+(  Version Created 2/7/94 by Foxen
+
+  A library to facilitate parsing of MPI within the standard @@desc, @@succ, etc
+  messages.  These are drop in replacements for the DESC, SUCC, etc primitives.
+
+  PARSE_DESC  [d -- s]  Like DESC, but parses embedded MPI and returns result.
+  PARSE_IDESC [d -- s]  Like IDESC, but parses embedded MPI and returns result.
+  PARSE_SUCC  [d -- s]  Like SUCC, but parses embedded MPI and returns result.
+  PARSE_OSUCC [d -- s]  Like OSUCC, but parses embedded MPI and returns result.
+  PARSE_FAIL  [d -- s]  Like FAIL, but parses embedded MPI and returns result.
+  PARSE_OFAIL [d -- s]  Like OFAIL, but parses embedded MPI and returns result.
+  PARSE_DROP  [d -- s]  Like DROP, but parses embedded MPI and returns result.
+  PARSE_ODROP [d -- s]  Like ODROP, but parses embedded MPI and returns result.
+)
+d28 3
+d65 12
+a76 4
+@@set $lib/mpi=/_/de:lib-mpi:List lines 1-15 for documentation.
+@@set $lib/mpi=_docs:@@list $lib/mpi=1-15
+@@set $lib/mpi=_lib-version:1.0FM$Revision: 1.2 $
+"Installation of lib-mpi complete.
+@
+
+
+1.2
+log
+@Documentation corrections.
+@
+text
+@d5 1
+a5 1
+( lib-MPI: $Date: 1998/08/23 16:45:24 $ $Revision: 1.1 $
+d26 2
+a27 3
+  Revision 1.1  1998/08/23 16:45:24  glow
+  Initial revision
+
+d62 1
+a62 1
+@@set $lib/mpi=_lib-version:1.0FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-MPI: $Date$ $Revision$
+d25 4
+a28 1
+  $Log$
+a52 1
+@@set $lib/mpi=/_/de:lib-mpi:List lines 1-14 for documentation.
+d61 3
+a63 2
+@@set $lib/mpi=_docs:@@list $lib/mpi=1-14
+@@set $lib/mpi=_lib-version:1.0FM$Revision$
+@

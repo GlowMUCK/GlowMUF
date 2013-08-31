@@ -1,0 +1,289 @@
+head	1.7;
+access;
+symbols
+	GlowMUF1-1-1:1.7
+	GlowMUF102:1.4;
+locks; strict;
+comment	@# @;
+
+
+1.7
+date	2005.04.07.12.58.44;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.01.11.15.55.44;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.01.11.15.53.22;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.02.13.16.37.36;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.17.18.20;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.7
+log
+@Updated documentation and installer script.
+@
+text
+@wh me=Beginning installation of lib-showlist...
+@@prog lib-showlist
+1 99999 d
+1 i
+( showlist:  d s -- : $Date: 2005/03/21 01:31:43 $ $Revision: 1.6 $           )
+( Purpose: Displays a property list to a player. Deprecated. Use EDIT-display )
+( Author: Unknown                                                             )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( showlist d s --         Lists list 's' on database item 'd' to player.      )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-showlist,v $
+  Revision 1.6  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
+  Revision 1.5  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to
+  database item/object/thing
+
+  Revision 1.4  2000/01/11 15:55:44  feaelin
+  I really hate parentheses.
+
+  Revision 1.3  2000/01/11 15:53:22  feaelin
+  Documentation update.
+
+  Revision 1.2  1999/02/13 16:37:36  feaelin
+  *sigh* Darn nested parentheses.
+) 
+$define n me @@ swap notify $enddef
+ 
+: getlines ( d s -- i )
+  ( checks prop# prop and prop/lines, returns biggest line # )
+  over over 
+  getpropstr atoi
+  3 rotate 3 rotate 
+  "/lines" strcat
+  getpropstr atoi
+  over over < if 
+    swap 
+  then
+  pop
+;
+ 
+: showlist ( d s -- )
+  ( illegal spam prevention )
+  "me" match me !
+  ( null list )
+  dup not if 
+    pop pop exit 
+  then
+  ( get rid of possible / at end ) 
+  dup strlen
+  1 - strcut
+  dup "/" strcmp if
+    strcat
+  else
+    pop
+  then
+  over over 
+  getlines
+  ( try a list#, then a _list if not found )
+  dup not if
+    pop "#" strcat
+    over over
+    getlines
+  then
+  dup not if
+    pop "_" 
+    swap strcat
+    over over 
+    getlines
+  then
+  dup not if 
+    pop pop pop exit 
+  then
+  
+  ( convert to propdir and show )
+  swap "/" strcat swap
+  rot rot 1
+  ( n d s/ 1 )
+  begin 
+    4 pick over >= 
+  while
+    3 pick 
+    3 pick 
+    3 pick 
+    intostr strcat
+    getpropstr
+    ( don't notify null lines, as we may be past the end of list )
+    dup if n else pop then
+    1 +
+  repeat
+  pop pop pop pop
+;
+
+public showlist
+.
+c
+q
+@@register lib-showlist=lib/showlist
+@@set $lib/showlist=L
+@@set $lib/showlist=W
+@@set $lib/showlist=/_defs/.listread:( d s -- ) "$lib/showlist" match call
+@@set $lib/showlist=/_defs/.showlist:( d s -- ) "$lib/showlist" match call
+@@set $lib/showlist=/_defs/listread:( d s -- ) "$lib/showlist" match call
+@@set $lib/showlist=/_defs/showlist:( d s -- ) "$lib/showlist" match call
+@@set $lib/showlist=/_/de:lib-showlist: @@list $lib/showlist=1-8 for documentation.
+@@set $lib/showlist=/_docs:@@list $lib/showlist=1-8
+@@set $lib/showlist=_lib-version:FM$Revision: 1.6 $
+wh me=Installation of lib-showlist complete.
+@
+
+
+1.6
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-showlist...
+d5 5
+a9 2
+( showlist:  d s -- : $Date: 2005/01/14 16:32:13 $ $Revision: 1.5 $           )
+( Originally from the glowmuf distribution                                    )
+d15 3
+d32 1
+a32 1
+
+d103 10
+a112 11
+@@register #me lib-showlist=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W
+@@set $tmp/prog1=/_defs/.listread:( d s -- ) "$lib/showlist" match call
+@@set $tmp/prog1=/_defs/.showlist:( d s -- ) "$lib/showlist" match call
+@@set $tmp/prog1=/_defs/listread:( d s -- ) "$lib/showlist" match call
+@@set $tmp/prog1=/_defs/showlist:( d s -- ) "$lib/showlist" match call
+@@set $tmp/prog1=/_/de:lib-showlist: @@list $lib/showlist=1-5 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/showlist=1-5 
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.5 $
+"Installation of lib-showlist complete.
+@
+
+
+1.5
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( showlist:  d s -- : $Date: 2000/01/11 15:55:44 $ $Revision: 1.4 $           )
+d12 4
+a23 4
+
+  Revision 1.1  1998/08/23 17:18:20  glow
+  Initial revision
+
+d106 1
+a106 1
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@I really hate parentheses.
+@
+text
+@d5 1
+a5 1
+( showlist:  d s -- : $Date: 2000/01/11 15:53:22 $ $Revision: 1.3 $           )
+d8 1
+a8 1
+( showlist d s --         Lists list 's' on object 'd' to player.             )
+d12 3
+d106 1
+a106 1
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Documentation update.
+@
+text
+@d5 1
+a5 1
+( showlist:  d s -- : $Date: 1999/02/13 16:37:36 $ $Revision: 1.2 $           )
+d8 1
+a8 1
+( showlist d s -- )       Lists list 's' on object 'd' to player.             )
+d12 3
+d103 1
+a103 1
+@@set $tmp/prog1=_lib-version:FM$Revision$
+@
+
+
+1.2
+log
+@*sigh* Darn nested parentheses.
+@
+text
+@d5 2
+a6 2
+( showlist:  d s -- : $Date: 1998/08/23 17:18:20 $ $Revision: 1.1 $        
+  Originally from the glowmuf distribution                                    )
+d8 1
+a8 2
+( Program to list a list stored within a propdir
+  s is the listname, often "_desc"                                            )
+d12 3
+d98 3
+a100 1
+@@set $tmp/prog1=_lib-version:FM1.0
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( showlist: ( d s -- ): $Date$ $Revision$        
+d12 4
+a15 1
+  $Log$
+@

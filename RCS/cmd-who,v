@@ -1,0 +1,532 @@
+head	1.7;
+access;
+symbols
+	GlowMUF1-1-1:1.7
+	GlowMUF102:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.7
+date	2005.04.19.15.14.47;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.19.03.03.36;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.04.18.23.57.58;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.18.23.48.01;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.03.26.03.06.03;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.02.23.15.34.40;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.22.02.39.00;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.7
+log
+@Added logic to deal with those odd moments when, in fact, no one is awake
+in a room. Corrected the problem where I put the wrong message in the
+wrong place.
+@
+text
+@wh me=Beginning installation of cmd-who...
+@@prog cmd-who
+1 99999 d
+1 i
+( cmd-who: $Date: 2005/04/19 03:03:36 $ $Revision: 1.6 $                     )
+( Purpose: A detailed 'who is in the game'                                    )
+( Author: Scotfox                                                             )
+( Contributors: Feaelin, Foxen?                                               )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Shows a list of everybody connected.  By Scotfox.                           )
+( Also uses Foxen's cmd-who                                                   )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-who,v $
+  Revision 1.6  2005/04/19 03:03:36  feaelin
+  Corrected another grammar issue is/are!
+
+  Revision 1.5  2005/04/18 23:57:58  feaelin
+  Minor grammar correction.
+
+  Revision 1.4  2005/04/18 23:48:01  feaelin
+  Revised colors. They're now in spectrum order.
+  Removed cmd-who's dependency on lib-glow-standard
+  Updated documentation.
+  Updated installer
+
+  Revision 1.3  2004/03/26 03:06:03  feaelin
+  Support for the who_hides_dark sysparm added.
+)
+( --------------------------------------------------------------------------- )
+
+lvar roomstuff
+: get-connected-list  ( concount -- namelist total howmanyleft )
+    begin dup 0 > while
+        dup condbref dup 
+        dup "/@@/dark" getpropstr tolower "y" 1 strncmp not
+        "who_hides_dark" sysparm tolower "y" 1 strncmp not
+        and swap location me @@ location dbcmp or if
+          pop swap 1 - swap
+        else
+          name    
+          rot rot              ( namelist newname total howmanyleft )
+        then
+        1 - 
+    repeat pop
+    1 sort
+;
+ 
+: glue-together-list  ( namelist gluedstring howmany  -- s)
+    begin dup 0 > while
+        rot                  ( namelist gluedstring howmany name )
+        over 1 = if  "and " swap strcat
+            else ", " strcat then
+        rot                  ( namelist howmany name gluedstring )
+        swap strcat swap     ( namelist gluedstring howmany )
+        1 - repeat
+    pop
+;
+ 
+: show-connected
+    concount dup 1 = if
+        me @@ "^PURPLE^You are the only one connected." ansi_notify exit then
+    dup get-connected-list
+    1 sort
+    dup 0 <= if
+        pop
+        "^PURPLE^Everyone is in this room." me @@ swap ansi_notify exit then
+    dup 1 = if
+        pop
+        "~" "^" subst
+        " is the only player connected who is not in this room." strcat
+        "^PURPLE^" swap strcat
+        me @@ swap ansi_notify exit then
+    "" swap glue-together-list
+    me @@ swap
+    "~" "^" subst
+    " are awake elsewhere in the game." strcat "^PURPLE^" swap strcat ansi_notify
+;
+ 
+$define MIN_IDLE 3 (minutes) $enddef
+ 
+: do_and
+    dup ", " rinstr
+    dup if
+        1 + strcut "and " swap
+        strcat strcat
+    else pop
+    then
+;
+ 
+: idletime (d -- i)
+    descriptors
+    begin dup 1 > while rot pop 1 - repeat
+    not if -1 exit then
+    descrcon conidle
+;
+ 
+: who-loop (pupstr idlestr asleepstr awakestr dbref -- pupstr idlestr asleepstr awakestr)
+    dup #-1 dbcmp if
+        pop do_and
+        4 rotate do_and
+        4 rotate do_and
+        4 rotate do_and
+        4 rotate exit
+    then
+  
+    dup player? if
+        dup awake? if
+            dup idletime dup MIN_IDLE 60 * < if
+                pop over if
+                    swap ", " strcat swap
+                then
+                dup name rot swap strcat swap
+            else
+                60 / intostr "[" swap strcat "m]" strcat
+                5 pick if
+                    5 rotate ", " strcat -5 rotate
+                then
+                over name swap strcat 5 rotate swap strcat -4 rotate
+            then
+        else
+            dup "DARK" flag? not if
+                3 pick if
+                    rot ", " strcat rot rot
+                then
+                dup name 4 rotate swap strcat rot rot
+            then
+        then
+    else
+        dup "_listen" propdir?
+        over "_listen" getpropstr or
+        over "_puppet?" getpropstr tolower "y" 1 strncmp not or
+        if
+            5 pick if
+                5 rotate ", " strcat -5 rotate
+            then
+            dup name 6 rotate swap strcat -5 rotate
+        then
+    then
+    next who-loop
+;
+ 
+: cmd-who
+  "me" match me !
+  "" "" "" "" me @@ location contents who-loop
+  4 rotate dup if
+    dup ", and " instr not if
+      "^YELLOW^The only puppet here is " swap strcat
+    else
+      "~" "^" subst
+      "^YELLOW^The puppets here are " swap strcat
+      "." strcat
+    then
+    me @@ swap ansi_notify
+  else
+    pop
+  then
+  dup "" strcmp not if
+    me @@ "^GREEN^No one is awake in this room." ansi_notify
+    pop
+  else
+    dup me @@ name strcmp not if
+      pop "^GREEN^You are the only one awake in this room."
+    else
+      "~" "^" subst
+      dup ", and " instr not if
+        "^GREEN^Only " swap strcat " is awake in this room." strcat
+      else
+        " are awake in this room." strcat "^GREEN^" swap strcat
+      then
+    then
+    me @@ swap ansi_notify
+  then
+  swap dup if
+    dup ", and " instr not if
+      "~" "^" subst
+      "^CYAN^Only " swap strcat
+      " is idle here." strcat
+    else
+      " are idle in this room." strcat "^CYAN^" swap strcat
+    then
+    me @@ swap ansi_notify
+  else
+    pop
+  then
+  me @@ location "DARK" flag? not if
+    dup not if
+      pop "^BLUE^There are no sleepers here."
+    else
+      dup ", and " instr not if
+        "^BLUE^Only " swap strcat
+        " is asleep here." strcat
+      else
+        "~" "^" subst
+        "^BLUE^The sleepers here are " swap strcat
+        "." strcat
+      then
+    then
+    me @@ swap ansi_notify
+  else
+    pop
+  then
+;
+ 
+: main
+  pop
+  cmd-who
+  show-connected
+;
+.
+c
+q
+@@register cmd-who=cmd/who
+@@set $cmd/who=/_/de:Displays who is online and in this room.
+@@set $cmd/who=L
+@@set $cmd/who=W3
+@@set $cmd/who=_version:FM$Revision: 1.6 $
+@@action who=here=tmp/exit1
+@@link $tmp/exit1=$cmd/who
+@@set $tmp/exit1=/_/de:@@$cmd/who
+@@set $tmp/exit1=M3
+wh me=Installation of cmd-who complete.
+@
+
+
+1.6
+log
+@Corrected another grammar issue is/are!
+@
+text
+@d5 1
+a5 1
+( cmd-who: $Date: 2005/04/18 23:57:58 $ $Revision: 1.5 $                     )
+d16 3
+d159 3
+a161 2
+  dup me @@ name strcmp not if
+    pop "^GREEN^You are the only one awake in this room."
+d163 2
+a164 3
+    "~" "^" subst
+    dup ", and " instr not if
+      "^GREEN^Only " swap strcat " is idle here." strcat
+d166 6
+a171 1
+      " are awake in this room." strcat "^GREEN^" swap strcat
+d173 1
+a174 1
+  me @@ swap ansi_notify
+d218 1
+a218 1
+@@set $cmd/who=_version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Minor grammar correction.
+@
+text
+@d5 1
+a5 1
+( cmd-who: $Date: 2005/04/18 23:48:01 $ $Revision: 1.4 $                     )
+d16 3
+d160 5
+a164 1
+    " are awake in this room." strcat "^GREEN^" swap strcat 
+d210 1
+a210 1
+@@set $cmd/who=_version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Revised colors. They're now in spectrum order.
+Removed cmd-who's dependency on lib-glow-standard
+Updated documentation.
+Updated installer
+@
+text
+@d5 1
+a5 1
+( cmd-who: $Date: 2004/03/26 03:06:03 $ $Revision: 1.3 $                     )
+d16 6
+d66 1
+a66 1
+        " is the only player connected who's not in this room." strcat
+d203 1
+a203 1
+@@set $cmd/who=_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Support for the who_hides_dark sysparm added.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-who...
+d5 2
+a6 1
+( cmd-who: $Date: 2004/02/23 15:34:40 $ $Revision: 1.2 $                                                  )
+d8 2
+d15 3
+a17 1
+  $Log$
+a20 3
+$include $lib/glowstandard
+$define notify .wrapnotify $enddef
+ 
+d25 3
+a27 2
+        dup "/@@/dark" getpropstr .yes? "who_hides_dark" sysparm .yes? and
+        swap location me @@ location dbcmp or if
+d37 1
+d48 1
+d51 1
+a51 1
+        me @@ "^GREEN^You are the only one connected." notify exit then
+d53 1
+d56 1
+a56 1
+        "^GREEN^Everyone is in this room." me @@ swap notify exit then
+d61 2
+a62 2
+        "^GREEN^" swap strcat
+        me @@ swap notify exit then
+d66 1
+a66 1
+    " are awake elsewhere in the game." strcat "^GREEN^" swap strcat notify
+d79 1
+a79 1
+  
+d86 1
+a86 1
+  
+d133 5
+a137 4
+    "me" match me !
+    "" "" "" "" me @@ location contents who-loop
+    dup me @@ name strcmp not if
+        pop "^CYAN^You are the only one awake in this room."
+d139 3
+a141 13
+        "~" "^" subst
+        " are awake in this room." strcat "^CYAN^" swap strcat then
+    me @@ swap notify
+    swap
+    dup if
+        dup ", and " instr not if
+            "~" "^" subst
+            "^YELLOW^Only " swap strcat
+            " is idle here." strcat
+        else
+            " are idle in this room." strcat "^YELLOW^" swap strcat then
+        me @@ swap notify
+    else pop
+d143 18
+a160 15
+    me @@ location "DARK" flag? not if
+        dup not if
+            pop "^PURPLE^There are no sleepers here."
+        else
+            dup ", and " instr not if
+                "^PURPLE^Only " swap strcat
+                " is asleep here." strcat
+            else
+                "~" "^" subst
+                "^PURPLE^The sleepers here are " swap strcat
+                "." strcat
+            then
+        then
+        me @@ swap notify
+    else pop
+d162 16
+a177 10
+    dup if
+        dup ", and " instr not if
+            "^BLUE^The only puppet here is " swap strcat
+        else
+            "~" "^" subst
+            "^BLUE^The puppets here are " swap strcat
+            "." strcat
+        then
+        me @@ swap notify
+    else pop
+d179 4
+d186 3
+a188 3
+    pop
+    show-connected
+    cmd-who
+d194 4
+a197 12
+@@register cmd-who=lib/cmdwho
+@@register #me cmd-who=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_defs/.eval-loop:"$desc" match "eval-loop" call
+@@set $tmp/prog1=/_defs/.format-print:"$desc" match "format-print" call
+@@set $tmp/prog1=/_defs/.gen-desc:"$desc" match "gen-desc" call
+@@set $tmp/prog1=/_defs/.get-legal-prop:"$desc" match "get-legal-prop" call
+@@set $tmp/prog1=/_defs/.split-args:"$desc" match "split-args" call
+@@set $tmp/prog1=/_defs/.wipe-list:"$desc" match "wipe-list" call
+@@set $tmp/prog1=/_docs:@@list $desc-docs
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+d201 2
+a202 1
+"Installation of cmd-who complete.
+@
+
+
+1.2
+log
+@Fixed problem where it listed all players as being 'connected elsewhere in the game'.
+Added /@@/dark support.
+@
+text
+@d5 1
+a5 1
+( cmd-who: $Date: 2000/12/22 02:39:00 $ $Revision: 1.1 $                                                  )
+d10 5
+a18 2
+: equaltest  stringcmp not ;
+ 
+d23 2
+a24 2
+        dup "/@@/dark" getpropstr .yes? swap location me @@ location
+        dbcmp or if
+d195 1
+a195 1
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-who: $Date$ $Revision$                                                  )
+d17 1
+a17 1
+: get-connected-list  ( namelist total howmanyleft )
+d19 10
+a28 4
+        dup condbref name    ( namelist total howmanyleft newname )
+        rot rot              ( namelist newname total howmanyleft )
+        1 - repeat
+    pop
+a29 6
+    'equaltest 1 .unique
+    loc @@ contents dup roomstuff !
+    begin dup #-1 dbcmp not while
+        name 'equaltest .remove
+        roomstuff @@ next dup roomstuff ! repeat
+    pop
+d31 1
+a31 1
+: glue-together-list  ( namelist gluedstring howmany )
+a44 1
+    1 sort
+d173 1
+d184 1
+a184 1
+@@set $tmp/prog1=W2
+d192 1
+a192 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

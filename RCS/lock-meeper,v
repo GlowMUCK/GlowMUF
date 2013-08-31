@@ -1,0 +1,44 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.02.21.01.12.03;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial rcsification.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of lock-meeper...
+@@prog lock-meeper
+1 99999 d
+1 i
+( lock-meeper: $Date$$Revision$
+  --------------------------------------------------------------------------- )
+: lock-meeper ( s -- )
+  "me" match "meeper" flag?
+;
+.
+c
+q
+@@register lock-meeper=lock/meeper
+@@register #me lock-meeper=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M1
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-meeper complete.
+@

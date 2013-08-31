@@ -1,0 +1,151 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2006.08.15.15.02.45;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.18.17.15.41;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Updated header.
+Eliminated dependence on lib-glow-standard.
+Colorized.
+@
+text
+@wh me=Beginning installation of cmd-beep...
+@@prog cmd-beep
+1 99999 d
+1 i
+( cmd-beep: $Date: 1999/04/18 17:15:41 $ $Revision: 1.1 $                     )
+( Purpose: Sends a beep message with a ansi-beep tone to a player or room     )
+( Author: Andy/Pakrat                                                         )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-beep,v $
+  Revision 1.1  1999/04/18 17:15:41  feaelin
+  Initial revision
+
+)
+
+$include $lib/match
+ 
+: private? ( -- i )
+  "_private" getpropstr "y" instr
+;
+ 
+: cmd-beep ( s -- )
+  me @@ "GUEST" flag? if
+    "^FAIL^Beep cannot be used by guests." ansi_notify
+  then
+  dup not if pop
+    me @@ "^SUCC^Usage: beep <player> or beep here -- sends ##beep## to player or room"
+    ansi_notify exit
+  then
+  dup "here" stringcmp not if pop
+    loc @@ #-1 "^beep^^SUCC^##Beep##" ansi_notify_except
+    exit
+  then
+  MATCH-pmatch dup not if pop
+    me @@ "^FAIL^I don't know who that is." ansi_notify exit
+  then
+  dup awake? not if pop
+    me @@ "^INFO^They are sleeping." ansi_notify exit
+  then
+  dup "HAVEN" flag? if pop
+    me @@ "^INFO^They are set haven." ansi_notify exit
+  then
+  dup private? over location private? or if
+    me @@ "^INFO^They wish for privacy." ansi_notify exit
+  then
+  dup "From " me @@ name strcat "..." strcat notify
+  dup "^beep^^SUCC^##Beep##" ansi_notify
+  me @@ "^SUCC^Beeped." ansi_notify
+;
+.
+c
+q
+@@register cmd-beep=cmd/beep
+@@register #me cmd-beep=tmp/prog1
+@@set $tmp/prog1=M2
+@@action beep=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:@@$cmd/beep
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+wh me=Installation of cmd-beep complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-beep...
+d5 4
+a8 3
+( cmd-beep: $Date$ $Revision$
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+d10 4
+a13 1
+  $Log$
+d16 6
+a21 2
+$include $lib/glow
+
+d23 3
+a25 1
+  .noguest
+d27 2
+a28 2
+    "Usage: beep <player> or beep here -- sends ##beep## to player or room"
+    .tellme exit
+d31 1
+a31 2
+    loc @@ #-1 "^beep^" ansi_notify_except
+    loc @@ #-1 "##Beep##" notify_except
+d34 2
+a35 2
+  .pmatch dup not if pop
+    "I don't know who that is." .tellme exit
+d38 1
+a38 1
+    "They are sleeping." .tellme exit
+d41 1
+a41 1
+    "They are set haven." .tellme exit
+d43 2
+a44 2
+  dup .private? over location .private? or if
+    "They wish for privacy." .tellme exit
+d47 2
+a48 3
+  dup "^beep^" ansi_notify
+  "##Beep##" notify
+  "Beeped." .tellme
+d60 2
+a61 2
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-beep complete.
+@
+

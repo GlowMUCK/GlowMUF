@@ -1,0 +1,770 @@
+head	1.8;
+access;
+symbols
+	GlowMUF1-1-1:1.8
+	GlowMUF102:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.8
+date	2005.04.05.23.50.12;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.04.05.23.32.55;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.04.18.22.25;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2004.09.23.15.10.25;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.02.20.17.10.09;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.01.22.05.27.18;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.25.17.57.29;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.8
+log
+@Whoops. Missed a macro that was in lib-glow-standard
+@
+text
+@wh me=Beginning installation of cmd-lsedit...
+@@prog cmd-lsedit
+1 99999 d
+1 i
+( cmd-lsedit: $Date: 2005/04/05 23:32:55 $ $Revision: 1.7 $                   )
+( Purpose: Front end for lib-editor as an actual text editor                  )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-lmgr, lib-edit, lib-editor, lib-strings, lib-mv-cp        )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-lsedit,v $
+  Revision 1.7  2005/04/05 23:32:55  feaelin
+  Corrected library calls according to the new standard.
+
+  Revision 1.6  2005/04/04 18:22:25  feaelin
+  Removed redundantly duplicated words that are already defined in lib-lmgr
+  Cleaned up the installer script
+  Cleaned up the header info
+
+  Revision 1.5  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+
+  Revision 1.4  2004/09/23 15:10:25  feaelin
+  Corrected bug where it would allow you to enter the editor without actually
+  specifying a list.
+
+  Revision 1.3  2004/02/20 17:10:09  feaelin
+  Colorized the responses.
+
+  Revision 1.2  2001/01/22 05:27:18  feaelin
+  Added lscopy and lsmove commands
+)
+ 
+$include $lib/lmgr
+$include $lib/edit
+$include $lib/editor
+$include $lib/strings
+$include $lib/mv-cp
+
+( We don't need these...they're in lib-lmgr 2005-04-04 IDE   
+: LMGRdeletelist
+  over over LMGRgetcount
+  1 4 rotate 4 rotate LMGRdeleterange
+;
+  
+: LMGRgetlist
+  over over LMGRgetcount
+  rot rot 1 rot rot
+  LMGRgetrange
+;
+ )
+  
+: lsedit-loop  ( listname dbref {rng} mask currline cmdstr -- )
+    EDITOR-loop
+    dup "save" stringcmp not if
+        pop pop pop pop
+        3 pick 3 + -1 * rotate
+        over 3 + -1 * rotate
+        dup 5 + pick over 5 + pick
+        over over LMGR-deletelist
+        1 rot rot LMGR-putrange
+        4 pick 4 pick LMGR-getlist
+        dup 3 + rotate over 3 + rotate
+        "^SUCC^< List saved. >" me @@ swap ansi_notify
+        "" lsedit-loop exit
+    then
+    dup "abort" stringcmp not if
+        "^INFO^< list not saved. >" me @@ swap ansi_notify
+        pop pop pop pop pop pop pop pop pop exit
+    then
+    dup "end" stringcmp not if
+        pop pop pop pop pop pop
+        dup 3 + rotate over 3 + rotate
+        over over LMGR-deletelist
+        1 rot rot LMGR-putrange
+        "^SUCC^< list saved. >" me @@ swap ansi_notify exit
+    then
+;
+ 
+: do-delete
+  "^SUCC^List to be deleted is as follows:" me @@ swap ansi_notify
+  2 pick 2 pick LMGR-getlist EDIT-display
+  "^FAIL^Enter YES if you are sure you want to delete the list." me @@ swap
+  ansi_notify
+  read
+  "YES" stringcmp not if
+    swap "#" strcat remove_prop
+    "^SUCC^List removed." me @@ swap ansi_notify
+  else
+    "^INFO^List removal aborted." me @@ swap ansi_notify
+  then
+;
+ 
+: do-copy
+  swap
+  "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
+  me @@ swap ansi_notify read
+  dup "." stringcmp not if 
+    pop 2 pick
+  else
+    strip
+    dup not if
+      "^FAIL^Invalid database item." me @@ swap ansi_notify
+      depth popn exit
+    then
+    match dup not if
+      pop
+      "^FAIL^I don't know what database item you mean." me @@ swap ansi_notify
+      depth popn exit
+    else 
+      dup #-2 dbcmp if
+        pop
+        "^FAIL^I don't know which one you mean." me @@ swap ansi_notify
+        depth popn exit
+      then
+    then
+    me @@ over owner dbcmp not
+    me @@ "w" flag? not and if
+      pop pop "^FAIL^Permission denied." me @@ swap ansi_notify exit
+    then
+  then
+  "^INFO^Enter the destination property or '.' if you are copying to the same property."
+  me @@ swap ansi_notify read
+  dup "." stringcmp not if
+    pop 2 pick
+  else
+    dup not if
+      "^FAIL^I didn't understand that list." me @@ swap ansi_notify
+      depth popn exit
+    then
+    "/" swap strcat
+    begin dup "//" instr while "/" "//" subst repeat
+    dup "/@@" instr
+    over "/~" instr or
+    me @@ "wizard" flag? not and if
+      "^FAIL^Permission denied." me @@ swap ansi_notify
+      depth popn exit
+    then
+  then
+  "#" strcat 3 pick "#" strcat 3 put MVCP-copy-prop
+  if 
+    me @@ "^SUCC^Copy successful." ansi_notify
+  else
+    me @@ "^FAIL^Copy failed." ansi_notify
+  then
+;
+ 
+: do-move
+  swap
+  "^INFO^Enter the destination database item or '.' if you are copying to the same database item."
+  me @@ swap ansi_notify read
+  dup "." stringcmp not if 
+    pop 2 pick
+  else
+    strip
+    dup not if
+      "^FAIL^Invalid database item." me @@ swap ansi_notify
+      depth popn exit
+    then
+    match dup not if
+      pop
+      "^FAIL^I don't know what database item you mean." me @@ swap ansi_notify
+      depth popn exit
+    else 
+      dup #-2 dbcmp if
+        pop
+        "^FAIL^I don't know which one you mean." me @@ swap ansi_notify
+        depth popn exit
+      then
+    then
+    me @@ over owner dbcmp not
+    me @@ "w" flag? not and if
+      pop pop "^FAIL^Permission denied." me @@ swap ansi_notify exit
+    then
+  then
+  "^INFO^Enter the destination property or '.' if you are copying to the same property."
+  me @@ swap ansi_notify read
+  dup "." stringcmp not if
+    pop 2 pick
+  else
+    dup not if
+      "^FAIL^I didn't understand that list." me @@ swap ansi_notify
+      depth popn exit
+    then
+    "/" swap strcat
+    begin dup "//" instr while "/" "//" subst repeat
+    dup "/@@" instr
+    over "/~" instr or
+    me @@ "wizard" flag? not and if
+      "^FAIL^Permission denied." me @@ swap ansi_notify
+      depth popn exit
+    then
+  then
+  "#" strcat 3 pick "#" strcat 3 put MVCP-move-prop 
+  if "^SUCC^Move successful." me @@ swap ansi_notify else "^FAIL^Move failed." me @@ swap ansi_notify then
+;
+ 
+: show-help
+  "Usage:" me @@ swap ansi_notify
+  "lsedit <database item>=<listname>     - Edit <listname>" me @@ swap ansi_notify
+  "lsdel <database item>=<listname>      - Delete <listname>" me @@ swap ansi_notify
+  "lscopy <database item>=<listname>     - Copy <listname>" me @@ swap ansi_notify
+  "lsmove <database item>=<listname>     - Move <listname>" me @@ swap ansi_notify
+  "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." me @@ swap ansi_notify
+; 
+ 
+: cmd-lsedit
+  "me" match
+  "guest" flag? if
+    me @@ "^FAIL^This command is unavailable to guests." ansi_notify
+    pop exit
+  then
+  dup "#help" stringcmp not if show-help exit then
+  "me" match me !
+  "=" STR-split strip swap strip
+  swap
+  dup "" strcmp not if
+    "^FAIL^You must specify a listname.  Syntax: " command @@ strcat 
+    " <database item>=<listname>." strcat me @@ swap ansi_notify
+    pop pop exit
+  then
+  "/" swap strcat
+  begin dup "//" instr while "/" "//" subst repeat
+  dup "/@@" instr
+  over "/~" instr or
+  me @@ "wizard" flag? not and if
+    "^FAIL^Permission denied." me @@ swap ansi_notify
+    pop pop exit
+  then
+  swap strip
+  dup not if
+    "^FAIL^You must specify a database item.  Syntax: " command @@ strcat 
+    " <database item>=<listname>." me @@ swap ansi_notify
+    pop pop exit
+  then
+  match dup not if pop
+    "^FAIL^I don't know what database item you mean.  Syntax: " command @@ strcat 
+    " <database item>=<listname>." me @@ swap ansi_notify
+    pop exit
+  else dup #-2 dbcmp if pop
+    "^FAIL^I don't know which one you mean.  Syntax: " command @@ strcat 
+    " <database item>=<listname>" me @@ swap ansi_notify
+    pop exit
+  then then
+    me @@ over owner dbcmp not
+    me @@ "w" flag? not and if
+      pop pop "^FAIL^Permission denied." me @@ swap ansi_notify exit
+  then
+  command @@ "lsdel" instr if do-delete exit then
+  command @@ "lsrem" instr if do-delete exit then
+  command @@ "lserase" stringcmp not if do-delete exit then
+  command @@ "lscopy" stringcmp not if do-copy exit then
+  command @@ "lscp" stringcmp not if do-copy exit then
+  command @@ "lsmove" stringcmp not if do-move exit then
+  command @@ "lsmv" stringcmp not if do-move exit then
+  "^NOTE^<    Welcome to the list editor.  You can get help by entering '.h'     >^RESET^"
+  me @@ swap ansi_notify
+  "^NOTE^< '.end' will exit and save the list.  '.abort' will abort any changes. >^RESET^"
+  me @@ swap ansi_notify
+  "^NOTE^<    To save changes to the list, and continue editing, use '.save'     >^RESET^"
+  me @@ swap ansi_notify
+  over over LMGR-getlist
+  "save" 1 ".i $" lsedit-loop
+;
+.
+c
+q
+@@register cmd-lsedit=cmd/lsedit
+@@set $cmd/lsedit=L
+@@set $cmd/lsedit=V
+@@set $cmd/lsedit=W3
+@@action lsedit;lsdelete;lsdele;lsdel;lserase;lsremove;lsremov;lsremo;lsrem;lscopy;lscp;lsmove;lsmv=here=tmp/exit1
+@@link $tmp/exit1=$cmd/lsedit
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/lsedit #help
+@@set $cmd/lsedit=/_/de:Type 'lsedit #help' for help
+@@set $cmd/lsedit=_version:FM$Revision: 1.7 $
+wh me=Installation of cmd-lsedit complete.
+@
+
+
+1.7
+log
+@Corrected library calls according to the new standard.
+@
+text
+@d5 1
+a5 1
+( cmd-lsedit: $Date: 2005/04/04 18:22:25 $ $Revision: 1.6 $                   )
+d13 3
+d210 5
+a214 1
+  .noguest
+d279 1
+a279 1
+@@set $cmd/lsedit=_version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Removed redundantly duplicated words that are already defined in lib-lmgr
+Cleaned up the installer script
+Cleaned up the header info
+@
+text
+@d5 1
+a5 1
+( cmd-lsedit: $Date: 2005/01/14 16:32:13 $ $Revision: 1.5 $                   )
+d13 5
+a30 4
+
+  Revision 1.1  2000/01/25 17:57:29  feaelin
+  Initial revision
+
+d38 1
+a38 2
+ 
+$def .atell me @@ swap ansi_notify
+d53 1
+a53 1
+    EDITORloop
+d59 3
+a61 3
+        over over LMGRdeletelist
+        1 rot rot LMGRputrange
+        4 pick 4 pick LMGRgetlist
+d63 1
+a63 1
+        "^SUCC^< List saved. >" .atell
+d67 1
+a67 1
+        "^INFO^< list not saved. >" .atell
+d73 3
+a75 3
+        over over LMGRdeletelist
+        1 rot rot LMGRputrange
+        "^SUCC^< list saved. >" .atell exit
+d80 4
+a83 3
+  "^SUCC^List to be deleted is as follows:" .atell
+  2 pick 2 pick LMGRgetlist EDITdisplay
+  "^FAIL^Enter YES if you are sure you want to delete the list." .atell
+d87 1
+a87 1
+    "^SUCC^List removed." .atell
+d89 1
+a89 1
+    "^INFO^List removal aborted." .atell
+d96 1
+a96 1
+  .atell read
+d102 1
+a102 1
+      "^FAIL^Invalid database item." .atell
+d107 1
+a107 1
+      "^FAIL^I don't know what database item you mean." .atell
+d112 1
+a112 1
+        "^FAIL^I don't know which one you mean." .atell
+d118 1
+a118 1
+      pop pop "^FAIL^Permission denied." .atell exit
+d122 1
+a122 1
+  .atell read
+d127 1
+a127 1
+      "^FAIL^I didn't understand that list." .atell
+d135 1
+a135 1
+      "^FAIL^Permission denied." .atell
+d139 6
+a144 2
+  "#" strcat 3 pick "#" strcat 3 put copy-prop
+  if "^SUCC^Copy successful." .atell else "^FAIL^Copy failed." .atell then
+d150 1
+a150 1
+  .atell read
+d156 1
+a156 1
+      "^FAIL^Invalid database item." .atell
+d161 1
+a161 1
+      "^FAIL^I don't know what database item you mean." .atell
+d166 1
+a166 1
+        "^FAIL^I don't know which one you mean." .atell
+d172 1
+a172 1
+      pop pop "^FAIL^Permission denied." .atell exit
+d176 1
+a176 1
+  .atell read
+d181 1
+a181 1
+      "^FAIL^I didn't understand that list." .atell
+d189 1
+a189 1
+      "^FAIL^Permission denied." .atell
+d193 2
+a194 2
+  "#" strcat 3 pick "#" strcat 3 put move-prop 
+  if "^SUCC^Move successful." .atell else "^FAIL^Move failed." .atell then
+d198 6
+a203 6
+  "Usage:" .atell
+  "lsedit <database item>=<listname>     - Edit <listname>" .atell
+  "lsdel <database item>=<listname>      - Delete <listname>" .atell
+  "lscopy <database item>=<listname>     - Copy <listname>" .atell
+  "lsmove <database item>=<listname>     - Move <listname>" .atell
+  "  Copy can be abbreviated 'lscp' and move can be abbreviated 'lsmv'." .atell
+d210 1
+a210 1
+  "=" STRsplit strip swap strip
+d214 1
+a214 1
+    " <database item>=<listname>." strcat .atell
+d222 1
+a222 1
+    "^FAIL^Permission denied." .atell
+d228 1
+a228 1
+    " <database item>=<listname>." .atell
+d233 1
+a233 1
+    " <database item>=<listname>." .atell
+d237 1
+a237 1
+    " <database item>=<listname>" .atell
+d242 1
+a242 1
+      pop pop "^FAIL^Permission denied." .atell exit
+d252 1
+a252 1
+  .atell
+d254 1
+a254 1
+  .atell
+d256 2
+a257 2
+  .atell
+  over over LMGRgetlist
+d271 2
+a272 2
+@@set $tmp/lsedit=/_/de:Type 'lsedit #help' for help
+@@set $cmd/lsedit=_version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-lsedit...
+d5 6
+a10 3
+( cmd-lsedit: $Date: 2004/09/23 15:10:25 $ $Revision: 1.4 $
+  Author:
+  --------------------------------------------------------------------------- )
+d13 4
+d31 1
+a31 1
+
+d37 1
+a37 2
+$include $lib/glowstandard
+
+d39 1
+a39 5
+$def LMGRgetcount lmgr-getcount
+$def LMGRgetrange lmgr-getrange
+$def LMGRputrange lmgr-putrange
+$def LMGRdeleterange lmgr-deleterange
+  
+d50 1
+d78 1
+a78 1
+
+d91 1
+a91 1
+
+d141 1
+a141 1
+
+d191 1
+a191 1
+
+d200 1
+a200 1
+
+d259 3
+a261 4
+@@register #me cmd-lsedit=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=V
+@@set $tmp/prog1=W3
+d263 1
+a263 1
+@@link $tmp/exit1=$tmp/prog1
+d266 3
+a268 2
+@@set $tmp/prog1=_version:FM$Revision: 1.4 $
+"Installation of cmd-lsedit complete.
+@
+
+
+1.4
+log
+@Corrected bug where it would allow you to enter the editor without actually
+specifying a list.
+@
+text
+@d5 1
+a5 1
+( cmd-lsedit: $Date: 2004/02/20 17:10:09 $ $Revision: 1.3 $
+d10 4
+d91 1
+a91 1
+  "^INFO^Enter the destination object or '.' if you are copying to the same object."
+d98 1
+a98 1
+      "^FAIL^Invalid object." .atell
+d103 1
+a103 1
+      "^FAIL^I don't know what object you mean." .atell
+d141 1
+a141 1
+  "^INFO^Enter the destination object or '.' if you are copying to the same object."
+d148 1
+a148 1
+      "^FAIL^Invalid object." .atell
+d153 1
+a153 1
+      "^FAIL^I don't know what object you mean." .atell
+d191 4
+a194 4
+  "lsedit <object>=<listname>     - Edit <listname>" .atell
+  "lsdel <object>=<listname>      - Delete <listname>" .atell
+  "lscopy <object>=<listname>     - Copy <listname>" .atell
+  "lsmove <object>=<listname>     - Move <listname>" .atell
+d219 1
+a219 1
+    "^FAIL^You must specify an object.  Syntax: " command @@ strcat 
+d224 1
+a224 1
+    "^FAIL^I don't know what object you mean.  Syntax: " command @@ strcat 
+d264 1
+a264 1
+@@set $tmp/prog1=_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Colorized the responses.
+@
+text
+@d5 1
+a5 1
+( cmd-lsedit: $Date: 2001/01/22 05:27:18 $ $Revision: 1.2 $
+d10 3
+d198 5
+a202 4
+  "=" .split .stripspaces swap .stripspaces
+  dup not if
+    "^INFO^You must specify a listname.  Syntax: " command @@ strcat 
+    " <obj>=<listname>." strcat .atell
+d205 1
+a205 1
+  swap "/" swap strcat
+d215 2
+a216 2
+    "^INFO^You must specify an object.  Syntax: " command @@ strcat 
+    " <obj>=<listname>." .atell
+d220 2
+a221 2
+    "^INFO^I don't know what object you mean.  Syntax: " command @@ strcat 
+    " <obj>=<listname>." .atell
+d224 2
+a225 2
+    "^INFO^I don't know which one you mean.  Syntax: " command @@ strcat 
+    " <obj>=<listname>" .atell
+d260 1
+a260 1
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Added lscopy and lsmove commands
+@
+text
+@d5 1
+a5 1
+( cmd-lsedit: $Date: 2000/01/25 17:57:29 $ $Revision: 1.1 $
+d10 3
+d53 1
+a53 1
+        "< List saved. >" .atell
+d57 1
+a57 1
+        "< list not saved. >" .atell
+d65 1
+a65 1
+        "< list saved. >" .atell exit
+d235 6
+a240 6
+  "<    Welcome to the list editor.  You can get help by entering '.h'     >"
+  .tell
+  "< '.end' will exit and save the list.  '.abort' will abort any changes. >"
+  .tell
+  "<    To save changes to the list, and continue editing, use '.save'     >"
+  .tell
+d256 1
+a256 1
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-enterdesc: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d16 1
+d19 1
+d22 1
+a32 2
+  
+  
+a38 1
+  
+d50 1
+a50 1
+        "< List saved. >" .tell
+d54 1
+a54 1
+        "< list not saved. >" .tell
+d62 1
+a62 1
+        "< list saved. >" .tell exit
+d65 47
+a111 5
+  
+: cmd-lsedit
+    .noguest
+    "me" match me !
+    "=" .split .stripspaces swap .stripspaces
+d113 2
+a114 2
+        "You must specify a listname.  Syntax: lsedit <obj>=<listname>" .tell
+        pop pop exit
+d116 1
+a116 1
+    swap "/" swap strcat
+d121 30
+a150 2
+        "Permission denied." .tell
+        pop pop exit
+d152 10
+a161 1
+    swap strip
+d163 10
+a172 2
+        "You must specify an object.  Syntax: lsedit <obj>=<listname>" .tell
+        pop pop exit
+d174 13
+d188 33
+a220 7
+    match dup not if pop
+        "I don't know what object you mean.  Syntax: lsedit <obj>=<list>" .tell
+        pop exit
+    else dup #-2 dbcmp if pop
+        "I don't know which one you mean.  Syntax: lsedit <obj>=<list>" .tell
+        pop exit
+    then then
+d223 17
+a239 10
+        pop pop "Permission denied." .tell exit
+    then
+"<    Welcome to the list editor.  You can get help by entering '.h'     >"
+.tell
+"< '.end' will exit and save the list.  '.abort' will abort any changes. >"
+.tell
+"<    To save changes to the list, and continue editing, use '.save'     >"
+.tell
+    over over LMGRgetlist
+    "save" 1 ".i $" lsedit-loop
+d249 1
+a249 1
+@@action lsedit=here=tmp/exit1
+d251 3
+a253 3
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:Use this program to create and edit lists.  Usage: LSEDIT <object> = <list>.
+@@set $tmp/prog1=_version:FM$Revision$
+@

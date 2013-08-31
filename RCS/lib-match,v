@@ -1,0 +1,970 @@
+head	1.19;
+access;
+symbols
+	GlowMUF1-1-1:1.16
+	GlowMUF102:1.4;
+locks; strict;
+comment	@# @;
+
+
+1.19
+date	2008.06.17.13.08.10;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2008.06.14.16.40.55;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2008.06.14.04.48.01;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.09.25.13.46.29;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.09.13.15.01.34;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.04.07.21.20.00;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2005.04.06.04.10.57;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2005.04.05.21.08.02;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2005.04.04.16.11.50;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.04.04.15.14.30;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2005.04.04.15.05.26;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.03.23.17.25.08;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2004.08.04.14.12.21;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.01.10.21.23.33;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.08.22.19.03.51;	author glow;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.22.18.57.08;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.22.18.51.47;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.19
+log
+@noisy_plmatch was matching more than just players. Corrected.
+@
+text
+@wh me=Begining installation of lib-match...
+@@prog lib-match
+1 99999 d
+1 i
+( lib-match: $Date: 2008/06/14 16:40:55 $ $Revision: 1.18 $                   )
+( Purpose: Provides various words to match a string to a database item's dbref)
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Matching library MATCH                                                      )
+( MATCH-pmatch: playername -- playerdbref                                     )
+(   Takes a string with a possible player name in it. It returns the dbref of )
+(   that player, if it can find it. Returns #-1 if it cannot.                 )
+(                                                                             )
+( MATCH-noisy_match: itemname -- itemdbref                                    )
+(   Takes a string with a possible item name in it. It returns the dbref of   )
+(   the database item is if is found. If it is not found, it tells the user   )
+(   that it doesn't see that here and returns #-1. If it finds several matches)
+(   it tells the user that it doesn't know which item was meant, and returns  )
+(   #-2.                                                                      )
+(                                                                             )
+( MATCH-noisy_pmatch: playername -- playerdbref                               )
+(   This routine takes a string with a possible playername and returns the    )
+(   dbref of that player, if it can find it. If it cannot find the player,    )
+(   then it tells the user that it doesn't know who that is, and it returns   )
+(   #-1.                                                                      )
+(                                                                             )
+( MATCH-noisy_plmatch: dbref itemname -- itemdbref                            )
+(   Identical to MATCH-noisy_pmatch, except restricts matching to players     )
+(   local to the triggering player, e.g., in the same room.                   )
+(                                                                             )
+( MATCH-noisy_rmatch: dbref itemname -- itemdbref                             )
+(   Searches dbref for "itemname" and returns matching dbref if found. If it  )
+(   is not found, it tells the user that it doesn't see that here and returns )
+(   #-1. If it finds several matches it tells the user that it doesn't know   )
+(   which item was meant, and returns #-2.                                    )
+(                                                                             )
+( MATCH-match_controlled: itemname -- itemdbref                               )
+(   This routine basically does a noisy_match, and checks that what is        )
+(   returned is controlled by the user. If it is not, then it tells the user  )
+(   Permission Denied, and returns #-1. Otherwise it returns the dbref of the )
+(   item matched.                                                             )
+(                                                                             )
+( MATCH-multi_rmatch: objref smatchstr -- dn .. d1 n                          )
+(   This function takes a dbref for the thing/player/room that it is to match )
+(   in, and a smatch style comparison string and returns the dbrefs of all the)
+(   contained database items within who's names matched the string. There is  )
+(   an integer on top giving how many dbrefs were returned. If no items were  )
+(   matched, it only returns a 0.                                             )
+(                                                                             )
+( MATCH-table_match: xnone xambig sn xn .. s1 x1 n comp func -- smat xmat     )
+(   This function takes, in order:                                            )
+(     - a data value of any type to return if no matches are made. {xnone}    )
+(     - a data value of any type to return if the match is amiguous. {xambig} )
+(     - a range of comparator {sn - s1}, and data {xn - x1} pairs of any type.)
+(     - an integer count of how many comparator-data pairs are on the stack to)
+(       be compared against. {n}                                              )
+(     - a value of the same type as the comparators, that will be checked     )
+(       against each comparator. {comp}                                       )
+(     - the address of the comparator function that is used to compare comp   )
+(       against s1 through sn. This function should take the for a            )
+(       non-match. {func}                                                     )
+(   This function tests comp against s1 through sn, returning the matching    )
+(   compatator-data pair if it finds one match. It returns a null string and  )
+(   xnone if no matches are found. It returns a null string and xambig if more)
+(   than one match was found.                                                 )
+(                                                                             )
+( MATCH-std_table_match:                                                      )
+(   This function runs .table_match with a standard comparator fuction that   )
+(   expects the comparators to be strings. The match comparator routine       )
+(   matches if comp matches the beginning of the comparator exactly. Example: )
+(   a comp of "#h" would match a comparator {s1 - sn} of "#help".             )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: lib-match,v $
+  Revision 1.18  2008/06/14 16:40:55  feaelin
+  Fixed bug in noisy_pmatch where passing a string like "*joeplayer" would not
+  work as expected.
+
+  Add noisy_plmatch.
+
+  Revision 1.17  2008/06/14 04:48:01  feaelin
+  Colorized error messages for noisy matches.
+  Added MATCH-noisy_rmatch
+ 
+  Revision 1.16  2005/09/25 13:46:29  feaelin
+  Documentation update.
+ 
+  Revision 1.15  2005/09/13 15:01:34  feaelin
+  Updated documentation strings.
+ 
+  Revision 1.14  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+ 
+  Revision 1.13  2005/04/06 04:10:57  feaelin
+  Added some colorization.
+ 
+  Revision 1.12  2005/04/05 21:08:02  feaelin
+  Removed unneeded $include of lib-stackrng
+ 
+  Revision 1.11  2005/04/04 16:11:50  feaelin
+  Documentation Update
+ 
+  Revision 1.10  2005/04/04 15:14:30  feaelin
+  Forgot the _defs entry for pmatch.
+ 
+  Revision 1.9  2005/04/04 15:05:26  feaelin
+  Moved pmatch to this library from lib-glow-standard
+  Revised noisy_pmatch to use the local word
+  Updated Documentation and installer script
+ 
+  Revision 1.8  2005/03/23 17:25:08  feaelin
+  Updated documentation strings.
+ 
+  Revision 1.7  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.6  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+ 
+  Revision 1.5  2004/08/04 14:12:21  feaelin
+  Updated header documentation. Updated library entries to add the new
+  LIBNAMEfuncname format for function names.
+ 
+  Revision 1.4  2000/01/10 21:23:33  feaelin
+  Fixed .controls backward compatibility
+ 
+  Revision 1.3  1998/08/22 19:03:51  feaelin
+  Oops. Remembered why I had already taken .controls out of lib-match.
+ 
+  Revision 1.2  1998/08/22 18:57:08  feaelin
+  Added .controls from fbmuf.
+)
+( --------------------------------------------------------------------------- )
+ 
+: noisy_match (s -- d)
+  dup if match else pop #-1 then
+  dup not if
+    me @@ "^FAIL^I don't see that here!" ansi_notify exit
+  then
+  dup #-2 dbcmp if
+    me @@ "^FAIL^I don't know which one you mean!" ansi_notify exit
+  then
+;
+ 
+: noisy_rmatch (d s -- d)
+  dup if
+    rmatch 
+  else
+    pop pop #-1 me @@ "^FAIL^I don't see that here!" ansi_notify exit
+  then
+  dup #-1 dbcmp if
+    me @@ "^FAIL^I don't see that here!" ansi_notify exit
+  then
+  dup #-2 dbcmp if
+    me @@ "^FAIL^I don't know which one you mean!" ansi_notify exit
+  then
+;
+ 
+: pmatch ( d -- s )
+  tolower dup "me" strcmp not if
+    match exit
+  then
+  "*" swap strcat
+  "*" "**" subst match
+; PUBLIC pmatch
+ 
+: noisy_pmatch ( s -- d )
+  pmatch dup not if
+    me @@ "^FAIL^I don't recognize anyone by that name." ansi_notify
+  then
+;
+ 
+: noisy_plmatch ( s -- d )
+  noisy_pmatch
+  dup location me @@ location dbcmp if
+    exit
+  then
+  pop #-1 
+  me @@ "^FAIL^I don't see them here." ansi_notify
+;
+ 
+: match_controlled (s -- d)
+  noisy_match dup ok? if
+    me @@ over controls not if
+      name #-1 me @@ "^FAIL^You do not control " 4 rotate strcat
+      "." strcat ansi_notify
+    then
+  then
+;
+ 
+: table_compare ( possible tomatch -- match? )
+  dup strlen strncmp not
+;
+ 
+: table_loop
+( xnone xdouble str1 x1 ... strn xn n tomatch prog pick -- strmat xmat )
+  dup 4 >
+  if
+    dup rotate over rotate
+( ..... tomatch prog found? pick stri xi )
+    over 7 pick 7 pick execute
+( ..... tomatch prog found? pick stri xi match? )
+    if
+      0 4 pick - rotate 0 3 pick - rotate
+( ..... tomatch prog found? pick )
+      swap
+      if
+        popn
+        swap pop "" swap exit
+      else
+        1 swap
+      then
+    else
+      pop pop
+    then
+    2 - table_loop
+  else
+    pop
+    if
+      pop pop rot pop rot pop
+    else
+      pop pop pop "" swap
+    then
+  then
+;
+ 
+: table_match
+( xnone xdouble str1 x1 ... strn xn n tomatch prog -- strmat xmat )
+  0 4 rotate 2 * 4 + table_loop
+;
+ 
+: std_table_match
+  'table_compare table_match
+;
+ 
+: multi_rmatch-loop (i s d -- dn .. d1 n)
+  dup not if pop pop exit then
+  over over name swap
+  "&" explode dup 2 + rotate
+  begin
+    over not if pop pop 0 break then
+    swap 1 - swap dup 4 rotate strip
+    dup not if pop pop continue then
+    dup "all" stringcmp not if pop "*" then
+    "*" swap strcat "*" strcat
+    smatch if
+      pop begin
+	dup while
+	1 - swap pop
+      repeat
+      pop 1 break
+    then
+  repeat
+  if rot 1 + rot 3 pick then
+  next multi_rmatch-loop
+;
+ 
+: multi_rmatch (d s -- dn .. d1 n)
+  over over rmatch dup int 0 >= if
+    dup thing? over program? or if
+      rot rot pop pop 1 exit
+    then
+  then
+  pop
+  0 swap rot contents
+  multi_rmatch-loop
+;
+ 
+PUBLIC noisy_match
+PUBLIC noisy_pmatch
+PUBLIC noisy_plmatch
+PUBLIC noisy_rmatch
+PUBLIC match_controlled
+PUBLIC table_match
+PUBLIC std_table_match
+PUBLIC multi_rmatch
+.
+c
+q
+@@register lib-match=lib/match
+@@set $lib/match=L
+@@set $lib/match=W
+@@set $lib/match=/_defs/.controls:controls
+@@set $lib/match=/_defs/.match_controlled:"$lib/match" match "match_controlled" call
+@@set $lib/match=/_defs/.noisy_match:"$lib/match" match "noisy_match" call
+@@set $lib/match=/_defs/.noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@@set $lib/match=/_defs/.std_table_match:"$lib/match" match "std_table_match" call
+@@set $lib/match=/_defs/.table_match:"$lib/match" match "table_match" call
+@@set $lib/match=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
+@@set $lib/match=/_defs/MATCHpmatch: "$lib/match" match "pmatch" call
+@@set $lib/match=/_defs/MATCHmatch_controlled:"$lib/match" match "match_controlled" call
+@@set $lib/match=/_defs/MATCHnoisy_match:"$lib/match" match "noisy_match" call
+@@set $lib/match=/_defs/MATCHnoisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@@set $lib/match=/_defs/MATCHstd_table_match:"$lib/match" match "std_table_match" call
+@@set $lib/match=/_defs/MATCHtable_match:"$lib/match" match "table_match" call
+@@set $lib/match=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
+@@set $lib/match=/_defs/MATCH-pmatch: "$lib/match" match "pmatch" call
+@@set $lib/match=/_defs/MATCH-match_controlled:"$lib/match" match "match_controlled" call
+@@set $lib/match=/_defs/MATCH-noisy_match:"$lib/match" match "noisy_match" call
+@@set $lib/match=/_defs/MATCH-noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@@set $lib/match=/_defs/MATCH-noisy_plmatch:"$lib/match" match "noisy_plmatch" call
+@@set $lib/match=/_defs/MATCH-noisy_rmatch:"$lib/match" match "noisy_rmatch" call
+@@set $lib/match=/_defs/MATCH-std_table_match:"$lib/match" match "std_table_match" call
+@@set $lib/match=/_defs/MATCH-table_match:"$lib/match" match "table_match" call
+@@set $lib/match=/_defs/MATCH-multi_rmatch:"$lib/match" match "multi_rmatch" call
+@@set $lib/match=/_/de:lib-match: List lines 1-60 to see documentation.
+@@set $lib/match=/_docs:@@list $lib/match=1-60
+@@set $lib/match=/_lib-version:FM$Revision: 1.18 $
+@@set $lib/match=/_lib-symbol:MATCH
+wh me=Installation of lib-match completed.
+@
+
+
+1.18
+log
+@Fixed bug in noisy_pmatch where passing a string like "*joeplayer" would not
+work as expected.
+
+Add noisy_plmatch.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2008/06/14 04:48:01 $ $Revision: 1.17 $                   )
+d77 6
+d177 3
+a179 11
+  tolower dup "me" strcmp not if
+    match exit
+  then
+  dup "*" 1 strncmp if
+    match dup if
+      exit
+    then
+  else
+    me @@ "mage" flag? if
+      match exit
+    then
+d181 1
+d311 1
+a311 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.17 $
+@
+
+
+1.17
+log
+@Colorized error messages for noisy matches.
+Added MATCH-noisy_rmatch
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/09/25 13:46:29 $ $Revision: 1.16 $                   )
+d29 10
+d40 1
+a40 1
+(   This routine basically does a .noisy_match, and checks that what is       )
+d77 4
+d83 1
+a83 1
+
+d157 5
+a161 2
+  dup "me" strcmp not if pop "me" match exit then
+    "*" swap strcat match
+d170 16
+d275 1
+d305 1
+d312 1
+a312 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.16 $
+@
+
+
+1.16
+log
+@Documentation update.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/09/13 15:01:34 $ $Revision: 1.15 $                   )
+d67 3
+d121 1
+a121 1
+    me @@ "I don't see that here!" notify exit
+d124 15
+a138 1
+    me @@ "I don't know which one you mean!" notify exit
+d156 2
+a157 1
+      pop #-1 me @@ "Permission denied." notify
+d242 1
+d271 1
+d277 1
+a277 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.15 $
+@
+
+
+1.15
+log
+@Updated documentation strings.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/07 21:20:00 $ $Revision: 1.14 $                   )
+d67 3
+d72 1
+a72 1
+
+d75 1
+a75 1
+
+d78 1
+a78 1
+
+d81 1
+a81 1
+
+d84 1
+a84 1
+
+d89 1
+a89 1
+
+d92 1
+a92 1
+
+d95 1
+a95 1
+
+d99 1
+a99 1
+
+d103 1
+a103 1
+
+d106 1
+a106 1
+
+d109 1
+a109 1
+
+d257 1
+a257 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/06 04:10:57 $ $Revision: 1.13 $                   )
+d67 3
+d252 3
+a254 3
+@@set $lib/match=/_/de:lib-match: List lines 1-55 to see documentation.
+@@set $lib/match=/_docs:@@list $lib/match=1-55
+@@set $lib/match=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Added some colorization.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/05 21:08:02 $ $Revision: 1.12 $                   )
+d67 3
+d251 2
+a252 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@Removed unneeded $include of lib-stackrng
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/04 16:11:50 $ $Revision: 1.11 $                   )
+d67 3
+d123 1
+a123 1
+    me @@ "I don't recognize anyone by that name." notify
+d248 1
+a248 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@Documentation Update
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/04 15:14:30 $ $Revision: 1.10 $                   )
+d9 1
+a9 1
+( Dependencies: lib-stackrng                                                  )
+d12 1
+a12 1
+( MATCHpmatch: playername -- playerdbref                                      )
+d16 1
+a16 1
+( MATCHnoisy_match: itemname -- itemdbref                                     )
+d23 1
+a23 1
+( MATCHnoisy_pmatch: playername -- playerdbref                                )
+d29 1
+a29 1
+( MATCHmatch_controlled: itemname -- itemdbref                                )
+d35 1
+a35 1
+( MATCHmulti_rmatch: objref smatchstr -- dn .. d1 n                           )
+d42 1
+a42 1
+( MATCHtable_match: xnone xambig sn xn .. s1 x1 n comp func -- smat xmat      )
+d59 1
+a59 1
+( MATCHstd_table_match:                                                       )
+d67 3
+a101 1
+$include $lib/stackrng
+d236 7
+d245 1
+a245 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@Forgot the _defs entry for pmatch.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/04/04 15:05:26 $ $Revision: 1.9 $                    )
+d9 1
+a9 1
+( Dependencies: lib-glow-standard, lib-stackrng                               )
+d67 3
+d236 1
+a236 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@Moved pmatch to this library from lib-glow-standard
+Revised noisy_pmatch to use the local word
+Updated Documentation and installer script
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/03/23 17:25:08 $ $Revision: 1.8 $                    )
+d67 5
+d224 1
+d233 1
+a233 1
+@@set $lib/match=/_lib-version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Updated documentation strings.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2005/03/21 01:31:43 $ $Revision: 1.7 $                    )
+a9 1
+( Originally taken from the FuzzBall MUF distribution.                        )
+d11 53
+a63 59
+( Matching library
+  .noisy_match  [ itemname -- itemdbref ]
+    Takes a string with a possible item name in it.  It returns the
+      dbref of the database item is if is found.  If it is not found, it tells
+      the user that it doesn't see that here and returns #-1.  If it
+      finds several matches it tells the user that it doesn't know which
+      item was meant, and returns #-2.
+  
+  .noisy_pmatch   [ playername -- playerdbref]
+    This routine takes a string with a possible playername and returns
+      the dbref of that player, if it can find it.  If it cannot find the
+      player, then it tells the user that it doesn't know who that is,
+      and it returns #-1.
+  
+  .controls  [ playerdbref dbref -- controlled? ]
+    This routine takes a player dbref and an database item dbref and returns an
+      integer value of 1 if the player controls that database item.  Otherwise
+      it returns a 0.
+  
+  .match_controlled  [ itemname -- itemdbref ]
+    This routine basically does a .noisy_match, and checks that what is
+      returned is controlled by the user.  If it is not, then it tells the
+      user Permission Denied, and returns #-1.  Otherwise it returns the
+      dbref of the item matched.
+  
+  .multi_rmatch  [objref smatchstr -- dn .. d1 n]
+      This function takes a dbref for the thing/player/room that it is
+      to match in, and a smatch style comparison string and returns the
+      dbrefs of all the contained database items within who's names matched the
+      string.  There is an integer on top giving how many dbrefs were
+      returned.  If no items were matched, it only returns a 0.
+  
+  .table_match  [ xnone xambig sn xn .. s1 x1 n comp func -- smat xmat ]
+      This function takes, in order:
+          - a data value of any type to return if no matches are made.
+              {xnone}
+          - a data value of any type to return if the match is amiguous.
+              {xambig}
+          - a range of comparator {sn - s1}, and data {xn - x1} pairs of
+              any type.
+          - an integer count of how many comparator-data pairs are on
+              the stack to be compared against. {n}
+          - a value of the same type as the comparators, that will be
+              checked against each comparator.  {comp}
+          - the address of the comparator function that is used to compare
+              comp against s1 through sn.  This function should take the
+              two datums for comparison and return a 1 for a match or a 0
+              for a non-match.  {func}
+        This function tests comp against s1 through sn, returning the
+          matching compatator-data pair if it finds one match.  It returns
+          a null string and xnone if no matches are found.  It returns a
+          null string and xambig if more than one match was found.
+  
+  .std_table_match
+    This function runs .table_match with a standard comparator fuction that
+      expects the comparators to be strings.  The match comparator routine
+      matches if comp matches the beginning of the comparator exactly.
+      ie:  a comp of "#h" would match a comparator {s1 - sn} of "#help".
+)
+d67 3
+a91 1
+$include $lib/glowstandard
+d102 6
+a107 2
+  
+  
+d109 1
+a109 1
+  .pmatch dup not if
+d113 1
+a113 1
+  
+d166 1
+a166 1
+  
+d188 1
+a188 1
+  
+d199 1
+a199 1
+  
+d210 18
+a227 19
+@@register #me lib-match=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W
+@@set $tmp/prog1=/_defs/.controls:controls
+@@set $tmp/prog1=/_defs/.match_controlled:"$lib/match" match "match_controlled" call
+@@set $tmp/prog1=/_defs/.noisy_match:"$lib/match" match "noisy_match" call
+@@set $tmp/prog1=/_defs/.noisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@@set $tmp/prog1=/_defs/.std_table_match:"$lib/match" match "std_table_match" call
+@@set $tmp/prog1=/_defs/.table_match:"$lib/match" match "table_match" call
+@@set $tmp/prog1=/_defs/.multi_rmatch:"$lib/match" match "multi_rmatch" call
+@@set $tmp/prog1=/_defs/MATCHmatch_controlled:"$lib/match" match "match_controlled" call
+@@set $tmp/prog1=/_defs/MATCHnoisy_match:"$lib/match" match "noisy_match" call
+@@set $tmp/prog1=/_defs/MATCHnoisy_pmatch:"$lib/match" match "noisy_pmatch" call
+@@set $tmp/prog1=/_defs/MATCHstd_table_match:"$lib/match" match "std_table_match" call
+@@set $tmp/prog1=/_defs/MATCHtable_match:"$lib/match" match "table_match" call
+@@set $tmp/prog1=/_defs/MATCHmulti_rmatch:"$lib/match" match "multi_rmatch" call
+@@set $tmp/prog1=/_/de:lib-match: List lines 8-66 to see documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/match=8-66
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Begining installation of lib-match...
+d5 1
+a5 1
+( lib-match: $Date: 2005/01/14 16:32:13 $ $Revision: 1.6 $                    )
+d74 3
+d227 4
+a230 4
+@@set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/match=3-62
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+"Installation of lib-match completed.
+@
+
+
+1.6
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2004/08/04 14:12:21 $ $Revision: 1.5 $                    )
+d74 4
+d85 2
+a86 2
+  Revision 1.3  1998/08/22 19:03:51  glow
+  Oops. Remember why I had already taken .controls out of lib-match.
+d88 1
+a88 1
+  Revision 1.2  1998/08/22 18:57:08  glow
+a89 4
+
+  Revision 1.1  1998/08/22 18:51:47  glow
+  Initial revision
+
+d226 1
+a226 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Updated header documentation. Updated library entries to add the new
+LIBNAMEfuncname format for function names.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 2000/01/10 21:23:33 $ $Revision: 1.4 $                    )
+d15 1
+a15 1
+      dbref of the object is if is found.  If it is not found, it tells
+d26 3
+a28 3
+  .controls  [ playerdbref objectdbref -- controlled? ]
+    This routine takes a player dbref and an object dbref and returns an
+      integer value of 1 if the player controls that object.  Otherwise
+d40 1
+a40 1
+      dbrefs of all the contained objects within who's names matched the
+d74 4
+d226 1
+a226 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Fixed .controls backward compatibility
+@
+text
+@d5 6
+a10 2
+( lib-match: $Date: 1998/08/22 19:03:51 $ $Revision: 1.3 $
+  Originally taken from the FuzzBall MUF distribution.                        )
+d74 3
+d214 6
+d222 1
+a222 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Oops. Remember why I had already taken .controls out of lib-match.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 1998/08/22 18:57:08 $ $Revision: 1.2 $
+d70 3
+d200 1
+a200 1
+@@set $tmp/prog1=/_/de:lib-match: List lines 3-62 to see documentation.
+d207 1
+d209 1
+a209 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Added .controls from fbmuf.
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date: 1998/08/22 18:51:47 $ $Revision: 1.1 $
+d70 3
+a97 7
+  
+: controls (player object -- bool)
+  owner over dbcmp
+  swap "wizard" flag? or
+;
+  
+  
+a150 1
+
+a185 1
+PUBLIC controls
+a197 1
+@@set $tmp/prog1=/_defs/.controls:"$lib/match" match "controls" call
+d204 2
+a205 2
+@@set $tmp/prog1=/_docs:@@list $lib/match=3-68
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-match: $Date$ $Revision$
+d69 4
+a72 1
+  $Log$
+d212 1
+a212 1
+@@set $tmp/prog1=/_lib-version:FM1.0
+@

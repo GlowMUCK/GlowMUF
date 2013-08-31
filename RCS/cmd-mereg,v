@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.28.14.53.53;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-mereg/regme...
+@@prog cmd-mereg
+1 99999 d
+1 i
+( cmd-mereg: $Date$ $Revision$ )
+( Author: Andy )
+( --------------------------------------------------------------------------- )
+
+$include $lib/glowstandard
+
+: mereg ( s -- )
+  "me" match me !
+  me @@ .wizard? not if "Permission denied." .tell exit then
+  prog owner
+  "@@tune reg_wiz=*" me @@ name strcat
+  force
+  "You are now set to process @@hopper registrations." .tell
+;
+.
+c
+q
+@@register cmd-mereg=cmd/mereg
+@@register #me cmd-mereg=tmp/prog1
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_/de:A scroll containing a spell called cmd-mereg
+@@action @@mereg;@@regme;mereg;regme=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-mereg complete.
+@

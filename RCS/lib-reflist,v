@@ -1,0 +1,665 @@
+head	1.8;
+access;
+symbols
+	GlowMUF1-1-1:1.8
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.8
+date	2005.09.25.23.24.53;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.04.07.21.20.00;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.05.22.21.34;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.01.15.06.35.18;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.01.10.21.34.22;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.16.07.05;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.8
+log
+@Documentation update.
+@
+text
+@wh me=Beginning installation of lib-reflist...
+@@prog lib-reflist
+1 99999 d
+1 i
+( lib-reflist: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                  )
+( Purpose: Handles a string property that contains a list of dbrefs           )
+( Author: Unknown                                                             )
+( Contributors: None                                                          )
+( Dependencies: lib-strings, lib-match, lib-look                              )
+( --------------------------------------------------------------------------- )
+( DBref list manager -- REF                                                   )
+( A reflist is a property on an database item that contains a string with a   )
+( series of space and # delimited dbrefs in it. For example:                  )
+(    reflist:#1234 #9364 #21 #6466 #37                                        )
+( A reflist only will contain one copy of any one dbref within it.            )
+( A reflist can be no longer than 4096 characters long.  Generally, this      )
+( means around 500+ refs.                                                     )
+(                                                                             )
+( REF-add: itemref reflistname dbreftoadd --                                  )
+(   Adds a dbref to the dbreflist.  If the given dbref is already in the      )
+(   reflist, it moves it to the end of the reflist.                           )
+(                                                                             )
+( REF-count: itemref reflistname -- i                                         )
+(   Returns the number of database item references in the reflist.            )
+(                                                                             )
+( REF-delete: itemref reflistname dbreftokill --                              )
+(   Removes a dbref from the dbreflist.                                       )
+(                                                                             )
+( REF-first: itemref reflistname -- firstdbref                                )
+(   Returns the first dbref in the reflist.                                   )
+(                                                                             )
+( REF-next: itemref reflistname currdbref -- nextdbref                        )
+(   Returns the next dbref in the list after the one you give it.             )
+(   Returns #-1 at the end of the list.                                       )
+(                                                                             )
+( REF-inlist?: itemref reflistname dbreftocheck -- inlist?                    )
+(   Returns whether or not the given dbref is in the dbreflist.               )
+(                                                                             )
+( REF-list: itemref reflistname -- liststr                                    )
+(   Returns a comma delimited string with the names of all the database items )
+(   in the given reflist.                                                     )
+(                                                                             )
+( REF-allrefs: itemref reflistname -- refx...ref1 refcount                    )
+(   Returns a range on the stack containing all the refs in the list, with the)
+(   count of them on top.                                                     )
+(                                                                             )
+( REF-filter: address itemref reflistname -- refx...ref1 refcount             )
+(   Returns a range of dbrefs on the stack, filtered from the given reflist.  )
+(   The filtering is done by a function that you pass the address of. The     )
+(   filter routine is [d -- i].  It takes a dbref and returns a boolean int.  )
+(   If the integer is 0, the ref is not included in the returned list. If the )
+(   the integer is not 0, the it is in the returned list.                     )
+(                                                                             )
+( REF-editlist: players? itemref reflistname --                               )
+(   Enters the user into an interactive editor that lets them add and remove  )
+(   database items from the given reflist. 'players?' is an integer boolean   )
+(   value, where if it is true, the list only lets you add players to it.     )
+(   Otherwise it lets you add regular database items to it.                   )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-reflist,v $
+  Revision 1.7  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+ 
+  Revision 1.6  2005/04/05 22:21:34  feaelin
+  Fixed library calls. Eliminated the need for the library to include
+  lib-glow-standard. Added in REF-count from legacy's reflist.
+  Made corrections to the installer script.
+  Cleaned up documentation.
+ 
+  Revision 1.5  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.4  2005/01/15 06:35:18  feaelin
+  Fixed the problem where programs relying on lib-reflist were expecting
+  non feni'd and non-colorized output.
+ 
+  Revision 1.3  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+ 
+  Revision 1.2  2000/01/10 21:34:22  feaelin
+  Documentation update.
+)
+( --------------------------------------------------------------------------- )
+$include $lib/strings
+$include $lib/match
+$include $lib/look
+ 
+: REF-delete (item reflist killref -- )
+  3 pick 3 pick getpropstr " " strcat
+  swap int intostr " " strcat
+  "#" swap strcat STR-split
+  strcat STR-sms strip
+  dup if setprop else pop remove_prop then
+;
+ 
+: REF-add (item reflist addref -- )
+  3 pick 3 pick 3 pick REF-delete
+  3 pick 3 pick getpropstr " " strcat
+  swap int intostr " " strcat
+  "#" swap strcat strcat
+  STR-sms strip 
+  dup if setprop else pop remove_prop then
+;
+ 
+: REF-first (itemref reflist -- firstref)
+  getpropstr " " STR-split pop
+  dup not if pop #-1 exit then
+  1 strcut swap pop atoi dbref
+;
+ 
+: REF-next (item reflist currref -- nextref)
+  rot rot getpropstr
+  swap int intostr
+  " " strcat "#" swap strcat
+  STR-split swap pop strip
+  dup not if pop #-1 exit then
+  " " STR-split pop
+  1 strcut swap pop
+  atoi dbref
+;
+ 
+: REF-inlist? (item reflistname dbreftocheck -- inlist?)
+  rot rot getpropstr " " strcat
+  swap int intostr
+  " " strcat "#" swap strcat
+  instr
+;
+ 
+: REF-allrefs (d s -- dx...d1 i)
+  getpropstr STR-sms strip
+  0 swap "#" explode
+  begin
+    dup while
+    1 - swap strip
+    dup not if pop continue then
+    atoi dbref
+    over 3 + -1 * rotate
+    dup 2 + rotate 1 + over 2 + -1 * rotate
+  repeat
+  pop
+;
+ 
+: REF-list  (itemref reflistname -- liststr)
+  REF-allrefs LOOK-short-list-n
+;
+ 
+: REF-filter (a d s -- dx...d1 i)
+  getpropstr STR-sms strip
+  0 rot rot begin
+    striplead dup while
+    "#" .split swap strip
+    dup not if pop continue then
+    atoi dbref dup 4 pick execute if
+      -4 rotate rot 1 + rot rot
+    else pop
+    then
+  repeat
+  pop pop
+;
+ 
+: REF-editlist-help
+  if
+    "To add a player, enter their name.  To remove a player, enter their name"
+    "with a ! in front of it.  ie: '!guest'.  To display the list, enter '*'"
+    "on a line by itself.  To clear the list, enter '#clear'.  To finish"
+    "editing and exit, enter '.' on a line by itself.  Enter '#help' to see"
+    "these instructions again."
+    strcat strcat strcat strcat me @@ swap ansi_notify
+  else
+    "To add a database item, enter its name or dbref.  To remove a database item, enter"
+    "its name or dbref with a ! in front of it.  ie: '!button'.  To display"
+    "the list, enter '*' on a line by itself.  To clear the list, enter"
+    "'#clear'.  To finish editing and exit, enter '.' on a line by itself."
+    "Enter '#help' to see these instructions again."
+    strcat strcat strcat strcat me @@ swap ansi_notify
+  then
+;
+ 
+: REF-editlist  (players? itemref reflistname -- )
+  3 pick REF-editlist-help
+  "^SUCC^The database item list currently contains:" me @@ swap ansi_notify
+  over over REF-list me @@ swap notify
+  begin
+    read
+    dup "." strcmp not if
+      pop pop pop
+      "^SUCC^Done." me @@ swap ansi_notify break
+    then
+    dup "#list" stringcmp not
+    over "*" strcmp not or if
+      pop "^SUCC^The database item list currently contains:" me @@ swap ansi_notify
+      over over REF-list me @@ swap notify continue
+    then
+    dup "#clear" stringcmp not if
+      pop over over remove_prop
+      "^SUCC^Database item list cleared." me @@ swap ansi_notify continue
+    then
+    dup "#help" stringcmp not if
+      pop 3 pick REF-editlist-help
+      continue
+    then
+    dup "!" 1 strncmp not if
+      1 strcut swap pop 1
+    else 0
+    then
+    swap 5 pick if MATCH-noisy_pmatch else MATCH-noisy_match then
+    dup ok? not if pop pop continue then
+    4 pick 4 pick rot 4 rotate if
+      3 pick 3 pick 3 pick REF-inlist? if
+        REF-delete "^SUCC^Removed." me @@ swap ansi_notify
+      else
+        pop pop pop
+        "^FAIL^Not in database item list." me @@ swap ansi_notify
+      then
+    else
+      REF-add "^SUCC^Added." me @@ swap ansi_notify
+    then
+  repeat
+;
+ 
+: REF-count ( itemdbref reflistname -- i )
+  getpropstr " " explode
+  over not if
+    pop pop 0 exit
+  then
+  dup begin
+    dup while
+    dup 2 + rotate pop
+  1 - repeat
+  pop
+;
+ 
+PUBLIC REF-add
+PUBLIC REF-delete
+PUBLIC REF-first
+PUBLIC REF-next
+PUBLIC REF-list
+PUBLIC REF-inlist?
+PUBLIC REF-allrefs
+PUBLIC REF-filter   ( address itemref reflistname -- refx...ref1 refcount )
+PUBLIC REF-editlist ( players? itemref reflistname -- )
+PUBLIC REF-count
+.
+c
+q
+@@register lib-reflist=lib/reflist
+@@set $lib/reflist=L
+@@set $lib/reflist=H
+@@set $lib/reflist=S
+@@set $lib/reflist=B
+@@set $lib/reflist=M2
+@@set $lib/reflist=/_defs/REF-add:"$lib/reflist" match "REF-add" call
+@@set $lib/reflist=/_defs/REF-count:"$lib/reflist" match "REF-count" call
+@@set $lib/reflist=/_defs/REF-delete:"$lib/reflist" match "REF-delete" call
+@@set $lib/reflist=/_defs/REF-first:"$lib/reflist" match "REF-first" call
+@@set $lib/reflist=/_defs/REF-next:"$lib/reflist" match "REF-next" call
+@@set $lib/reflist=/_defs/REF-inlist?:"$lib/reflist" match "REF-inlist?" call
+@@set $lib/reflist=/_defs/REF-list:"$lib/reflist" match "REF-list" call
+@@set $lib/reflist=/_defs/REF-allrefs:"$lib/reflist" match "REF-allrefs" call
+@@set $lib/reflist=/_defs/REF-filter:"$lib/reflist" match "REF-filter" call
+@@set $lib/reflist=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
+@@set $lib/reflist=/_/de:lib-reflist: List lines 1-52 for documentation.
+@@set $lib/reflist=/_docs:@@list $lib/reflist=1-55
+@@set $lib/reflist=/_lib-version:FM$Revision: 1.7 $
+@@set $lib/reflist=/_lib-symbol:REF
+wh me=Installation of lib-reflist complete.
+@
+
+
+1.7
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date: 2005/04/05 22:21:34 $ $Revision: 1.6 $                  )
+d62 3
+d70 1
+a70 1
+
+d73 1
+a73 1
+
+d77 1
+a77 1
+
+d81 1
+a81 1
+
+d265 2
+a266 2
+@@set $lib/reflist=/_docs:@@list $lib/reflist=1-52
+@@set $lib/reflist=/_lib-version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Fixed library calls. Eliminated the need for the library to include
+lib-glow-standard. Added in REF-count from legacy's reflist.
+Made corrections to the installer script.
+Cleaned up documentation.
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date: 2005/03/21 01:31:43 $ $Revision: 1.5 $                  )
+d62 6
+d263 2
+a264 1
+@@set $lib/reflist=_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-reflist...
+d5 54
+a58 49
+( lib-reflist: $Date: 2005/01/15 06:35:18 $ $Revision: 1.4 $
+  Originally from FuzzBall MUF Distribution                                 )
+( ------------------------------------------------------------------------- )
+( DBref list manager -- REF
+  A reflist is a property on an database item that contains a string with
+  a series of space and # delimited dbrefs in it.  ie:
+    reflist:#1234 #9364 #21 #6466 #37
+  A reflist only will contain one copy of any one dbref within it.
+  A reflist can be no longer than 4096 characters long.  Generally,
+    this means around 500+ refs.
+  
+  REF-add  [objref reflistname dbreftoadd -- ]
+    Adds a dbref to the dbreflist.  If the given dbref is already in
+    the reflist, it moves it to the end of the reflist.
+  
+  REF-delete  [objref reflistname dbreftokill -- ]
+    Removes a dbref from the dbreflist.
+  
+  REF-first [objref reflistname -- firstdbref]
+    Returns the first dbref in the reflist.
+  
+  REF-next  [objref reflistname currdbref -- nextdbref]
+    Returns the next dbref in the list after the one you give it.
+    Returns #-1 at the end of the list.
+
+  REF-inlist? [objref reflistname dbreftocheck -- inlist?]
+    Returns whether or not the given dbref is in the dbreflist.
+  
+  REF-list  [objref reflistname -- liststr]
+    Returns a comma delimited string with the names of all the database items
+    in the given reflist.
+  
+  REF-allrefs [objref reflistname -- refx...ref1 refcount]
+    Returns a range on the stack containing all the refs in the list,
+    with the count of them on top.
+
+  REF-filter [address objref reflistname -- refx...ref1 refcount]
+    Returns a range of dbrefs on the stack, filtered from the given reflist.
+    The filtering is done by a function that you pass the address of.  The
+    filter routine is [d -- i].  It takes a dbref and returns a boolean int.
+    If the integer is 0, the ref is not included in the returned list.  If
+    the integer is not 0, the it is in the returned list.
+
+  REF-editlist  [players? objref reflistname -- ]  
+    Enters the user into an interactive editor that lets them add and remove
+    database items from the given reflist.  'players?' is an integer boolean value,
+    where if it is true, the list only lets you add players to it.  Otherwise
+    it lets you add regular database items to it.
+)
+d62 3
+a76 1
+$include $lib/glowstandard
+d78 1
+d80 2
+a81 3
+$include $lib/match
+  
+: REF-delete (obj reflist killref -- )
+d84 3
+a86 2
+  "#" swap strcat STRsplit
+  strcat STRsms STRstrip .setpropstr
+d88 2
+a89 2
+  
+: REF-add (obj reflist addref -- )
+d94 2
+a95 1
+  STRsms STRstrip .setpropstr
+d97 3
+a99 3
+  
+: REF-first (obj reflist -- firstref)
+  getpropstr " " STRsplit pop
+d103 2
+a104 2
+  
+: REF-next (obj reflist currref -- nextref)
+d108 1
+a108 1
+  STRsplit swap pop STRstrip
+d110 1
+a110 1
+  " " STRsplit pop
+d114 2
+a115 2
+  
+: REF-inlist? (objref reflistname dbreftocheck -- inlist?)
+d121 1
+a121 1
+  
+d123 1
+a123 1
+  getpropstr STRsms strip
+d135 3
+a137 3
+
+: REF-list  (objref reflistname -- liststr)
+  REF-allrefs LOOKshort-list-n
+d139 1
+a139 1
+
+d141 1
+a141 1
+  getpropstr STRsms strip
+d153 1
+a153 2
+
+
+d161 1
+a161 1
+    strcat strcat strcat strcat .tell
+d168 1
+a168 1
+    strcat strcat strcat strcat .tell
+d171 2
+a172 2
+
+: REF-editlist  (players? objref reflistname -- )
+d174 2
+a175 2
+  "The database item list currently contains:" .tell
+  over over REF-list .tell
+d180 1
+a180 1
+      "Done." .tell break
+d184 2
+a185 2
+      pop "The database item list currently contains:" .tell
+      over over REF-list .tell continue
+d189 1
+a189 1
+      "database item list cleared." .tell continue
+d199 1
+a199 1
+    swap 5 pick if .noisy_pmatch else .noisy_match then
+d203 1
+a203 1
+        REF-delete "Removed." .tell
+d206 1
+a206 1
+        "Not in database item list." .tell
+d209 1
+a209 1
+      REF-add "Added." .tell
+d213 13
+a225 2
+
+
+d233 3
+a235 2
+PUBLIC REF-filter (address objref reflistname -- refx...ref1 refcount)
+PUBLIC REF-editlist  (players? objref reflistname -- )
+d240 19
+a258 19
+@@register #me lib-reflist=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=H
+@@set $tmp/prog1=S
+@@set $tmp/prog1=B
+@@set $tmp/prog1=M2
+@@set $tmp/prog1=/_defs/REF-add:"$lib/reflist" match "REF-add" call
+@@set $tmp/prog1=/_defs/REF-delete:"$lib/reflist" match "REF-delete" call
+@@set $tmp/prog1=/_defs/REF-first:"$lib/reflist" match "REF-first" call
+@@set $tmp/prog1=/_defs/REF-next:"$lib/reflist" match "REF-next" call
+@@set $tmp/prog1=/_defs/REF-inlist?:"$lib/reflist" match "REF-inlist?" call
+@@set $tmp/prog1=/_defs/REF-list:"$lib/reflist" match "REF-list" call
+@@set $tmp/prog1=/_defs/REF-allrefs:"$lib/reflist" match "REF-allrefs" call
+@@set $tmp/prog1=/_defs/REF-filter:"$lib/reflist" match "REF-filter" call
+@@set $tmp/prog1=/_defs/REF-editlist:"$lib/reflist" match "REF-editlist" call
+@@set $tmp/prog1=/_/de:lib-reflist: List lines 3-45 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/reflist=3-45
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.4 $
+"Installation of lib-reflist complete.
+@
+
+
+1.4
+log
+@Fixed the problem where programs relying on lib-reflist were expecting
+non feni'd and non-colorized output.
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date: 2005/01/14 16:32:13 $ $Revision: 1.3 $
+d57 4
+d62 2
+a63 1
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+a66 4
+
+  Revision 1.1  1998/08/23 16:07:05  glow
+  Initial revision
+
+d237 1
+a237 1
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date: 2000/01/10 21:34:22 $ $Revision: 1.2 $
+d57 3
+d127 1
+a127 1
+  REF-allrefs .short-list
+d236 1
+a236 1
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Documentation update.
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date: 1998/08/23 16:07:05 $ $Revision: 1.1 $
+d9 1
+a9 1
+  A reflist is a property on an object that contains a string with
+d34 1
+a34 1
+    Returns a comma delimited string with the names of all the objects
+d50 1
+a50 1
+    objects from the given reflist.  'players?' is an integer boolean value,
+d52 1
+a52 1
+    it lets you add regular objects to it.
+d57 3
+d151 1
+a151 1
+    "To add an object, enter its name or dbref.  To remove an object, enter"
+d162 1
+a162 1
+  "The object list currently contains:" .tell
+d172 1
+a172 1
+      pop "The object list currently contains:" .tell
+d177 1
+a177 1
+      "Object list cleared." .tell continue
+d194 1
+a194 1
+        "Not in object list." .tell
+d233 1
+a233 1
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-reflist: $Date$ $Revision$
+d56 4
+a59 1
+  $Log$
+a218 1
+@@set $tmp/prog1=/_/de:lib-reflist: List lines 3-48 for documentation.
+d228 3
+a230 2
+@@set $tmp/prog1=/_docs:@@list $lib/reflist=3-48
+@@set $tmp/prog1=_lib-version:FM$Revision$
+@

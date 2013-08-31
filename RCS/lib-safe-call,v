@@ -1,0 +1,276 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2006.08.15.14.10.00;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2006.08.15.13.10.51;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@One small cut and paste error...
+@
+text
+@wh me=Beginning installation of lib-safe-call
+@@prog lib-safe-call
+1 99999 d
+1 i
+( lib-safe-call: $Date: 2006/08/15 13:10:51 $ $Revision: 1.1 $                )
+( Purpose: Safely call another program by storing the current stack in props  )
+( Authors: Feaelin                                                            )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Overview:                                                                   )
+(   The safe-call library is intended to help you safely call programs whose  )
+(   return values and careful handling of the stack is not guaranteed.        )
+(   Each of the safe-call library words stores and removes the stack. After   )
+(   calling the specified dbref it restores the stack, allowing your program  )
+(   to continue.                                                              )
+(                                                                             )
+( SAFECALL-basic   [ d --  ]                                                  )
+(   Calls program 'd' and destroys anything 'd' leaves on the stack,          )
+(   and restores the calling program's stack.                                 )
+(                                                                             )
+( SAFECALL-arg     [ d s -- ]                                                 )
+(   Calls program 'd' and leaves 's' on the stack for 'd' to use. Destroys    )
+(   anything 'd' leaves on the stack and restores the calling program's       )
+(   stack.                                                                    )
+(                                                                             )
+( SAFECALL-cmd     [ d s -- ]                                                 )
+(   Preserves command variable and sets it to 's' before calling program 'd'. )
+(   Destroys anything 'd' leaves on the stack and restores the calling        )
+(   program's stack and restores the command variable.                        )
+(                                                                             )
+( SAFECALL-arg-cmd [ d sc sa -- ]                                             )
+(   Preserves the command variable and sets it to 'sc' before calling program )
+(   'd' with 'sa' on the stack. Destroys anything 'd' leaves on the stack and )
+(   restores the calling program's stack and restores the command variable.   )
+(                                                                             )
+( SAFECALL-full    [ d sc sa i -- x1 x2 ... xi ]                              )
+(   Preserves the command variable and sets it to 'sc' before calling program )
+(   'd' with 'sa' on the stack. After the program finishes, returns up to 'i' )
+(   stack items to the calling program in addition to restoring the calling   )
+(   program's stack.                                                          )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-safe-call,v $
+  Revision 1.1  2006/08/15 13:10:51  feaelin
+  Added the new safe call library to the repository.
+
+)
+( TODO: Check what happens when the stack is empty? )
+: temp-dir
+  "/_prefs/safe-call/temp/" pid intostr strcat "/" strcat
+;
+ 
+: temp-dir-stack
+  temp-dir "stack/" strcat
+;
+ 
+lvar counter
+: save-stack ( [any number of stack items] -- )
+  0 counter !
+  begin
+    counter @@ 1 + counter !
+    depth rotate me @@ swap temp-dir-stack counter @@ intostr strcat swap
+    dup string? if
+      dup "" strcmp not if
+        pop "lib-safe-call-null-string" 
+      then
+    then
+    dup int? if
+      dup 0 = if
+        pop "lib-safe-call-null-integer"
+      then
+    then
+    setprop
+  depth 0 = until
+;
+ 
+: load-stack ( -- [restored stack items] )
+  me @@ temp-dir-stack nextprop
+  begin
+    dup me @@ swap getprop
+    dup string? if
+      dup "lib-safe-call-null-string" strcmp not if
+        pop ""
+      then
+      dup "lib-safe-call-null-integer" strcmp not if
+        pop 0
+      then
+    then
+    swap
+    me @@ swap nextprop
+  dup "" strcmp not until
+  me @@ temp-dir dup strlen 1 - strcut pop remove_prop
+;
+ 
+: store-call-stack ( s -- )
+  dup string? if
+    dup "" strcmp not if
+      pop "lib-safe-call-null-string" 
+    then
+  then
+  dup int? if
+    dup 0 = if
+      pop "lib-safe-call-null-integer"
+    then
+  then
+  me @@ temp-dir "callstack" strcat rot setprop ( Store the stack item to call the program with )
+;
+ 
+: load-call-stack ( -- s )
+  me @@ temp-dir "callstack" strcat getprop ( Load the stack item for called program )
+  dup string? if
+    dup "lib-safe-call-null-string" strcmp not if
+      pop ""
+    then
+    dup "lib-safe-call-null-integer" strcmp not if
+      pop 0
+    then
+  then
+;
+ 
+lvar old-command
+: safe-call-full ( [stack] d sc sa i -- [stack_restored] x1 x2 ... xi )
+  me @@ temp-dir "stackcount" strcat rot setprop
+  store-call-stack
+  me @@ temp-dir "command" strcat rot setprop ( Store what the command variable will be )
+  dup ok? over program? and not if
+    "lib-safe-call called without a valid program dbref on the stack." abort
+  then
+  me @@ temp-dir "progref" strcat rot setprop ( Store the program to be called )
+  save-stack
+  me @@ temp-dir "command" strcat getpropstr dup "" strcmp if
+    command @@ old-command ! command !
+  then
+  load-call-stack
+  me @@ temp-dir "progref" strcat getprop ( Program to be called )
+  call depth me @@ temp-dir "stackcount" strcat getprop - popn
+  load-stack
+  old-command @@ command !
+; public safe-call-full
+ 
+: safe-call-arg-cmd ( [stack] d sc sa -- [stack_restored] )
+  store-call-stack
+  me @@ temp-dir "command" strcat rot setprop ( Store what the command variable will be )
+  dup ok? over program? and not if
+    "lib-safe-call called without a valid program dbref on the stack." abort
+  then
+  me @@ temp-dir "progref" strcat rot setprop ( Store the program to be called )
+  save-stack
+  me @@ temp-dir "command" strcat getpropstr dup "" strcmp if
+    command @@ old-command ! command !
+  then
+  load-call-stack
+  me @@ temp-dir "progref" strcat getprop ( Program to be called )
+  call depth popn
+  load-stack
+  old-command @@ command !
+; public safe-call-arg-cmd
+ 
+: safe-call-cmd ( [stack] d s -- [stack_restored] )
+  me @@ temp-dir "command" strcat rot setprop ( Store what the command variable will be )
+  dup ok? over program? and not if
+    "lib-safe-call called without a valid program dbref on the stack." abort
+  then
+  me @@ temp-dir "progref" strcat rot setprop ( Store the program to be called )
+  save-stack
+  me @@ temp-dir "command" strcat getpropstr dup "" strcmp if
+    command @@ old-command ! command !
+  then
+  me @@ temp-dir "progref" strcat getprop ( Program to be called )
+  call
+  depth dup 0 = not if
+    popn
+  then
+  load-stack
+  old-command @@ command !
+; public safe-call-cmd
+ 
+: safe-call-arg ( [stack] d s -- [stack_restored] )
+  store-call-stack
+  dup ok? over program? and not if
+    "lib-safe-call called without a valid program dbref on the stack." abort
+  then
+  me @@ temp-dir "progref" strcat rot setprop ( Store the program to be called )
+  save-stack
+  load-call-stack
+  me @@ temp-dir "progref" strcat getprop ( Program to be called )
+  call
+  depth dup 0 = not if
+    popn
+  then
+  load-stack
+; public safe-call-arg
+ 
+: safe-call-basic ( [stack] d -- [stack_restored] )
+  dup ok? over program? and not if
+    "lib-safe-call called without a valid program dbref on the stack." abort
+  then
+  me @@ temp-dir "progref" strcat rot setprop ( Store the program to be called )
+  save-stack
+  me @@ temp-dir "progref" strcat getprop ( Program to be called )
+  call
+  depth dup 0 = not if
+    popn
+  then
+  load-stack
+; public safe-call-basic
+ 
+: safe-call
+  0 "foo" "bar" "baz" "3" "4" "5" #101 ("" "mycommand"  test sample )
+  safe-call-basic
+;
+.
+c
+q
+@@register lib-safe-call=lib/safe-call
+@@set $lib/safe-call=L
+@@set $lib/safe-call=W
+@@set $lib/safe-call=/_defs/SAFECALL-arg:"$lib/safe-call" match "safe-call-arg" call
+@@set $lib/safe-call=/_defs/SAFECALL-arg-cmd:"$lib/safe-call" match "safe-call-arg-cmd" call
+@@set $lib/safe-call=/_defs/SAFECALL-basic:"$lib/safe-call" match "safe-call-basic" call
+@@set $lib/safe-call=/_defs/SAFECALL-cmd:"$lib/safe-call" match "safe-call-cmd" call
+@@set $lib/safe-call=/_defs/SAFECALL-full:"$lib/safe-call" match "safe-call-full" call
+@@set $lib/safe-call=/_/de:lib-case:List lines 1-38 for documentation.
+@@set $lib/safe-call=/_docs:@@list $lib/safe-call=1-38
+@@set $lib/safe-call=/_lib-version:FM$Revision: 1.1 $
+@@set $lib/safe-call=/_lib-symbol:SAFECALL
+wh me=Installation of lib-safe-call completed.
+@
+
+
+1.1
+log
+@Added the new safe call library to the repository.
+@
+text
+@d5 1
+a5 1
+( lib-safe-call: $Date$ $Revision$                )
+d44 4
+a47 1
+  $Log$
+d226 2
+a227 2
+@@set $lib/safe-call=/_lib-version:FM$Revision$
+@@set $lib/editor=/_lib-symbol:SAFECALL
+@
+

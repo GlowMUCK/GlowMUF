@@ -1,0 +1,402 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2012.04.12.18.34.37;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.09.22.20.30.23;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.28.17.09.55;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@Updated dependency information.
+@
+text
+@"Beginning installation of cmd-morph...
+@@prog cmd-morph
+1 99999 d
+1 i
+( cmd-morph: $Date: 2005/09/22 20:30:23 $ $Revision: 1.2 $                    )
+( Author: PakRat                                                              )
+( Contributors: Maddax                                                        )
+( Dependencies: lib-glow-standard, macro-longdesc                             )
+( --------------------------------------------------------------------------- )
+( MorphPro Copyright 1992 by PakRat Productions, all rights reserved.         )
+( Type morph to see your current morph; morph -help for the help screen.      )
+
+$include $lib/glowstandard  
+
+$define oldmorph #9214 call $enddef
+$define linewrap "@@$desc " swap strcat $enddef
+$define longdesc 1 strcut swap pop "@@$list " swap strcat $enddef
+$define MDIR "_prefs/morph/" $enddef
+$define n ( s -- ) me @@ swap notify $enddef
+$define opt? ( s s1 -- s i ) over 1 strncmp not $enddef
+$define setpropstr dup if 1 addprop else pop remove_prop then $enddef  
+( safename/prop -- val )
+$define getprop me @@ MDIR rot strcat getpropstr $enddef
+( safename/prop val -- )
+$define setprop me @@ MDIR 4 rotate strcat rot setpropstr $enddef
+$define fit10 "           " strcat 10 strcut pop $enddef
+$define MorphOk? safename "/md" strcat getprop atoi $enddef
+$define NOMORPH "That morph does not exist." n $enddef
+$define ErrNoArg "Morph name required." n $enddef
+  
+: title ( -- )
+  " " n
+  "Morph 2 by PakRat -- Morph -help for help." n
+  " " n
+;
+  
+: safename ( s -- s )
+  "-" "@@" subst
+  "-" "~" subst
+  "-" "." subst
+  "-" "/" subst
+;
+  
+: nocmd ( s -- s' )
+  dup " " instr dup if
+    strcut swap pop
+  else
+    pop pop ""
+  then
+;
+  
+: remprog ( s -- ps s )
+  dup not if "" exit then
+  dup "@@$list " 6 strncmp not if 6 strcut swap pop "!" swap strcat then
+  dup "@@" 1 strncmp if "" swap exit then
+  dup " " instr dup if 1 - strcut 1 strcut swap pop else pop "" then
+;
+  
+: spoof ( s -- ) 
+  me @@ swap pronoun_sub
+  "<M> " swap strcat 
+  loc @@ swap 
+  #-1 swap 
+  notify_except 
+;
+  
+: MorphHelp ( s -- )
+  pop title
+  "Morph 2 is a description/sex/species manager." n
+  "Usage: morph name     -- Morph into something" n
+  "       morph -command -- Use a Morph setup command" n
+  "       morph #command -- Same as -command" n
+  " " n
+  "Morph -list   -- List all available Morphs" n
+  "Morph -show   -- Show everything about a particular Morph" n
+  "Morph -edit   -- Set up a new Morph or change an old one" n
+  "Morph -delete -- Remove a Morph" n
+  "Morph -copy   -- Copy your old morphs to the new system" n
+  "Commands can be abbreviated to one letter as well, ie Morph #l" n
+  " " n 
+  "Show, Edit, and Delete require a morph name to work on." n
+  " " n
+  "*** To upgrade from Morph 1, just type Morph -copy  (all will be copied)" n
+  "Send bugs and suggestions to " prog owner name strcat "." strcat n
+;
+  
+$define MSet over swap strcat rot setprop $enddef
+  
+: MorphSet ( sprog sspecies ssex sspoof sdscr sdesc sname prop -- )
+  dup not if pop pop pop pop pop pop pop pop exit then
+  "/na" MSet
+  "/de" MSet
+  "/ds" MSet
+  "/xf" MSet
+  "/sx" MSet
+  "/sp" MSet
+  "/pr" MSet
+  "/md" strcat systime intostr setprop
+;
+  
+: MorphCopy ( s -- )
+  pop title
+  "Copying old morphs to new system..." n
+  1
+  begin
+    dup me @@ "_morphpro/name/" rot intostr strcat getpropstr
+  dup while
+    dup "Copying " swap strcat "..." strcat n
+      "" "" ( n sname "" "" )
+      4 pick me @@ "_morphpro/xform/" rot intostr strcat getpropstr
+      5 pick me @@ "_morphpro/dscr/" rot intostr strcat getpropstr
+      6 pick me @@ "_morphpro/desc/" rot intostr strcat getpropstr
+      remprog swap -6 rotate
+      7 rotate dup safename MorphSet
+    1 +
+  repeat
+  pop pop
+  "Done!" n
+  "Your old morphs are now part of the new system." n
+  "If you'd like to have them set your sex or species, use morph -e mphname" n
+  "To turn on look notify, type @@set me=_look_notify:yes" n
+  "To turn on linewrap for your @@descs, type @@set me=_prefs/linewrap:yes" n
+;
+$define MGet over swap strcat getprop swap $enddef 
+  
+: MorphGet ( sname -- sprog sspecies ssex sspoof sdscr sdesc sname imod )
+  ( returns 0 if doesn't exist )
+  dup MorphOk? not if pop 0 exit then
+  safename
+  "/pr" MGet
+  "/sp" MGet
+  "/sx" MGet
+  "/xf" MGet
+  "/ds" MGet
+  "/de" MGet
+  "/na" MGet
+  "/md" strcat getprop atoi
+;
+  
+: MorphMini ( d ps -- )
+  dup dup "/" rinstr strcut swap pop
+  MorphOk? if
+    over over "/na" strcat getpropstr
+    fit10 " -- " strcat
+    rot rot "/ds" strcat getpropstr
+    strcat n
+  else
+    pop pop
+  then
+;
+  
+: MorphDelete ( sname -- )
+  dup MorphOk? not if
+    pop NOMORPH exit
+  then
+  title
+  me @@ MDIR 3 pick safename strcat MorphMini
+  "Are you sure you want to delete this? (y/n)" n
+  read .yes? not if pop "Spared." n exit then
+  "" "" "" "" "" "" "" 8 pick MorphSet
+  safename "/md" strcat "" setprop
+  "Deleted." n
+;
+  
+: MorphList ( s -- )
+  pop title
+  "Available morphs:" n
+  me @@ dup MDIR nextprop
+  dup not if 
+    pop pop "No morphs defined." n exit 
+  then
+  begin dup while
+    over over MorphMini
+    over swap nextprop
+  repeat
+  pop pop
+  "Done." n
+;
+   
+: MorphShow ( s -- )
+  dup MorphOk? not if pop NOMORPH exit then
+  title
+  MorphGet
+  "Name: " rot strcat n
+  "Last modified: %A, %b %e at %I:%M %p %Z" swap timefmt
+  " " "  " subst n
+  "Summary: " rot strcat n
+  swap dup if "Spoof:   " swap strcat n else pop then
+  swap dup if "Sex:     " swap strcat n else pop then
+  swap dup if "Species: " swap strcat n else pop then
+  swap dup if "Run:     " swap strcat n else pop then
+  " " n
+  "@@DESC (unexpanded):" n .wrap
+; 
+  
+: ChangeSetting ( n/p -- )
+  " " n
+  me @@ MDIR 3 pick strcat getpropstr
+  dup if "Current: " swap strcat n " " n else pop then
+  "Enter a new setting, a period to leave unchanged, or XXX to clear it:" n
+  read
+  dup "." strcmp not if pop pop "Unchanged." n exit then
+  dup "XXX" stringcmp not if pop "" then
+  over dup "/" rinstr strcut swap pop
+  "de" stringcmp not if
+    dup "desc" stringcmp not if pop me @@ desc then
+    dup "@@desc" stringcmp not if pop me @@ desc then
+    remprog swap pop
+  then
+  me @@ MDIR 4 rotate strcat 3 pick setpropstr
+  if "Set." else "Cleared." then n " " n " " n
+;
+  
+: MorphEdit ( s -- )
+  dup safename swap over "/na" strcat swap setprop
+  "For each of these, choosing XXX to clear the setting will cause" n
+  "morph to ignore it when morphing, including @@desc changes, allowing" n
+  "morphs to do anything you want them to do." n
+  " " n
+  "To change just one thing, use a period for each field you wish to" n
+  "keep the same, a period on new morphs is the same as using XXX." n
+  " " n
+  " " n
+  ( sprog sspecies ssex sspoof sdscr sdesc sname )
+  "@@DESC: Enter this morph's @@desc.  Enter DESC to copy your real @@desc." n
+  "Put a ! in front if it is an lsedit list-name, ie !_smurfy_desc" n
+  dup "/de" strcat ChangeSetting
+  "SUMMARY: Type a half-line summary about this morph." n
+  dup "/ds" strcat ChangeSetting
+  "SPOOF: Type a spooflike message to be shown when you morph." n
+  "Spoofs DO support %n %o %p %s substitutions." n
+  dup "/xf" strcat ChangeSetting
+  "SEX: Choose a sex for this morph. (male, female, neuter)" n
+  dup "/sx" strcat ChangeSetting
+  "SPECIES: Choose a species for this morph. (human, cow, fox)" n
+  dup "/sp" strcat ChangeSetting
+  "PROGRAM: If you would like Morph to call a program for your @@desc," n
+  "Enter it here, as you would in a @@description, ie @@12345" n
+  "(Morph strips these from the above DESC entry, to keep things cleaner.)" n
+  dup "/pr" strcat ChangeSetting
+  dup "/md" strcat systime intostr setprop
+  "We're done!" n
+  pop
+;
+  
+: DoMorph ( sname -- )
+  dup MorphOk? not if pop NOMORPH exit then
+  safename
+  dup "/pr" strcat getprop
+  over "/de" strcat getprop
+  dup if
+    dup "!" 1 strncmp not if longdesc then
+    over if " " swap strcat strcat else swap pop then
+    dup "@@" 1 strncmp if linewrap then
+    me @@ swap setdesc
+  else pop pop then
+  dup "/xf" strcat getprop
+  dup if spoof else pop then
+  dup "/sx" strcat getprop
+  dup if me @@ "sex" rot setpropstr else pop then
+  dup "/sp" strcat getprop
+  dup if me @@ "species" rot setpropstr else pop then
+  me @@ MDIR dup strlen 1 - strcut pop rot setpropstr
+;
+  
+: MorphMain ( s -- ? )
+  .noguest
+  "me" match dup me ! location loc !
+  trig trigger !
+  
+  command @@ "oldmorph" over stringcmp not
+  swap "omorph" stringcmp not 
+  or if
+    oldmorph exit
+  then
+  
+  dup if ( make sure we have a command )
+    dup 1 strcut pop "-#" swap instr if
+      1 strcut swap pop
+           "l" opt? if MorphList
+      else "c" opt? if MorphCopy
+      else "s" opt? if nocmd dup if MorphShow  else pop ErrNoArg then
+      else "e" opt? if nocmd dup if MorphEdit   else pop ErrNoArg then
+      else "d" opt? if nocmd dup if MorphDelete else pop ErrNoArg then
+      else "h" opt? if MorphHelp else
+        pop "Unknown option, Morph -help for help." n
+      then then then then then then
+    else
+      dup MorphOk? if 
+        DoMorph 
+      else 
+        pop "That morph isn't defined." n 
+      then
+    then
+  else
+    pop title
+    me @@ MDIR dup strlen
+    1 - strcut pop getpropstr
+    dup MorphOk? if
+       dup "/na" strcat getprop 
+       swap "/ds" strcat getprop
+       " -- " swap strcat strcat 
+       "Current morph: " swap strcat n
+    else pop "You have yet to morph into anything." n then
+  then
+;
+  
+: dodebug ( s -- ? )
+  .noguest
+  MorphMain
+  depth command @@ "morph" stringcmp not and if debug-line "Ack!" n then
+;
+.
+c
+q
+@@register cmd-morph=cmd/morph
+@@register #me cmd-morph=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M2
+@@set $tmp/prog1=_version:1.0AFM$Revision: 1.2 $
+@@action morph=here=tmp/exit1
+@@link $tmp/exit1=$cmd/morph
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:@@$cmd/morph -help
+"Installation of cmd-morph complete.
+@
+
+
+1.2
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@d5 1
+a5 1
+( cmd-morph: $Date: 2000/01/28 17:09:55 $ $Revision: 1.1 $                    )
+d8 1
+d320 1
+a320 1
+@@set $tmp/prog1=_version:1.0AFM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 3
+a7 2
+( cmd-morph: $Date$ $Revision$ )
+( Author: PakRat )
+d9 2
+a10 3
+( MorphPro Copyright 1992 by PakRat Productions, all rights reserved.     )
+( Type morph to see your current morph; morph -help for the help screen.  )
+( Version 1.0a )
+d310 1
+a310 1
+  depth command @@ "morph" stringcmp not and if .debug-line "Ack!" n then
+d319 1
+a319 1
+@@set $tmp/prog1=_version:1.0AFM$Revision$
+@
+

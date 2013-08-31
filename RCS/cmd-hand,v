@@ -1,0 +1,152 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.03.26.03.19.21;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.27.19.47.16;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@"Beginning installation of cmd-hand...
+@@prog cmd-hand
+1 99999 d
+1 i
+( cmd-hand: $Date: 2004/03/26 03:19:21 $ $Revision: 1.2 $                     )
+( Author: Priss                                                               )
+( --------------------------------------------------------------------------- )
+( Hand Program                                Priss                   10-25-92
+                                              Lisa Richardson
+                                              priss@@glia.biostr.washington.edu
+ 
+A helpful hand program that will allow people to hand things to other people
+provided that they are _hand_ok:yes and are awake.
+)
+(
+  $Log: cmd-hand,v $
+  Revision 1.2  2004/03/26 03:19:21  feaelin
+  Doc cleanup
+
+  Revision 1.1  2000/01/27 19:47:16  feaelin
+  Initial revision
+
+)
+var obj var targ
+: t
+  me @@ swap notify
+;
+: help
+  "Execution:" t
+  "  " trigger @@ name strcat " <thing> to <player>" strcat t
+  "  " trigger @@ name strcat " <thing>=<player>" strcat t
+  "  Player you are handing to must be '_hand_ok:yes' or '_hand_ok?:yes'" t
+;
+: handoff
+  dup " to " instr
+  if " to " else "=" then
+  explode pop
+  me @@ swap rmatch
+  dup #-1 dbcmp if pop pop "You don't have that!" t exit then
+  dup #-2 dbcmp if pop pop "Which one?" t exit then
+  dup exit? if pop pop "You can't hand an exit!" t exit then
+  loc @@ rot rmatch
+  dup #-1 dbcmp if pop pop "That player is not here." t exit then
+  dup player? not if pop pop "That's not a player!" t exit then
+  dup "_hand_ok" getpropstr tolower "y" instr
+  over "_hand_ok?" getpropstr tolower "y" instr or not
+  if pop pop "That player is not _hand_ok:yes." t exit then
+  dup awake? not if pop pop "That player is not awake!" t exit then
+  targ ! obj !
+  
+  obj @@ targ @@ moveto
+  "You hand " obj @@ name strcat " to " strcat targ @@ name strcat "."
+  strcat t
+  me @@ name " hands " strcat obj @@ name strcat " to " strcat targ @@
+  name strcat "." strcat loc @@ me @@ rot notify_except
+;
+: main
+  tolower dup not over "#help" instr or if pop help exit then
+  dup " to " instr over "=" instr or
+  if
+    handoff
+  else
+    pop help
+  then
+  "Done." t
+;
+.
+c
+q
+@@register cmd-hand=cmd/hand
+@@register #me cmd-hand=tmp/prog1
+@@set $tmp/prog1=W2
+@@action hand=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/hand 
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+"Installation of cmd-hand complete.
+@
+
+
+1.2
+log
+@Doc cleanup
+@
+text
+@d5 2
+a6 1
+( cmd-hand: $Date: 2000/01/27 19:47:16 $ $Revision: 1.1 $                     )
+d12 1
+a12 1
+A helpful hand program that will allow people to hand objects to other people
+d17 3
+d30 2
+a31 2
+  "  " trigger @@ name strcat " <object> to <player>" strcat t
+  "  " trigger @@ name strcat " <object>=<player>" strcat t
+d77 1
+a77 1
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-hand: $Date$ $Revision$                                                 )
+d15 4
+a18 1
+  $Log$
+d73 1
+a73 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

@@ -1,0 +1,612 @@
+head	1.8;
+access;
+symbols
+	GlowMUF1-1-1:1.8
+	GlowMUF102:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.8
+date	2005.09.25.13.46.29;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.04.07.21.20.00;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.04.16.19.32;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.03.26.03.18.15;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.22.19.36.27;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.22.19.32.02;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.8
+log
+@Documentation update.
+@
+text
+@wh me=Beginning installation of lib-mesg...
+@@prog lib-mesg
+1 99999 d
+1 i
+( lib-mesg: $Date: 2005/04/07 21:20:00 $ $Revision: 1.7 $                     )
+( Purpose: Provides routines for handling messages                            )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-lmgr                                                      )
+( --------------------------------------------------------------------------- )
+( Message Handling MSG                                                        )
+( A message is a set of elements with a count and an information string,      )
+( stored in properties.                                                       )
+(                                                                             )
+( 'base' is a string containing the name and property path location of the    )
+(        message                                                              )
+( 'itemnum' is the number of an item within a message.                        )
+( 'itemstr' is a single item's string.                                        )
+( 'infostr' is the messages information string.                               )
+( '{strrange}' is a string range that is all the elements of the message with )
+( an integer count.                                                           )
+(                                                                             )
+( Message data type:                                                          )
+( Base#         Count of Message Items                                        )
+( Base#/X       Message Items                                                 )
+( Base#/i       Info String                                                   )
+(                                                                             )
+( MSG-destroy: base dbref --                                                  )
+(   Clears and removes the message.                                           )
+(                                                                             )
+( MSG-create: {strrange} infostr base dbref --                                )
+(   Create a new message with the given items and info string on the given    )
+(   database item with the given name.                                        )
+(                                                                             )
+( MSG-count: base dbref -- count                                              )
+(   Returns how many items are in the given message.                          )
+(                                                                             )
+( MSG-info: base dbref -- infostr                                             )
+(   Returns the information string for the given message.                     )
+(                                                                             )
+( MSG-setinfo: infostr base dbref --                                          )
+(   Sets the information string on an existing message.                       )
+(                                                                             )
+( MSG-message: base dbref -- {strrange}                                       )
+(   Returns the items of a message as a range on the stack.                   )
+(                                                                             )
+( MSG-item: itemnum base dbref -- itemstr                                     )
+(   Returns the given message item from the message.                          )
+(                                                                             )
+( MSG-setitem: itemstr itemnum base dbref --                                  )
+(   Sets the specified message item to the given string.                      )
+(                                                                             )
+( MSG-insitem: itemstr itemnum base dbref --                                  )
+(   Inserts a new message item into the message at the given point.           )
+(                                                                             )
+( MSG-append: itemstr base dbref --                                           )
+(   Appends a message item to the given message.                              )
+(                                                                             )
+( MSG-delitem: itemnum base dbref --                                          )
+(   Deletes the specified message item from the given message.                )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-mesg,v $
+  Revision 1.7  2005/04/07 21:20:00  feaelin
+  Added Library Symbols
+ 
+  Revision 1.6  2005/04/04 16:19:32  feaelin
+  Replaced .setpropstr call to $lib/glow with the equivalent primitives.
+  Updated documentation and installer scripting.
+ 
+  Revision 1.5  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.4  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+ 
+  Revision 1.3  2004/03/26 03:18:15  feaelin
+  Upgraded wizprop so you can store messages in @@ props.
+ 
+  Revision 1.2  1998/08/22 19:36:27  feaelin
+  Finished RCS-ifying.
+)
+( --------------------------------------------------------------------------- )
+( $def the following if your muck uses the new style propdirized lists        )
+( ie:  listname#/1:line one    listename#/2:line two    etc.                  )
+$def SLASHED_LISTS
+ 
+$include $lib/lmgr
+ 
+: MSG-destroy (base dbref -- )
+$ifdef SLASHED_LISTS
+    over over swap "#/i" strcat remove_prop
+$else
+    swap "/" strcat
+    over over "i" strcat remove_prop
+    swap
+$endif
+    LMGR-deletelist
+;
+ 
+: MSG-setinfo (infostr base dbref -- )
+    swap
+$ifdef SLASHED_LISTS
+    "#" strcat
+$endif
+    "/i" strcat rot
+    dup if setprop else pop remove_prop then
+;
+ 
+: MSG-create ({strrange} infostr base dbref -- )
+    over over MSG-destroy
+    rot 3 pick 3 pick MSG-setinfo
+    ({strrange} base dbref)
+    1 rot rot
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+$endif
+    LMGR-putrange
+;
+ 
+: MSG-count (base dbref -- count)
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+    over over LMGR-getcount
+    dup if
+        rot rot pop pop exit
+    else pop
+    then
+$endif
+    LMGR-getcount
+;
+ 
+: MSG-message (base dbref -- {strrange})
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+    over over lmgr-getlist
+    dup if
+        dup 2 + rotate pop
+        dup 2 + rotate pop
+        exit
+    else pop
+    then
+$endif
+    LMGR-getlist
+;
+ 
+: safeclear (d s -- )
+    over over propdir? if
+        over over "" -1 addprop
+        "" 0 addprop
+    else
+        remove_prop
+    then
+;
+ 
+: MSG-clearoldinfo (base dbref -- )
+    swap
+$ifdef SLASHED_LISTS
+    over over
+    "#/i" strcat safeclear
+$else
+    "/i" strcat safeclear
+$endif
+;
+ 
+: MSG-oldinfo (base dbref -- infostr)
+    swap "/i" strcat getpropstr
+;
+ 
+: MSG-newinfo (base dbref -- infostr)
+    swap "#/i" strcat getpropstr
+;
+ 
+: convert-info (base dbref value -- )
+    3 pick 3 pick MSG-clearoldinfo
+    rot rot MSG-setinfo
+;
+ 
+: MSG-info (base dbref -- infostr)
+$ifdef SLASHED_LISTS
+    over over MSG-newinfo
+    dup if rot rot pop pop exit then
+    pop over over MSG-oldinfo
+    dup if dup -4 rotate convert-info exit then
+$else
+    over over MSG-oldinfo
+    dup if rot rot pop pop exit then
+    pop over over MSG-newinfo
+    dup if dup -4 rotate convert-info exit then
+$endif
+    pop pop pop ""
+;
+ 
+: MSG-item (itemnum base dbref -- itemstr)
+$ifndef SLASHED_LISTS
+    3 pick 3 pick "/" strcat 3 pick
+    LMGR-getelem
+    dup if
+        -4 rotate pop pop pop exit
+    else pop
+    then
+$endif
+    LMGR-getelem
+;
+ 
+: MSG-setitem (itemstr itemnum base dbref -- )
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+$endif
+    LMGR-putelem
+;
+ 
+: MSG-insitem (itemstr itemnum base dbref -- )
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+$endif
+    1 -4 rotate LMGR-insertrange
+;
+ 
+: MSG-append (itemstr base dbref -- )
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+$endif
+    over over LMGR-getcount 1 +
+    rot rot LMGR-putelem
+;
+ 
+: MSG-delitem (itemnum base dbref -- )
+$ifndef SLASHED_LISTS
+    swap "/" strcat swap
+$endif
+    1 -4 rotate LMGR-deleterange
+;
+ 
+PUBLIC MSG-destroy
+PUBLIC MSG-create
+PUBLIC MSG-count
+PUBLIC MSG-info
+PUBLIC MSG-setinfo
+PUBLIC MSG-message
+PUBLIC MSG-item
+PUBLIC MSG-setitem
+PUBLIC MSG-insitem
+PUBLIC MSG-append
+PUBLIC MSG-delitem
+.
+c
+q
+@@register lib-mesg=lib/mesg
+@@set $lib/mesg=L
+@@set $lib/mesg=W3
+@@set $lib/mesg=/_defs/MSG-append:"$lib/mesg" match "MSG-append" call
+@@set $lib/mesg=/_defs/MSG-count:"$lib/mesg" match "MSG-count" call
+@@set $lib/mesg=/_defs/MSG-create:"$lib/mesg" match "MSG-create" call
+@@set $lib/mesg=/_defs/MSG-delitem:"$lib/mesg" match "MSG-delitem" call
+@@set $lib/mesg=/_defs/MSG-destroy:"$lib/mesg" match "MSG-destroy" call
+@@set $lib/mesg=/_defs/MSG-info:"$lib/mesg" match "MSG-info" call
+@@set $lib/mesg=/_defs/MSG-insitem:"$lib/mesg" match "MSG-insitem" call
+@@set $lib/mesg=/_defs/MSG-item:"$lib/mesg" match "MSG-item" call
+@@set $lib/mesg=/_defs/MSG-message:"$lib/mesg" match "MSG-message" call
+@@set $lib/mesg=/_defs/MSG-setinfo:"$lib/mesg" match "MSG-setinfo" call
+@@set $lib/mesg=/_defs/MSG-setitem:"$lib/mesg" match "MSG-setitem" call
+@@set $lib/mesg=/_defs/MSGappend:"$lib/mesg" match "MSG-append" call
+@@set $lib/mesg=/_defs/MSGcount:"$lib/mesg" match "MSG-count" call
+@@set $lib/mesg=/_defs/MSGcreate:"$lib/mesg" match "MSG-create" call
+@@set $lib/mesg=/_defs/MSGdelitem:"$lib/mesg" match "MSG-delitem" call
+@@set $lib/mesg=/_defs/MSGdestroy:"$lib/mesg" match "MSG-destroy" call
+@@set $lib/mesg=/_defs/MSGinfo:"$lib/mesg" match "MSG-info" call
+@@set $lib/mesg=/_defs/MSGinsitem:"$lib/mesg" match "MSG-insitem" call
+@@set $lib/mesg=/_defs/MSGitem:"$lib/mesg" match "MSG-item" call
+@@set $lib/mesg=/_defs/MSGmessage:"$lib/mesg" match "MSG-message" call
+@@set $lib/mesg=/_defs/MSGsetinfo:"$lib/mesg" match "MSG-setinfo" call
+@@set $lib/mesg=/_defs/MSGsetitem:"$lib/mesg" match "MSG-setitem" call
+@@set $lib/mesg=/_/de:lib-mesg: List lines 1-57 for documentation.
+@@set $lib/mesg=/_docs:@@list $lib/mesg=1-57
+@@set $lib/mesg=/_lib-version:FM$Revision: 1.7 $
+@@set $lib/mesg=/_lib-symbol:MSG
+wh me=Installation of lib-mesg complete.
+@
+
+
+1.7
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date: 2005/04/04 16:19:32 $ $Revision: 1.6 $                     )
+d64 3
+d70 1
+a70 1
+
+d73 1
+a73 1
+
+d77 1
+a77 1
+
+d80 1
+a80 1
+
+d277 1
+a277 1
+@@set $lib/mesg=/_lib-version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Replaced .setpropstr call to $lib/glow with the equivalent primitives.
+Updated documentation and installer scripting.
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date: 2005/03/21 01:31:43 $ $Revision: 1.5 $                     )
+d64 4
+d274 2
+a275 1
+@@set $lib/mesg=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-mesg...
+d5 56
+a60 2
+( lib-mesg: $Date: 2005/01/14 16:32:13 $ $Revision: 1.4 $
+  Originally in the FuzzBall MUF Distribution                                 )
+a61 56
+( **** Message Object -- MSG- ****
+  A message is a set of elements with a count and an information string,
+    stored in properties.
+  
+  base is a string containing the name of the message.
+  itemnum is the number of an item within a message.
+  itemstr is a single item's string.
+  infostr is the messages information string.
+  {strrange} is a string range that is all the elements of the message
+    with an integer count.
+  
+    MSG-destroy [base dbref -- ]
+      Clears and removes the message.
+  
+    MSG-create  [{strrange} infostr base dbref -- ]
+      Create a new message with the given items and info string on
+      the given database item with the given name.
+  
+    MSG-count   [base dbref -- count]
+      Returns how many items are in the given message.
+  
+    MSG-info    [base dbref -- infostr]
+      Returns the information string for the given message.
+  
+    MSG-setinfo [infostr base dbref -- ]
+      Sets the information string on an existing message.
+  
+    MSG-message [base dbref -- {strrange}]
+      Returns the items of a message as a range on the stack.
+  
+    MSG-item    [itemnum base dbref -- itemstr]
+      Returns the given message item from the message.
+  
+    MSG-setitem [itemstr itemnum base dbref -- ]
+      Sets the specified message item to the given string.
+  
+    MSG-insitem [itemstr itemnum base dbref -- ]
+      Inserts a new message item into the message at the given point.
+  
+    MSG-append  [itemstr base dbref -- ]
+      Appends a message item to the given message.
+  
+    MSG-delitem [itemnum base dbref -- ]
+      Deletes the specified message item from the given message.
+  
+  
+Message data type:
+  Base#         Count of Message Items
+  Base#/X       Message Items
+  Base#/i       Info String
+)
+  
+( $def the following if your muck uses the new style propdirized lists )
+( ie:  listname#/1:line one    listename#/2:line two    etc. )
+$def SLASHED_LISTS
+( -------------------------------------------------------------------------- )
+d64 3
+d77 5
+a81 1
+$include $lib/glowstandard
+d83 1
+a83 1
+  
+d94 1
+a94 1
+  
+d100 2
+a101 1
+    "/i" strcat rot .setpropstr
+d103 1
+a103 1
+  
+d114 1
+a114 1
+  
+d126 1
+a126 1
+  
+d140 1
+a140 1
+  
+d149 1
+a149 1
+  
+d159 1
+a159 1
+  
+d163 1
+a163 1
+  
+d167 1
+a167 1
+  
+d172 1
+a172 1
+  
+d187 1
+a187 1
+  
+d199 1
+a199 1
+  
+d206 1
+a206 1
+  
+d213 1
+a213 2
+  
+  
+d221 1
+a221 1
+  
+d228 1
+a228 1
+  
+d244 28
+a271 18
+@@register #me lib-mesg=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_/de:lib-mesg: List lines 3-53 for documentation.
+@@set $tmp/prog1=/_defs/MSG-append:"$lib/mesg" match "MSG-append" call
+@@set $tmp/prog1=/_defs/MSG-count:"$lib/mesg" match "MSG-count" call
+@@set $tmp/prog1=/_defs/MSG-create:"$lib/mesg" match "MSG-create" call
+@@set $tmp/prog1=/_defs/MSG-delitem:"$lib/mesg" match "MSG-delitem" call
+@@set $tmp/prog1=/_defs/MSG-destroy:"$lib/mesg" match "MSG-destroy" call
+@@set $tmp/prog1=/_defs/MSG-info:"$lib/mesg" match "MSG-info" call
+@@set $tmp/prog1=/_defs/MSG-insitem:"$lib/mesg" match "MSG-insitem" call
+@@set $tmp/prog1=/_defs/MSG-item:"$lib/mesg" match "MSG-item" call
+@@set $tmp/prog1=/_defs/MSG-message:"$lib/mesg" match "MSG-message" call
+@@set $tmp/prog1=/_defs/MSG-setinfo:"$lib/mesg" match "MSG-setinfo" call
+@@set $tmp/prog1=/_defs/MSG-setitem:"$lib/mesg" match "MSG-setitem" call
+@@set $tmp/prog1=/_docs:@@list $lib/mesg=3-53
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+"Installation of lib-mesg complete.
+@
+
+
+1.4
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date: 2004/03/26 03:18:15 $ $Revision: 1.3 $
+d66 4
+d73 1
+a73 1
+  Revision 1.2  1998/08/22 19:36:27  glow
+a74 4
+
+  Revision 1.1  1998/08/22 19:32:02  glow
+  Initial revision
+
+d255 1
+a255 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Upgraded wizprop so you can store messages in @@ props.
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date: 1998/08/22 19:36:27 $ $Revision: 1.2 $
+d24 1
+a24 1
+      the given object with the given name.
+d66 3
+d255 1
+a255 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Finished RCS-ifying.
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date: 1998/08/22 19:32:02 $ $Revision: 1.1 $
+d66 3
+d238 1
+a238 1
+@@set $tmp/prog1=W2
+d252 1
+a252 1
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+a253 2
+
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-mesg: $Date$ $Revision$
+d65 4
+a68 1
+  $Log$
+d249 1
+a249 1
+@@set $tmp/prog1=/_lib-version:FM1.0
+@

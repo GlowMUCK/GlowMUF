@@ -1,0 +1,413 @@
+head	1.4;
+access;
+symbols
+	GlowMUF1-1-1:1.4
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2005.09.22.19.20.25;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.09.22.17.05.17;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.01.25.16.38.06;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.17.23.48.50;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.4
+log
+@Updated timestamp format.
+@
+text
+@wh me=Beginning installation of cmd-announce...
+@@prog cmd-announce
+1 99999 d
+1 i
+( cmd-announce: $Date: 2005/09/22 17:05:17 $ $Revision: 1.3 $                 )
+( Purpose: Global Public Channel                                              )
+( Author: Scotfox                                                             )
+( Contributors: Casual, Dalles, Andy, Pakrat, Feaelin                         )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-announce,v $
+  Revision 1.3  2005/09/22 17:05:17  feaelin
+  Removed reliance on lib-glow-standard.
+
+  Revision 1.2  2000/01/25 16:38:06  feaelin
+  Typo in the installer script.
+
+  Revision 1.1  1999/04/17 23:48:50  feaelin
+  Initial revision
+
+)
+( announce.muf, by Scotfox, 26-September-1993 )
+( modified by Casual and Dalles, 8-April-1994 )
+$def delay 2 (seconds)
+$def tell me @@ swap ansi_notify
+$def ctell "^WHITE^" command @@ strcat " " strcat swap strcat tell
+$def annban "~/ban/announce"
+$def annblock "_prefs/announce"
+$def annpre "_prefs/announce/annprefix"
+$def annverb "_prefs/announce/annverb"
+$def annstamp "_prefs/announce/annstamp"
+$def annverblen 12
+$def annwhatlen 20
+$def annwhatobj trig
+$def annwhatcur "_what"
+$def annwhatdir "_what/"
+ 
+: setannon ( d -- )
+  annblock "yes" setprop
+;
+ 
+: setannoff ( d -- )
+  annblock "no" setprop
+;
+ 
+: setstamp ( d -- )
+  annstamp "yes" setprop
+;
+ 
+: setstampoff ( d -- )
+  annstamp "no" setprop
+;
+ 
+: setbanned ( d -- )
+  annban "yes" setprop
+;
+ 
+: annon? ( d -- i )
+  annblock getpropstr tolower "y" 1 strncmp not
+;
+ 
+: stamp? ( d -- i )
+  annstamp getpropstr tolower "y" 1 strncmp not
+;
+ 
+: annbanned? ( d -- i )
+  annban getpropstr tolower "y" 1 strncmp not
+;
+ 
+$def pck ( s s -- s ) over swap instring if pop 1 exit then
+: pottycheck ( s -- )
+  "shit" pck
+  "fuck" pck  
+  pop 0
+;
+ 
+: abuse ( -- )
+    "^YELLOW^To prevent abuse, wait at least "
+    delay intostr strcat " seconds between announcements." strcat tell
+; 
+ 
+: announce-help
+    "  " tell
+    "<message>        ^CYAN^broadcasts your message to everyone." ctell
+    ":<pose>          ^CYAN^broadcasts your pose to everyone." ctell
+    "on               ^CYAN^lets you hear and make announcements." ctell
+    "off              ^CYAN^makes it so you don't hear any announcements." ctell
+    "who              ^CYAN^tells you who's listening right now." ctell
+    "what             ^CYAN^list the last few lines on chat." ctell
+    "stamp            ^CYAN^toggle whether you see timestamps." ctell
+    "prefix <text>    ^CYAN^sets or clears your chat prefix text (default '<*>')" ctell
+    "verb <new verb>  ^CYAN^sets or clears your char verb (default 'chat')" ctell
+    "  " tell abuse
+    "^YELLOW^You have to be listening in order to make announcements." tell
+    "^YELLOW^Abusive language is NOT allowed on public channels or areas." tell
+    "  " tell
+;
+ 
+: announce-current ( -- d )
+  annwhatobj annwhatcur getpropval
+  ( rangecheck current value )
+  dup 0 < if pop 0 then
+  dup annwhatlen >= if pop annwhatlen 1 - then
+;
+ 
+: announce-next ( -- d )
+  announce-current 1 +
+  dup annwhatlen >= if pop 0 then
+;
+ 
+: announce-what ( -- )
+  me @@ annpre envpropstr swap pop dup not if pop "<*>" then
+  "^^" "^" subst
+  "^CYAN^" swap strcat
+  annwhatlen announce-current 1 + begin over over > while
+      annwhatobj annwhatdir 3 pick intostr strcat getpropstr
+      dup if " " swap strcat 4 pick swap strcat tell else pop then
+      1 +
+  repeat pop pop
+  announce-current 0 begin over over >= while
+      annwhatobj annwhatdir 3 pick intostr strcat getpropstr
+      dup if " " swap strcat 4 pick swap strcat tell else pop then
+      1 +
+  repeat pop pop
+  pop
+  "^YELLOW^Done. (" "%X now)" systime timefmt strcat tell
+;
+ 
+: save-announce ( s -- )
+  "%X" systime timefmt swap strcat
+  annwhatobj annwhatdir announce-next intostr strcat rot setprop
+  ( update current counter )
+  annwhatobj annwhatcur announce-next setprop
+;
+ 
+: announce
+  "me" match "guest" flag? if
+     me @@ "^FAIL^This command is unavailable to guests." ansi_notify
+     pop exit
+   then
+    "me" match dup me ! location loc !
+    me @@ annban getpropstr tolower "y" 1 strncmp not if
+      me @@ setannoff
+       "^RED^You are banned from the public chat line." tell exit
+    then
+  
+    strip
+    dup "#" 1 strncmp not if 1 strcut swap pop then
+    dup "-" 1 strncmp not if 1 strcut swap pop then
+  
+    dup not over "who" stringcmp not or if
+        pop "^YELLOW^" "muckname" sysparm strcat
+        "'s public chat line.  Type '" strcat
+        command @@ strcat
+        " help' for help." strcat tell
+        "^CYAN^Players listening:^GREEN^"
+        online depth rotate swap begin dup while rot
+            dup annon? over annbanned? not and
+            over "guest" flag? not and if
+                name rot " " strcat swap strcat swap
+                else pop then
+            1 - repeat
+        pop "." strcat tell exit then
+    dup "help" stringcmp not if pop announce-help exit then strip
+    dup "on" stringcmp not if pop me @@ setannon
+        "^YELLOW^You will hear announcements." tell exit then
+    dup "off" stringcmp not if pop me @@ setannoff
+        "^YELLOW^You will not hear announcements." tell exit then
+    dup "stamp" stringcmp not if
+      me @@ stamp? if me @@ setstampoff "^YELLOW^You will not see timestamps."
+      else me @@ setstamp "^YELLOW^You will see timestamps." then
+    tell exit then
+    dup "prefix" stringcmp not if
+        me @@ annpre remove_prop
+        "^GREEN^Chat prefix cleared." tell exit
+    then
+    dup "prefix " 7 strncmp not if
+        7 strcut swap pop
+        me @@ annpre rot setprop "^GREEN^Chat prefix set." tell exit
+    then
+    dup "verb" stringcmp not if
+        me @@ annverb remove_prop
+        "^GREEN^Chat verb cleared." tell exit
+    then
+    dup "verb " 5 strncmp not if
+        5 strcut swap pop annverblen strcut pop
+        me @@ annverb rot setprop "^GREEN^Chat verb set." tell exit
+    then
+    dup "what" stringcmp not if
+        announce-what exit
+    then
+ 
+    (Check announce-ok.)
+    me @@ annon? not if pop
+        "^YELLOW^You must type '" command @@ strcat
+        " on' before you can make or hear announcements." strcat
+        tell exit
+    then
+    me @@ "mage" flag? not if
+        me @@ "@@/lastannounce" getpropval systime delay - > if
+        pop abuse exit then
+    then
+    dup pottycheck if
+        me @@ setbanned
+        me @@ setannoff
+        "That kind of vulgarity is not allowed on announce." me @@ swap notify
+        "You have been banned from public chat." me @@ swap notify
+        prog "_potty/" me @@ intostr strcat rot setprop
+        exit
+    then
+    (Construct announcement.)
+    dup ":" 1 strncmp not over ";" 1 strncmp not or if
+        1 strcut swap pop striplead me @@ name " " strcat swap strcat then
+    " ^VIOLET^" me @@ name strcat " " strcat
+    me @@ annverb getpropstr annverblen strcut pop
+    dup not if pop "chat" then "^^" "^" subst strcat
+    "s: \"^GREEN^" strcat
+    swap "^^" "^" subst strcat "^VIOLET^\"" strcat
+    (Save.)
+    dup save-announce
+    (Announce.)
+    online begin dup while swap
+        dup annon? not over annbanned? or
+        over "guest" flag? or
+        if pop 1 - continue then
+        over 2 + pick
+        over annpre envpropstr swap pop dup not if pop "<*>" then
+        "^^" "^" subst
+        "^CYAN^" swap strcat
+        3 pick stamp? if " [%Y-%m-%d %X]" systime timefmt strcat then
+        swap strcat
+        ansi_notify 1 - repeat
+    pop pop
+    me @@ "@@/lastannounce" "" systime addprop
+;
+.
+c
+q
+@@register cmd-announce=cmd/announce
+@@set $cmd/announce=L
+@@set $cmd/announce=V
+@@set $cmd/announce=W3
+@@set $cmd/announce=/_version:FM$Revision: 1.3 $
+@@action @@announce;@@announc;@@announ;@@annou;@@anno;@@ann;@@an;announce;announc;announ;annou;anno;ann;an;+announce;+announc;+announ;+annou;+anno;+ann;+an;think;thin;thi;th;do;itn;@@shout;@@shou;@@shou;@@sho;@@sh;shout;shou;sho;sh;.;chat;talk;public;gossip;gossi;goss;gos=here=tmp/exit1
+@@link $tmp/exit1=$cmd/announce
+@@set $tmp/exit1=Z
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/announce #help
+wh me=Installation of cmd-announce complete.
+@
+
+
+1.3
+log
+@Removed reliance on lib-glow-standard.
+@
+text
+@d5 1
+a5 1
+( cmd-announce: $Date: 2000/01/25 16:38:06 $ $Revision: 1.2 $                 )
+d13 3
+d231 1
+a231 1
+        3 pick stamp? if " %X" systime timefmt strcat then
+d244 1
+a244 1
+@@set $cmd/announce=/_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Typo in the installer script.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-announce...
+d5 6
+a10 3
+( cmd-announce: $Date: 1999/04/17 23:48:50 $ $Revision: 1.1 $
+  Author: Scotfox -- Later Modified by Andy/Pakrat
+  --------------------------------------------------------------------------- )  
+d13 3
+a21 2
+
+$include $lib/glow
+d27 8
+a34 2
+$def annpre "_prefs/annprefix"
+$def annverb "_prefs/annverb"
+d44 8
+d57 5
+a61 1
+  annblock getpropstr .yes?
+d65 1
+a65 1
+  annban getpropstr .yes?
+d87 2
+d97 37
+d135 4
+a138 1
+    .noguest
+d140 1
+a140 1
+    me @@ annban getpropstr .yes? if
+d157 1
+a157 1
+            over .guest? not and if
+d167 4
+d184 1
+a184 1
+        5 strcut swap pop
+d187 3
+d197 1
+a197 1
+    me @@ .mage? not if
+d204 2
+a205 2
+        "That kind of vulgarity is not allowed on announce." .tell
+        "You have been banned from public chat." .tell
+d211 1
+a211 1
+        1 strcut swap pop me @@ name " " strcat swap strcat then
+d213 2
+a214 1
+    me @@ annverb getpropstr dup not if pop "chat" then "^^" "^" subst strcat
+d217 2
+d222 1
+a222 1
+        over .guest? or
+d225 1
+a225 1
+        over annpre getpropstr dup not if pop "<*>" then
+d227 3
+a229 1
+        "^CYAN^" swap strcat swap strcat
+d238 4
+a241 5
+@@register #me cmd-announce=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=V
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_version:FM1.0
+d243 1
+a243 1
+@@link $tmp/exit1=$tmp/prog1
+d247 1
+a247 2
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-announce complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-announce: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d166 1
+a166 1
+$set $tmp/prog1=/_version:FM1.0
+d172 1
+a172 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

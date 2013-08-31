@@ -1,0 +1,61 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	99.03.18.02.27.21;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.03.18.02.26.29;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial check-in
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@"Beginning installation of lock-wizard...
+@@prog lock-wizard
+1 99999 d
+1 i
+
+$include $lib/glowstandard
+
+: lock-wizard
+  "me" match .wizard?
+;
+.
+c
+q
+@@register lock-wizard=lock/wizard
+@@register #me lock-wizard=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M1
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-wizard complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d18 1
+a18 1
+@@set $tmp/prog1=_version:FM1.0
+@

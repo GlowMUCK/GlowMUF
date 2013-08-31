@@ -1,0 +1,128 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2005.03.21.01.31.57;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.23.22.10.58;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.21.38.42;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@General maintenance and documentation updates
+@
+text
+@"Beginning installation of macro-longdesc...
+@@prog macro-longdesc
+1 99999 d
+1 i
+( macro-longdesc: $Date: 1998/08/23 22:10:58 $ $Revision: 1.2 $
+  Author: Pakrat                                                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: macro-longdesc,v $
+  Revision 1.2  1998/08/23 22:10:58  feaelin
+  Finished RCS-ifying.
+)
+( --------------------------------------------------------------------------- )
+ $include $lib/glowstandard
+ $include $lib/showlist
+ $define loop repeat $enddef
+
+ : main
+   trigger @@ player? if trigger @@ awake? if
+   trigger @@ "_look_notify" getpropstr if
+   trigger @@ "_look_format" getpropstr
+  dup not if pop ">> %n looked at you <<" then
+  me @@ name "%n" subst
+  trigger @@ swap notify
+   then then then
+  dup not if pop "_/de" then
+  trigger @@ owner .arch? not if
+    dup "/" 1 strncmp if
+      "/" over strcat
+    else
+      dup
+    then
+    "/@@" instr if
+      me @@ "Property read-permission denied." notify
+      exit
+    then
+  then
+  trigger @@ swap .showlist exit
+  1 begin
+    over over intostr strcat trigger @@ swap
+    getpropstr dup
+  while
+ me @@ swap striptail dup if else pop " " then notify
+    1 +
+  loop pop pop pop
+ ;
+.
+c
+q
+@@register macro-longdesc=list
+@@register macro-longdesc=macro/longdesc
+@@register #me macro-longdesc=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M2
+@@set $tmp/prog1=/_/lok:A new beginning(#0R)
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+"Installation of macro-longdesc complete.
+@
+
+
+1.2
+log
+@Finished RCS-ifying.
+@
+text
+@d5 1
+a5 1
+( macro-longdesc: $Date: 1998/08/23 21:38:42 $ $Revision: 1.1 $
+d10 2
+a11 3
+  Revision 1.1  1998/08/23 21:38:42  glow
+  Initial revision
+
+d56 1
+a56 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( macro-longdesc: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d57 1
+a57 1
+@@set $tmp/prog1=_version:FM1.0
+@

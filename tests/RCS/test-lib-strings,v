@@ -1,0 +1,158 @@
+head	1.5;
+access;
+symbols
+	GlowMUF1-1-1:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.5
+date	2012.03.20.14.44.46;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2008.10.24.02.28.30;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.01.14.16.48.50;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.01.14.16.32.17;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2004.05.09.15.04.14;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.5
+log
+@* Added tests for /cmd -cmd for STR-parse.
+* Added test for STR-singlespace
+@
+text
+@@@prog test-lib-strings
+1 10000 d
+i
+$include $lib/strings
+$def message if "succeeded!" strcat "^GREEN^" swap strcat me @@ swap ansi_notify else "failed!" strcat "^RED^" swap strcat me @@ swap ansi_notify then
+$def message2 depth if me @@ "^RED^But unexpected stuff left on the stack." ansi_notify else depth popn then
+: main
+  depth popn
+  "Testing STR-blank? with a null string..." "" STR-blank? message message2
+  "Testing STR-blank? with a empty string..." " " STR-blank? message message2
+  "Testing STR-blank? with a non-empty string..." dup STR-blank? not message message2
+  "Testing STR-blank? with a empty w/color string..." "^RED^" STR-blank? message message2
+  "Testing STRsls with leading spaces..." "    ^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message message2
+  "Testing STRsls without leading spaces..." "^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message message2
+  "Testing STRsts with trailing spaces..." "  ^PURPLE^cow  " STRsts "  ^PURPLE^cow" strcmp not message message2
+  "Testing STRsts without trailing spaces..." "  ^PURPLE^cow" STRsts "  ^PURPLE^cow" strcmp not message message2
+  "Testing STRstrip with leading/trailing spaces..." "  ^PURPLE^cow  " STRstrip "^PURPLE^cow" strcmp not message message2
+  "Testing STRstrip without leading/trailing spaces..." "^PURPLE^cow" STRstrip "^PURPLE^cow" strcmp not message message2
+  "Testing STRsplit..." "^PURPLE^cow $test$cow" "$" STRsplit "test$cow" strcmp not swap "^PURPLE^cow " strcmp not and message message2
+  "Testing STRrsplit..." "^PURPLE^cow $test$cow" "$" STRrsplit "cow" strcmp not swap "^PURPLE^cow $test" strcmp not and message message2
+  "Testing STRsplitargs (=)..." "^PURPLE^cow=args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message message2 
+  "Testing STRsplitargs ( )..." "^PURPLE^cow args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message message2 
+  "Testing STRfillfield..." "^PURPLE^cows" " " 10 STRfillfield "      " strcmp not message message2
+  "Testing STRcenter..." "^PURPLE^cows" 10 STRcenter "   ^PURPLE^cows   " strcmp not message message2
+  "Testing STRleft..." "^PURPLE^cows" 10 STRleft "^PURPLE^cows      " strcmp not message message2
+  "Testing STRright..." "^PURPLE^cows" 10 STRright "      ^PURPLE^cows" strcmp not message message2
+  "Testing STRasc..." "A" STRasc 65 = "B" STRasc 66 = and message message2
+  "Testing STRchr..." 65 STRchr "A" strcmp not 66 STRchr "B" strcmp not and message message2
+  "Testing STRparse with #..." "#cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STRparse with /..." "/cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STRparse with -..." "-cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STRparse with multiple words..." "-cows foo henry cow baz=bar" STRparse "bar" strcmp not swap "foo henry cow baz" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STR-countOccurrence with an empty string to search..." "" "A" STR-countOccurrence 0 = message message2
+  "Testing STR-countOccurrence with # of f's in Baffled..." "Baffled" "f" STR-countOccurrence 2 = message message2
+  "Testing STR-countOccurrence with # of f's in Beta..." "Beta" "f" STR-countOccurrence 0 = message message2
+  "Testing STR-singlespace..." "foo  bar" STR-singlespace "foo bar" strcmp not message message2
+;
+.
+c
+q
+@@action teststring=me
+@@link teststring=test-lib-strings
+@
+
+
+1.4
+log
+@Updated to handle STR-countOccurrence
+@
+text
+@d29 8
+a36 4
+  "Testing STRparse..." "#cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message message2
+  "Testing STR-countOccurrence with an empty string to search" "" "A" STR-countOccurrence 0 = message message2
+   "Testing STR-countOccurrence with # of f's in Baffled" "Baffled" "f" STR-countOccurrence 2 = message message2
+  "Testing STR-countOccurrence with # of f's in Beta" "Beta" "f" STR-countOccurrence 0 = message message2
+@
+
+
+1.3
+log
+@Updated to test for extraneous data left on the stack
+@
+text
+@d9 4
+a12 3
+  "Testing STRblank? with a null string..." "" STRblank? message message2
+  "Testing STRblank? with a empty string..." " " STRblank? message message2
+  "Testing STRblank? with a non-empty string..." dup STRblank? not message message2
+d30 3
+@
+
+
+1.2
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d2 2
+d8 1
+d30 5
+@
+
+
+1.1
+log
+@Added the lib-strings test program.
+@
+text
+@d4 1
+d6 20
+a25 20
+  "Testing STRblank? with a null string..." "" STRblank? message depth popn
+  "Testing STRblank? with a empty string..." " " STRblank? message depth popn
+  "Testing STRblank? with a non-empty string..." dup STRblank? not message depth popn
+  "Testing STRsls with leading spaces..." "    ^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message depth popn
+  "Testing STRsls without leading spaces..." "^PURPLE^cow  " STRsls "^PURPLE^cow  " strcmp not message depth popn
+  "Testing STRsts with trailing spaces..." "  ^PURPLE^cow  " STRsts "  ^PURPLE^cow" strcmp not message depth popn
+  "Testing STRsts without trailing spaces..." "  ^PURPLE^cow" STRsts "  ^PURPLE^cow" strcmp not message depth popn
+  "Testing STRstrip with leading/trailing spaces..." "  ^PURPLE^cow  " STRstrip "^PURPLE^cow" strcmp not message depth popn
+  "Testing STRstrip without leading/trailing spaces..." "^PURPLE^cow" STRstrip "^PURPLE^cow" strcmp not message depth popn
+  "Testing STRsplit..." "^PURPLE^cow $test$cow" "$" STRsplit "test$cow" strcmp not swap "^PURPLE^cow " strcmp not and message depth popn
+  "Testing STRrsplit..." "^PURPLE^cow $test$cow" "$" STRrsplit "cow" strcmp not swap "^PURPLE^cow $test" strcmp not and message depth popn
+  "Testing STRsplitargs (=)..." "^PURPLE^cow=args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message depth popn 
+  "Testing STRsplitargs ( )..." "^PURPLE^cow args" STRsplitargs "args" strcmp not swap "^PURPLE^cow" strcmp not and message depth popn 
+  "Testing STRfillfield..." "^PURPLE^cows" " " 10 STRfillfield "      " strcmp not message depth popn
+  "Testing STRcenter..." "^PURPLE^cows" 10 STRcenter "   ^PURPLE^cows   " strcmp not message depth popn
+  "Testing STRleft..." "^PURPLE^cows" 10 STRleft "^PURPLE^cows      " strcmp not message depth popn
+  "Testing STRright..." "^PURPLE^cows" 10 STRright "      ^PURPLE^cows" strcmp not message depth popn
+  "Testing STRasc..." "A" STRasc 65 = "B" STRasc 66 = and message depth popn
+  "Testing STRchr..." 65 STRchr "A" strcmp not 66 STRchr "B" strcmp not and message depth popn
+  "Testing STRparse..." "#cows foo=bar" STRparse "bar" strcmp not swap "foo" strcmp not and swap "cows" strcmp not and message depth popn
+@
+

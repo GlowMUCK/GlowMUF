@@ -1,0 +1,284 @@
+head	1.6;
+access;
+symbols
+	GlowMUF1-1-1:1.5
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.6
+date	2010.09.24.16.28.11;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2006.08.15.14.15.19;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.08.00.37.26;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.04.10.20.34.55;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2004.01.20.03.24.28;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.6
+log
+@Added WRAP-wordwrap_reverse
+@
+text
+@wh me=Beginning installation of lib-wordwrap.muf...
+@@prog lib-wordwrap
+1 10000 d
+i
+( lib-wordwrap: $Date: 2006/08/15 14:15:19 $ $Revision: 1.5 $                 )
+( Purpose: Reformat a single string into multiple lines                       )
+( Author: Feaelin Moilar                                                      )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( With Thanks to Andy's original wrapnotify code                              )
+( WRAP-wordwrap: i s -- s1 ... sn n                                           )
+(   Wordwraps string 's' to 'i' characters, allowing for ansi codes and word  )
+(   breaks. Returns each line as a separate string with the number of lines   )
+(   on top.                                                                   )
+( WRAP-wordwrap_reverse: i s -- s1 ... sn n                                   )
+(   As WRAP-wordwrap, except the order of the lines is reversed. If you want  )
+(   to follow a wordwrap with EDIT-ansi_display or EDIT-display, you'l want   )
+(   this version of the word-wrapping algorithm.                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-wordwrap,v $
+  Revision 1.5  2006/08/15 14:15:19  feaelin
+  Error checking so the caller has a better idea of why their program fails.
+
+  Revision 1.4  2005/04/08 00:37:26  feaelin
+  Cleaned up the installer script.
+  Documented the library words
+  Cleaned up the documentation header.
+
+  Revision 1.3  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
+  Revision 1.2  2004/04/10 20:34:55  feaelin
+  Fixed variable used as a global var when it should be used lvar.
+)
+( --------------------------------------------------------------------------- )
+ 
+lvar line_count
+ 
+: last-color ( s -- s )
+  "\\~" "\\^" subst
+  dup "^" rinstr dup if
+    1 - strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop
+      "^" swap strcat
+      "^" strcat
+    else pop pop "" then
+  else pop pop "" then
+;
+ 
+: wraploop ( i s -- s1 s2 ... n sn )
+  dup ansi_strlen 3 pick > if
+    2 pick over swap 1 ansi_offset strcut
+    swap dup " " rinstr
+    dup 0 > if
+      strcut swap striptail
+      dup last-color
+      rot rot
+      -5 line_count @@ - rotate
+      line_count @@ 1 + line_count !
+      striplead strcat swap strcat
+    else
+      pop
+      dup last-color
+      rot rot -4 line_count @@ - rotate
+      line_count @@ 1 + line_count !
+      swap strcat
+    then
+    wraploop
+  else swap pop line_count @@ 1 + line_count ! then
+;
+ 
+: wordwrap ( i s -- s1 s2 ... sn n )
+  "is" checkargs
+  0 line_count ! wraploop 0 line_count @@ - rotate line_count @@
+;
+ 
+lvar lines
+: wordwrap_reverse ( i s -- sn ... s2 s1 n )
+  "is" checkargs
+  wordwrap
+  dup lines ! line_count ! 
+  BEGIN
+    0 line_count @@ - rotate
+    line_count @@ 1 - dup line_count ! not
+  UNTIL
+  lines @@
+;
+ 
+public wordwrap
+public wordwrap_reverse
+.
+c
+q
+@@register lib-wordwrap=lib/wordwrap
+@@set $lib/wordwrap=W3
+@@set $lib/wordwrap=/_/de:Use @@list $lib/wordwrap=1-12 for documentation.
+@@set $lib/wordwrap=/_docs:@@list $lib/wordwrap=1-12
+@@set $lib/wordwrap=/_lib-version:$Revision: 1.5 $
+@@set $lib/wordwrap=/_lib-symbol:WRAP
+@@set $lib/wordwrap=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
+@@set $lib/wordwrap=/_defs/WRAP-wordwrap:"$lib/wordwrap" match "wordwrap" call
+@@set $lib/wordwrap=/_defs/WRAP-wordwrap_reverse:"$lib/wordwrap" match "wordwrap_reverse" call
+wh me=Installation completed.
+@
+
+
+1.5
+log
+@Error checking so the caller has a better idea of why their program fails.
+@
+text
+@d5 1
+a5 1
+( lib-wordwrap: $Date: 2005/04/08 00:37:26 $ $Revision: 1.4 $                 )
+d16 4
+d23 3
+d80 12
+d93 1
+d101 1
+a101 1
+@@set $lib/wordwrap=/_lib-version:$Revision: 1.4 $
+d105 1
+@
+
+
+1.4
+log
+@Cleaned up the installer script.
+Documented the library words
+Cleaned up the documentation header.
+@
+text
+@d5 1
+a5 1
+( lib-wordwrap: $Date: 2005/03/21 01:31:43 $ $Revision: 1.3 $                 )
+d19 5
+d69 1
+d81 1
+a81 1
+@@set $lib/wordwrap=/_lib-version:$Revision: 1.3 $
+@
+
+
+1.3
+log
+@General maintenance and documentation updates
+@
+text
+@d1 2
+a2 2
+"Beginning installation of lib-wordwrap.muf...
+@@prog lib-wordwrap.muf
+d5 12
+a16 4
+( lib-wordwrap By Iain E. Davis AKA Feaelin                                  )
+( With Thanks to Andy's original wrapnotify code                             )
+( $Revision: 1.2 $ $Date: 2004/04/10 20:34:55 $                              )
+( -------------------------------------------------------------------------- )
+d19 3
+d25 2
+a26 2
+( -------------------------------------------------------------------------- )
+
+d28 1
+a28 1
+
+d40 1
+a40 1
+
+d62 1
+a62 1
+
+d66 1
+a66 1
+
+a67 5
+
+: main
+  pop 20
+  "^CYAN^^RED^This line should be longer than 10 characters, I hope" wordwrap
+;
+d71 9
+a79 5
+@@set lib-wordwrap.muf=W3
+@@set lib-wordwrap.muf=_lib-version:$Revision: 1.2 $
+@@set lib-wordwrap.muf=/_defs/wordwrap:"$lib/wordwrap" match "wordwrap" call
+@@register lib-wordwrap.muf=lib/wordwrap
+"Installation completed.
+@
+
+
+1.2
+log
+@Fixed variable used as a global var when it should be used lvar.
+@
+text
+@d7 1
+a7 1
+( $Revision: 1.1 $ $Date: 2004/01/20 03:24:28 $                              )
+d10 3
+a12 4
+  $Log: lib-wordwrap.muf,v $
+  Revision 1.1  2004/01/20 03:24:28  feaelin
+  Initial revision
+
+d59 2
+a60 1
+  pop 20 "^CYAN^^RED^This line should be longer than 10 characters, I hope" wordwrap
+d66 1
+a66 1
+@@set lib-wordwrap.muf=_lib-version:$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+( $Revision$ $Date$                              )
+d10 4
+a13 1
+  $Log$
+d17 1
+a17 1
+var line_count
+d66 1
+a66 1
+@@set lib-wordwrap.muf=_version:$Revision$
+@

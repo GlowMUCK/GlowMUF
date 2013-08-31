@@ -1,0 +1,66 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.30.15.42.20;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Installation of cmd-mufrestart...
+@@prog cmd-mufrestart
+1 99999 d
+1 i
+( cmd-mufrestart: $Date$ $Revision$ )
+( Author: ??? )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+: restart
+  me @@ .wizard? not if
+    "Permission denied."
+    me @@ swap notify exit
+  then
+  prog owner "@@kill all" force
+  #0 begin
+    int 1 + dbref
+    dup int dbtop int < while
+    dup program? if
+      dup "abode" flag? if
+        dup owner .tmage? if
+          0 over "Startup" queue pop
+        then
+      then
+    then
+  repeat pop
+  me @@ "All autostart programs have been restarted." notify
+;
+.
+c
+q
+@@register cmd-mufrestart=cmd/restart
+@@register #me cmd-mufrestart=tmp/prog1
+@@set $tmp/prog1=W3
+@@action @@mufrestart;@@restartmuf=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@mufrestart may only be used by wizards.
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-mufrestart complete.
+@

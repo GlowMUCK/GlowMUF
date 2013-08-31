@@ -1,0 +1,45 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.02.20.20.42.03;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial rcs-ification.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of lock-killer...
+@@prog lock-killer
+1 99999 d
+1 i
+( lock-kill: $Date$ $Revision$
+  Author: Andy
+  --------------------------------------------------------------------------- )
+: lock-kill
+  "me" match "KILL" flag?
+;
+.
+c
+q
+@@register lock-killer=lock/killer
+@@register #me lock-killer=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M1
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-killer complete.
+@

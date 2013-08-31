@@ -1,0 +1,110 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2000.12.20.14.06.35;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.26.16.31.31;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Removed extraneous reference to a board on Legacy.
+@
+text
+@"Beginning installation of cmd-globals...
+@@prog cmd-globals
+1 99999 d
+1 i
+( cmd-globals: $Date: 2000/01/26 16:31:31 $ $Revision: 1.1 $                                              )
+( Author: Scotfox                                                             )
+( --------------------------------------------------------------------------- )
+( Globals.muf -- by Scotfox, 26-September-93                                  )
+( Displays a list of the actions on #0.                                       )
+( Tweaked by Casual, 8-July-94, to display globals on the location of the     )
+( trigger action, on #0 or otherwise.                                         )
+( Andy added going up the room tree finding globals                           )
+(
+  $Log$
+)
+ 
+$include $lib/glowstandard
+
+$def notify .wrapnotify
+$def tell me @@ swap .wrapnotify
+ 
+: get-exit-list  ( roomdbref -- {exitnames} )
+  0 swap ( {str} loc )
+  begin dup ok? while
+    dup exits ( {str} loc exit )
+    begin dup #-1 dbcmp not while
+      ( {exitnames} loc exit )
+      dup "D" flag? me @@ .wizard? not and if next continue then
+      dup name
+      dup ";" instr dup if 1 - strcut then pop
+       ( {str} loc exit name )
+      4 rotate 1 + 4 rotate 4 rotate next
+    repeat pop location
+  repeat pop
+;
+: assemble-list  ( {exitnames} -- exitstring )
+  dup 1 <= if pop exit then
+  1 - swap begin
+    ( {exitnames} exitstring )
+    swap dup 1 = if pop ", and " strcat swap strcat break then
+    1 - swap ", " strcat rot strcat repeat
+  "." strcat
+;
+: globals pop
+  "^GREEN^Global commands:" tell
+  loc @@ location dup not if pop #0 then
+  get-exit-list 1 sort
+  dup 0 = if pop "^CYAN^None." else assemble-list then
+  "^CYAN^" swap strcat .wrap
+  "^GREEN^For instructions a command, use 'help <command>'. (No ''s or <>s)"
+  tell
+;
+.
+c
+q
+@@register cmd-globals=cmd/globals
+@@register #me cmd-globals=tmp/prog1
+@@set $tmp/prog1=M3
+@@action globals;global=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/globals
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-globals complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-globals: $Date$ $Revision$                                              )
+d13 3
+d63 1
+a63 2
+@@set $tmp/exit1=/_old/sc:{null:{ansi:^GREEN^Type '^WHITE^^FLASH^pub^ ^^GREEN^' to get to the common chat haus and bulletin board.}}\r{null:{ansi:^CYAN^Public: global commands:}}{null:{ansi:^CYAN^{commas:{filter:duh2,{exits:#0},{if:{instr:{flags:{&duh2}},d},{if:{and:{instr:{flags:me},w},{not:{instr:{flags:me},q}}},{&duh2}},{&duh2}}},\, and ,duh1,{name:{&duh1}}}}}{null:{ansi:^GREEN^For instructions on a command\, look at it ('look <command>').}}
+@@set $tmp/prog1=_version:FM$Revision$
+@

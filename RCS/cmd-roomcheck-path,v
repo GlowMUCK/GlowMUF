@@ -1,0 +1,407 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2008.03.31.13.49.00;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Split roomcheck into two versions, one for mu*s using paths and another
+for mu*s without paths.
+@
+text
+@wh me=Beginning installation of cmd-roomcheck...
+@@prog cmd-roomcheck-path
+1 99999 d
+1 i
+( cmd-roomcheck: $Date: 2005/04/25 17:04:38 $ $Revision: 1.5 $                )
+( Author: ???                                                                 )
+( --------------------------------------------------------------------------- )
+(
+  $Log$
+)
+$include $lib/glow
+$include $lib/strings
+$include $lib/match
+$include $lib/path
+lvar check-obj-addr
+ 
+: check-next-loop (d -- )
+   dup not if pop exit then
+   dup exit? over thing? or
+   me @@ 3 pick controls and if
+      dup check-obj-addr @@ execute
+   then
+   next check-next-loop
+;
+   
+: check-contents (d -- )
+   contents check-next-loop
+;
+
+$define pathislocked? (d s -- i) PATHgetlock "" strcmp $enddef
+
+: pathislocked_always (d-location s-pathname -- i)
+  PATHgetlockstr dup "#0" stringcmp not if pop 1 exit then
+  dup "#" STRsplit swap pop atoi
+  "#" swap intostr strcat
+  (lockstr "#dbref")
+  dup "&!" over strcat strcat
+  3 pick stringcmp not if pop pop 1 exit then
+  "&" over strcat strcat "!" swap strcat
+  stringcmp not if 1 exit then
+  0
+;
+
+: check-path ( d s -- )
+  dup 3 pick swap
+  ( Path not linked? )
+  PATHgetlink dup room? not if
+    dup me @@ swap "^FAIL^The path '" swap strcat 
+    "' is unlinked." strcat ansi_notify
+  else ( Path is linked )
+    3 pick dbcmp if ( Linked to source? )
+      dup 3 pick swap PATHlocked? if ( Path linked to source, is it locked? )
+        dup me @@ swap "^RED^The path '" swap strcat
+        "' is linked to it's source, but is not locked." strcat ansi_notify
+      then
+    then
+  then
+  dup 3 pick swap PATHgetdesc "" strcmp not
+     "transparent_paths" sysparm "no" strcmp not and if
+     dup me @@ swap "^INFO^Path '" swap strcat
+     "' has no description." strcat ansi_notify
+  then
+  dup 3 pick swap PATHgetlink room? if
+    dup 3 pick swap pathislocked_Always not if
+      dup 3 pick swap PATHgetsucc "" strcmp not if
+        dup me @@ swap "^INFO^Path '" swap strcat
+        "' has no success message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetosucc "" strcmp not if
+        dup me @@ swap "^INFO^Path '" swap strcat
+        "' has no osuccess message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetodrop "" strcmp not if
+        dup me @@ swap "^INFO^Path '" swap strcat
+        "' has no odrop message." strcat ansi_notify
+      then
+    then
+    dup 3 pick swap pathislocked? if
+      dup 3 pick swap PATHgetfail "" strcmp not if
+        dup me @@ swap "^INFO^Path '" swap strcat
+        "' has no fail message." strcat ansi_notify
+      then
+      dup 3 pick swap PATHgetofail "" strcmp not if
+        dup me @@ swap "^INFO^Path '" swap strcat
+        "' has no ofail message." strcat ansi_notify
+      then
+    then
+  then
+;
+
+: check-paths (d -- )
+  dup PATHlist dup "" strcmp not if exit then
+  dup "|" instr if
+    begin
+      "|" STRsplit swap strip
+      3 pick swap check-path
+      dup "|" instr while
+    repeat
+  then
+  strip check-path
+;
+   
+: check-exits (d -- )
+   exits check-next-loop
+;
+   
+: exec-err (d mtypestr warnstr -- )
+   "On " 4 rotate unparseobj strcat
+   ", in it's " strcat rot strcat
+   ", " strcat swap strcat "^INFO^" 
+   swap strcat me @@ swap ansi_notify
+;
+   
+: can-linkto? (player object -- i)
+   dup "link_ok" flag? if pop pop 1 exit then
+   controls
+;
+   
+: check-exec (d mtype execstr -- )
+   dup "@@" 1 strncmp if pop pop pop exit then
+   1 strcut swap pop
+   " " .split pop
+   dup "$" 1 strncmp not if
+      dup match ok? not if
+         " is not a known registered program." strcat
+         exec-err exit
+      then
+      dup match program? not if
+         " is not a program." strcat
+         exec-err exit
+      then
+      3 pick owner over match can-linkto? not if
+         " is not Link_OK." strcat
+         exec-err exit
+      then
+   else
+      dup number? not if
+         " is not a program dbref." strcat
+         "@@" swap strcat exec-err exit
+      then
+      dup atoi dbref ok? not if
+         " is not a valid program reference." strcat
+         "@@" swap strcat exec-err exit
+      then
+      dup atoi dbref program? not if
+         " is not a valid program reference." strcat
+         "@@" swap strcat exec-err exit
+      then
+      3 pick owner over atoi dbref can-linkto? not if
+         " is not Link_OK." strcat
+         "@@" swap strcat exec-err exit
+      then
+   then
+   pop pop pop
+;
+   
+   
+: missing-err ( d s -- )
+   swap unparseobj
+   " is missing an "
+   strcat swap strcat
+   " message." strcat
+   "^INFO^" swap strcat me @@ swap ansi_notify
+;
+   
+: colon-err ( d s -- )
+   swap unparseobj
+   " has an unnecesary ':' at the start of its "
+   strcat swap strcat
+   " message." strcat
+   "^INFO^" swap strcat me @@ swap ansi_notify
+;
+   
+: check-desc (d -- )
+   dup desc not if
+      "@@description" missing-err
+   else
+      "@@description" over
+      desc check-exec
+   then
+;
+   
+: check-succ (d -- )
+   dup succ not if
+      "@@success" missing-err
+   else
+      "@@success" over
+      succ check-exec
+   then
+;
+   
+: check-fail (d -- )
+   dup fail not if
+      "@@fail" missing-err
+   else
+      "@@fail" over
+      fail check-exec
+   then
+;
+   
+: check-drop (d -- )
+   dup drop not if
+      "@@drop" missing-err
+   else
+      "@@drop" over
+      drop check-exec
+   then
+;
+   
+: check-osucc (d -- )
+   dup osucc not if
+      "@@osuccess" missing-err
+   else
+      dup osucc ":" 1 strncmp not if
+         "@@osuccess" colon-err
+      else pop
+      then
+   then
+;
+   
+: check-ofail (d -- )
+   dup ofail not if
+      "@@ofail" missing-err
+   else
+      dup ofail ":" 1 strncmp not if
+         "@@ofail" colon-err
+      else pop
+      then
+   then
+;
+   
+: check-odrop (d -- )
+   dup odrop not if
+      "@@odrop" missing-err
+   else
+      dup odrop ":" 1 strncmp not if
+         "@@odrop" colon-err
+      else pop
+      then
+   then
+;
+   
+   
+$define islocked? (d -- i) getlockstr "*UNLOCKED*" stringcmp $enddef
+ 
+: islocked_always? (d -- i)
+   getlockstr dup "#0" stringcmp not if pop 1 exit then
+   dup "#" STRsplit swap pop atoi
+   "#" swap intostr strcat
+   (lockstr "#dbref")
+   dup "&!" over strcat strcat
+   3 pick stringcmp not if pop pop 1 exit then
+   "&" over strcat strcat "!" swap strcat
+   stringcmp not if 1 exit then
+   0
+;
+   
+: check-link ( d -- )
+   dup getlink not if
+      dup unparseobj " is unlinked." strcat
+      "^INFO^" swap strcat me @@ swap ansi_notify 
+   else
+      dup getlink over location dbcmp if
+         dup islocked? not if
+            dup unparseobj
+            " is linked to it's location, but is unlocked."
+            strcat
+            "^INFO^" swap strcat me @@ swap ansi_notify
+         then
+      else (is not linked to it's location)
+         dup getlink program? if
+            dup dup owner swap getlink can-linkto? not if
+               dup unparseobj
+               " is linked to a program which is not Link_OK."
+               strcat
+               "^INFO^" swap strcat me @@ swap ansi_notify
+            then
+         then
+      then
+   then
+   pop
+;
+         
+: check-room (d -- )
+   dup check-desc
+   dup islocked? if
+      dup islocked_always? not if
+         dup check-succ
+      then
+      dup check-fail
+   then
+   dup getlink if
+      dup check-drop
+      dup check-odrop
+   then
+   dup check-contents
+   dup check-exits
+   check-paths
+;
+   
+: check-exit ( d -- )
+   dup check-link
+   dup check-desc
+   dup getlink dup ok? if
+      program? not if
+         dup islocked_always? not if
+            dup check-succ
+            dup check-osucc
+            dup check-odrop
+         then
+         dup islocked? if
+            dup check-fail
+            dup check-ofail
+         then
+      then
+   else pop
+   then
+   pop
+;
+   
+: check-thing ( d -- )
+   dup check-desc
+   dup islocked_always? not if
+      dup check-succ
+      dup check-osucc
+   then
+   dup islocked? if
+      dup check-fail
+      dup check-ofail
+   then
+   dup check-drop
+   dup check-odrop
+   check-exits
+;
+   
+: check-player ( d -- )
+   dup check-desc
+   dup islocked_always? not if
+      dup check-succ
+      dup check-osucc
+   then
+   dup islocked? if
+      dup check-fail
+      dup check-ofail
+   then
+   dup check-contents
+   check-exits
+;
+   
+: check-program ( d -- )
+   check-desc
+;
+   
+: check-obj (d -- )
+   dup room?   if check-room   exit then
+   dup exit?   if check-exit   exit then
+   dup thing?  if check-thing  exit then
+   dup player? if check-player exit then
+   check-program
+;
+   
+: main
+   me @@ "^SUCC^Beginning @@check..." ansi_notify
+   'check-obj check-obj-addr !
+   STRstrip dup not if pop "here" then
+   .match_controlled
+   dup #-3 dbcmp if pop me @@ getlink then
+   dup ok? not if pop exit then
+   check-obj
+   me @@ "^SUCC^Check done." ansi_notify
+;
+.
+c
+q
+@@register cmd-roomcheck=cmd/roomcheck
+@@register #me cmd-roomcheck=tmp/prog1
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=_version:FM$Revision: 1.5 $
+@@action @@roomcheck;@@rc=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:Type '@@roomcheck' to verify the room you are in is built correctly.
+wh me=Installation of cmd-roomcheck complete.
+@

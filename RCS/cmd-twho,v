@@ -1,0 +1,174 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.12.22.19.02.12;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-twho...
+@@prog cmd-twho
+1 99999 d
+1 i
+( cmd-twho: $Date$ $Revision$                                                 )
+( Author: Unknown                                                             )
+( --------------------------------------------------------------------------- )
+( twho - a shameless copy of the program on delusions..                       )
+( no code from that program was used in the making of this                    )
+(
+  $Log$
+)
+$include $lib/glowstandard
+
+var plyr
+  
+  
+: pad ( s n -- s )
+    swap "                                              " strcat
+    swap strcut pop
+;
+  
+: header ( -- )
+    " Player           Gender Status Idle @@doing" .tell
+;
+  
+: mawake? ( d -- n )
+    "who_hides_dark" sysparm .yes? not if
+        awake? exit
+    then
+    dup "d" flag? me @@ "w" flag? not and if
+        pop 0 exit
+    then
+    awake?
+;
+  
+: stimestr (i -- s)
+    dup 86400 > if
+        86400 / intostr "d" strcat 
+    else dup 3600 > if
+            3600 / intostr "h" strcat
+        else dup 60 > if
+                60 / intostr "m" strcat
+            else
+                intostr "s" strcat
+            then
+        then
+    then
+    "    " swap strcat
+    dup strlen 4 - strcut swap pop
+;
+  
+: getline ( n d -- s )
+    dup name " " swap strcat 18 pad
+    over "sex" getpropstr 6 pad strcat " " strcat
+    over mawake? not if
+        "Asleep ----" strcat
+        swap pop exit
+    then
+    "Awake  " strcat
+    rot conidle stimestr strcat " " strcat
+    swap "_/do" getpropstr strcat
+;
+  
+: main ( s -- )
+    dup if
+        tolower
+        #-1 plyr !
+        dup .pmatch dup ok? if
+            swap pop
+            dup mawake? not if
+                header
+                0 swap getline .tell
+                exit
+            then
+            plyr !
+            "#all"
+        else pop
+        then
+        dup "#all" stringcmp not if
+            pop
+            header
+            plyr @@ descriptors
+            dup dup 2 + -1 * rotate
+            begin
+                dup while
+                over descrcon
+                dup condbref mawake? not if
+                    pop
+                    swap pop
+                    1 -
+                    dup 2 + rotate 1 -
+                    over 2 + -1 * rotate
+                    continue
+                then
+                dup condbref getline .tell
+                swap pop
+                1 -
+            repeat pop
+            "There " over 1 = if "is " else "are " then strcat
+            over intostr " player" strcat strcat
+            swap 1 = not if "s" strcat then " connected." strcat .tell
+            exit
+        then
+        dup "#help" stringcmp not if
+            pop
+            "usage -" .tell
+            "  twho          - lists some info about players in this room." .tell
+            "  twho player   - lists some info about [player]." .tell
+            "  twho #all     - lists some info about all players connected." .tell
+            "  twho #help    - this screen." .tell
+            exit
+        then
+        "I don't see the player named '" swap "'." strcat strcat .tell
+        exit
+    then
+    header
+    loc @@ contents
+    0 swap
+    begin
+        dup ok? while
+        dup player? not if next continue then
+        dup mawake? not if next continue then
+        dup descriptors
+        begin
+            dup 1 > while
+            swap pop
+            1 -
+        repeat pop
+        descrcon
+        dup not if pop next swap 1 + swap continue then
+        over getline .tell
+        swap 1 + swap next
+    repeat pop
+    "There " over 1 = if "is " else "are " then strcat
+    over intostr " player" strcat strcat
+    swap 1 = not if "s" strcat then " awake." strcat .tell
+;
+.
+c
+q
+@@register cmd-twho=cmd/twho
+@@register #me cmd-twho=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W2
+@@set $tmp/prog1=_version:FM$Revision$
+@@action twho=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+"Installation of cmd-twho complete.
+@

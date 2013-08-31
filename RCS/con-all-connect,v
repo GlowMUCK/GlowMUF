@@ -1,0 +1,274 @@
+head	1.4;
+access;
+symbols
+	GlowMUF1-1-1:1.4
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2006.07.11.03.16.32;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.09.22.20.30.24;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.04.17.14.32.17;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.17.14.29.54;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial RCS Checkin
+@
+
+
+1.4
+log
+@Laston records the connect time in the correct property now.
+@
+text
+@wh me=Beginning installation of con-all-connect (con-caller)...
+@@prog con-caller
+1 99999 d
+1 i
+( con-caller: $Date: 2005/09/22 20:30:24 $ $Revision: 1.3 $
+  Author: Andy
+  --------------------------------------------------------------------------- )
+(
+  $Log: con-all-connect,v $
+  Revision 1.3  2005/09/22 20:30:24  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
+  Revision 1.2  1999/04/17 14:32:17  feaelin
+  Brought in line with glow 3.1.0
+
+)
+( --------------------------------------------------------------------------- )
+( Global connect programs )
+  
+( guest    -- guest name changes )
+( announce -- @@ann chat system   )
+( mail     -- show new mail      )
+( notify   -- connect notify     )
+( accept   -- ~/accept check     )
+( lasthost -- show last host     )
+( laston   -- show last connect  )
+  
+$include $lib/glowstandard
+$include $lib/showlist
+
+$def n         me @@ swap notify
+$def tellwho   #1 name
+$def LASTHOST  "@@/lastsite"
+$def CONPROP   "@@/lc"
+$def MCONPROP  "~/lc"
+  
+: tattle ( -- ) "Please tell " tellwho strcat " that you saw this." strcat n ;
+  
+: record-site
+    me @@ #1 dbcmp if exit then
+    me @@ descriptors
+    begin
+        dup 1 > while
+        rot pop 1 -
+    repeat
+    dup if
+      pop descrcon
+      dup conipnum me @@ "@@/host" rot setprop
+      dup conhost "(" strcat swap conuser strcat ")" strcat
+      me @@ "@@/site" rot setprop
+    else pop then
+;
+  
+: AddNum ( s i s i -- s i )
+  dup intostr rot strcat swap ( s i s i )
+  dup 1 = not if swap "s" strcat swap then
+  0 = if pop "" then ( s i s )
+  dup if ", " strcat then
+  rot swap strcat swap
+;  
+  
+: Tell-Time ( i -- s ) 
+  "" swap ( s i )
+  dup 2419200 / " moon" swap AddNum 2419200 %
+  dup   86400 /  " day" swap AddNum 86400 % 
+  over "moon" instr not if
+    dup  3600 / " hour" swap AddNum  3600 %
+    over "day" instr not if
+      dup  60 /  " min" swap AddNum    60 %
+      over "hour" instr not if
+        dup " sec" swap AddNum
+      then
+    then
+  then
+  pop 
+  .cleancommas
+;
+  
+: cleanstack ( ? -- )
+  depth if
+    debug-line tattle depth popn
+  then
+;
+  
+: con-guest ( -- )
+  me @@ .guest? me @@ name "Guest" stringcmp not and if
+    "Connect" "$con/guest" match call
+  then
+;
+  
+( : con-accept /q -- 
+  me @@ "~/accept" getpropstr .yes? not if
+    me @@ "$room/newbie" match dup room? if setlink else pop then
+  then
+; )
+  
+: con-watch ( -- )
+  "Connect" "$con/watch" match call
+;
+  
+: con-lasthost ( -- )
+  me @@ "@@/host" getpropstr dup if me @@ "@@/lasthost" rot setprop else pop then
+  me @@ "@@/site" getpropstr dup if me @@ "@@/lastsite" rot setprop else pop then
+  record-site
+  fork not if
+    background 1 sleep record-site 10 sleep record-site
+    pid kill pop begin 1 while 65535 sleep repeat
+  then
+;
+  
+$def COOKIEDB #0
+$def COOKIEDIR "_cookie"
+  
+: con-cookie ( -- )
+  me @@ .guest? if exit then
+  me @@ "_prefs/cookie" getpropstr .no? not if
+    COOKIEDB COOKIEDIR "s#" strcat getpropstr atoi dup if
+      random swap % 1 + intostr
+      COOKIEDB COOKIEDIR "s/" strcat rot strcat getpropstr dup if
+        "Look a cookie!" .tell " " .tell
+        COOKIEDB COOKIEDIR "/" strcat rot strcat .showlist " " .tell
+      else pop then
+    else pop then
+  then
+;
+  
+: con-mail ( -- )
+  me @@ .guest? if exit then
+  me @@ "$cmd/mail" match "check" call
+;
+  
+: con-laston ( -- )
+  me @@ LASTHOST getpropstr
+  me @@ CONPROP getpropval
+  me @@ CONPROP systime setprop
+  me @@ MCONPROP systime setprop
+  over over and not if pop pop exit then
+  me @@ .guest? if pop pop exit then
+  " ago at %I:%M %p on %B %e from " over timefmt
+  " " "  " subst
+  systime rot - Tell-Time
+  "Last Connect: " swap strcat swap strcat swap strcat
+  .tell-me
+;
+  
+  
+( Main connection program run daemon )
+: connect-main ( s -- )
+  "me" match dup location loc ! me !
+  "Connect" strcmp trig or if
+    "Connect aborted." n tattle
+    exit
+  then
+  
+  con-guest cleanstack
+  ( con-accept cleanstack )
+  con-watch cleanstack
+  con-lasthost cleanstack
+  con-laston cleanstack
+  con-cookie cleanstack
+  con-mail cleanstack
+;
+.
+c
+q
+@@register con-caller=con/all-connect
+@@register #me con-caller=tmp/prog1
+@@set #0=/~connect/all:$con/all-connect
+@@set $tmp/prog1=L
+@@set $tmp/prog1=S
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=V
+@@set $tmp/prog1=_version:FM$Revision: 1.3 $
+wh me=Installation of con-caller complete.
+@
+
+
+1.3
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of con-all-connect (con-caller)...
+d5 1
+a5 1
+( con-caller: $Date: 1999/04/17 14:32:17 $ $Revision: 1.2 $
+d10 6
+d37 1
+a37 1
+$def CONPROP   "_/lc"
+d176 2
+a177 2
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+"Installation of con-caller complete.
+@
+
+
+1.2
+log
+@Brought in line with glow 3.1.0
+@
+text
+@d5 1
+a5 1
+( con-caller: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d78 1
+a78 1
+    .debug-line tattle depth popn
+d170 1
+a170 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d11 1
+a11 1
+  ---------------------------------------------------------------------------
+@

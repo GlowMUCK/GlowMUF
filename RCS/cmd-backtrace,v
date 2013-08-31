@@ -1,0 +1,162 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2006.08.15.15.05.17;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2006.08.15.14.06.23;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.18.01.33.58;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.3
+log
+@Updated header.
+@
+text
+@wh me=Beginning installation of cmd-backtrace...
+@@prog cmd-backtrace
+1 99999 d
+1 i
+( cmd-backtrace : $Date: 2006/08/15 14:06:23 $ $Revision: 1.2 $               )
+( Purpose: Lists child rooms that are also parents and lists how many rooms   )
+(          are below that parent.                                             )
+( Author: Unknown                                                             )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-backtrace,v $
+  Revision 1.2  2006/08/15 14:06:23  feaelin
+  Removed dependence on lib-glow-standard.
+  Added some color to output
+
+  Revision 1.1  1999/04/18 01:33:58  feaelin
+  Initial revision
+
+)
+
+: CountARoom ( Tally Room# -- Tally Room# )
+  dup contents dup if 0 swap ( T R# T C# )
+    begin dup while dup room? not if next continue then
+      CountARoom swap 1 + swap next
+    repeat ( T R# T C# ) pop
+    dup if ( only do this if we got rooms )
+      over "_private" getpropstr "y" instr
+      me @@ "MAGE" flag? not and if
+        "A private room" else over unparseobj then
+      " run by " strcat 3 pick owner name strcat " has " strcat
+      over intostr strcat " rooms." strcat me @@ swap ansi_notify rot + swap
+    else pop then 
+  else ( NothingInRoom ) pop then
+;
+: Count-Main
+  "me" match dup me ! location loc !
+  me @@ "MAGE" flag? loc @@ owner me @@ dbcmp or if
+    "Descendents of " loc @@ unparseobj ":" strcat strcat
+    0 loc @@ CountARoom pop pop
+    me @@ "^SUCC^Done." ansi_notify
+  else
+    me @@ "^FAIL^You don't own this room." ansi_notify
+  then
+;
+.
+c
+q
+@@register cmd-backtrace=cmd/backtrace
+@@set $cmd/backtrace=M3
+@@action backtrace=here=tmp/exit1
+@@link $tmp/exit1=$cmd/backtrace
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:Backtrace lists all rooms in the current room and their descendants.
+@@set $cmd/backtrace=_version:FM$Revision: 1.2 $
+wh me=Installation of cmd-backtrace complete.
+@
+
+
+1.2
+log
+@Removed dependence on lib-glow-standard.
+Added some color to output
+@
+text
+@d5 5
+a9 3
+( cmd-backtrace : $Date: 1999/04/18 01:33:58 $ $Revision: 1.1 $
+  Author: ???
+  --------------------------------------------------------------------------- )
+d12 4
+a51 1
+@@lock $tmp/exit1=#0
+d55 1
+a55 1
+@@set $cmd/backtrace=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-backtrace...
+d5 1
+a5 1
+( cmd-backtrace : $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+a14 2
+$include $lib/glow
+
+d21 2
+a22 1
+      over .private? me @@ .wizard? not and if
+d25 1
+a25 1
+      over intostr strcat " rooms." strcat .tell rot + swap
+d30 2
+a31 2
+  .initialize
+  me @@ .wizard? loc @@ owner me @@ dbcmp or if
+d34 1
+a34 1
+    "Done." .tell
+d36 1
+a36 1
+    "You don't own this room." .tell
+d43 1
+a43 2
+@@register #me cmd-backtrace=tmp/prog1
+@@set $tmp/prog1=M3
+d45 1
+a45 1
+@@link $tmp/exit1=$tmp/prog1
+d50 2
+a51 4
+@@set $tmp/exit1=/_/fl:Permission denied.
+@@set $tmp/exit1=/_/lok:lock-mage(#323FLM1)
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-backtrace complete.
+@
+

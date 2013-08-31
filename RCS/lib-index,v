@@ -1,0 +1,1231 @@
+head	1.9;
+access;
+symbols
+	GlowMUF1-1-1:1.9
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.9
+date	2005.09.26.00.27.52;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2005.04.07.21.19.51;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2005.04.05.22.34.17;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.04.15.03.34;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.08.22.01.46.50;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.08.23.16.19.30;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.16.18.09;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.9
+log
+@Documentation update.
+@
+text
+@wh me=Beginning installation of lib-index...
+@@prog lib-index
+1 99999 d
+1 i
+( lib-index: $Date: 2005/04/07 21:19:51 $ $Revision: 1.8 $                    )
+( Purpose: Routine manipulate name-value pairs                                )
+( Author: ErmaFelna                                                           )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( This library consists of a set of routines to manipulate elements consisting)
+( of name:value pairs.  It stores both a 'list' of all the elements [not a    )
+( list as in the list manager here], and an 'index' which contains a list of  )
+( which contains a list of all the names. The index is used for the purposes  )
+( of sorting and matching.                                                    )
+(                                                                             )
+( All routines except 'index-matchrange' exist in two forms: the base forms,  )
+( which take exactly the parameters listed below, and remove their input      )
+( behind them; and the standard or 'std-' forms, which must be given all four )
+( of the input parameters, and which will return all of them as well. The     )
+( routines like 'std-index-add' will null out any parameters that aren't used )
+( by the base form, and will still add an error code to the top of the stack  )
+( on exit if the base form does.                                              )
+(                                                                             )
+( The standard set of parameters for all routines in this library contains:   )
+(   dbref - the database reference of the database item the index exists on   )
+(   index - the string containing the name of the index                       )
+(   name  - the string containing the name of the element in the index        )
+(   value - the string containing the value of the named element              )
+( And one extra on output:                                                    )
+(   error - a boolean integer: true if the operation succeeded.               )
+(                                                                             )
+( The following routines exist in this library:                               )
+(   index-match: dbref index name -- name' error                              )
+(     This is the core reason for this library: it does a complex three level )
+(     level matching scheme.  The first attempt is an exact match by property )
+(     name. The second is a partial exact matching, like in exits, where it   )
+(     matches anything in the original name delimited by semicolons. If there )
+(     are multiple matches at this level, then one of them is chosen at       )
+(     random. The third match attempt tries to match the starts of words:     )
+(     anything that comes immediately after a space. So 'mat' will match      )
+(     'mattress' and 'lit match', but not 'rematch'. If the error code is     )
+(     true, the name' string is good; if the error code is false, than the    )
+(     name' string is either null for nothing found, or the first element     )
+(     found if there were multiple matches.                                   )
+(                                                                             )
+(   index-matchrange: dbref index name -- name1' ... namen' n                 )
+(     This routine performs a partial word match search like the usual match  )
+(     routine, but it returns a stack range of every value that it matches.   )
+(     Because of the unusual output form of this routine, it does not exist in)
+(     a 'std-' form.                                                          )
+(                                                                             )
+(   index-envmatch: dbref index name -- name' error                           )
+(     The envmatch routine performs a match similar to the standard           )
+(     index-match, except that if it doesn't find the value on the dbref      )
+(     given, it will try again on the dbref above that. And it will keep      )
+(     scanning up the dbref's until it either finds one or more matching      )
+(     element or it hits the top of the environment tree. Return values are   )
+(     the same as index-match.                                                )
+(                                                                             )
+(   index-add: dbref index name value -- error                                )
+(     The add routine will fail out if an element with that exact name exists )
+(     already; otherwise, it will add the new name to the end of the index,   )
+(     and add the new element into the list.                                  )
+(                                                                             )
+(   index-add-sort: dbref index name value -- error                           )
+(     The sorted add is similar to the usual add routine, except that instead )
+(     of adding it to the end of the index, it adds it right before the       )
+(     element whose name is the closest one following it in alphabetical      )
+(     order. This was, so long as the index is always added to by this        )
+(     routine, it will remain in alphabetical order.                          )
+(                                                                             )
+(   index-write: dbref index name value -- error                              )
+(     This routine is used only to edit the elements that alread exist in the )
+(     index. It will make the value of the named element equal to the value   )
+(     given; if the element does not exist, it will fail.                     )
+(                                                                             )
+(   index-set: dbref index name value --                                      )
+(     This combines the add and write routines.  It does not fail out, but    )
+(     will add the element if it doesn't already exist, and edit it if it     )
+(     does.                                                                   )
+(                                                                             )
+(   index-remove: dbref index name -- error                                   )
+(     This routine removes an existing element from the list and its name     )
+(     from the index.  If the element does not exist in the list, it fails.   )
+(                                                                             )
+(   index-delete: dbref index name --                                         )
+(     This acts like the index-remove, except that it simply exits if the     )
+(     name is not in the index, rather than failing.                          )
+(                                                                             )
+(   index-value: dbref index name -- value                                    )
+(     This returns the value associated with the named element.               )
+(                                                                             )
+(   index-first: dbref index -- name                                          )
+(     This routine returns the first name in the index.                       )
+(                                                                             )
+(   index-last:                                                               )
+(     This routine returns the last name in the index.                        )
+(                                                                             )
+(   index-next: dbref index name -- name'                                     )
+(     This routine takes the name, and returns the one immediately after it in)
+(     the index.                                                              )
+(                                                                             )
+(   index-prev: dbref index name -- name'                                     )
+(     This routine takes the name, and returns the one immediately previous   )
+(     to it in the index.                                                     )
+( --------------------------------------------------------------------------- )
+(
+ $Log: lib-index,v $
+ Revision 1.8  2005/04/07 21:19:51  feaelin
+ Added Library Symbols
+ 
+ Revision 1.7  2005/04/05 22:34:17  feaelin
+ Cleaned up formatting
+ Added color
+ Removed unnecessary library $includes
+ Revised word names for library words
+ Cleaned up documentation
+ 
+ Revision 1.6  2005/04/04 15:03:34  feaelin
+ Replaced .controls macro call with a primitive call to controls
+ 
+ Revision 1.5  2005/03/21 01:31:43  feaelin
+ General maintenance and documentation updates
+ 
+ Revision 1.4  2005/01/14 16:32:13  feaelin
+ Broad sweep to clear up terminology usage in regards to database
+ item/object/thing
+ 
+ Revision 1.3  2004/08/22 01:46:50  feaelin
+ Documentation cleanup.
+ 
+ Revision 1.2  1998/08/23 16:19:30  feaelin
+ Fixed documentation up.
+)
+( --------------------------------------------------------------------------- )
+: int-quickerror  ( dbref index name value errstring -- 0 )
+  me @@ swap "^FAIL^" swap strcat ansi_notify pop pop pop pop 0
+;
+ 
+: int-error  ( dbref index name value errstring -- 0 )
+  5 rotate intostr "%d" subst
+  4 rotate "%i" subst
+  rot "%n" subst
+  swap "%v" subst
+  me @@ swap notify 0
+;
+ 
+: errorcheck ( dbref index name value -- " " " " noerror? )
+  depth 3 >
+  if
+    4 pick dbref?
+    if
+      4 pick ok?
+      if
+        3 pick string?
+        if
+          3 pick
+          if
+            over string?
+            if
+              over
+              if
+                dup string?
+                if
+                  dup
+                  if
+                    1 exit
+                  then
+                  "lib-index: Value argument is null."
+                else
+                  "lib-index: Value argument is not string."
+                then
+              else
+                "lib-index: Name argument is null."
+              then
+            else
+              "lib-index: Name argument is not string."
+            then
+          else
+            "lib-index: Index argument is null."
+          then
+        else
+          "lib-index: Index argument is not string."
+        then
+      else
+        "lib-index: database item argument is bad dbref."
+      then
+    else
+      "lib-index: database item argument is not dbref."
+    then
+  else
+    "" "" "" "" "Index: function called with insufficient arguments."
+  then
+  int-quickerror
+;
+ 
+: editcheck ( dbref index name value -- " " " " noerror? )
+  me @@ 5 pick controls
+  if
+    1 exit
+  then
+  trig owner 5 pick controls trig "_public" getpropstr and
+  if
+    3 pick 1 strcut "_.@@" swap instr
+    if
+      1 exit
+    else
+      "Index: index '%i' cannot be written on database item #%d." strcat
+    then
+  else
+    "Index: Permission denied on database item #%d."
+  then
+  int-error
+;
+ 
+: int-getIPrange  ( dbref index -- indexp1 ... indexpn n )
+  0 rot rot "/" strcat
+  begin
+    "i" strcat over over getpropstr dup
+  while
+    -4 rotate rot 1 + rot rot
+  repeat
+  pop pop pop
+;
+ 
+: int-compIPrange  ( indexp1 ... indexpn n -- indexp1' ... indexpn' n' )
+  dup
+  begin
+    1 - dup
+  while
+    dup 3 + pick strlen
+    over 3 + pick strlen + 4001 <
+    if
+      dup 3 + rotate
+      over 3 + rotate
+      2 strcut swap pop strcat
+      over -2 swap - rotate
+      swap 1 - swap
+    then
+  repeat
+  pop
+;
+ 
+: int-setIPrange  ( indexp1 ... indexpn n dbref index -- )
+  "/" strcat
+  begin
+    "i" strcat rot dup
+  while
+    1 - dup -4 rotate 3 pick 3 pick rot 6 + rotate
+    0 addprop
+  repeat
+  pop
+  begin
+    over over getpropstr
+  while
+    over over remove_prop
+    "i" strcat
+  repeat
+  pop pop
+;
+ 
+: int-next-word-match  ( dbref prop left match -- " "' "' " matched )
+  begin
+    over over instring dup
+    if
+      rot swap 1 + strcut swap dup ";;" rinstr 2 + strcut swap pop
+      swap strcat dup ";;" instr 1 - strcut rot rot break
+    else
+      pop swap pop swap "i" strcat swap
+      3 pick 3 pick getpropstr swap over not
+      if
+        "" break
+      then
+    then
+  repeat
+  ";" "; " subst
+;
+ 
+: int-start-word-match  ( dbref index match -- dbref prop "" match )
+  swap "/" strcat "" rot
+;
+ 
+: int-exact-match?  ( dbref index match -- matched? )
+  swap "/t-" strcat swap strcat getpropstr not not
+;
+ 
+: int-matchrange  ( dbref index match -- matches ... count )
+  int-start-word-match 0 -5 rotate
+  begin
+    int-next-word-match dup
+  while
+    -6 rotate 5 rotate 1 + -5 rotate
+  repeat
+  pop pop pop pop pop
+;
+ 
+: index-matchrange  ( dbref index match -- matches ... count )
+  " " errorcheck
+  if
+    pop " " swap strcat int-matchrange
+  else
+    0
+  then
+;
+ 
+: int-match  ( dbref index match -- matched error? )
+  3 pick 3 pick 3 pick int-exact-match?
+  if
+    rot pop swap pop 1
+  else
+    3 pick 3 pick "; " 4 pick strcat ";" strcat int-matchrange dup
+    if
+      random 256 / over % 2 + rotate -4 3 pick - rotate
+      2 + popn 1
+    else
+      pop " " swap strcat int-start-word-match
+      int-next-word-match dup -6 rotate not not dup
+      if
+        pop int-next-word-match not
+      then
+      -5 rotate pop pop pop pop
+    then
+  then
+;
+ 
+: index-match  ( dbref index match -- matched error? )
+  " " errorcheck
+  if
+    pop int-match
+  else
+    "" 0
+  then
+;
+ 
+: int-envmatch  ( dbref index match -- dbref' matched error? )
+  begin
+    3 pick 3 pick 3 pick int-match over not
+  while
+    pop pop rot location rot rot 3 pick not
+    if
+      "" 0 break
+    then
+  repeat
+  rot pop rot pop
+;
+ 
+: index-envmatch  ( dbref index match -- dbref' matched error? )
+  " " errorcheck
+  if
+    pop int-envmatch
+  else
+    #-1 "" 0
+  then
+;
+ 
+: int-write  ( dbref index name value -- )
+  rot "/t-" strcat rot strcat swap 0 addprop
+;
+ 
+: int-add  ( dbref index name value -- )
+  over "; " ";" subst "" 6 pick 6 pick "/" strcat
+  begin
+    dup "i" strcat 3 pick over getpropstr dup
+  while
+    -5 rotate swap pop rot pop
+  repeat
+  pop pop rot dup
+  if
+    dup strlen 5 pick strlen + 4000 >
+    if
+      pop "i" strcat ";;"
+    then
+  else
+    pop "i" strcat ";;"
+  then
+  " " strcat 4 rotate strcat ";;" strcat 0 addprop
+  int-write
+;
+ 
+: index-add  ( dbref index name value -- errcode )
+  errorcheck
+  if
+    editcheck
+    if
+      4 pick 4 pick 4 pick int-exact-match?
+      if
+        "Index-add: name '%n' to add already exists in index #%d:%i" int-error
+      else
+        int-add 1
+      then
+    then
+  then
+;
+ 
+: int-add-sort  ( dbref index name value -- )
+  4 pick 4 pick 4 pick 4 rotate int-write
+  3 pick 3 pick "/t-" strcat 3 pick strcat nextprop
+  3 pick strlen 1 + strcut swap pop
+  4 pick 4 pick int-getIPrange
+  dup 3 + rotate over 3 + rotate dup
+  if
+    ";; " swap "; " ";" subst strcat ";;" strcat 3 pick
+    begin
+      dup
+    while
+      dup 4 + pick 3 pick instring dup
+      if
+        over 5 + rotate swap
+        strcut ";;" swap strcat
+        -5 4 pick - rotate -5 3 pick - rotate
+        4 rotate 1 + -4 rotate
+        break
+      then
+      pop 1 -
+    repeat
+  else
+    0
+  then
+  swap pop swap ";; " swap "; " ";" subst strcat ";;" strcat swap
+  -2 swap - rotate 1 +
+  int-compIPrange
+  dup 3 + rotate over 3 + rotate
+  int-setIPrange
+;
+ 
+: index-add-sort  ( dbref index name value -- errcode )
+  errorcheck
+  if
+    editcheck
+    if
+      4 pick 4 pick 4 pick int-exact-match?
+      if
+        "Index-add-sort: name '%n' to add already exists in index #%d:%i"
+        int-error
+      else
+        int-add-sort 1
+      then
+    then
+  then
+;
+ 
+: index-write  ( dbref index name value -- errcode )
+  errorcheck
+  if
+    editcheck
+    if
+      4 pick 4 pick 4 pick int-exact-match?
+      if
+        int-write 1
+      else
+        "Index-write: name '%n' to edit doesn't exist in index #%d:%i"
+        int-error
+      then
+    then
+  then
+;
+ 
+: index-set  ( dbref index name value -- errcode )
+  errorcheck
+  if
+    editcheck
+    if
+      4 pick 4 pick 4 pick int-exact-match?
+      if
+        int-write
+      else
+        int-add
+      then
+      1
+    then
+  then
+;
+ 
+: int-remove  ( dbref index name -- )
+  ";; " over "; " ";" subst strcat ";;" strcat 4 pick 4 pick "/" strcat
+  begin
+    "i" strcat over over getpropstr dup
+  while
+    dup 5 pick instring dup
+    if
+      strcut 5 rotate strlen 2 - strcut swap pop strcat 0 addprop 1 break
+    else
+      pop pop
+    then
+  repeat
+  not
+  if
+    pop pop pop pop
+  then
+  swap "/t-" strcat swap strcat remove_prop
+;
+ 
+: index-remove  ( dbref index name -- errcode )
+  " " errorcheck
+  if
+    editcheck
+    if
+      pop 3 pick 3 pick 3 pick int-exact-match?
+      if
+        int-remove 1 exit
+      else
+        "" "Index-remove: name '%n' to remove doesn't exist in index #%d:%i"
+        int-error
+      then
+    then
+  then
+;
+ 
+: index-delete  ( dbref index name -- )
+  " " errorcheck
+  if
+    editcheck
+    if
+      pop int-remove
+    then
+  then
+;
+ 
+: int-value  ( dbref index name -- value )
+  swap "/t-" strcat swap strcat getpropstr
+;
+ 
+: index-value  ( dbref index name -- value )
+  " " errorcheck
+  if
+    pop int-value
+  then
+;
+ 
+: int-first  ( dbref index -- first )
+  "/i" strcat getpropstr dup
+  if
+    3 strcut swap pop
+    dup ";;" instr dup
+    if
+      1 - strcut pop ";" "; " subst
+    else
+      pop pop ""
+    then
+  else
+    pop ""
+  then
+;
+ 
+: index-first ( dbref index -- first )
+  " " " " errorcheck
+  if
+    pop pop int-first
+  else
+    ""
+  then
+;
+ 
+: int-last  ( dbref index -- last )
+  "/" strcat "" rot rot
+  begin
+    "i" strcat over over getpropstr dup
+  while
+    4 rotate pop rot rot
+  repeat
+  swap pop swap pop
+  if
+    dup strlen 1 - strcut pop
+    dup ";; " rinstr 2 + strcut swap pop
+  else
+    pop ""
+  then
+  ";" "; " subst
+;
+ 
+: index-last ( dbref index -- last )
+  " " " " errorcheck
+  if
+    pop pop int-last
+  else
+    ""
+  then
+;
+ 
+: int-next  ( dbref index name -- next )
+  ";; " swap "; " ";" subst strcat ";;" strcat rot rot "/" strcat
+  begin
+    "i" strcat over over getpropstr dup
+  while
+    dup 5 pick instring dup
+    if
+      5 pick strlen + strcut swap pop
+      dup ";;" instr dup
+      if
+        1 - strcut pop
+      else
+        pop pop "i" strcat over over getpropstr dup
+        if
+          3 strcut swap pop
+          dup ";;" instr 1 - strcut pop
+        then
+      then
+      break
+    then
+    pop pop
+  repeat
+  -4 rotate pop pop pop ";" "; " subst
+;
+ 
+: index-next  ( dbref index name -- next )
+  " " errorcheck
+  if
+    pop int-next
+  else
+    ""
+  then
+;
+ 
+: int-prev  ( dbref index name -- prev )
+  ";; " swap "; " ";" subst strcat ";;" strcat
+  ";;" 4 rotate 4 rotate "/" strcat
+  begin
+    "i" strcat over over getpropstr dup
+  while
+    dup 6 pick instring dup
+    if
+      1 - strcut pop
+      dup ";;" rinstr dup
+      if
+        2 + strcut swap pop
+      else
+        pop pop 3 pick dup strlen 1 - strcut pop
+        dup ";;" rinstr dup
+        if
+          2 + strcut swap
+        then
+        pop
+      then
+      break
+    then
+    pop -4 rotate rot pop
+  repeat
+  -5 rotate pop pop pop pop ";" "; " subst
+;
+ 
+: index-prev  ( dbref index name -- prev )
+  " " errorcheck
+  if
+    pop int-prev
+  else
+    ""
+  then
+;
+ 
+( And the non-deleting macros... )
+( All of these take 'dbref index name value', and return the same list
+  with the addition of an error value for the following routines:
+  match, envmatch, add, write, remove )
+ 
+: std-index-match
+  pop 3 pick 3 pick rot
+  index-match
+  "" swap
+;
+ 
+: std-index-envmatch
+  pop 3 pick 3 pick rot
+  index-envmatch
+  "" swap
+;
+ 
+: std-index-add
+  4 pick 4 pick 4 pick 4 pick
+  index-add
+;
+ 
+: std-index-add-sort
+   4 pick 4 pick 4 pick 4 pick
+  index-add-sort
+;
+ 
+: std-index-write
+  4 pick 4 pick 4 pick 4 pick
+  index-write
+;
+ 
+: std-index-set
+  4 pick 4 pick 4 pick 4 pick
+  index-set
+;
+ 
+: std-index-remove
+  pop 3 pick 3 pick 3 pick
+  index-remove
+  "" swap
+;
+ 
+: std-index-delete
+  pop 3 pick 3 pick 3 pick
+  index-delete
+  ""
+;
+ 
+: std-index-value
+  pop 3 pick 3 pick 3 pick
+  index-value
+;
+ 
+: std-index-first
+  pop pop over over
+  index-first
+  ""
+;
+ 
+: std-index-last
+  pop pop over over
+  index-last
+  ""
+;
+ 
+: std-index-next
+  pop 3 pick 3 pick rot
+  index-next
+  ""
+;
+ 
+: std-index-prev
+  pop 3 pick 3 pick rot
+  index-prev
+  ""
+;
+ 
+public index-match                   public std-index-match
+public index-matchrange
+public index-envmatch                public std-index-envmatch
+public index-add                     public std-index-add
+public index-add-sort                public std-index-add-sort
+public index-write                   public std-index-write
+public index-set                     public std-index-set
+public index-remove                  public std-index-remove
+public index-delete                  public std-index-delete
+public index-value                   public std-index-value
+public index-first                   public std-index-first
+public index-last                    public std-index-last
+public index-next                    public std-index-next
+public index-prev                    public std-index-prev
+.
+c
+q
+@@register lib-index=lib/index
+@@set $lib/index=L
+@@set $lib/index=M3
+@@set $lib/index=/_defs/.index-add:"$lib/index" match "index-add" call
+@@set $lib/index=/_defs/.index-add-sort:"$lib/index" match "index-add-sort" call
+@@set $lib/index=/_defs/.index-delete:"$lib/index" match "index-delete" call
+@@set $lib/index=/_defs/.index-envmatch:"$lib/index" match "index-envmatch" call
+@@set $lib/index=/_defs/.index-first:"$lib/index" match "index-first" call
+@@set $lib/index=/_defs/.index-last:"$lib/index" match "index-last" call
+@@set $lib/index=/_defs/.index-match:"$lib/index" match "index-match" call
+@@set $lib/index=/_defs/.index-matchrange:"$lib/index" match "index-matchrange" call
+@@set $lib/index=/_defs/.index-next:"$lib/index" match "index-next" call
+@@set $lib/index=/_defs/.index-prev:"$lib/index" match "index-prev" call
+@@set $lib/index=/_defs/.index-remove:"$lib/index" match "index-remove" call
+@@set $lib/index=/_defs/.index-set:"$lib/index" match "index-set" call
+@@set $lib/index=/_defs/.index-value:"$lib/index" match "index-value" call
+@@set $lib/index=/_defs/.index-write:"$lib/index" match "index-write" call
+@@set $lib/index=/_defs/.std-index-add:"$lib/index" match "std-index-add" call
+@@set $lib/index=/_defs/.std-index-add-sort:"$lib/index" match "std-index-add-sort" call
+@@set $lib/index=/_defs/.std-index-delete:"$lib/index" match "std-index-delete" call
+@@set $lib/index=/_defs/.std-index-envmatch:"$lib/index" match "std-index-envmatch" call
+@@set $lib/index=/_defs/.std-index-first:"$lib/index" match "std-index-first" call
+@@set $lib/index=/_defs/.std-index-last:"$lib/index" match "std-index-last" call
+@@set $lib/index=/_defs/.std-index-match:"$lib/index" match "std-index-match" call
+@@set $lib/index=/_defs/.std-index-next:"$lib/index" match "std-index-next" call
+@@set $lib/index=/_defs/.std-index-prev:"$lib/index" match "std-index-prev" call
+@@set $lib/index=/_defs/.std-index-remove:"$lib/index" match "std-index-remove" call
+@@set $lib/index=/_defs/.std-index-set:"$lib/index" match "std-index-set" call
+@@set $lib/index=/_defs/.std-index-value:"$lib/index" match "std-index-value" call
+@@set $lib/index=/_defs/.std-index-write:"$lib/index" match "std-index-write" call
+@@set $lib/index=/_defs/INDEX-add:"$lib/index" match "index-add" call
+@@set $lib/index=/_defs/INDEX-add-sort:"$lib/index" match "index-add-sort" call
+@@set $lib/index=/_defs/INDEX-delete:"$lib/index" match "index-delete" call
+@@set $lib/index=/_defs/INDEX-envmatch:"$lib/index" match "index-envmatch" call
+@@set $lib/index=/_defs/INDEX-first:"$lib/index" match "index-first" call
+@@set $lib/index=/_defs/INDEX-last:"$lib/index" match "index-last" call
+@@set $lib/index=/_defs/INDEX-match:"$lib/index" match "index-match" call
+@@set $lib/index=/_defs/INDEX-matchrange:"$lib/index" match "index-matchrange" call
+@@set $lib/index=/_defs/INDEX-next:"$lib/index" match "index-next" call
+@@set $lib/index=/_defs/INDEX-prev:"$lib/index" match "index-prev" call
+@@set $lib/index=/_defs/INDEX-remove:"$lib/index" match "index-remove" call
+@@set $lib/index=/_defs/INDEX-set:"$lib/index" match "index-set" call
+@@set $lib/index=/_defs/INDEX-value:"$lib/index" match "index-value" call
+@@set $lib/index=/_defs/INDEX-write:"$lib/index" match "index-write" call
+@@set $lib/index=/_defs/INDEX-std-add:"$lib/index" match "std-index-add" call
+@@set $lib/index=/_defs/INDEX-std-add-sort:"$lib/index" match "std-index-add-sort" call
+@@set $lib/index=/_defs/INDEX-std-delete:"$lib/index" match "std-index-delete" call
+@@set $lib/index=/_defs/INDEX-std-envmatch:"$lib/index" match "std-index-envmatch" call
+@@set $lib/index=/_defs/INDEX-std-first:"$lib/index" match "std-index-first" call
+@@set $lib/index=/_defs/INDEX-std-last:"$lib/index" match "std-index-last" call
+@@set $lib/index=/_defs/INDEX-std-match:"$lib/index" match "std-index-match" call
+@@set $lib/index=/_defs/INDEX-std-next:"$lib/index" match "std-index-next" call
+@@set $lib/index=/_defs/INDEX-std-prev:"$lib/index" match "std-index-prev" call
+@@set $lib/index=/_defs/INDEX-std-remove:"$lib/index" match "std-index-remove" call
+@@set $lib/index=/_defs/INDEX-std-set:"$lib/index" match "std-index-set" call
+@@set $lib/index=/_defs/INDEX-std-value:"$lib/index" match "std-index-value" call
+@@set $lib/index=/_defs/INDEX-std-write:"$lib/index" match "std-index-write" call
+@@set $lib/index=/_/de:lib-index: List lines 1-103 for documentation.
+@@set $lib/index=/_docs:@@list $lib/index=1-103
+@@set $lib/index=/_lib-version:1.2FM$Revision: 1.8 $
+@@set $lib/index=/_lib-symbol:INDEX
+wh me=Installation of lib-index complete.
+@
+
+
+1.8
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date: 2005/04/05 22:34:17 $ $Revision: 1.7 $                    )
+d110 3
+d119 1
+a119 1
+
+d122 1
+a122 1
+
+d125 1
+a125 1
+
+d129 1
+a129 1
+
+d132 1
+a132 1
+
+d805 1
+a805 1
+@@set $lib/index=/_lib-version:1.2FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Cleaned up formatting
+Added color
+Removed unnecessary library $includes
+Revised word names for library words
+Cleaned up documentation
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date: 2005/04/04 15:03:34 $ $Revision: 1.6 $                    )
+d110 7
+d802 2
+a803 1
+@@set $lib/index=/_lib-version:1.2FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Replaced .controls macro call with a primitive call to controls
+@
+text
+@d5 5
+a9 3
+( lib-index: $Date: 2005/03/21 01:31:43 $ $Revision: 1.5 $
+  Originally taken from the FuzzBall MUF distribution.
+  Author: ErmaFelna                                                           )
+d11 96
+a106 101
+( This library consists of a set of routines to manipulate elements
+    consisting of name:value pairs.  It stores both a 'list' of all the
+    elements [not a list as in the list manager here], and an 'index'
+    which contains a list of all the names.  The index is used for the
+    purposes of sorting and matching.
+ 
+  The standard set of parameters for all routines in this library contains:
+    dbref - the database reference of the database item the index exists on
+    index - the string containing the name of the index
+    name  - the string containing the name of the element in the index
+    value - the string containing the value of the named element
+  And one extra on output:
+    error - a boolean integer: true if the operation succeeded.
+ 
+  All routines except 'index-matchrange' exist in two forms: the base
+    forms, which take exactly the parameters listed below, and remove
+    their input behind them; and the standard or 'std-' forms, which
+    must be given all four of the input parameters, and which will
+    return all of them as well.  The routines like 'std-index-add' will
+    null out any parameters that aren't used by the base form, and will
+    still add an error code to the top of the stack on exit if the base
+    form does.
+ 
+  The following routines exist in this library:
+ 
+    index-match: [ dbref index name -- name' error ]
+      This is the core reason for this library: it does a complex three
+      level matching scheme.  The first attempt is an exact match by
+      property name.  The second is a partial exact matching, like in
+      exits, where it matches anything in the original name delimited
+      by semicolons.  If there are multiple matches at this level, then
+      one of them is chosen at random.  The third match attempt tries
+      to match the starts of words: anything that comes immediatly
+      after a space.  So 'mat' will match 'mattress' and 'lit match',
+      but not 'rematch'.
+      If the error code is true, the name' string is good; if the error
+      code is false, than the name' string is either null for nothing found,
+      or the first element found if there were multiple matches.
+ 
+    index-matchrange: [ dbref index name -- name1' ... namen' n ]
+      This routine performs a partial word match search like the usual
+      match routine, but it returns a stack range of every value that
+      it matches.  Because of the unusual output form of this routine,
+      it does not exist in a 'std-' form.
+ 
+    index-envmatch: [ dbref index name -- name' error ]
+      The envmatch routine performs a match similar to the standard
+      index-match, except that if it doesn't find the value on the
+      dbref given, it will try again on the dbref above that.  And it
+      will keep scanning up the dbref's until it either finds one or
+      more matching element or it hits the top of the environment
+      tree.  Return values are the same as index-match.
+ 
+    index-add: [ dbref index name value -- error ]
+      The add routine will fail out if an element with that exact name
+      exists already; otherwise, it will add the new name to the end
+      of the index, and add the new element into the list.
+ 
+    index-add-sort: [ dbref index name value -- error ]
+      The sorted add is similar to the usual add routine, except that
+      instead of adding it to the end of the index, it adds it right
+      before the element whose name is the closest one following it in
+      alphabetical order.  This was, so long as the index is always
+      added to by this routine, it will remain in alphabetical order.
+ 
+    index-write: [ dbref index name value -- error ]
+      This routine is used only to edit the elements that alread exist
+      in the index.  It will make the value of the named element equal
+      to the value given; if the element does not exist, it will fail.
+ 
+    index-set: [ dbref index name value -- ]
+      This combines the add and write routines.  It does not fail out,
+      but will add the element if it doesn't already exist, and edit
+      it if it does.
+ 
+    index-remove: [ dbref index name -- error ]
+      This routine removes an existing element from the list and its
+      name from the index.  If the element does not exist in the list,
+      it fails.
+ 
+    index-delete: [ dbref index name -- ]
+      This acts like the index-remove, except that it simply exits
+      if the name is not in the index, rather than failing.
+ 
+    index-value: [ dbref index name -- value ]
+      This returns the value associated with the named element.
+ 
+    index-first: [ dbref index -- name ]
+      This routine returns the first name in the index.
+ 
+    index-last:
+      This routine returns the last name in the index.
+ 
+    index-next: [ dbref index name -- name' ]
+      This routine takes the name, and returns the one immediately
+      after it in the index.
+ 
+    index-prev: [ dbref index name -- name' ]
+      This routine takes the name, and returns the one immediately
+      previous to it in the index.
+)
+d110 3
+a126 4
+$include $lib/glowstandard
+$include $lib/match
+$include $lib/stackrng
+ 
+d128 1
+a128 1
+  .tell pop pop pop pop 0
+d136 1
+a136 1
+  .tell 0
+d160 1
+a160 1
+                  "Index: Value argument is null."
+d162 1
+a162 1
+                  "Index: Value argument is not string."
+d165 1
+a165 1
+                "Index: Name argument is null."
+d168 1
+a168 1
+              "Index: Name argument is not string."
+d171 1
+a171 1
+            "Index: Index argument is null."
+d174 1
+a174 1
+          "Index: Index argument is not string."
+d177 1
+a177 1
+        "Index: database item argument is bad dbref."
+d180 1
+a180 1
+      "Index: database item argument is not dbref."
+d737 59
+a795 33
+@@register #me lib-index=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=/_/de:lib-index: List lines 5-109 for documentation.
+@@set $tmp/prog1=/_defs/.index-add:"$lib/index" match "index-add" call
+@@set $tmp/prog1=/_defs/.index-add-sort:"$lib/index" match "index-add-sort" call
+@@set $tmp/prog1=/_defs/.index-delete:"$lib/index" match "index-delete" call
+@@set $tmp/prog1=/_defs/.index-envmatch:"$lib/index" match "index-envmatch" call
+@@set $tmp/prog1=/_defs/.index-first:"$lib/index" match "index-first" call
+@@set $tmp/prog1=/_defs/.index-last:"$lib/index" match "index-last" call
+@@set $tmp/prog1=/_defs/.index-match:"$lib/index" match "index-match" call
+@@set $tmp/prog1=/_defs/.index-matchrange:"$lib/index" match "index-matchrange" call
+@@set $tmp/prog1=/_defs/.index-next:"$lib/index" match "index-next" call
+@@set $tmp/prog1=/_defs/.index-prev:"$lib/index" match "index-prev" call
+@@set $tmp/prog1=/_defs/.index-remove:"$lib/index" match "index-remove" call
+@@set $tmp/prog1=/_defs/.index-set:"$lib/index" match "index-set" call
+@@set $tmp/prog1=/_defs/.index-value:"$lib/index" match "index-value" call
+@@set $tmp/prog1=/_defs/.index-write:"$lib/index" match "index-write" call
+@@set $tmp/prog1=/_defs/.std-index-add:"$lib/index" match "std-index-add" call
+@@set $tmp/prog1=/_defs/.std-index-add-sort:"$lib/index" match "std-index-add-sort" call
+@@set $tmp/prog1=/_defs/.std-index-delete:"$lib/index" match "std-index-delete" call
+@@set $tmp/prog1=/_defs/.std-index-envmatch:"$lib/index" match "std-index-envmatch" call
+@@set $tmp/prog1=/_defs/.std-index-first:"$lib/index" match "std-index-first" call
+@@set $tmp/prog1=/_defs/.std-index-last:"$lib/index" match "std-index-last" call
+@@set $tmp/prog1=/_defs/.std-index-match:"$lib/index" match "std-index-match" call
+@@set $tmp/prog1=/_defs/.std-index-next:"$lib/index" match "std-index-next" call
+@@set $tmp/prog1=/_defs/.std-index-prev:"$lib/index" match "std-index-prev" call
+@@set $tmp/prog1=/_defs/.std-index-remove:"$lib/index" match "std-index-remove" call
+@@set $tmp/prog1=/_defs/.std-index-set:"$lib/index" match "std-index-set" call
+@@set $tmp/prog1=/_defs/.std-index-value:"$lib/index" match "std-index-value" call
+@@set $tmp/prog1=/_defs/.std-index-write:"$lib/index" match "std-index-write" call
+@@set $tmp/prog1=/_docs:@@list $lib/index=5-109
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@General maintenance and documentation updates
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date: 2005/01/14 16:32:13 $ $Revision: 1.4 $
+d113 3
+d193 1
+a193 1
+  me @@ 5 pick .controls
+d197 1
+a197 1
+  trig owner 5 pick .controls trig "_public" getpropstr and
+d773 1
+a773 1
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date: 2004/08/22 01:46:50 $ $Revision: 1.3 $
+d113 4
+d120 1
+a120 1
+ Revision 1.2  1998/08/23 16:19:30  glow
+a121 4
+
+ Revision 1.1  1998/08/23 16:18:09  glow
+ Initial revision
+
+d770 1
+a770 1
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Documentation cleanup.
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date: 1998/08/23 16:19:30 $ $Revision: 1.2 $
+d16 1
+a16 1
+    dbref - the database reference of the object the index exists on
+d113 3
+d178 1
+a178 1
+        "Index: Object argument is bad dbref."
+d181 1
+a181 1
+      "Index: Object argument is not dbref."
+d200 1
+a200 1
+      "Index: index '%i' cannot be written on object #%d." strcat
+d203 1
+a203 1
+    "Index: Permission denied on object #%d."
+d770 1
+a770 1
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Fixed documentation up.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-index...
+d5 1
+a5 1
+( lib-index: $Date: 1998/08/23 16:18:09 $ $Revision: 1.1 $
+d44 2
+a45 7
+      If the 
+      This is the core reason for this library: it does a partial word
+      match on the name given, trying to find any element in the index
+      with a name that has the given name string as a prefix.  This
+      type of match is similar to that performed by the server.  If the
+      error code is true, the name' string is good; if the error code
+      is false, than the name' string is either null for nothing found,
+d113 3
+d767 2
+a768 2
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.1 $
+"Installation of lib-index complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-index: $Date$ $Revision$
+d117 4
+a120 1
+ $Log$
+d740 1
+a740 1
+@@set $tmp/prog1=/_/de:lib-index: List lines 1-109 for documentation.
+d768 2
+a769 2
+@@set $tmp/prog1=/_docs:@@list $lib/index=1-109
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision$
+@

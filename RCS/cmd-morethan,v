@@ -1,0 +1,115 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.28.17.05.13;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@"Beginning installation of cmd-morethan...
+@@prog cmd-morethan
+1 99999 d
+1 i
+( cmd-morethan: $Date: 2000/01/28 17:05:13 $ $Revision: 1.1 $ )
+( Author: ???
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+lvar ptot
+lvar where
+lvar top
+lvar bigplayers
+lvar bigobjects
+lvar big
+: howmanplayers
+#-1 stats pop swap pop swap pop swap pop swap pop swap pop
+;
+: gettot
+where @@ dbref stats pop pop pop pop pop pop
+ptot !
+;
+: gettop
+dbtop int top !
+;
+: reset
+0 where !
+;
+: main
+  "me" match .mage? not if "Permission denied." .tell exit then
+background
+big ! big @@ atoi big !
+reset
+gettop
+begin
+where @@ dbref player?
+if gettot ptot @@ big @@ >
+if bigplayers @@ 1 + bigplayers ! bigobjects @@ ptot @@ + bigobjects !
+where @@ dbref name " (#" strcat where @@ intostr strcat ") -- " strcat
+ptot @@ intostr strcat " database items" strcat me @@ swap notify then then
+where @@ 1 + where !
+where @@ top @@ >
+until 
+me @@ "Dbase Hogs:" bigplayers @@ intostr strcat notify
+bigplayers @@ 100 * howmanplayers / intostr "Percentage of Hogs: " swap strcat
+me @@ swap notify
+me @@ "Dbase Hogs' database items:" bigobjects @@ intostr strcat notify
+bigobjects @@ 100 * top @@ / intostr "Percentage of Dbase: " swap strcat
+me @@ swap notify
+;
+.
+c
+q
+@@register cmd-morethan=cmd/morethan
+@@register #me cmd-morethan=tmp/prog1
+@@set $tmp/prog1=W
+@@action morethan=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=/_/de:List all players with more than x database items (morethan x).  Mage+
+@@set $tmp/exit1=/_/fl:Mage command.
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-morethan complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-morethan: $Date$ $Revision$ )
+d39 1
+a39 1
+ptot @@ intostr strcat " objects" strcat me @@ swap notify then then
+d46 1
+a46 1
+me @@ "Dbase Hogs' objects:" bigobjects @@ intostr strcat notify
+d58 1
+a58 1
+@@set $tmp/exit1=/_/de:List all players with more than x objects (morethan x).  Mage+
+d60 1
+a60 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+

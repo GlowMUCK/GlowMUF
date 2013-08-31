@@ -1,0 +1,97 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.01.25.17.20.35;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@"Beginning installation of cmd-enterdesc...
+@@prog cmd-enterdesc
+1 99999 d
+1 i
+( cmd-enterdesc: $Date: 2000/01/25 17:20:35 $ $Revision: 1.1 $
+  Author:
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-enterdesc,v $
+  Revision 1.1  2000/01/25 17:20:35  feaelin
+  Initial revision
+
+)
+
+$include $lib/glow
+
+: enterdesc ( s -- )
+  .strip dup not if
+    pop "Usage: enterdesc <database item> -- set multi-line description for the database item"
+    .tell
+  exit then
+  dup match dup ok? not if
+    pop pop "I don't see that here." .tell
+  exit then
+  me @@ over controls not if
+    pop pop "You don't control that database item." .tell
+  exit then
+  "@@$list _desc" setdesc
+  "=_desc" strcat "$cmd/lsedit" match call
+  "Multi-line description set." .tell
+;
+.
+c
+q
+@@register cmd-enterdesc=cmd/enterdesc
+@@register #me cmd-enterdesc=tmp/prog1
+@@set $tmp/prog1=W3
+@@action enterdesc;@@enterdesc;ed;edesc;mdesc=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/enterdesc
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-enterdesc complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-enterdesc: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d19 1
+a19 1
+    pop "Usage: enterdesc <object> -- set multi-line description for object"
+d26 1
+a26 1
+    pop pop "You don't control that object." .tell
+d42 1
+a42 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+

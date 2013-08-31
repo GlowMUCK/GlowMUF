@@ -1,0 +1,417 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	99.04.18.18.58.39;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.02.14.16.30.00;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.02.14.16.23.35;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial login
+@
+
+
+1.3
+log
+@Brought inline with Glow 3.1.0
+@
+text
+@"Beginning installation of cmd-cinfo...
+@@prog cmd-cinfo
+1 99999 d
+1 i
+( cmd-cinfo: $Date: 1999/02/14 16:30:00 $ $Revision: 1.2 $
+  Originally from the Glowmuck 1.9.3 
+  ---------------------------------------------------------------------- )
+( Connect info by PakRat )
+( Gives various infos when one connects or calls the command )
+(*Features: )
+( -Who check )
+( -Wiz check )
+( -Manager check )
+( -World check )
+( -# times online )
+( -Who is with you and awake )
+(*)
+
+$include $lib/glow
+$include $lib/strings
+
+$def awake? dup player? if \awake? else pop 0 then
+
+( Macros )
+: find "$cmd/find" match "FindDbrefList" call ;
+: last "$cmd/laston" match call ;
+: split .split2 ;
+(
+: stringncmp rot tolower rot tolower rot strncmp ;
+)
+: n me @@ swap notify ;
+: killverb ( s -- s ) " " split swap pop ;
+: Show?    ( feature -- i ) "_cin/" swap strcat me @@ swap getpropstr not ;
+: Turn-On  ( feature --   ) "_cin/" swap strcat me @@ swap remove_prop ;
+: Turn-Off ( feature --   ) "_cin/" swap strcat me @@ swap "no" 1 addprop ;
+()
+( Help Screens )
+: cin-title
+  " " n
+"Connect-Info by PakRat (@@cin)" n
+  "~~~~~~~~~~~~" n
+;
+: cin-usage
+  "USAGE: @@cin -- show a summary of qwest info" n
+  "Type @@cin help for more info." n
+;
+: cin-help
+  cin-title
+  "@@cin commands: Use @@cin command-name command-arguments" n
+  "Ie: @@cin list -- lists all players in your who priority list" n
+  " " n
+  "turn featurename on  -- turn on an info bit"  n
+  "turn featurename off -- turn off an info bit" n 
+  "add playername       -- Adds player to who checker" n
+  "del playername       -- Removes player from who checker" n
+  "list                 -- Shows players who checker list" n
+  "find                 -- Show locations of players in who checker" n
+  "last                 -- Show laston info of players in checker" n
+  "on                   -- Make @@cin run every time you connect" n
+  "off                  -- Don't show @@cin when you connect" n
+  " " n
+  "-- You can type 'cf' instead of 'cin find' to do a find." n
+  "-- You can type 'cl' instead of 'cin last' to do a last." n
+  "Current features: who, wizards, managers, mail, world, times-on," n
+  "awake-here, find." n
+  "Feature names can be abbreviated to 3 letters: @@cin turn wiz on" n
+  "If you know of something else useful to show, send mail to "
+  prog owner name strcat "." strcat n
+;
+: addwiz ( i s -- .. d i+1 ) .pmatch swap 1 + ;
+: cin-show-wiz ( wizards online )
+  "wiz" Show? if 0
+"brooklyn" addwiz
+"Chaya" addwiz
+"Feaelin" addwiz
+"Fritz" addwiz
+"Kismet" addwiz
+"Rouge" addwiz
+    "" ( {d} s )
+    begin over while
+      swap 1 - swap rot ( {d} s d )
+      dup ok? if dup player? if dup awake? else 0 then else 0 then if 
+        name " " swap strcat "," strcat strcat
+      else pop then
+    repeat swap pop
+    dup if 
+      .cleancommas "Wizards online: " swap strcat n
+    else 
+      "No wizards online now." n
+    then
+  then
+;
+: cin-last ( who priority list )
+  cin-title pop
+  me @@ "_cin/wholist" getpropstr dup if
+    last
+  else pop
+    "No names in @@cin's wholist to find, use cin add playername to add some."
+  n then
+;
+: cin-find ( who priority list )
+  cin-title pop
+  "fin" show? if
+    me @@ "_cin/wholist" getpropstr dup if
+      online dup dup 3 + rotate ( {d} n s )
+      begin over while
+        4 rotate
+        dup name " " swap strcat "," strcat
+        ( {d-d1} n s d s )
+        3 pick swap instring if
+          4 pick 3 + -1 * rotate
+        else
+          pop rot 1 - rot rot
+        then
+        swap 1 - swap
+      repeat
+      pop pop
+      #-1 over 2 + -1 * rotate
+      find
+    else
+      pop
+      "No names in @@cin's wholist to find, use cin add playername to add some."
+      n
+    then
+  then
+;
+: cin-show-who ( who priority list )
+  "who" show? if
+     me @@ "_cin/wholist" getpropstr dup if
+       online dup 2 + rotate ( {d} s )
+       "" ( {d} slist sonline )
+       begin 3 pick while
+         rot 1 - rot rot
+         4 rotate ( {d} slist sonline d )
+         name " " swap strcat "," strcat
+         3 pick over instring if
+           strcat
+         else
+           pop
+         then
+       repeat swap pop swap pop
+       dup if
+         .cleancommas dup " and " instr if " are" else " is" then strcat
+         " on now." strcat n
+       else
+         pop "No special people are on now." n
+       then
+     else
+       pop
+       "Wholist empty." n
+     then
+  then
+;
+: cin-show-man ( managers online )
+  "man" Show? if
+    "$cmd/managers" match
+    dup if dup program? else 0 then if
+      dup owner intostr swap "_/M/Voters" getpropstr
+      "," explode ( leaves a dead "" at bottom of stack )
+      dup 1 + rotate pop 
+      ( Put mana program owner on top of list )
+      dup 1 + rotate swap
+      "" ( {s} "" )
+      begin over while
+        rot atoi dbref dup awake? if
+          name " " swap strcat "," strcat strcat
+        else
+          pop
+        then
+        swap 1 - swap
+      repeat swap pop
+      dup if
+        .cleancommas "Managers online: " swap strcat n
+      else 
+        pop "No managers online now." n 
+      then
+    else 
+      pop "Unable to find Consortium Managers list." n 
+    then
+  then
+;
+: cin-show-awa
+  "awa" Show? if
+    me @@ location contents 0
+    ( d i )
+    begin over while
+      over player? 3 pick me @@ dbcmp not and if 
+        1 + over next swap
+      else 
+        swap next swap
+      then
+    repeat swap pop
+    "" ( {d} "" ) 
+    begin over while
+      swap 1 - swap rot
+      dup awake? if 
+        name " " swap strcat "," strcat strcat
+      else
+        pop
+      then
+    repeat swap pop
+    dup if
+      .cleancommas dup " and " instr if " are" else " is" then strcat
+      " awake in this room." strcat n
+    else
+      pop "There's noone else awake here." n
+    then
+  then
+;
+: cin-show-wor ( What world am I in? )
+  "wor" Show? if
+    me @@ location "_world" envpropstr swap pop
+    dup if 
+      "You are in " swap strcat "." strcat n
+    else
+      pop "You aren't in any known world." n
+    then
+  then
+;
+: cin-show-tim ( How many times am I on Qwest? )
+  "tim" Show? if
+    me @@ awake?
+    dup 1 = not if  
+      intostr "* You are connected " swap strcat " times." strcat n
+    else pop then
+  then
+;
+: cin-info ( s -- ) pop
+  cin-title
+  cin-show-wiz
+  cin-show-man
+  cin-show-who
+  cin-show-wor
+  cin-show-tim
+  cin-show-awa
+;
+: cin-add ( s -- ) killverb
+  dup " " instr over "," instr or if
+    pop "I don't understand that name." n exit
+  then
+  " " swap strcat "," strcat
+  me @@ "_cin/wholist" getpropstr
+  swap over over instring if
+    pop pop "That name is already in your who list." n exit
+  then
+  strcat me @@ "_cin/wholist" rot 1 addprop
+  "Name added." n
+;
+: cin-del ( s -- ) killverb
+  dup " " instr over "," instr or if
+    pop "I don't understand that name." n exit
+  then
+  " " swap strcat "," strcat
+  me @@ "_cin/wholist" getpropstr
+  swap over over instring not if
+    pop pop "That name is not in your who list." n exit
+  then
+  over over instring swap strlen ( str pos len )
+  rot rot 1 - strcut ( len str stend )
+  rot strcut swap pop strcat ( str )
+  me @@ "_cin/wholist" rot 1 addprop
+  "Name removed." n
+;
+: cin-set ( s -- )
+  killverb " " split
+  dup "on"  stringcmp not if 
+    pop 3 strcut pop tolower turn-on 
+    "Feature added." n exit 
+  then
+  dup "off" stringcmp not if 
+    pop 3 strcut pop tolower turn-off 
+    "Feature removed." n exit 
+  then
+  pop "Usage: @@cin turn feature on or off" .tell-me
+;
+: cin-list ( s -- ) pop
+  me @@ "_cin/wholist"
+  getpropstr dup if 
+    .cleancommas dup " and " instr if " are" else " is" then
+    strcat " in your who list." strcat n
+  else 
+    pop "You don't have anyone in your who list." n 
+  then
+;
+: cin-on  ( s -- ) pop
+  me @@ "_connect/cin" prog intostr 1 addprop
+  "@@cin will now show info each time you connect." n
+  "@@cin turn featurename off -- remove any feature you don't want" n
+  "@@cin turn featurename on  -- put back a feature" n
+;
+: cin-off ( s -- ) pop
+  me @@ "_connect/cin" remove_prop
+  "@@cin will no longer show info when you connect." n
+;
+: cin-main ( s -- )
+  .noguest
+  command @@ 2 strcut pop "cf" stringcmp not if pop "find" then
+  command @@ 2 strcut pop "cl" stringcmp not if pop "last" then
+  dup if
+    dup "connect" stringcmp  not if cin-info exit then
+    dup "h"     1 stringncmp not if cin-help exit then
+    dup "set "  4 stringncmp not if cin-set  exit then
+    dup "turn " 5 stringncmp not if cin-set  exit then
+    dup "add "  4 stringncmp not if cin-add  exit then
+    dup "rem "  4 stringncmp not if cin-del  exit then
+    dup "del "  4 stringncmp not if cin-del  exit then
+    dup "list"    stringcmp  not if cin-list exit then
+    dup "find"    stringcmp  not if cin-find exit then
+    dup "last"    stringcmp  not if cin-last exit then
+    dup "on"      stringcmp  not if cin-on   exit then
+    dup "off"     stringcmp  not if cin-off  exit then
+    pop cin-usage
+  else 
+    cin-info
+  then
+;
+.
+c
+q
+@@register cmd-cinfo=cmd/cinfo
+@@register #me cmd-cinfo=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=V
+@@set $tmp/prog1=M2
+@@action @@cin;@@cinfo;cin;cf;cl=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/cinfo help
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+"Installation of cmd-cinfo complete.
+@
+
+
+1.2
+log
+@Minor cleanup...added lib-strings include
+@
+text
+@d5 1
+a5 1
+( cmd-cinfo: $Date$ $Revision$
+d19 1
+a19 1
+$include $lib/glowstandard
+d23 1
+d27 1
+d32 1
+a32 1
+: killverb ( s -- s ) " " .split swap pop ;
+d265 1
+a265 1
+  killverb " " .split
+d301 6
+a306 6
+    dup "h"     1 .stringncmp not if cin-help exit then
+    dup "set "  4 .stringncmp not if cin-set  exit then
+    dup "turn " 5 .stringncmp not if cin-set  exit then
+    dup "add "  4 .stringncmp not if cin-add  exit then
+    dup "rem "  4 .stringncmp not if cin-del  exit then
+    dup "del "  4 .stringncmp not if cin-del  exit then
+a326 1
+@@set $tmp/exit1=D
+d329 1
+a329 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 3
+a7 2
+$include $lib/glowstandard
+$def awake? dup player? if \awake? else pop 0 then
+d18 5
+d328 1
+a328 1
+@@set $tmp/prog1=_version:FM1.0
+@

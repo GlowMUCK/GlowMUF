@@ -1,0 +1,451 @@
+head	1.6;
+access;
+symbols
+	GlowMUF1-1-1:1.6
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.6
+date	2006.08.15.13.51.13;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.09.22.19.55.30;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.27.21.29.47;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.04.26.19.54.27;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.04.26.19.05.32;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.18.00.17.49;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.6
+log
+@Added 'colorlist' feature for 256 color mode.
+@
+text
+@wh me=Beginning installation of cmd-ansi...
+@@prog cmd-ansi
+1 99999 d
+1 i
+( cmd-ansi: $Date: 2005/09/22 19:55:30 $ $Revision: 1.5 $                     )
+( Purpose: Prettily turn and off ANSI color and/or 256 xterm colors           )
+( Author: Andy/Pakrat                                                         )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-edit                                                      )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-ansi,v $
+  Revision 1.5  2005/09/22 19:55:30  feaelin
+  Added notification of the 'alternate color' feature.
+
+  Revision 1.4  2005/04/27 21:29:47  feaelin
+  Fixed another notify.
+
+  Revision 1.3  2005/04/26 19:54:27  feaelin
+  Missed a me @@ or two...
+
+  Revision 1.2  2005/04/26 19:05:32  feaelin
+  Removed dependency on lib-glow-standard
+  Added compatibility with the new 256 colors feature of glowmuck 3.2.0
+  Updated installer script
+  Updated documentation.
+
+)
+ 
+$include $lib/edit
+lvar red
+lvar green
+lvar blue
+ 
+: do-help ( -- )
+  me @@ "color enhanced -- turn on enhanced color mode" notify
+  me @@ "color on       -- turn on color" notify
+  me @@ "color off      -- turn off color" notify
+  me @@ "colors         -- show color combinations" notify
+  me @@ "colors2        -- how to use 256 color" notify
+  me @@ "colorlist      -- show 256 color combinations" notify
+;
+ 
+: show-colors ( -- )
+  me @@ "C" flag? if
+    me @@ " " notify
+    me @@
+    "Ansi Colors are available by ^COLOR^ or ^MODE^ (^ ^ is the same as ^NORMAL^)"
+    notify
+    " "
+    "^NORMAL^Normal^ ^   ^FLASH^Flash^ ^    ^INVERT^Invert^ ^   Beep    Cls"
+    " "
+    "^BLACK^^BGRAY^Black^ ^    ^CRIMSON^Crimson^ ^  ^FOREST^Forest^ ^   ^BROWN^Brown^ ^"
+    "^NAVY^Navy^ ^     ^VIOLET^Violet^ ^   ^AQUA^Aqua^ ^     ^GRAY^Gray^ ^"
+    " "
+    "^GLOOM^Gloom^ ^    ^RED^Red^ ^      ^GREEN^Green^ ^    ^YELLOW^Yellow^ ^"
+    "^BLUE^Blue^ ^     ^PURPLE^Purple^ ^   ^CYAN^Cyan^ ^     ^WHITE^White^ ^"
+    " "
+    "^BBLACK^BBlack^ ^   ^BRED^BRed^ ^     ^BGREEN^BGreen^ ^   ^BBROWN^BBrown^ ^"
+    "^BBLUE^BBLue^ ^    ^BPURPLE^BPurple^ ^  ^BCYAN^BCyan^ ^    ^BLACK^^BGRAY^BGray^ ^"
+    " "
+    "^SUCC^Succ^ ^     ^FAIL^Fail^ ^     ^INFO^Info^ ^     ^NOTE^Note^ ^    ^MOVE^Move^ ^"
+    13 EDIT-ansi_display
+$ifdef __pref_256colors
+    me @@ __pref_256colors getprop if
+      " "
+      "^256FG-053^You have enhanced color support turned on."
+      "^256FG-052^Type '^256FG-050^colors2^256FG-052^' for more information."
+      3 EDIT-ansi_display
+    then
+$endif
+  else
+    me @@ "You are color blind." notify
+  then
+;
+ 
+$ifdef __pref_256colors 
+: colors2
+  me @@ __pref_256colors getprop if
+    me @@ " " notify
+    me @@ "^256FG-052^Enhanced Color 6x6x6 Cubes:" ansi_notify
+    me @@ "^256FG-053^Use: ^^256BG-rgb^^ to set the background color." 
+    ansi_notify
+    me @@ "^256FG-053^Use: ^^256FG-rgb^^ to set the foreground color."
+    ansi_notify
+    me @@ "^256FG-503^rgb is a three digit number representing the level of red, green, and blue." ansi_notify
+    me @@ "^256FG-502^Each digit is on a range of 0 to 5." ansi_notify
+    me @@ " " notify
+    0 red !
+    ""
+    begin
+      0 green !
+      begin
+        0 blue !
+        begin
+          "^256BG-"
+          red @@ intostr strip strcat
+          green @@ intostr strip strcat
+          blue @@ intostr strip strcat
+          "^ " strcat strcat
+          blue @@ 1 + blue !
+        blue @@ 6 = until
+        green @@ 1 + green !
+      green @@ 6 = until
+      me @@ swap ansi_notify ""
+      red @@ 1 + red !
+    red @@ 6 = until
+    me @@ " " notify
+    me @@ "^256FG-G20^Grayscale Colors: " ansi_notify
+    me @@ "^256FG-G15^Use: ^^256BG-Gxx^^ to set the background color."
+    ansi_notify
+    me @@ "^256FG-G15^Use: ^^256FG-Gxx^^ to set the foreground color."
+    ansi_notify
+    me @@ "^256FG-G15^xx is a number between 1 and 24 (black to white)."
+    ansi_notify
+    me @@ " " notify
+    1 swap begin
+      "^256BG-G" 3 pick intostr strip strcat "^ " strcat strcat
+      swap 1 + swap
+    over 24 = until
+    me @@ swap ansi_notify
+    me @@ " " notify
+    me @@ "^256FG-053^Finally, you can specify a alternate color from the normal color set for those that can't see enhanced colors:" ansi_notify
+    me @@ "^^256FG-053:VIOLET^^ will appear violet for those who do not have enhanced color mode turned on."
+    ansi_notify
+  else
+    me @@ "^FAIL^You need 256 color ('color enhanced') turned on to use this." ansi_notify
+    depth popn exit
+  then
+;
+$endif
+ 
+: color-list ( -- )
+  0 red !
+  ""
+  begin
+    0 green !
+    begin
+      0 blue !
+      begin
+        " ^256FG-"
+        red @@ intostr strip strcat
+        green @@ intostr strip strcat
+        blue @@ intostr strip strcat
+        "^" strcat strcat
+        red @@ intostr strip strcat
+        green @@ intostr strip strcat
+        blue @@ intostr strip strcat
+        blue @@ 1 + blue !
+      blue @@ 6 = until
+      green @@ 1 + green !
+      me @@ swap ansi_notify ""
+    green @@ 6 = until
+    red @@ 1 + red !
+  red @@ 6 = until
+;
+ 
+: ansi ( s -- )
+  "me" match dup location loc ! me !
+  command @@ "colors" stringcmp not if pop show-colors exit then
+$ifdef __pref_256colors
+  command @@ "colors2" stringcmp not if pop colors2 exit then
+  command @@ "colorlist" stringcmp not if pop color-list exit then
+$endif  
+  dup if
+    dup "help" stringcmp not if pop do-help exit then
+$ifdef __pref_256colors
+    dup 3 strcut pop "enh" stringcmp not
+    over "256" strcmp not or if
+      pop
+      me @@ "C" set
+      me @@ __pref_256colors 1 setprop
+      me @@ " " notify
+      me @@ "^256FG-503^Enhanced 256 color mode turned ^GREEN^^FLASH^on^ ^^BLUE^! "
+      "^YELLOW^You will now see in ^256FG-510^m^256FG-511^a^256FG-512^n^256FG-513^y^ ^ " strcat
+      "^256FG-514^c^256FG-515^o^256FG-520^l^256FG-521^o^256FG-522^r^256FG-523^s^ ^!" strcat ansi_notify
+      me @@ " " notify
+      me @@ "^256FG-511^For linewrap try: @@wrap 80" ansi_notify
+      exit
+    then
+$endif
+    dup "on" stringcmp not over 1 strcut pop "y" stringcmp not or if
+      me @@ "C" set
+$ifdef __pref_256colors
+      me @@ __pref_256colors remove_prop
+$endif
+      me @@ " " notify
+      me @@ "For linewrap try: @@wrap 80" notify
+      me @@ " " notify
+      me @@ "^BLUE^Ansi color turned ^GREEN^^FLASH^on^ ^^BLUE^! "
+      "^YELLOW^You will now see in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ " strcat
+      "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!" strcat ansi_notify
+    else
+      me @@ "!C" set
+$ifdef __pref_256colors
+      me @@ __pref_256colors remove_prop
+$endif
+      me @@ " " notify
+      me @@ "Ansi color turned off. Living in a monochrome world again. *sigh*" notify
+    then
+  else pop
+    me @@ "C" flag? if
+      me @@ "^AQUA^You are seeing in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ "
+      "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!  'ansi help' for help."
+      strcat ansi_notify
+    else
+      me @@ "You are living in a monochrome world.  'ansi help' for help." notify
+    then
+  then
+;
+.
+c
+q
+@@register cmd-ansi=cmd/ansi
+@@set $cmd/ansi=V
+@@set $cmd/ansi=M3
+@@set $cmd/ansi=_version:FM$Revision: 1.5 $
+@@action color;ansi;colors;colors2;@@ansi;colorlist=here=tmp/exit1
+@@link $tmp/exit1=$cmd/ansi
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:Type 'color on' to turn color on.  'color off' turns it off.  'colors' lists available colors.
+wh me=Installation of cmd-ansi complete.
+@
+
+
+1.5
+log
+@Added notification of the 'alternate color' feature.
+@
+text
+@d5 1
+a5 1
+( cmd-ansi: $Date: 2005/04/27 21:29:47 $ $Revision: 1.4 $                     )
+d13 3
+d40 2
+d133 25
+d163 1
+d217 2
+a218 2
+@@set $cmd/ansi=_version:FM$Revision: 1.4 $
+@@action color;ansi;colors;colors2;@@ansi=here=tmp/exit1
+@
+
+
+1.4
+log
+@Fixed another notify.
+@
+text
+@d5 1
+a5 1
+( cmd-ansi: $Date: 2005/04/26 19:54:27 $ $Revision: 1.3 $                     )
+d13 3
+d117 7
+d186 1
+a186 1
+@@set $cmd/ansi=_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Missed a me @@ or two...
+@
+text
+@d5 1
+a5 1
+( cmd-ansi: $Date: 2005/04/26 19:05:32 $ $Revision: 1.2 $                     )
+d13 3
+d65 1
+a65 1
+    "You are color blind." notify
+d176 1
+a176 1
+@@set $cmd/ansi=_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Removed dependency on lib-glow-standard
+Added compatibility with the new 256 colors feature of glowmuck 3.2.0
+Updated installer script
+Updated documentation.
+@
+text
+@d5 1
+a5 1
+( cmd-ansi: $Date: 1999/04/18 00:17:49 $ $Revision: 1.1 $                     )
+d13 6
+d143 4
+a146 4
+      " " notify
+      "For linewrap try: @@wrap 80" notify
+      " " notify
+      "^BLUE^Ansi color turned ^GREEN^^FLASH^on^ ^^BLUE^! "
+d154 2
+a155 2
+      " " notify
+      "Ansi color turned off. Living in a monochrome world again. *sigh*" notify
+d173 1
+a173 1
+@@set $cmd/ansi=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-ansi...
+d5 6
+a10 3
+( cmd-ansi: $Date$ $Revision$
+  Author: Andy/Pakrat
+  --------------------------------------------------------------------------- )
+d12 1
+a12 1
+  $Log$
+d14 6
+a19 6
+
+$include $lib/glow
+
+$def a me @@ swap ansi_notify
+$def n me @@ swap notify
+  
+d21 4
+a24 3
+  "color on  -- turn on color" n
+  "color off -- turn off color" n
+  "colors    -- show color combinations" n
+d26 1
+a26 1
+  
+d29 26
+a54 18
+" " n
+"Ansi Colors are available by ^COLOR^ or ^MODE^ (^ ^ is the same as ^NORMAL^)" n
+" " n
+"^NORMAL^Normal^ ^   ^FLASH^Flash^ ^    ^INVERT^Invert^ ^   Beep    Cls" a
+" " n
+"^BLACK^^BGRAY^Black^ ^    ^CRIMSON^Crimson^ ^  ^FOREST^Forest^ ^   ^BROWN^Brown^ ^"
+a
+"^NAVY^Navy^ ^     ^VIOLET^Violet^ ^   ^AQUA^Aqua^ ^     ^GRAY^Gray^ ^" a
+" " n
+"^GLOOM^Gloom^ ^    ^RED^Red^ ^      ^GREEN^Green^ ^    ^YELLOW^Yellow^ ^" a
+"^BLUE^Blue^ ^     ^PURPLE^Purple^ ^   ^CYAN^Cyan^ ^     ^WHITE^White^ ^" a
+" " n
+"^BBLACK^BBlack^ ^   ^BRED^BRed^ ^     ^BGREEN^BGreen^ ^   ^BBROWN^BBrown^ ^" a
+"^BBLUE^BBLue^ ^    ^BPURPLE^BPurple^ ^  ^BCYAN^BCyan^ ^    ^BLACK^^BGRAY^BGray^ ^"
+a
+" " n
+"^SUCC^Succ^ ^     ^FAIL^Fail^ ^     ^INFO^Info^ ^     ^NOTE^Note^ ^    ^MOVE^Move^ ^"
+a
+d56 49
+a104 1
+    "You are color blind." n
+d107 2
+a108 1
+  
+d112 3
+a114 1
+  
+d117 16
+a132 1
+    dup "on" stringcmp not swap .yes? or if
+d134 6
+a139 4
+      " " n
+      "For linewrap try: @@wrap 80" n
+      "For wordwrap in some programs try: @@set me=_prefs/linewrap:yes" n
+      " " n
+d142 1
+a142 1
+      "^PURPLE^c^CRIMSON^o^AQUA^l^VIOLET^o^WHITE^r^ ^!" strcat a
+d145 5
+a149 2
+      " " n
+      "Ansi color turned off. Living in a monochrome world again. *sigh*" n
+d153 1
+a153 1
+      "^AQUA^You are seeing in ^RED^A^BLUE^N^GREEN^S^YELLOW^I^ ^ "
+d155 1
+a155 1
+      strcat a
+d157 1
+a157 1
+      "You are living in a monochrome world.  'ansi help' for help." n
+d167 2
+a168 2
+@@set $cmd/ansi=_version:FM$Revision$
+@@action color;ansi;colors;@@ansi=here=tmp/exit1
+d172 1
+a172 1
+"Installation of cmd-ansi complete.
+@
+

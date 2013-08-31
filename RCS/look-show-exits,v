@@ -1,0 +1,1305 @@
+head	1.15;
+access;
+symbols
+	GlowMUF1-1-1:1.15;
+locks; strict;
+comment	@# @;
+
+
+1.15
+date	2006.12.18.03.13.51;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2006.08.15.14.20.11;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2006.07.28.21.03.57;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2006.07.25.16.27.49;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2006.07.21.22.12.16;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2006.07.20.23.27.47;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2006.07.20.22.58.06;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2006.07.19.04.36.04;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2006.07.19.03.01.47;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2006.07.19.02.56.29;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2006.07.18.21.03.08;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2006.07.18.03.07.11;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2006.07.17.20.38.30;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2006.07.17.19.37.30;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2006.07.17.19.23.56;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.15
+log
+@Corrected spelling in #help and fixed it so it showed all the help lines
+correctly.
+@
+text
+@wh me=Beginning installation of look-show-exits
+@@prog look-show-exits
+1 99999 d
+1 i
+( look-show-exits: $Date: 2006/08/15 14:20:11 $ $Revision: 1.14 $             )
+( Purpose: To display exits in a given room when called by lib-look           )
+( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Contributors: Andy, Syvel                                                   )
+( Dependencies: lib-case, lib-edit, lib-match, lib-strings, lib-unparseobj    )
+(               lib-wordwrap                                                  )
+( --------------------------------------------------------------------------- )
+( Obvious exits lister. Intended for use with lib-look, but will work as an   )
+( @@succ if preferred. Lists all not-dark exits not regarded as actions.       )
+( Actions are any exit that is not linked to a room. To force an action to be )
+( displayed, you can @@set <action>=_action?:yes                               )
+( To force all actions in a given room or area, @@set <room>=_showactions?:yes )
+( A wrapping point can be set either on the program or in the environment by: )
+( @@set <program>=_wrap:78, or @@set <room>=_wrap:78, etc.                      )
+( To change the prefix on the exit list, @@set <program>=_prefix:You can go:...)
+( This string can contain glow color codes.                                   )
+( Additional color customizations can be made:                                )
+( @@set <program or environment room>=_show-exit-color-1: for the exit name    )
+( @@set <program or environment>=_show-exit-color-2: bracket color             )
+( @@set <program or environment>=_show-exit-color-3: dir letter color          )
+( @@set <program or environment>=_show-exit-color-4: extended exit color       )
+( --------------------------------------------------------------------------- )
+(
+  $Log: look-show-exits,v $
+  Revision 1.14  2006/08/15 14:20:11  feaelin
+  Corrected bug where the program crashes if you're in a room with no visible
+  exits.
+
+  Revision 1.13  2006/07/28 21:03:57  feaelin
+  Dark exits you control now show [Dark] next to their name.
+  On extended output, if the destination is dark, it also shows [Dark]
+  next to the name.
+
+  Revision 1.12  2006/07/25 16:27:49  feaelin
+  Fixed bug where using the exit without parameters did nothing, instead of
+  displaying the exit list as if it had been called by look or a succ.
+ 
+  Revision 1.11  2006/07/21 22:12:16  feaelin
+  Added toggles for big exit and signpost
+  Added support for the standard glow help functionality
+  Updated help.
+ 
+  Revision 1.10  2006/07/20 23:27:47  feaelin
+  Added toggles for some of the configuration options.
+ 
+  Revision 1.9  2006/07/20 22:58:06  feaelin
+  ZMUD support added.
+ 
+  Revision 1.8  2006/07/19 04:36:04  feaelin
+  Replaced wizard checks with 'controls' which is the correct way.
+ 
+  Revision 1.7  2006/07/19 03:01:47  feaelin
+  Updated documentation.
+  Added check for dark rooms.
+ 
+  Revision 1.6  2006/07/19 02:56:29  feaelin
+  Added support for extended/big exit information.
+ 
+  Revision 1.5  2006/07/18 21:03:08  feaelin
+  Added in the signpost code and customizations.
+ 
+  Revision 1.4  2006/07/18 03:07:11  feaelin
+  Added color-customization.
+ 
+  Revision 1.3  2006/07/17 20:38:30  feaelin
+  Added support for the _action? property to force an action to be shown.
+  Added support for the _showactions? property force actions to be shown.
+  Added support for the wrap point to be settable in the environment.
+  Added support for legacy [deprecated] properties.
+  
+  Revision 1.2  2006/07/17 19:37:30  feaelin
+  Added exit darking and fixed my testing shim so it isn't there anymore.
+  
+  Revision 1.1  2006/07/17 19:23:56  feaelin
+  Initial code. Basic exit showing fully implemented.
+)
+
+$include $lib/strings
+$include $lib/case
+$include $lib/match
+$include $lib/wordwrap
+$include $lib/edit
+$include $lib/unparseobj
+
+( Crossroads lifted from Andy's old version of show-exits ) 
+: gname ( sp -- sn i ) 
+   trigger @@ swap getpropstr dup strlen dup 14 < and 
+;
+: doubleloop 1 - swap over strcut " " swap strcat strcat swap
+  dup 1 > if doubleloop else pop then 
+;
+: double dup strlen dup if doubleloop else pop then ;
+: addspaces "         " swap strcut pop swap over strcat strcat ;
+: stretch ( s -- s ) double dup strlen 2 / 12 swap - addspaces ; 
+: top  me @@ "^BLUE^                   _" ansi_notify ;
+: topr me @@ "^BLUE^     _____________|_|____________" ansi_notify ;
+: botr me @@ "^BLUE^     ~~~~~~~~~~~~~|~|~~~~~~~~~~~~" ansi_notify ;
+: topl me @@ "^BLUE^      ____________|_|_____________" ansi_notify ;
+: botl me @@ "^BLUE^      ~~~~~~~~~~~~|~|~~~~~~~~~~~~~" ansi_notify ;
+: bare me @@ "^BLUE^                  | |" ansi_notify ;
+: grass me @@ "^GREEN^|||||||||||||||||||||||||||||||||||||||" ansi_notify ;
+: dop ( sn sb se -- )
+  rot stretch "^WHITE^^BBLUE^" swap strcat "^RESET^" strcat
+  swap strcat strcat me @@ swap ansi_notify 
+;
+:  pn "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^N" dop ;
+:  pe "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^E" dop ;
+: pne "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^NE" dop ;
+: pse "     ^BLUE^^BBLUE^> ^RESET^" "^BLUE^^BBLUE^ >^RESET^ ^WHITE^SE" dop ;
+:  ps "   ^WHITE^S ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+:  pw "   ^WHITE^W ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: pnw "  ^WHITE^NW ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: psw "  ^WHITE^SW ^BLUE^^BBLUE^< " "^BLUE^^BBLUE^ <" dop ;
+: crossroads top
+  "_north" gname if topr pn botr else pop then
+  "_northeast" gname if topr pne botr else pop then
+  "_east" gname if topr pe botr else pop then
+  "_southeast" gname if topr pse botr else pop then
+  "_south" gname if topl ps botl else pop then
+  "_southwest" gname if topl psw botl else pop then
+  "_west" gname if topl pw botl else pop then
+  "_northwest" gname if topl pnw botl else pop then
+   bare bare bare grass	
+;
+ ( End of Crossroads lifted code )
+
+( Sets up either the configured prefix or the default string ) 
+: get-prefix ( -- s )
+  prog "_prefix" getpropstr dup STR-blank? if
+    pop "^CYAN^You can go: "
+  then
+;
+ 
+( fetch custom color if available )
+: get-color-1
+  prog "_show-exit-color-1" getpropstr
+  dup "" strcmp if exit then
+  pop
+  trigger @@ "_show-exit-color-1" envpropstr
+  swap pop dup "" strcmp if exit then
+  pop
+  "^AQUA^"
+;
+ 
+( fetch custom color if available )
+: get-color-2
+  prog "_show-exit-color-2" getpropstr
+  dup "" strcmp if exit then
+  pop
+  trigger @@ "_show-exit-color-2" envpropstr
+  swap pop dup "" strcmp if exit then
+  pop
+  "^BROWN^"
+;
+ 
+( fetch custom color if available )
+: get-color-3
+  prog "_show-exit-color-3" getpropstr
+  dup "" strcmp if exit then
+  pop
+  trigger @@ "_show-exit-color-3" envpropstr
+  swap pop dup "" strcmp if exit then
+  pop
+  "^YELLOW^"
+;
+ 
+( fetch custom color if available )
+: get-color-4
+  prog "_show-exit-color-4" getpropstr
+  dup "" strcmp if exit then
+  pop
+  trigger @@ "_show-exit-color-4" envpropstr
+  swap pop dup "" strcmp if exit then
+  pop
+  "^CYAN^"
+;
+ 
+( Substitutions to prettify the output )
+: do-substitutions ( s -- s )
+  "^COLOR-2^<^COLOR-3^" "<" subst
+  "^COLOR-2^>" ">" subst
+  "^COLOR-2^(^COLOR-3^" "(" subst
+  "^COLOR-2^)" ")" subst
+  "^COLOR-2^[^COLOR-3^" "[" subst
+  "^COLOR-2^]" "]" subst
+  "^COLOR-2^{^COLOR-3^" "{" subst
+  "^COLOR-2^}" "}" subst
+  get-color-2 "^COLOR-2^" subst
+  get-color-3 "^COLOR-3^" subst
+;
+ 
+: get-prefix-len ( -- i )
+  get-prefix ansi_strlen
+;
+ 
+( What is our wrap point? )
+: get-wrap-length ( -- i )
+  prog "_wrap" getprop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  trigger @@ "_wrap" envprop swap pop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  prog "contents/width" getprop dup string? if atoi then
+  dup 0 = not if exit then
+  pop
+  trigger @@ "contents/width" envprop swap pop dup string? if atoi then
+  dup 0 = if
+    pop 78
+  then
+;
+ 
+( check an action/exit for either being an exit or being ok )
+: action_ok? ( d -- i )
+  dup getlink room? if pop 1 exit then
+  dup "_action?" getpropstr "y" instr if pop 1 exit then
+  "_showactions?" envpropstr swap pop "y" instr
+;
+ 
+: show_exit? ( d -- i )
+  dup ok? if ( Must be a valid database item )
+    dup exit? if ( Must be an exit )
+      dup action_ok? if ( Our test to see if it is an action )
+        dup "DARK" flag? not ( if not dark... )
+        over me @@ swap controls ( or I control it )
+        me @@ "silent" flag? not and ( and I want to see hidden things )
+        me @@ "quell" flag? not and  ( and I want to see hidden things )
+        or if ( or I control it )
+          pop 1 exit
+        else
+          pop 0 exit
+        then
+      else
+        pop 0 exit
+      then
+    else
+      pop 0 exit
+    then
+  else
+    pop 0 exit
+  then
+;
+ 
+: show-exits ( -- )
+  get-prefix
+  ( This shouldn't happen, but just in case )
+  trigger @@ room? not if
+    exit
+  then
+  0 trigger @@ exits
+  dup ok? if 
+    begin
+      dup show_exit? if
+        swap 1 + 
+        dup 1 > if
+          3 pick ", " strcat 3 put
+        then
+        swap
+        ( We want only the first name )
+        dup name ";" explode over over 2 + 0 swap - rotate popn
+        get-color-1 swap strcat
+	over "dark" flag? if
+	  " [Dark]" strcat
+	then
+        do-substitutions
+        4 rotate swap strcat -3 rotate
+      then
+      next
+    dup ok? not until
+    pop
+  else
+    pop
+  then
+  0 = if
+    me @@ "^CYAN^You see no obvious way out." ansi_notify
+  else
+    get-wrap-length swap WRAP-wordwrap
+    swap me @@ swap ansi_notify
+    1 - dup 0 = not if
+      begin
+        swap
+        "" " " get-prefix-len STR-fillfield swap strcat
+        me @@ swap ansi_notify
+      1 - dup 0 = until
+    then
+  then
+  pop
+;
+ 
+: show-extended-exits ( -- )
+  ( This shouldn't happen, but just in case )
+  trigger @@ room? not if
+    exit
+  then
+  me @@ get-prefix ansi_notify
+  0 trigger @@ exits
+  dup ok? if 
+    begin
+      dup show_exit? if
+        swap 1 + swap
+        ( We want only the first name )
+        dup name ";" explode over over 2 + 0 swap - rotate popn
+        get-color-1 swap strcat
+        over "DARK" flag? if
+	  " [Dark]" strcat
+        then
+        do-substitutions
+        "    " swap strcat
+        " to " strcat get-color-4 strcat
+        over getlink
+        dup "DARK" flag? over me @@ swap controls not and if
+          pop "Unknown"
+        else
+          dup name swap
+	  "DARK" flag? if
+	    " [Dark]" do-substitutions strcat
+          then
+        then
+        strcat
+        me @@ swap ansi_notify
+      then
+      next
+    dup ok? not until
+    pop
+  else
+    pop
+  then
+  0 = if
+    me @@ "^CYAN^You see no obvious way out." ansi_notify
+  then
+;
+ 
+: remove-extras ( s1 s2 ... si i i -- s )
+  1 + pick ( grab a copy of the one we want )
+  over 2 + 0 swap - rotate ( move the one we want to keep to the bottom )
+  popn
+;
+  
+: pick-simple-exit ( s1 s2 ... si i -- s )
+  dup begin
+    dup 2 + pick
+    case
+      "n" strcmp not when remove-extras exit end
+      "s" strcmp not when remove-extras exit end
+      "w" strcmp not when remove-extras exit end
+      "e" strcmp not when remove-extras exit end
+      "nw" strcmp not when remove-extras exit end
+      "ne" strcmp not when remove-extras exit end
+      "sw" strcmp not when remove-extras exit end
+      "se" strcmp not when remove-extras exit end
+      "u"  strcmp not when remove-extras exit end
+      "d"  strcmp not when remove-extras exit end
+(      "1"  strcmp not when remove-extras exit end )
+      default pop end
+    endcase
+  1 - dup 0 = until
+  pop popn ""
+;
+ 
+: zmud-output-handler
+  ( This shouldn't happen, but just in case )
+  trigger @@ room? not if
+    exit
+  then
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    exit
+  then
+  me @@ "_prefs/look-show-exits/zmud-output" getpropstr "y" instr not if
+    exit
+  then
+  "[ZMUD: " trigger @@ name strcat " [" strcat
+  0 trigger @@ exits
+  dup ok? if 
+    begin
+      dup show_exit? if
+        dup name tolower ";" explode pick-simple-exit
+        dup STR-blank? if
+          pop
+        else
+          4 pick 4 pick 0 > if "," strcat then
+          swap strcat 3 put
+          swap 1 + swap
+        then
+      then
+      next
+    dup ok? not until
+    pop
+  else
+    pop
+  then
+  0 = if
+    "None!" strcat
+  then
+  "] " strcat
+  me @@ trigger @@ controls if
+    "#" strcat trigger @@ int intostr strcat
+  then
+  "]" strcat
+  me @@ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+     "^BBLACK^^BLACK^" swap strcat "^RESET^" strcat 
+  then
+  me @@ swap ansi_notify
+  me @@ "[ZMUD-PROMPT]"
+  me @@ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+     "^BBLACK^^BLACK^" swap strcat "^RESET^" strcat 
+  then
+  ansi_notify
+;
+ 
+: toggle-signpost-mode ( s -- )
+  dup " " instr dup 0 = if
+    me @@
+    "^FAIL^show-exits: Specify a target: here or a room/parent dbref."
+    ansi_notify
+    exit
+  then
+  strcut swap pop
+  MATCH-noisy_match dup ok? not if exit then
+  dup room? not if
+    me @@ "^FAIL^show-exits: Invalid target." ansi_notify
+    pop exit
+  then
+  me @@ over controls not if
+    me @@ "^FAIL^show-exits: Permission Denied!" ansi_notify
+  then
+  dup "_prefs/look-show-exits/signpost-mode" getpropstr "y" instr if
+    dup "_prefs/look-show-exits/signpost-mode" "no" setprop
+    me @@ "^SUCC^show-exits: Big Exit mode turned off for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  else
+    dup "_prefs/look-show-exits/signpost-mode" "yes" setprop
+    "^SUCC^show-exits: Big Exit mode turned on for: " swap
+    UPO-color-unparseobj strcat
+    "^INFO^show-exits: Don't forget to set the various direction exits: _north, _south,"
+    "^INFO^show-exits: _west, _east, _northwest, _northeast, _southwest, and/or"
+    "^INFO^show-exits: _southeast"
+    4 EDIT-ansi_display
+  then
+;
+ 
+: toggle-big-exit-mode ( s -- )
+  dup " " instr dup 0 = if
+    me @@
+    "^FAIL^show-exits: Specify a target: me, here, or a room/parent dbref."
+    ansi_notify
+    exit
+  then
+  strcut swap pop
+  MATCH-noisy_match dup ok? not if exit then
+  dup me @@ dbcmp over room? or not if
+    me @@ "^FAIL^show-exits: Invalid target." ansi_notify
+    pop exit
+  then
+  me @@ over controls not if
+    me @@ "^FAIL^show-exits: Permission Denied!" ansi_notify
+  then
+  dup "_prefs/look-show-exits/big-exit-mode" getpropstr "y" instr if
+    dup "_prefs/look-show-exits/big-exit-mode" "no" setprop
+    me @@ "^SUCC^show-exits: Big Exit mode turned off for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  else
+    dup "_prefs/look-show-exits/big-exit-mode" "yes" setprop
+    me @@ "^SUCC^show-exits: Big Exit mode turned on for: " rot
+    UPO-color-unparseobj strcat ansi_notify
+  then
+;
+ 
+: toggle-zmud-mode ( -- )
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    me @@ "^FAIL^show-exits: ZMUD Output not allowed on this muck." ansi_notify
+    exit
+  then
+  me @@ "_prefs/look-show-exits/zmud-output" getpropstr "y" instr if
+    me @@ "^SUCC^show-exits: ZMUD Output turned off." ansi_notify
+    me @@ "_prefs/look-show-exits/zmud-output" "no" setprop
+  else
+    me @@ "^SUCC^show-exits: ZMUD Output turned on." ansi_notify
+    me @@ "_prefs/look-show-exits/zmud-output" "yes" setprop
+  then
+;
+ 
+: toggle-zmud-black ( -- )
+  prog "_allow_zmud_output" getpropstr "y" instr not if
+    me @@ "^FAIL^show-exits: ZMUD Output not allowed on this muck." ansi_notify
+    exit
+  then
+  me @@ "_prefs/look-show-exits/zmud-black" getpropstr "y" instr if
+    me @@ "^SUCC^show-exits: ZMUD Output Blackening turned off.." ansi_notify
+    me @@ "_prefs/look-show-exits/zmud-black" "no" setprop
+  else
+    me @@ "^SUCC^show-exits: ZMUD Output is now Blackened." ansi_notify
+    me @@ "_prefs/look-show-exits/zmud-black" "yes" setprop
+  then
+;
+ 
+: toggle-allow-zmud-mode ( -- )
+  me @@ "ARCHWIZARD" flag? not if
+    me @@ "^FAIL^show-exits: You must be an arch-wizard to toggle that setting."
+    ansi_notify
+    exit
+  then
+  prog "_allow_zmud_output" getpropstr "y" instr if
+    me @@
+    "^SUCC^show-exits: ZMUD Output is now ^FAIL^disabled^SUCC^ on this muck."
+    ansi_notify
+    prog "_allow_zmud_output" "no" setprop
+  else
+    me @@
+    "^SUCC^show-exits: ZMUD Output is now ^FAIL^enabled^SUCC^ on this muck."
+    ansi_notify
+    prog "_allow_zmud_output" "yes" setprop
+  then
+;
+ 
+: show-help-zmud ( -- )
+  me @@
+  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
+  begin
+    dup "$" instr while
+    "$" STR-split strcat
+  repeat
+  "^FOREST^By Feaelin Moilar (Iain E. Davis)"
+  "^WHITE^------------------------------------------------------------------------------"
+"ZMUD, a mud client primarily designed for prompted worlds has an automapper"
+"which has trouble understanding the exits on most tinymu*s. To compensate for"
+"this, you can turn on zmud-mode which puts out two lines of text after the"
+"exits that ZMUD can understand."
+" "
+"This means when you are using ZMUD's automapper or autowalk features, it will"
+"correctly understand what room you are in, its name, and its exits. In"
+"addition,it will record the room's dbref in the vnum field in the automapper."
+" "
+"To make this work on the ZMUD end you will need the following two triggers:"
+"    #TRIGGER ~[ZMUD: (*) ~[(*)~] ~#(*)~] #TAG name,exit,vnum {%1} {%2} {%3}"
+"    #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt"
+  "^WHITE^------------------------------------------------------------------------------"
+  16 EDIT-ansi_display
+;
+ 
+: show-help ( s -- )
+  " " instr if show-help-zmud exit then
+  me @@
+  "^FOREST^Show Exits: $Revision: 1.14 $ $Date: 2006/08/15 14:20:11 $"
+  begin
+    dup "$" instr while
+    "$" STRsplit strcat
+  repeat
+  "^FOREST^By Feaelin Moilar (Iain E. Davis)"
+  "^WHITE^------------------------------------------------------------------------------"
+  me @@ "archwizard" flag? if
+    "show-exits #allow-zmud          Allows players to use zmud-mode."
+  then
+  "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>."
+  "show-exits #signpost ^YELLOW^<^RESET^room^YELLOW^>^RESET^     Toggles signpost mode for <room>"
+  prog "_allow_zmud_output" getpropstr "y" instr if
+    "show-exits #help zmud           Displays information about zmud-mode."
+    "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black."
+    "show-exits #zmud-mode           Toggles ZMUD Output on or off."
+  then
+  "^WHITE^------------------------------------------------------------------------------"
+  10 EDIT-ansi_display
+;
+  
+: main ( s -- )
+  dup "" strcmp not over "(Look)" strcmp not or if
+    "" strcmp not if
+      me @@ location trigger !
+    then
+    trigger @@ "DARK" flag? if
+      me @@ trigger @@ controls not if
+        exit
+      then
+    then 
+    trigger @@ "_prefs/look-show-exits/signpost-mode" envpropstr swap pop
+    "y" instr if
+      crossroads zmud-output-handler exit
+    then
+    trigger @@ "_SignPost" getpropstr "y" instr if
+      crossroads zmud-output-handler exit
+    then
+    me @@ "_BigExits" getpropstr "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    trigger @@ "_BigExits" envpropstr swap pop "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    me @@ "_prefs/look-show-exits/big-exit-mode" getpropstr "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    trigger @@ "_prefs/look-show-exits/big-exit-mode" envpropstr swap pop
+    "y" instr if
+      show-extended-exits zmud-output-handler exit
+    then
+    show-exits
+    zmud-output-handler
+    exit
+  then
+  dup STR-command
+  dup STR-blank? if
+    2 popn
+    me @@ "^FAIL^show-exits: I don't understand what you're trying to do."
+    ansi_notify
+    exit
+  then
+  swap pop tolower
+  dup
+  case
+  ( These take an arguement )
+    "big" 3 strncmp not when toggle-big-exit-mode exit end
+    "ext" 3 strncmp not when toggle-big-exit-mode exit end
+    "sig" 3 strncmp not when toggle-signpost-mode exit end
+    "hel" 3 strncmp not when show-help exit end
+  ( These do not take an argument )
+    "all" 3 strncmp not when pop toggle-allow-zmud-mode exit end
+    "zmud-b" 6 strncmp not when pop toggle-zmud-black exit end
+    "zmud-m" 6 strncmp not when pop toggle-zmud-mode exit end
+  endcase
+;
+.
+c
+q
+@@register look-show-exits=cmd/show-exits
+@@register look-show-exits=look/show-exits
+@@set $look/show-exits=/_docs:@@list $look/show-exits=1-32
+@@set $look/show-exits=/_version:FM$Revision: 1.14 $
+wh me=Installation of look-show-exits complete.
+@@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here=tmp/exit1
+@@set $tmp/exit1=M2
+@@desc $tmp/exit1=@@$look/show-exits #help
+@@link exits=$look/show-exits
+@
+
+
+1.14
+log
+@Corrected bug where the program crashes if you're in a room with no visible
+exits.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/28 21:03:57 $ $Revision: 1.13 $             )
+d29 4
+d521 1
+a521 1
+  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
+d547 1
+a547 1
+  "^FOREST^Show Exits: $Revision: 1.13 $ $Date: 2006/07/28 21:03:57 $"
+d555 1
+a555 1
+    "show-exits #allow-zmud          Allows players to user zmud-mode."
+d565 1
+a565 1
+  9 EDIT-ansi_display
+d629 1
+a629 1
+@@set $look/show-exits=/_version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Dark exits you control now show [Dark] next to their name.
+On extended output, if the destination is dark, it also shows [Dark]
+next to the name.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/25 16:27:49 $ $Revision: 1.12 $             )
+d29 5
+d275 1
+a275 1
+   pop me @@ "^CYAN^You see no obvious way out." ansi_notify
+d329 1
+a329 1
+    pop me @@ "^CYAN^You see no obvious way out." ansi_notify
+d517 1
+a517 1
+  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
+d543 1
+a543 1
+  "^FOREST^Show Exits: $Revision: 1.12 $ $Date: 2006/07/25 16:27:49 $"
+d625 1
+a625 1
+@@set $look/show-exits=/_version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@Fixed bug where using the exit without parameters did nothing, instead of
+displaying the exit list as if it had been called by look or a succ.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/21 22:12:16 $ $Revision: 1.11 $             )
+d29 4
+d37 1
+a37 1
+
+d40 1
+a40 1
+
+d43 1
+a43 1
+
+d257 3
+d299 3
+d303 2
+a304 1
+        "    " swap strcat " to " strcat get-color-4 strcat
+d309 4
+a312 1
+          name
+d512 1
+a512 1
+  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
+d538 1
+a538 1
+  "^FOREST^Show Exits: $Revision: 1.11 $ $Date: 2006/07/21 22:12:16 $"
+d620 1
+a620 1
+@@set $look/show-exits=/_version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@Added toggles for big exit and signpost
+Added support for the standard glow help functionality
+Updated help.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/20 23:27:47 $ $Revision: 1.10 $              )
+d8 1
+a8 1
+( Contributors:                                                               )
+d29 5
+d120 1
+a120 1
+  prog "_prefix" getpropstr dup "" strcmp not if
+d358 1
+a358 1
+        dup "" strcmp not if
+d498 1
+a498 1
+  "^FOREST^Show Exits: $Revision: 1.10 $ $Date: 2006/07/20 23:27:47 $"
+d524 1
+a524 1
+  "^FOREST^Show Exits: $Revision: 1.10 $ $Date: 2006/07/20 23:27:47 $"
+d547 3
+a549 1
+    pop
+d580 1
+a580 1
+  dup "" strcmp not if
+d606 1
+a606 1
+@@set $look/show-exits=/_version:FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@Added toggles for some of the configuration options.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/20 22:58:06 $ $Revision: 1.9 $              )
+a26 18
+( If you want to instead use a signpost, you can set the following properties )
+( @@set <room>=_Signpost:yes ...to turn on the signpost                        )
+( @@set <room>=_north:Description to set what the sign says pointing north     )
+( @@set <room>=_south (and so on, for each direction you want represented any  )
+( of the following: north, northeast, east, southeast, south, southwest, west,)
+( and northwest.                                                              )
+( --------------------------------------------------------------------------- )
+( If you or a player wants to have more detailed exit information, they may   )
+( @@set me=_BigExit:yes or @@set <room or environment>=_BigExit:yes, and they   )
+( will exit strings such as:                                                  )
+( South Lawn <S> to South Lawn                                                )
+( --------------------------------------------------------------------------- )
+( There is now a special widget that will allow ZMUD's automapper to work.    )
+( On the ZMUD side you will need to set the following triggers:               )
+( You will need to replace <> with parentheses.                               )
+( #TRIGGER ~[ZMUD: <*> ~[<*>~] ~#<*>~] #TAG name,exit,vnum {%1} {%2} {%3}     )
+( #TRIGGER ~[ZMUD~-PROMPT~] #TAG prompt
+( --------------------------------------------------------------------------- )
+d29 3
+d265 1
+a265 1
+        "" " " get-prefix-len STRfillfield swap strcat
+d386 31
+d490 2
+a491 1
+: show-help ( -- )
+d493 27
+a519 1
+  "^FOREST^Show Exits: $Revision: 1.9 $ $Date: 2006/07/20 22:58:06 $"
+d527 8
+a534 1
+  "show-exits #allow-zmud          Allows players to user zmud-mode"
+a535 3
+  "show-exits #extended ^YELLOW^<^RESET^target^YELLOW^>^RESET^   Toggles extended/big-exit mode for <target>"
+  "show-exits #zmud-black          Toggles ZMUD Output color to/from black/black"
+  "show-exits #zmud-mode           Toggles ZMUD Output on or off."
+d537 1
+a537 1
+  7 EDIT-ansi_display
+d548 4
+d585 2
+a588 1
+    "hel" 3 strncmp not when pop show-help exit end
+d599 1
+a599 1
+@@set $look/show-exits=/_version:FM$Revision: 1.9 $
+d601 4
+a604 2
+#@@action ShowExits;show-exits;show-exit;show-exi;show-ex;show-e;showexit;showexi;showex;exits;exit=here
+#@@link exits=$look/show-exits
+@
+
+
+1.9
+log
+@ZMUD support added.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/19 04:36:04 $ $Revision: 1.8 $              )
+d9 2
+a10 1
+( Dependencies: lib-case, lib-edit, lib-strings, lib-wordwrap                 )
+a45 3
+  TBD: Help, and interface for player to set big exit?
+)
+(
+d47 3
+d81 1
+d84 1
+d401 27
+d476 1
+a476 1
+  "^FOREST^Show Exits: $Revision$ $Date$"
+d486 1
+d510 7
+d528 2
+a529 1
+  swap pop
+d531 8
+a538 4
+    "allow-zmud" strcmp not when toggle-allow-zmud-mode exit end
+    "help"      strcmp not when show-help exit end
+    "zmud-black" strcmp not when toggle-zmud-black exit end
+    "zmud-mode" strcmp not when toggle-zmud-mode exit end
+d547 1
+a547 1
+@@set $look/show-exits=/_version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Replaced wizard checks with 'controls' which is the correct way.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/19 03:01:47 $ $Revision: 1.7 $              )
+d9 1
+a9 1
+( Dependencies: lib-wordwrap, lib-edit                                        )
+d24 1
+d38 6
+d49 3
+d55 1
+a55 1
+
+d79 1
+d223 4
+a226 1
+        over me @@ swap controls or if ( or I control it )
+d282 1
+d321 54
+a374 3
+: main ( s -- )
+  ( I know this is pointless. Its here just in case I need it later )
+  dup "(Look)" strcmp not if ( If called by lib-look, pop, if not, pop )
+d379 99
+a477 3
+  trigger @@ "DARK" flag? if
+    me @@ trigger @@ controls not if
+      exit
+d479 3
+a481 3
+  then 
+  trigger @@ "_SignPost" getpropstr "y" instr if
+    crossroads exit
+d483 6
+a488 5
+  me @@ "_BigExits" getpropstr "y" instr if
+    show-extended-exits exit
+  then
+  trigger @@ "_BigExits" envpropstr swap pop "y" instr if
+    show-extended-exits exit
+d490 7
+a496 1
+  show-exits
+d501 1
+d504 1
+a504 1
+@@set $look/show-exits=/_version:FM$Revision: 1.7 $
+d506 2
+@
+
+
+1.7
+log
+@Updated documentation.
+Added check for dark rooms.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/19 02:56:29 $ $Revision: 1.6 $              )
+d42 4
+d211 2
+a212 1
+        dup "DARK" flag? not me @@ "mage" flag? or if ( if not dark or I'm wiz )
+d287 1
+a287 1
+        dup "DARK" flag? me @@ "MAGE" flag? not and if
+d334 1
+a334 1
+@@set $look/show-exits=/_version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Added support for extended/big exit information.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/18 21:03:08 $ $Revision: 1.5 $              )
+d32 5
+d42 3
+d281 7
+a287 1
+        over getlink name strcat
+d328 2
+a329 2
+@@set $look/show-exits=/_docs:@@list $look/show-exits=1-27
+@@set $look/show-exits=/_version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Added in the signpost code and customizations.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/18 03:07:11 $ $Revision: 1.4 $              )
+d33 1
+a33 2
+  TBD:
+       See old "official" one cmd-showexits for other features to incorp.
+d37 3
+d42 1
+a42 1
+
+d142 11
+d195 20
+d224 1
+a224 2
+      dup ok? over exit? and over action_ok? and 
+      over "DARK" flag? not and if
+d255 30
+a284 1
+
+d302 6
+d315 1
+a315 1
+@@set $look/show-exits=/_version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Added color-customization.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/17 20:38:30 $ $Revision: 1.3 $              )
+d25 7
+d38 3
+d57 43
+a99 1
+ 
+d233 8
+d247 2
+a248 2
+@@set $look/show-exits=/_docs:@@list $look/show-exits=1-1
+@@set $look/show-exits=/_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Added support for the _action? property to force an action to be shown.
+Added support for the _showactions? property force actions to be shown.
+Added support for the wrap point to be settable in the environment.
+Added support for legacy (deprecated) properties.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/17 19:37:30 $ $Revision: 1.2 $              )
+d19 5
+a27 2
+  Additionally:
+       Add customization of the colors.
+d31 6
+d55 33
+d90 10
+a99 8
+  "^BROWN^<^YELLOW^" "<" subst
+  "^BROWN^>" ">" subst
+  "^BROWN^(^YELLOW^" "(" subst
+  "^BROWN^)" ")" subst
+  "^BROWN^[^YELLOW^" "[" subst
+  "^BROWN^]" "]" subst
+  "^BROWN^{^YELLOW^" "{" subst
+  "^BROWN^}" "}" subst
+d148 1
+a148 1
+        "^AQUA^" swap strcat
+d159 1
+a159 1
+   pop me @@ "You can see no obvious way out." ansi_notify
+d188 1
+a188 1
+@@set $look/show-exits=/_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Added exit darking and fixed my testing shim so it isn't there anymore.
+@
+text
+@d5 1
+a5 1
+( look-show-exits: $Date: 2006/07/17 19:23:56 $ $Revision: 1.1 $              )
+d11 15
+d28 3
+d46 12
+d64 11
+a74 1
+  prog "_wrap" getpropval dup 0 = if
+d79 7
+d95 1
+a95 8
+      ( 
+        Confirm that: 
+        a. valid dbref
+        b. actual exit
+        c. exit does link to a room, instead of program/action
+        d. is the exit dark?
+      )
+      dup ok? over exit? and over getlink room? and 
+d105 1
+a105 2
+        "^BROWN^<^YELLOW^" "<" subst
+        "^BROWN^>" ">" subst
+d115 1
+a115 1
+   ( No exits to list )
+d144 1
+a144 1
+@@set $look/show-exits=/_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial code. Basic exit showing fully implemented.
+@
+text
+@d1 106
+a106 103
+wh me=Beginning installation of look-show-exits
+@@prog look-show-exits
+1 99999 d
+1 i
+( look-show-exits: $Date$ $Revision$                )
+( Purpose: To display exits in a given room when called by lib-look           )
+( Author: Feaelin Moilar AKA Iain E. Davis                                    )
+( Contributors:                                                               )
+( Dependencies: lib-wordwrap, lib-edit                                        )
+( --------------------------------------------------------------------------- )
+(
+  $Log$
+)
+
+$include $lib/strings
+$include $lib/wordwrap
+$include $lib/edit
+ 
+( Sets up either the configured prefix or the default string ) 
+: get-prefix ( -- s )
+  prog "_prefix" getpropstr dup "" strcmp not if
+    pop "^CYAN^You can go: "
+  then
+;
+ 
+: get-prefix-len ( -- i )
+  get-prefix ansi_strlen
+;
+ 
+( What is our wrap point? )
+: get-wrap-length ( -- i )
+  prog "_wrap" getpropval dup 0 = if
+    pop 78
+  then
+;
+ 
+: show-exits ( -- )
+  get-prefix
+  ( This shouldn't happen, but just in case )
+  trigger @@ room? not if
+    #673 trigger !
+  then
+  0 trigger @@ exits
+  dup ok? if 
+    begin
+      ( 
+        Confirm that: 
+        a. valid dbref
+        b. actual exit
+        c. exit does link to a room, instead of program/action
+      )
+      dup ok? over exit? and over getlink room? and if
+        swap 1 + 
+        dup 1 > if
+          3 pick ", " strcat 3 put
+        then
+        swap
+        ( We want only the first name )
+        dup name ";" explode over over 2 + 0 swap - rotate popn
+        "^AQUA^" swap strcat
+        "^BROWN^<^YELLOW^" "<" subst
+        "^BROWN^>" ">" subst
+        4 rotate swap strcat -3 rotate
+      then
+      next
+    dup ok? not until
+    pop
+  else
+    pop
+  then
+  0 = if
+   ( No exits to list )
+  else
+    get-wrap-length swap WRAP-wordwrap
+    swap me @@ swap ansi_notify
+    1 - dup 0 = not if
+      begin
+        swap
+        "" " " get-prefix-len STRfillfield swap strcat
+        me @@ swap ansi_notify
+      1 - dup 0 = until
+    then
+  then
+
+;
+ 
+: main ( s -- )
+  ( I know this is pointless. Its here just in case I need it later )
+  dup "(Look)" strcmp not if ( If called by lib-look, pop, if not, pop )
+    pop
+  else
+    pop
+  then
+  show-exits
+;
+.
+c
+q
+@@register look-show-exits=look/show-exits
+@@set $look/show-exits=/_docs:@@list $look/show-exits=1-1
+@@set $look/show-exits=/_lib-version:FM$Revision$
+@@set $look/show-exits=/_version:FM$Revision$
+wh me=Installation of look-show-exits complete.
+@
+

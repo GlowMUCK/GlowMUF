@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.28.14.34.46;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-map...
+@@prog cmd-map
+1 99999 d
+1 i
+
+( cmd-map: $Date$ $Revision$ )
+( Author: ??? )
+( --------------------------------------------------------------------------- )
+$include $lib/showlist
+$include $lib/glowstandard
+
+: map ( s -- ) pop
+  loc @@ begin dup while
+    dup "_map#" getpropstr atoi
+    dup if pop break then
+  pop location repeat
+  dup room? if "_map" .showlist "Done." .tell exit then
+  pop "There is no map for this room." .tell
+;
+.
+c
+q
+@@register cmd-map=cmd/map
+@@register #me cmd-map=tmp/prog1
+@@set $tmp/prog1=M2
+@@action map=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:Type 'map' to get a map.
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-map complete.
+@

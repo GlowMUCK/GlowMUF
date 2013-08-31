@@ -1,0 +1,333 @@
+head	1.4;
+access;
+symbols
+	GlowMUF1-1-1:1.4
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2005.09.22.20.30.23;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.04.25.17.04.38;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2005.01.14.16.32.03;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.19.13.58.13;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@"Beginning installation of cmd-detail...
+@@prog cmd-detail
+1 99999 d
+1 i
+( cmd-detail: $Date: 2005/04/25 17:04:38 $ $Revision: 1.3 $
+  Author: Pakrat
+  --------------------------------------------------------------------------- )
+(
+  $Log: cmd-detail,v $
+  Revision 1.3  2005/04/25 17:04:38  feaelin
+  Updated to use the controls primitive instead of the .controls macro.
+
+  Revision 1.2  2005/01/14 16:32:03  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+
+  Revision 1.1  1999/04/19 13:58:13  feaelin
+  Initial revision
+
+)
+( @@detail/@@object by PakRat CopyRight 1995 All Rights Reserved )
+  
+$include $lib/glow
+$include $lib/strings
+
+$def cmp stringcmp not
+$def n me @@ swap notify
+$def setpropstr dup if setprop else pop remove_prop then
+  
+lvar show
+lvar obj
+lvar dname
+lvar ddesc
+  
+: do-match ( s -- d )
+  dup not if pop #-1 else
+    match
+    dup ok? not if pop #-1 else
+      me @@ over controls not if pop #-1 then
+    then
+  then
+;
+  
+: do-findprop ( s -- s )
+  dup not if pop "" exit then
+  ";" swap strcat ";" strcat
+  show @@ if "/_obj/" else "/_det/" then
+  begin obj @@ swap nextprop dup while
+    dup 6 strcut swap pop
+    ";" swap strcat ";" strcat
+    3 pick instring if swap pop exit then
+  repeat pop pop ""
+;
+  
+: do-help ( -- )
+"Usage: @@detail dbi=name=description -- Make hidden detail on something." n
+"       @@object dbi=name=description -- Make visible object on something." n
+" " n
+"       @@detail #show dbi=name -- Turn a hidden detail into an object." n
+"       @@object #hide dbi=name -- Turn an object into a hidden detail." n
+"       @@detail #name dbi=name=newname -- Fix the name of a detail." n
+"       @@detail #desc dbi=name=newdesc -- Change the desc of a detail." n
+"       @@detail #nuke dbi=name         -- Delete a detail." n
+" " n
+"'dbi' can be anything you own, including 'me' and 'here'." n
+"The 'name' is an exit delimited name such as: My blue sign;sign;blue" n
+"The description can by anything, including @@1234 and @@$prog programs." n
+" " n
+"The #xxxx options only need to match one name for to change it." n
+"All #name and #desc work for both @@detail and @@object." n
+;
+  
+: do-show ( -- )
+  obj @@ ok? not if "I don't see that here." n exit then
+  show @@ not if
+    ddesc @@ "=" STR-split ddesc ! dname !
+    dname @@ do-findprop
+    dup if
+      obj @@ over getpropstr
+      obj @@ 3 pick remove_prop
+      swap 6 strcut swap pop "/_obj/" swap strcat
+      obj @@ swap rot setpropstr
+      "Revealed." n
+    else "I don't see that detail there." n pop then
+  else "Objects are already visible!  Try '@@detail #show detail'" n then
+;
+  
+: do-hide ( -- )
+  obj @@ ok? not if "I don't see that here." n exit then
+  show @@ if
+    ddesc @@ "=" STR-split ddesc ! dname !
+    dname @@ do-findprop
+    dup if
+      obj @@ over getpropstr
+      obj @@ 3 pick remove_prop
+      swap 6 strcut swap pop "/_det/" swap strcat
+      obj @@ swap rot setpropstr
+      "Hidden." n
+    else "I don't see that object there." n pop then
+  else "Details are already hidden!  Try '@@object #hide object'" n then
+;
+  
+: do-name ( -- )
+  obj @@ ok? not if "I don't see that here." n exit then
+  ddesc @@ "=" STR-split ddesc ! dname !
+  ddesc @@ not if "Rename it to what?" n exit then
+  dname @@ do-findprop
+  dup if
+    obj @@ over getpropstr
+    obj @@ rot remove_prop
+    obj @@ show @@ if "/_obj/" else "/_det/" then
+    ddesc @@ strcat rot setpropstr
+    "Renamed." n
+  else "I don't see that there." n pop then
+;
+  
+: do-nuke ( -- )
+  obj @@ ok? not if "I don't see that here." n exit then
+  ddesc @@ "=" STR-split ddesc ! dname !
+  dname @@ do-findprop
+  dup if
+      obj @@ swap remove_prop
+      "Nuked." n
+  else "I don't see that there." n pop then
+;
+  
+: do-desc ( -- )
+  obj @@ ok? not if "I don't see that here." n exit then
+  ddesc @@ "=" STR-split ddesc ! dname !
+  ddesc @@ not if "Describe it as what?" n exit then
+  dname @@ do-findprop
+  dup if
+    obj @@ swap ddesc @@ setpropstr
+    "Description changed." n
+  else "I don't see that there." n pop then
+;
+  
+: main ( s -- )
+  "me" match dup me ! location loc !
+  
+  command @@ "obj" instring if 1 else 0 then show !
+  
+  dup not if do-help pop exit then
+  
+  dup 1 strcut pop "#" strcmp not if
+    " " STR-split "=" STR-split ddesc !
+    do-match obj !
+    1 strcut swap pop dname !
+    dname @@ "help" cmp if do-help else
+    dname @@ "show" cmp if do-show else
+    dname @@ "hide" cmp if do-hide else
+    dname @@ "name" cmp if do-name else
+    dname @@ "desc" cmp if do-desc else
+    dname @@ "nuke" cmp if do-nuke else
+    show @@ if
+      "I'm not sure what you want to do.  Try '@@object #help' for help."
+    else
+      "I'm not sure what you want to do.  Try '@@detail #help' for help."
+    then n
+    then then then then then then
+  else
+    "=" STR-split swap do-match obj !
+    "=" STR-split ddesc ! dname !
+    obj @@ ok? if
+    dname @@ if
+    ddesc @@ if
+      obj @@ show @@ if "_obj/" else "_det/" then
+      dname @@ strcat ddesc @@ setpropstr
+      "Created." n
+    else "You forgot the description." n then
+    else "Call it what?" n then
+    else "I don't see that here." n then
+  then
+;
+  
+: debug (s--)
+  .noguest
+  main
+  prog "D" flag? not if
+    depth 0 > if
+      "Please tell PakRat you saw this line, you should not have." n
+      debug-line
+    then
+  then
+;
+.
+c
+q
+@@register cmd-detail=cmd/detail
+@@register #me cmd-detail=tmp/prog1
+@@set $tmp/prog1=W2
+@@set $tmp/prog1=V
+@@action @@detail;@@object;@@det;@@obj=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:@@$cmd/detail
+@@set $tmp/prog1=_version:FM$Revision: 1.3 $
+"Installation of cmd-detail complete.
+@
+
+
+1.3
+log
+@Updated to use the controls primitive instead of the .controls macro.
+@
+text
+@d5 1
+a5 1
+( cmd-detail: $Date: 2005/01/14 16:32:03 $ $Revision: 1.2 $
+d10 3
+d182 1
+a182 1
+      .debug-line
+d197 1
+a197 1
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( cmd-detail: $Date: 1999/04/19 13:58:13 $ $Revision: 1.1 $
+d10 4
+a22 1
+$def split2 .split2
+d36 1
+a36 1
+      me @@ over .controls not if pop #-1 then
+d73 1
+a73 1
+    ddesc @@ "=" split2 ddesc ! dname !
+d88 1
+a88 1
+    ddesc @@ "=" split2 ddesc ! dname !
+d102 1
+a102 1
+  ddesc @@ "=" split2 ddesc ! dname !
+d116 1
+a116 1
+  ddesc @@ "=" split2 ddesc ! dname !
+d126 1
+a126 1
+  ddesc @@ "=" split2 ddesc ! dname !
+d143 1
+a143 1
+    " " split2 "=" split2 ddesc !
+d159 2
+a160 2
+    "=" split2 swap do-match obj !
+    "=" split2 ddesc ! dname !
+d194 1
+a194 1
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-detail: $Date$ $Revision$
+d9 4
+a12 1
+  $Log$
+d50 2
+a51 2
+"Usage: @@detail obj=name=description -- Make hidden detail on something." n
+"       @@object obj=name=description -- Make visible object on something." n
+d53 5
+a57 5
+"       @@detail #show obj=name -- Turn a hidden detail into an object." n
+"       @@object #hide obj=name -- Turn an object into a hidden detail." n
+"       @@detail #name obj=name=newname -- Fix the name of a detail." n
+"       @@detail #desc obj=name=newdesc -- Change the desc of a detail." n
+"       @@detail #nuke obj=name         -- Delete a detail." n
+d59 1
+a59 1
+"'obj' can be anything you own, including 'me' and 'here'." n
+d191 1
+a191 1
+@@set $tmp/prog1=_version:FM$Revision$
+@
+

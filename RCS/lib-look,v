@@ -1,0 +1,2958 @@
+head	1.47;
+access;
+symbols
+	GlowMUF1-1-1:1.39
+	GlowMUF102:1.17;
+locks; strict;
+comment	@# @;
+
+
+1.47
+date	2011.02.18.16.56.52;	author feaelin;	state Exp;
+branches;
+next	1.46;
+
+1.46
+date	2010.09.24.14.53.27;	author feaelin;	state Exp;
+branches;
+next	1.45;
+
+1.45
+date	2009.10.18.23.53.54;	author feaelin;	state Exp;
+branches;
+next	1.44;
+
+1.44
+date	2009.03.19.22.22.27;	author feaelin;	state Exp;
+branches;
+next	1.43;
+
+1.43
+date	2008.06.17.13.15.18;	author feaelin;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2008.06.14.16.41.59;	author feaelin;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2008.06.14.14.06.56;	author feaelin;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2008.02.08.06.38.10;	author feaelin;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2006.08.03.19.57.53;	author feaelin;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2006.08.02.13.17.23;	author feaelin;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2006.07.30.19.44.20;	author feaelin;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2005.09.25.23.14.27;	author feaelin;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2005.09.09.22.17.20;	author feaelin;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2005.04.21.18.04.34;	author feaelin;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2005.04.21.03.25.05;	author feaelin;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2005.04.20.01.17.24;	author feaelin;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2005.04.19.22.12.37;	author feaelin;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2005.04.19.22.11.04;	author feaelin;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2005.04.19.20.04.29;	author feaelin;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2005.04.19.19.34.50;	author feaelin;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2005.04.07.21.19.52;	author feaelin;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2005.04.06.19.28.19;	author feaelin;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2005.04.05.21.32.48;	author feaelin;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2005.04.05.13.42.16;	author feaelin;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2005.01.15.06.35.18;	author feaelin;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2004.08.04.18.50.53;	author feaelin;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2004.08.04.18.41.15;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2004.05.19.18.50.10;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2004.04.22.19.44.21;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2004.04.22.17.25.53;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2004.04.22.17.16.22;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2004.04.22.01.52.09;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2004.04.20.22.05.52;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2004.04.20.21.55.45;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2004.04.15.21.15.11;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2004.04.13.23.18.24;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2004.04.12.15.50.55;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2004.04.12.14.57.51;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.04.11.19.58.28;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2004.04.11.18.46.00;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2004.04.10.17.24.47;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2004.04.10.15.09.40;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2004.04.08.13.38.36;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2004.03.26.03.21.18;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.15.47.21;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.47
+log
+@The error when a program is not link_ok and you don't control it wasn't
+explicit enough. For mages+, it now explains why the permission is denied.
+@
+text
+@wh me=Beginning installation of lib-look...
+@@prog lib-look
+1 99999 d
+1 i
+( cmd/lib-look: $Date: 2010/09/24 14:53:27 $ $Revision: 1.46 $                )
+( Purpose: Replicate and enhance the inserver look routine                    )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-match, lib-unparseobj                        )
+( --------------------------------------------------------------------------- )
+( Features to be aware of:                                                    )
+(                                                                             )
+( If you need programs to run when a player looks you can set a property in   )
+( the ~look property dir anywhere in the environment to the dbref of the      )
+( program you want to run. For example an obvious exits program could be set  )
+( in ~look/obviousexits on #0, and it would run that program. The output is   )
+( displayed after the description but before the Contents list.               )
+(                                                                             )
+( Similarly, if you set ~look/contents-handler to a program dbref, look will  )
+( call the program specified with a dbref of an item its listing in a contents)
+( list and Look in parentheses at the top of the stack. The program should    )
+( return only a string which will either be appended with parentheses to the  )
+( list OR You can specify the format of the list-item by setting the property )
+( ~/look/contents-format. In that property %normal% represents the regular    )
+( part of the string, %extra% represents the portion that your program will   )
+( return. Any other text in the property is displayed normally.               )
+( --------------------------------------------------------------------------- )
+( The following functions are included in this library:                       )
+( LOOK-safecall:  x d --                                                      )
+(      Takes a dbref which is assumed to be a command or @@desc-like program   )
+(      that takes one parameter, usually a string, and returns no values.     )
+(      It ensures that none of the variables me, loc, trigger, or command     )
+(      are modified, and that no garbage is left behind on the stack.         )
+( LOOK-unparse:  d -- s                                                       )
+(      Takes a dbref, and returns either just its name, or the name plus      )
+(      flags, depending on the permissions of me @@.                           )
+( LOOK-std-filter: d -- i                                                     )
+(      A typical filter for LOOKcontents-filter. If you need all the normal   )
+(      filtering plus more, you can call this inside of your own filter to    )
+(      prevent reinvention of the wheel...                                    )
+( LOOK-contents-filter:  a d -- d... i                                        )
+(      Takes the address of a 'filter' routine and a dbref, and returns a     )
+(      range on the stack of the filtered contents of the db-item. The first  )
+(      item to print is the bottom of the stack range.  The filter should     )
+(      be  d -- i; it takes a dbref and returns a true/false value to say     )
+(      whether or not the dbref should be put into the list.                  )
+( LOOK-get-contents:  d -- d... i                                             )
+(      Takes a dbref, and returns the list of its contents, filtered through  )
+(      the standard filter which acts like the server's contents list:        )
+(      Dark rooms don't list anything unless the room or the db-items are     )
+(      yours, dark db-items not owned by you don't show, and you don't show.  )
+(      This list has the first element in the contents at the bottom of the   )
+(      stack.                                                                 )
+( LOOK-long-display:  d... i --                                               )
+(      List the dbref stack range given, in the usual format for the server.  )
+(      All elements on separate lines, using unparse.  The bottom element is  )
+(      printed first.                                                         )
+( LOOK-list-objects:  d --                                                    )
+(      Lists all the 'db-items' that are setup by the @@object/@@detail commands)
+(      Parallels long-display.                                                )
+( LOOK-detail-dbmatch: d s -- s                                               )
+(      Searches for a detail or object created by @@object/@@detail and returns )
+(      its description. Searches only the dbref specified.                    )
+( LOOK-detail-desc: s --                                                      )
+(      Searches for a detail or object created by @@object/@@detail and displays)
+(      its description. Currently only searches the current room "here".      )
+( LOOK-short-list:  d... i -- s                                               )
+(      Turns the range of dbrefs on the stack into a properly formatted       )
+(      string, with commas.  1 element is just returned, 2 elements returns   )
+(      '1 and 2', more elements return '1, 2, 3, and 4' or similar.  Returns  )
+(      a null string if there are no elements.  Again, the bottom element is  )
+(      first in the list.                                                     )
+( LOOK-short-display:  d1 d2 d3 ... di i --                                   )
+(      Calls short-list, then prints out "You see <string>." to the user.     )
+(      Prints "You see nothing." if nothing is on the list.                   )
+( LOOK-list-contents:  s d --                                                 )
+(      Calls get-contents followed by long-display and list-objects to print  )
+(      out all of the contents of the given dbref. If there are any contents  )
+(      listed, then  the string on the stack is printed out, for "Contents:"  )
+(      or the like. If the contents list is empty, the string is ignored.     )
+( LOOK-str-desc:  s --                                                        )
+(      Takes string 's', and prints it out as a description. Matches the      )
+(      '@@###' and '@@$prog' values properly, and uses them with the present    )
+(      trigger value.  If neither of these exist, or if they're invalid,      )
+(      the rest of the string is just printed out. Does NOT parse MPI.        )
+( LOOK-dbstr-desc:  d s --                                                    )
+(      Runs str-desc, using the value d on the stack as the effective         )
+(      trigger value. Parses MPI as appropiate.                               )
+( LOOK-db-desc:  d --                                                         )
+(      Does a full description of the db-item, including name and succ/fail   )
+(      if the dbref given is a room, and contents. All programs run with      )
+(      the dbref given in 'trigger @@'. Will return the proper values for      )
+(      dbref's #-1 and #-2 as well. Parses MPI as appropiate.                 )
+( LOOK-cmd-look:  s --                                                        )
+(      Does a match function, then calls db-desc with the results.  This      )
+(      will simulate the usual 'look' command.                                )
+(                                                                             )
+(      This now includes support for FENI [Fully Extensible Name Interface]   )
+(      programs. If you set following properties on the program database item:)
+(        @@set <program>=_feni-lib:$lib/<some-feni-library>                    )
+(        @@set <program>=_feni-match-word:<name of public word>                )
+(      Look will call the word in specified in the property with the string   )
+(      to be matched on the top of the stack. It will expect a database ref   )
+(      to be returned by the word. So the prototype for your feni-match word  )
+(      should be: [ s -- d ]. Return any 'negative' database reference number )
+(      to indicate there wasn't a match or it was ambiguous. In other words,  )
+(      your feni-match word should parallel 'match' in the way it operates.   )
+(      If your feni-match word doesn't, I recommend creating another word to  )
+(      rearrange the stack appropiately around your actual feni-match word.   )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: lib-look,v $
+  Revision 1.46  2010/09/24 14:53:27  feaelin
+  * lib-look needs to be W4
+  * made it more obvious what an object is.
+
+  Revision 1.45  2009/10/18 23:53:54  feaelin
+  Fixed issue where lack of Look on the top of the stack when a content
+  handler is called breaks the content handler.
+
+  Revision 1.44  2009/03/19 22:22:27  feaelin
+  Fixed security issue where mortals could far-look.
+
+  Revision 1.43  2008/06/17 13:15:18  feaelin
+  Added the @@lookatallow and @@lookatdesc commands. Cleaned up notify's.
+
+  Revision 1.42  2008/06/14 16:41:59  feaelin
+  Revised to use noisy_plmatch instead of noisy_pmatch so that far-looking is
+  properly restricted to wizards.
+ 
+  Revision 1.41  2008/06/14 14:06:56  feaelin
+  Corrected bug in db-desc where it left items on the stack.
+  Added support for 'look at ...' to work more or less like Foxen's look at.
+ 
+  Revision 1.40  2008/02/08 06:38:10  feaelin
+  Repaired issues where the contents-handler didn't operate correctly.
+ 
+  Revision 1.39  2006/08/03 19:57:53  feaelin
+  No longer needed the include to the glow lib.
+ 
+  Revision 1.38  2006/08/02 13:17:23  feaelin
+  Updated documentation.
+ 
+  Revision 1.37  2006/07/30 19:44:20  feaelin
+  Added support for various FENI programs.
+ 
+  Revision 1.36  2005/09/25 23:14:27  feaelin
+  Formatting cleanup.
+ 
+  Revision 1.35  2005/09/09 22:17:20  feaelin
+  Sticky/Silent now hides dark items, regardless of control.
+
+  Revision 1.34  2005/04/21 18:04:34  feaelin
+  Fixed logic flaw. If a player is viewed that has stuff, it potentially will
+  bomb when trying to show the contents.
+ 
+  Revision 1.33  2005/04/21 03:25:05  feaelin
+  Add support for the contents of containers.
+ 
+  Revision 1.32  2005/04/20 01:17:24  feaelin
+  Fixed issue where on mu*s that aren't using the contents-handler, that
+  the look errors when it reaches the contents lister.
+ 
+  Revision 1.31  2005/04/19 22:12:37  feaelin
+  Sigh. Updated _docs property again.
+ 
+  Revision 1.30  2005/04/19 22:11:04  feaelin
+  Rearranged documentation
+  Updated description and _docs property.
+ 
+  Revision 1.29  2005/04/19 20:04:29  feaelin
+  Amazing how one 'pop' in the wrong place does so much damage.
+ 
+  Revision 1.28  2005/04/19 19:34:50  feaelin
+  Added a feature by which a muck can make local changes to the contents list
+  withouth changing lib-look.
+ 
+  Revision 1.27  2005/04/07 21:19:52  feaelin
+  Added Library Symbols
+ 
+  Revision 1.26  2005/04/06 19:28:19  feaelin
+  Documented the ~look property directory feature.
+ 
+  Revision 1.25  2005/04/05 21:32:48  feaelin
+  Removed unneeded $include statements ...no actual calls to those libraries.
+  Revised library words to be in line with the standard and fixed calls to
+  lib-strings and lib-unparseobj as well.
+ 
+  Revision 1.24  2005/04/05 13:42:16  feaelin
+  General documentation cleanup.
+  Improvements made to the installer script.
+ 
+  Revision 1.23  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.22  2005/01/15 06:35:18  feaelin
+  Fixed the problem where programs relying on lib-reflist were expecting
+  non feni'd and non-colorized output.
+ 
+  Revision 1.21  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+ 
+  Revision 1.20  2004/08/04 18:50:53  feaelin
+  Missed part of the calls when checking for #0.
+ 
+  Revision 1.19  2004/08/04 18:41:15  feaelin
+  Fix so that if you have an @@ sign in your desc it doesn't try to use it
+  to call #0 as a program.
+ 
+  Revision 1.18  2004/05/19 18:50:10  feaelin
+  Removed erroneous striplead and striptail, which would mess carefully spaced
+  descriptions and lsedit lists.
+ 
+  Revision 1.17  2004/04/22 19:44:21  feaelin
+  Fixed issue where darked players were hidden from wizards.
+ 
+  Revision 1.16  2004/04/22 17:25:53  feaelin
+  Documentation Cleanup
+ 
+  Revision 1.15  2004/04/22 17:16:22  feaelin
+  Added support for player darking via the /@@/dark:yes prop
+ 
+  Revision 1.14  2004/04/22 01:52:09  feaelin
+  Fixed issues with LOOKshort-list where it wasn't colorizing as you might
+  expect it to.
+ 
+  Revision 1.13  2004/04/20 22:05:52  feaelin
+  Okay. This time, I REALLY made std-filter public. And fixed the docs up
+  properly.
+ 
+  Revision 1.12  2004/04/20 21:55:45  feaelin
+  Made the standard filter [LOOKstd-filter] public so extended filters can be
+  written without having to recreate the functionality of std-filter.
+  
+  Revision 1.11  2004/04/15 21:15:11  feaelin
+  New Feature: ~look props. Similar in function to ~connect/~arrive/~idle
+  props, you can now do: @@set <item>=~look/<name>:<ref> and the program
+  <ref> will be executed when <item> is looked at. As you might expect, the
+  property may be set on parent rooms or #0, to have programs that are
+  executed for the entire area/muck.
+  
+  Revision 1.10  2004/04/13 23:18:24  feaelin
+  Added support for IDESCs
+  
+  Revision 1.9  2004/04/12 15:50:55  feaelin
+  Fixed bug in look that caused it to display dbrefs & flags for players that
+  had 'color' turned on.
+  
+  Revision 1.8  2004/04/12 14:57:51  feaelin
+  Fixed issue where obvious things like 'me' and 'here' didn't match correctly
+  in cmd-look. Changed failed messages to use the FAIL color code.
+  
+  Revision 1.7  2004/04/11 19:58:28  feaelin
+  Changed detail-desc in preparation for adding functionality to match
+  details against players and things in the room.
+  Cleaned up the docs so that they display correctly for the MUF editor's
+  'view' command.
+  
+  Revision 1.6  2004/04/11 18:46:00  feaelin
+  Added the library calls LOOKxxx, to be more inline with the standard.
+  Added support for @@object/@@detail details. Correspondingly added some
+  related library calls.
+  
+  Revision 1.5  2004/04/10 17:24:47  feaelin
+  Fixed minor issues in the std-filter function.
+  
+  Revision 1.4  2004/04/10 15:09:40  feaelin
+  Fixed issue where if you didn't control the item, or you were set silent,
+  the database item name wasn't colorized.
+  
+  Revision 1.3  2004/04/08 13:38:36  feaelin
+  Fixed issues where lib-look didn't parse color in descriptions by default.
+  Fixed issue where lib-look didn't parse MPI in descriptions and messages.
+  Further cleaned up dependency on macros.
+  
+  Revision 1.2  2004/03/26 03:21:18  feaelin
+  Reduced macro/library dependence.
+)
+( --------------------------------------------------------------------------- )
+$include $lib/strings
+$include $lib/match
+$include $lib/unparseobj
+
+$def REMOTE_ALLOW_PROP "_remote_look?"
+$def REMOTE_DESC_PROP "_remote_desc"
+
+lvar sme
+lvar sloc
+lvar strigger
+lvar scommand
+lvar sdepth
+lvar realtrig
+ 
+: safecall  ( x d -- )
+  me @@ sme !
+  loc @@ sloc !
+  trigger @@ strigger !
+  command @@ scommand !
+  depth sdepth !
+  call
+  sme @@ me !
+  sloc @@ loc !
+  strigger @@ trigger !
+  scommand @@ command !
+  depth 2 + sdepth @@ - popn
+;
+ 
+: control? ( d -- i )
+  me @@ swap controls me @@ "silent" flag? not and
+;
+ 
+: dark? ( d -- i )
+  dup "Dark" flag? swap control? not and
+;
+ 
+( To allow the administrators to add additional text to the contents list     )
+( on a per item basis, we'll check to see if there is a program handler and   )
+( also check to see if there is a format string.                              )
+( The program handler needs to use a dbref and return a string while leaving  )
+( everything else on the stack.                                               )
+: unparse-secondary ( s d -- s )
+  dup -3 rotate "~look/contents-handler" envpropstr swap pop
+  dup "" strcmp if
+    dup dbref? not if
+      dup string? if
+        dup "#" instr if
+          1 strcut swap pop
+        then
+        atoi dbref
+      else
+        dup int? if
+          dbref
+        then
+      then
+    then
+    dup ok? over #0 dbcmp not and if
+      dup program? if
+        dup "LINK_OK" flag? if
+          me @@ sme !
+          loc @@ sloc !
+	  trigger @@ strigger !
+	  command @@ scommand !
+	  depth sdepth !
+      ( I'm just not sure what this line is supposed to look like anymore,
+        apparently at some point I decided to change it storing Look in 
+        the command variable, but that broke programs for some folks.
+        changing back here, perhaps later I'll remember what I intended.)
+	  3 pick swap "(Look)" swap (command !) call
+	  sme @@ me !
+	  sloc @@ loc !
+	  strigger @@ trigger !
+	  scommand @@ command !
+	  depth sdepth @@ - popn
+        else
+          pop ""
+        then
+      else
+        pop ""
+      then
+    else
+      pop ""
+    then
+  then
+  rot "~look/contents-format" envpropstr swap pop
+  dup "" strcmp not if
+    pop
+    dup "" strcmp not if
+      pop
+    else
+      " (" swap strcat strcat ")" strcat
+    then
+  else
+    swap "%extra%" subst
+    swap "%normal%" subst
+  then
+;
+ 
+: unparse ( d -- s )
+  me @@ "Silent" flag? if
+    "%P" UPO-special-unparseobj exit
+  then
+  dup control? not
+  if
+    dup "Link_OK" flag? not
+    if
+      dup "Chown_OK" flag? over player? not and not
+      if
+        dup "Abode" flag? not
+        if
+          "%P" UPO-special-unparseobj exit
+        then
+      then
+    then
+  then
+  UPO-color-unparseobj
+;
+ 
+( Don't see rooms.  Don't see programs you can't link to. )
+( Don't see dark things, except you always see zombies and players. )
+: std-filter ( d -- i )
+  dup me @@ dbcmp if pop 0 exit then
+  dup room? if pop 0 exit then
+  dup player? if
+    dup me @@ swap controls if
+      pop 1 exit
+    else
+      prog "@@allowdarkplayers" getpropstr "yes" strcmp not if
+        dup "@@/dark" getpropstr "yes" strcmp swap pop exit
+      else
+        pop 1 exit
+      then
+    then
+  then
+  dup dup thing? swap "z" flag? and if
+    dup me @@ swap controls if
+      pop 1 exit
+    else
+      prog "@@allowdarkplayers" getpropstr "yes" strcmp not if
+        dup "@@/dark" getpropstr "yes" strcmp swap pop exit
+      else
+        pop 1 exit
+      then
+    then
+  then
+  dup program? if
+    dup control? over "Link_OK" flag? or if
+      pop 1 exit
+    else
+      pop 0 exit
+    then
+  then
+  dup "dark" flag? if pop 0 exit then
+  pop 1 
+; PUBLIC std-filter
+ 
+: contents-filter ( a d -- d... i )
+  contents 0 rot rot
+  begin
+    dup
+  while
+    over over swap execute
+    if
+      rot 1 + rot rot dup -4 rotate
+    then
+    next
+  repeat
+  pop pop
+;
+ 
+: get-contents ( d -- d... i )
+  dup dark?
+  if
+    pop 0
+  else
+    'std-filter swap contents-filter
+  then
+;
+ 
+: long-display ( d... i -- )
+  begin
+    dup
+  while
+    1 - dup 2 + rotate
+    dup dbref?
+    if
+      dup unparse
+      swap unparse-secondary
+    then
+    me @@ swap ansi_notify
+  repeat
+  pop
+;
+ 
+: short-list ( d... i -- s )
+  dup 3 <
+  if
+    1 - dup 2 + rotate "%P" UPO-special-unparseobj over
+    if
+      " " strcat
+    then
+  else
+    ""
+    begin
+      over 1 >
+    while
+      swap 1 - swap over 3 + rotate "%P" UPO-special-unparseobj
+      "^WHITE^, " strcat strcat
+    repeat
+  then
+  swap
+  if
+    "^WHITE^and " strcat swap "%P" UPO-special-unparseobj strcat
+  then
+;
+ 
+: short-list-n ( d... i -- s )
+  dup 1 < if
+    pop "" exit
+  then
+  dup 3 <
+  if
+    1 - dup 2 + rotate name over
+    if
+      " " strcat
+    then
+  else
+    ""
+    begin
+      over 1 >
+    while
+      swap 1 - swap over 3 + rotate name
+      "^WHITE^, " strcat strcat
+    repeat
+  then
+  swap
+  if
+    "^WHITE^and " strcat swap name strcat
+  then
+;
+ 
+: short-display ( d... i -- )
+  short-list dup
+  if
+    "You see " swap strcat "." strcat me @@ swap ansi_notify
+  else
+    "You see nothing." me @@ swap ansi_notify
+  then
+;  
+ 
+: list-objects ( d -- )
+  dup "_obj/" nextprop
+  begin
+    dup "" strcmp while
+    dup ";" STR-split pop
+    "/" STR-split swap pop
+    "thing" UPO-color-query
+    me @@ "silent" flag? not if
+      3 pick control? if
+        "^YELLOW^(object-detail)" strcat
+      then
+    then
+    me @@ swap ansi_notify
+    over swap nextprop
+  repeat
+  pop pop
+; PUBLIC list-objects
+ 
+: list-contents ( s d -- )
+  dup "_obj/" nextprop STR-blank? not swap
+  dup get-contents dup dup 4 + rotate or
+  if
+    dup 3 + rotate me @@ swap ansi_notify
+    long-display
+    list-objects
+  else
+    3 popn
+  then
+;
+ 
+: look-prop-handler ( d s -- )
+  over swap nextprop
+  dup "" strcmp not if pop pop exit then
+  begin
+    over over getprop
+    dup dbref? not if
+      dup string? if
+        dup "#" instr if
+          1 strcut swap pop
+        then
+        atoi dbref
+      else
+        dup int? if
+          dbref
+        then
+      then
+    then
+    over "contents-handler" instr not if
+      over "contents-format" instr not if
+        dup ok? over #0 dbcmp not and if
+          dup program? if
+            dup "LINK_OK" flag? if
+              "(Look)" swap safecall
+            else
+              pop
+            then
+          else
+            pop
+          then
+        else
+          pop
+        then
+      else
+        pop
+      then
+    else
+      pop
+    then
+    over swap nextprop dup "" strcmp not
+  until
+  pop pop
+; 
+ 
+: look-prop2 ( d -- )
+  dup "~look/"
+  nextprop "" strcmp if
+    "~look/" look-prop-handler
+  else
+    pop
+  then
+;
+ 
+: look-prop ( d -- )
+  begin
+    dup look-prop2
+    location
+    dup #-1 dbcmp 
+  until
+  pop
+; PUBLIC look-prop
+ 
+: str-desc ( s -- )
+  dup
+  if
+    dup "@@" 1 strncmp
+    if
+      me @@ swap ansi_notify
+    else
+      1 strcut swap pop " " STR-split striplead striptail swap
+      dup "$" 1 strncmp
+      if
+        atoi dbref
+      else
+        match
+      then
+      dup ok? over #0 dbcmp not and
+      if
+        dup trigger @@ owner swap controls over "Link_OK" flag? or
+        if
+          safecall
+        else
+	  pop pop me @@
+	  me @@ "MAGE" flag? if
+            "^FAIL^Permission Denied: Programs called by lib-look must be LINK_OK"
+          else
+            "^FAIL^Permission Denied" 
+          then
+          ansi_notify
+        then
+      else
+        pop me @@ swap ansi_notify
+      then
+    then
+  else
+    pop "You see nothing special." me @@ swap ansi_notify
+  then
+;
+ 
+: dbstr-desc ( d s -- )
+  swap trigger @@ realtrig ! trigger !
+  trigger @@ swap "(@@Desc)" 1 parsempi str-desc
+  realtrig @@ trigger !
+;
+ 
+: db-desc ( d -- )
+  dup #-1 dbcmp
+  if
+    pop "^FAIL^I don't see that here." me @@ swap ansi_notify exit
+  then
+  dup #-2 dbcmp
+  if
+    pop "^FAIL^I don't know which one you mean!" me @@ swap ansi_notify exit
+  then
+  dup trigger @@ realtrig ! trigger !
+  dup room? over me @@ location dbcmp or
+  if
+    dup unparse me @@ swap ansi_notify
+  then
+  dup me @@ location dbcmp over room? not and
+  over "/_/ide" getpropstr STR-blank? not and if
+    dup "/_/ide" "(@@Idesc)" 1 parseprop
+  else
+    dup "/_/de" "(@@Desc)" 1 parseprop
+  then
+  str-desc
+  dup look-prop ( handle the ~look prop )
+  dup room? over me @@ location dbcmp or
+  if
+    me @@ over locked?
+    if
+      dup "/_/fl" "(@@Fail)" 1 parseprop dup
+      if
+        str-desc
+      else
+        pop
+      then
+      dup "/_/ofl" "(@@OFail)" 1 parseprop dup
+      if
+        loc @@ me @@ rot ansi_notify_except
+      else
+        pop
+      then
+    else
+      dup "/_/sc" "(@@Succ)" 1 parseprop dup
+      if
+        str-desc
+      else
+        pop
+      then
+      dup "/_/osc" "(@@OSucc)" 1 parseprop dup
+      if
+        loc @@ me @@ rot ansi_notify_except
+      else
+        pop
+      then
+    then
+    "^BLUE^Contents:" over list-contents
+  else
+    dup player?
+    if
+      "^BLUE^Carrying:" over list-contents
+    else
+      dup thing?
+      if
+        "^BLUE^Contents:" over list-contents
+      then
+    then
+  then
+  realtrig @@ trigger !
+  pop
+;
+ 
+: detail-dbmatch ( d s -- s )
+  swap dup "_obj/" nextprop
+  begin
+    dup "" strcmp while
+    dup 4 pick instring if
+      over swap getprop
+      0 while
+    then
+    over swap nextprop
+  repeat
+  dup "" strcmp if -3 rotate pop pop exit then
+  pop
+  dup "_det/" nextprop
+  begin
+    dup "" strcmp while
+    dup 4 pick instring if
+      over swap getprop
+      0 while
+    then
+    over swap nextprop
+  repeat
+  -3 rotate pop pop
+; PUBLIC detail-dbmatch
+ 
+: detail-desc ( s -- )
+  dup
+  "here" match dup rot 
+  detail-dbmatch
+  "(@@Desc)" 1 parsempi
+  dup "" strcmp if
+    str-desc
+    pop 1 exit
+  then
+  pop 0 exit
+; PUBLIC detail-desc
+ 
+: get-feni-lib ( -- s )
+  prog "_feni-lib" getpropstr dup "" strcmp not if
+     pop #0 "_feni-lib" getpropstr
+  then
+;
+ 
+: get-feni-match-word ( -- s )
+  prog "_feni-match-word" getpropstr dup "" strcmp not if
+     pop #0 "_feni-match-word" getpropstr
+  then
+;
+ 
+( If there is a FENI program out there, make use of it. ) 
+: look-feni-match ( s -- d )
+  ( We should check depth and use checkargs? )
+  get-feni-lib dup "" strcmp not if
+    pop #-1 exit
+  then
+  match program? if
+    get-feni-lib match
+    get-feni-match-word dup "" strcmp not if
+      pop #-1 exit
+    then
+    call
+  else
+    #-1
+  then
+;
+ 
+( Handles setting of a remote description )
+: handle-remote-desc ( s -- )
+  dup STR-blank? not if
+    STR-splitargs swap MATCH-noisy_match 
+    dup #-1 dbcmp not if ( hmm. is it a valid item? )
+      ( Valid, proceed with describing )
+      swap REMOTE_DESC_PROP swap setprop
+      me @@ "^SUCC^Done." ansi_notify
+      exit
+    then
+  then
+  ( Add help here )
+;
+ 
+( Handles toggling of allowing lookat on a given database item )
+: handle-allow ( s -- )
+  dup STR-blank? not if
+    MATCH-noisy_match 
+    dup #-1 dbcmp not if ( hmm. is it a valid item? )
+      dup REMOTE_ALLOW_PROP getpropstr tolower
+      "y" 1 strncmp not if
+        dup REMOTE_ALLOW_PROP remove_prop
+        me @@ "^SUCC^Players are now UNABLE to 'lookat' "
+        rot UPO-color-unparseobj strcat "." strcat
+        ansi_notify
+        exit
+      else   
+        dup REMOTE_ALLOW_PROP "yes" setprop
+        me @@ "^SUCC^Players are now ABLE to 'lookat' "
+        rot UPO-color-unparseobj strcat "." strcat
+        ansi_notify
+        exit
+      then
+    then
+  then
+  ( Add help here )
+;
+ 
+: cmd-look ( s -- )
+  command @@ "@@lookatallow" stringcmp not if
+    handle-allow exit
+  then
+  command @@ "@@lookatdesc" stringcmp not if
+    handle-remote-desc exit
+  then
+  command @@ "lookat" stringcmp not if
+    "look" command ! "at " swap strcat
+  then
+  ( If no arguement, assume looking at the current room )
+  dup STR-blank? if
+    pop "here"
+  else ( otherwise, check for 'lookat' functionality )
+    strip ( cleanup extraneous whitespace )
+    dup " " STR-split swap strip ( split first arg: "joeplayer's foo..." "at" )
+    "at" stringcmp not if ( If it is an at, proceed )
+      dup STR-blank? if ( if the rest is empty, then bail out )
+        me @@ "^FAIL^Look at what?!" ansi_notify
+        pop pop exit
+      then
+      " " STR-split swap ( split off 2nd arg: "foo..." "Joeplayer's" )
+      dup "'" instr if ( is the apostrophe present? )
+        "'" STR-split ( toss the "'s": "foo..." "joeplayer" "s")
+        dup "s" strcmp swap "" strcmp and if
+          3 popn
+          me @@ "^FAIL^Whatever do you mean?!" ansi_notify
+          exit
+        else
+          MATCH-noisy_plmatch ( find the player )
+          dup #-1 dbcmp if ( oh. noisy-pmatch complained, bail )
+            2 popn exit ( clean up and exit )
+          then
+          over STR-blank? if ( is the target item not specified? )
+            name me @@ swap "^FAIL^Look at " swap strcat "'s what?" strcat ansi_notify
+            pop pop
+            exit
+          then
+          swap over over rmatch ( search for the target in player's inventory )
+          dup ok? if
+            dup REMOTE_ALLOW_PROP getpropstr tolower ( found it, is it remotelookable? )
+            "y" 1 strncmp not if
+              dup REMOTE_DESC_PROP getpropstr ( it is, does it have a remote desc? )
+              dup STR-blank? if
+                pop db-desc 3 popn exit ( display normal desc )
+              else
+                dbstr-desc 3 popn exit ( display remote desc )
+              then
+            else
+              ( not remote lookable, but is there a detail with same name? )
+              pop detail-dbmatch dup if
+                me @@ swap ansi_notify ( haha! display the detail )
+                pop exit
+              else
+                ( Ah. Nothing actually there at all )
+                pop pop
+                me @@ "^FAIL^I don't see that here." ansi_notify 
+                exit
+              then
+            then
+          else ( no 'thing' found, see if there is a @@detail/@@object )
+            pop detail-dbmatch dup if
+              me @@ swap ansi_notify ( haha! display the detail )
+              pop exit
+            else
+              ( Ah. Nothing actually there at all )
+              pop me @@ "^FAIL^I don't see that here." ansi_notify 
+              exit
+            then
+          then
+        then
+      else
+        swap pop swap pop
+      then
+    else ( not an "at", proceed to normal processing )
+      pop
+    then
+  then
+  me @@ "MAGE" flag? not if
+    "" "*" subst
+    "" "#" subst
+  then
+  dup
+  match
+  dup ok? not if
+    pop dup look-feni-match dup ok? if
+      db-desc exit
+    then
+    pop
+    detail-desc not if
+      pop me @@ "^FAIL^I don't see that here." ansi_notify
+    then
+  else
+    swap pop db-desc
+  then
+;
+ 
+public safecall
+public unparse
+public contents-filter
+public get-contents
+public long-display
+public short-list
+public short-list-n
+public short-display
+public list-contents
+public str-desc
+public dbstr-desc
+public db-desc
+public cmd-look
+.
+c
+q
+@@register lib-look=lib/look
+@@register lib-look=cmd/look
+@@set $lib/look=L
+@@set $lib/look=S
+@@set $lib/look=H
+@@set $lib/look=W4
+@@set $lib/look=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
+@@set $lib/look=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
+@@set $lib/look=/_defs/.db-desc:"$lib/look" match "db-desc" call
+@@set $lib/look=/_defs/.dbstr-desc:"$lib/look" match "dbstr-desc" call
+@@set $lib/look=/_defs/.get-contents:"$lib/look" match "get-contents" call
+@@set $lib/look=/_defs/.list-contents:"$lib/look" match "list-contents" call
+@@set $lib/look=/_defs/.long-display:"$lib/look" match "long-display" call
+@@set $lib/look=/_defs/.safecall:"$lib/look" match "safecall" call
+@@set $lib/look=/_defs/.short-display:"$lib/look" match "short-display" call
+@@set $lib/look=/_defs/.short-list:"$lib/look" match "short-list" call
+@@set $lib/look=/_defs/.str-desc:"$lib/look" match "str-desc" call
+@@set $lib/look=/_defs/.unparse:"$lib/look" match "unparse" call
+@@set $lib/look=/_defs/LOOKcmd-look:"$lib/look" match "cmd-look" call
+@@set $lib/look=/_defs/LOOKcontents-filter:"$lib/look" match "contents-filter" call
+@@set $lib/look=/_defs/LOOKdb-desc:"$lib/look" match "db-desc" call
+@@set $lib/look=/_defs/LOOKdbstr-desc:"$lib/look" match "dbstr-desc" call
+@@set $lib/look=/_defs/LOOKdetail-dbmatch:"$lib/look" match "detail-dbmatch" call
+@@set $lib/look=/_defs/LOOKdetail-desc:"$lib/look" match "detail-desc" call
+@@set $lib/look=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
+@@set $lib/look=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
+@@set $lib/look=/_defs/LOOKlist-objects:"$lib/look" match "list-objects" call
+@@set $lib/look=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
+@@set $lib/look=/_defs/LOOKprop:"$lib/look" match "look-prop" call
+@@set $lib/look=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
+@@set $lib/look=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
+@@set $lib/look=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@@set $lib/look=/_defs/LOOKshort-list-n:"$lib/look" match "short-list-n" call
+@@set $lib/look=/_defs/LOOKstd-filter:"$lib/look" match "std-filter" call
+@@set $lib/look=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
+@@set $lib/look=/_defs/LOOKunparse:"$lib/look" match "unparse" call
+@@set $lib/look=/_defs/LOOK-cmd-look:"$lib/look" match "cmd-look" call
+@@set $lib/look=/_defs/LOOK-contents-filter:"$lib/look" match "contents-filter" call
+@@set $lib/look=/_defs/LOOK-db-desc:"$lib/look" match "db-desc" call
+@@set $lib/look=/_defs/LOOK-dbstr-desc:"$lib/look" match "dbstr-desc" call
+@@set $lib/look=/_defs/LOOK-detail-dbmatch:"$lib/look" match "detail-dbmatch" call
+@@set $lib/look=/_defs/LOOK-detail-desc:"$lib/look" match "detail-desc" call
+@@set $lib/look=/_defs/LOOK-get-contents:"$lib/look" match "get-contents" call
+@@set $lib/look=/_defs/LOOK-list-contents:"$lib/look" match "list-contents" call
+@@set $lib/look=/_defs/LOOK-list-objects:"$lib/look" match "list-objects" call
+@@set $lib/look=/_defs/LOOK-long-display:"$lib/look" match "long-display" call
+@@set $lib/look=/_defs/LOOK-prop:"$lib/look" match "look-prop" call
+@@set $lib/look=/_defs/LOOK-safecall:"$lib/look" match "safecall" call
+@@set $lib/look=/_defs/LOOK-short-display:"$lib/look" match "short-display" call
+@@set $lib/look=/_defs/LOOK-short-list:"$lib/look" match "short-list" call
+@@set $lib/look=/_defs/LOOK-short-list-n:"$lib/look" match "short-list-n" call
+@@set $lib/look=/_defs/LOOK-std-filter:"$lib/look" match "std-filter" call
+@@set $lib/look=/_defs/LOOK-str-desc:"$lib/look" match "str-desc" call
+@@set $lib/look=/_defs/LOOK-unparse:"$lib/look" match "unparse" call
+@@set $lib/look=/_docs:@@list $lib/look=1-106
+@@set $lib/look=/_/de:lib-look:List lines 1-106 for documentation.
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.46 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.46 $
+@@set $lib/look=/_lib-symbol:LOOK
+wh me=Installation of lib-look complete.
+@
+
+
+1.46
+log
+@* lib-look needs to be W4
+* made it more obvious what an object is.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2009/10/18 23:53:54 $ $Revision: 1.45 $                )
+d113 4
+d642 7
+a648 1
+          pop pop "Permission Denied" me @@ swap ansi_notify
+d1005 2
+a1006 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.45 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.45 $
+@
+
+
+1.45
+log
+@Fixed issue where lack of Look on the top of the stack when a content
+handler is called breaks the content handler.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2009/03/19 22:22:27 $ $Revision: 1.44 $                )
+d113 4
+d536 1
+a536 1
+        "^YELLOW^(detail)" strcat
+d944 1
+a944 1
+@@set $lib/look=W3
+d995 2
+a996 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.44 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.44 $
+@
+
+
+1.44
+log
+@Fixed security issue where mortals could far-look.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2008/06/17 13:15:18 $ $Revision: 1.43 $                )
+d113 3
+d337 5
+a341 1
+	  3 pick swap "(Look)" command ! call
+d490 3
+d991 2
+a992 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.43 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.43 $
+@
+
+
+1.43
+log
+@Added the @@lookatallow and @@lookatdesc commands. Cleaned up notify's.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2008/06/14 16:41:59 $ $Revision: 1.42 $                )
+d113 3
+d890 6
+a895 1
+  dup match
+d981 2
+a982 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.42 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.42 $
+@
+
+
+1.42
+log
+@Revised to use noisy_plmatch instead of noisy_pmatch so that far-looking is
+properly restricted to wizards.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2008/06/14 14:06:56 $ $Revision: 1.41 $                )
+d113 4
+d120 1
+a120 1
+
+d123 1
+a123 1
+
+d126 1
+a126 1
+
+d129 1
+a129 1
+
+d132 1
+a132 1
+
+d135 1
+a135 1
+
+d138 1
+a138 1
+ 
+d271 3
+a280 9
+: otell
+  ( Display string to everyone in my room except me )
+  loc @@ me @@ rot ansi_notify_except ( s -- )
+;
+ 
+: tell
+  me @@ swap ansi_notify
+;
+ 
+d452 1
+a452 1
+    tell
+d504 1
+a504 1
+    "You see " swap strcat "." strcat tell
+d506 1
+a506 1
+    "You see nothing." tell
+d522 1
+a522 1
+    tell
+d532 1
+a532 1
+    dup 3 + rotate tell
+d606 1
+a606 1
+      tell
+d621 1
+a621 1
+          pop pop "Permission Denied" tell
+d624 1
+a624 1
+        pop tell
+d628 1
+a628 1
+    pop "You see nothing special." tell
+d641 1
+a641 1
+    pop "^FAIL^I don't see that here." tell exit
+d645 1
+a645 1
+    pop "^FAIL^I don't know which one you mean!" tell exit
+d650 1
+a650 1
+    dup unparse tell
+d672 1
+a672 1
+        otell
+d685 1
+a685 1
+        otell
+d771 38
+d810 6
+d849 1
+a849 1
+            dup "_remote_look?" getpropstr tolower ( found it, is it remotelookable? )
+d851 1
+a851 1
+              dup "_remote_desc" getpropstr ( it is, does it have a remote desc? )
+d973 2
+a974 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.41 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.41 $
+@
+
+
+1.41
+log
+@Corrected bug in db-desc where it left items on the stack.
+Added support for 'look at ...' to work more or less like Foxen's look at.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2008/02/08 06:38:10 $ $Revision: 1.40 $                )
+d113 4
+d796 1
+a796 1
+          MATCH-noisy_pmatch ( find the player )
+d931 2
+a932 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.40 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.40 $
+@
+
+
+1.40
+log
+@Repaired issues where the contents-handler didn't operate correctly.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2006/08/03 19:57:53 $ $Revision: 1.39 $                )
+d9 1
+a9 1
+( Dependencies: lib-strings, lib-unparseobj                                   )
+d113 3
+d260 1
+d534 1
+a534 1
+    pop pop
+d770 5
+a774 2
+  dup not
+  if
+d776 64
+d927 2
+a928 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.39 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.39 $
+@
+
+
+1.39
+log
+@No longer needed the include to the glow lib.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2006/08/02 13:17:23 $ $Revision: 1.38 $                )
+d113 3
+d303 12
+a314 13
+  me @@ "~look/contents-handler" envpropstr swap pop
+  dup "" strcmp not if
+    pop pop exit
+  then
+  dup dbref? not if
+    dup string? if
+      dup "#" instr if
+        1 strcut swap pop
+      then
+      atoi dbref
+    else
+      dup int? if
+        dbref
+d317 17
+a333 15
+  then
+  dup ok? over #0 dbcmp not and if
+    dup program? if
+      dup "LINK_OK" flag? if
+        me @@ sme !
+        loc @@ sloc !
+	trigger @@ strigger !
+	command @@ scommand !
+	depth sdepth !
+	"(Look)" swap call
+	sme @@ me !
+	sloc @@ loc !
+	strigger @@ trigger !
+	scommand @@ command !
+	depth 1 + sdepth @@ - popn
+a339 2
+  else
+    pop ""
+d341 1
+a341 1
+  ( No string, no further processing )
+d344 5
+a348 5
+    exit
+  then
+  me @@ "~look/contents-format" envpropstr swap pop
+  dup "" strcmp not if
+    pop " (" swap strcat strcat ")" strcat
+d856 2
+a857 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.38 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.38 $
+@
+
+
+1.38
+log
+@Updated documentation.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2006/07/30 19:44:20 $ $Revision: 1.37 $                )
+d113 3
+d255 1
+a255 1
+$include $lib/glow 
+d854 2
+a855 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.37 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.37 $
+@
+
+
+1.37
+log
+@Added support for various FENI programs.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/09/25 23:14:27 $ $Revision: 1.36 $                )
+d113 3
+d849 4
+a852 4
+@@set $lib/look=/_docs:@@list $lib/look=1-93
+@@set $lib/look=/_/de:lib-look:List lines 1-110 for documentation.
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.36 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.36 $
+@
+
+
+1.36
+log
+@Formatting cleanup.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/09/09 22:17:20 $ $Revision: 1.35 $                )
+d97 13
+d113 3
+d728 29
+d762 7
+a768 3
+  dup match dup
+  #-1 dbcmp if
+    pop detail-desc not if
+d847 3
+a849 3
+@@set $lib/look=/_/de:lib-look:List lines 1-93 for documentation.
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.35 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.35 $
+@
+
+
+1.35
+log
+@Sticky/Silent now hides dark items, regardless of control.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/21 18:04:34 $ $Revision: 1.34 $                )
+d100 3
+d106 1
+a106 1
+
+d109 1
+a109 1
+
+d113 1
+a113 1
+
+d116 1
+a116 1
+
+d120 1
+a120 1
+
+d123 1
+a123 1
+
+d127 1
+a127 1
+
+d130 1
+a130 1
+
+d133 1
+a133 1
+
+d138 1
+a138 1
+
+d142 1
+a142 1
+
+d145 1
+a145 1
+
+d149 1
+a149 1
+
+d153 1
+a153 1
+
+d156 1
+a156 1
+
+d160 1
+a160 1
+
+d164 1
+a164 1
+
+d167 1
+a167 1
+
+d170 1
+a170 1
+
+d173 1
+a173 1
+
+d177 1
+a177 1
+
+d181 1
+a181 1
+
+d263 1
+a263 1
+
+d799 2
+a800 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.34 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.34 $
+@
+
+
+1.34
+log
+@Fixed logic flaw. If a player is viewed that has stuff, it potentially will
+bomb when trying to show the contents.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/21 03:25:05 $ $Revision: 1.33 $                )
+d100 4
+d260 1
+a260 1
+ 
+d262 1
+a262 1
+  me @@ swap controls
+d796 2
+a797 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.33 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.33 $
+@
+
+
+1.33
+log
+@Add support for the contents of containers.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/20 01:17:24 $ $Revision: 1.32 $                )
+d100 3
+d658 5
+a662 4
+    then
+    dup thing?
+    if
+      "^BLUE^Contents:" over list-contents
+d792 2
+a793 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.32 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.32 $
+@
+
+
+1.32
+log
+@Fixed issue where on mu*s that aren't using the contents-handler, that
+the look errors when it reaches the contents lister.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/19 22:12:37 $ $Revision: 1.31 $                )
+d100 4
+d656 4
+d788 2
+a789 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.31 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.31 $
+@
+
+
+1.31
+log
+@Sigh. Updated _docs property again.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/19 22:11:04 $ $Revision: 1.30 $                )
+d100 3
+d265 3
+d780 2
+a781 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.30 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.30 $
+@
+
+
+1.30
+log
+@Rearranged documentation
+Updated description and _docs property.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/19 20:04:29 $ $Revision: 1.29 $                )
+d100 4
+d772 4
+a775 4
+@@set $lib/look=/_docs:@@list $lib/look=1-95
+@@set $lib/look=/_/de:lib-look:List lines 1-95 for documentation.
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.29 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.29 $
+@
+
+
+1.29
+log
+@Amazing how one 'pop' in the wrong place does so much damage.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/19 19:34:50 $ $Revision: 1.28 $                )
+d11 17
+a27 1
+( Set of library routines for doing 'look' functions.                         )
+a97 17
+( Features to be aware of:                                                    )
+(                                                                             )
+( If you need programs to run when a player looks you can set a property in   )
+( the ~look property dir anywhere in the environment to the dbref of the      )
+( program you want to run. For example an obvious exits program could be set  )
+( in ~look/obviousexits on #0, and it would run that program. The output is   )
+( displayed after the description but before the Contents list.               )
+(                                                                             )
+( Similarly, if you set ~look/contents-handler to a program dbref, look will  )
+( call the program specified with a dbref of an item its listing in a contents)
+( list and Look in parentheses at the top of the stack. The program should    )
+( return only a string which will either be appended with parentheses to the  )
+( list OR You can specify the format of the list-item by setting the property )
+( ~/look/contents-format. In that property %normal% represents the regular    )
+( part of the string, %extra% represents the portion that your program will   )
+( return. Any other text in the property is displayed normally.               )
+( --------------------------------------------------------------------------- )
+d100 3
+d768 4
+a771 4
+@@set $lib/look=/_docs:@@list $lib/look=1-76
+@@set $lib/look=/_/de:lib-look:List lines 1-76 for documentation.
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.28 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.28 $
+@
+
+
+1.28
+log
+@Added a feature by which a muck can make local changes to the contents list
+withouth changing lib-look.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/07 21:19:52 $ $Revision: 1.27 $                )
+d101 4
+d293 1
+a293 1
+    pop pop
+d768 2
+a769 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.27 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.27 $
+@
+
+
+1.27
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/06 19:28:19 $ $Revision: 1.26 $                )
+d83 1
+d89 9
+d101 3
+d206 1
+a206 1
+ 
+d245 56
+d389 2
+a390 1
+      unparse
+d497 12
+a508 4
+    dup ok? over #0 dbcmp not and if
+      dup program? if
+        dup "LINK_OK" flag? if
+          "(Look)" swap safecall
+d510 1
+a510 1
+          pop pop pop exit
+d513 1
+a513 1
+        pop pop pop exit
+d516 1
+a516 1
+      pop pop pop exit
+d524 2
+a525 1
+  dup "~look/" nextprop "" strcmp if
+d764 2
+a765 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.26 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.26 $
+@
+
+
+1.26
+log
+@Documented the ~look property directory feature.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/05 21:32:48 $ $Revision: 1.25 $                )
+d91 3
+d685 3
+a687 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.25 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.25 $
+@
+
+
+1.25
+log
+@Removed unneeded $include statements ...no actual calls to those libraries.
+Revised library words to be in line with the standard and fixed calls to
+lib-strings and lib-unparseobj as well.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/04/05 13:42:16 $ $Revision: 1.24 $                )
+d82 7
+d91 5
+d682 2
+a683 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.24 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.24 $
+@
+
+
+1.24
+log
+@General documentation cleanup.
+Improvements made to the installer script.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/03/21 01:31:43 $ $Revision: 1.23 $                )
+d9 1
+a9 1
+( Dependencies: lib-strings, lib-stackrng, lib-match, lib-unparseobj          )
+d13 1
+a13 1
+( LOOKsafecall:  x d --                                                       )
+d18 1
+a18 1
+( LOOKunparse:  d -- s                                                        )
+d21 1
+a21 1
+( LOOKstd-filter: d -- i                                                      )
+d25 1
+a25 1
+( LOOKcontents-filter:  a d -- d... i                                         )
+d31 1
+a31 1
+( LOOKget-contents:  d -- d... i                                              )
+d38 1
+a38 1
+( LOOKlong-display:  d... i --                                                )
+d42 1
+a42 1
+( LOOKlist-objects:  d --                                                     )
+d45 1
+a45 1
+( LOOKdetail-dbmatch: d s -- s                                                )
+d48 1
+a48 1
+( LOOKdetail-desc: s --                                                       )
+d51 1
+a51 1
+( LOOKshort-list:  d... i -- s                                                )
+d57 1
+a57 1
+( LOOKshort-display:  d1 d2 d3 ... di i --                                    )
+d60 1
+a60 1
+( LOOKlist-contents:  s d --                                                  )
+d65 1
+a65 1
+( LOOKstr-desc:  s --                                                         )
+d70 1
+a70 1
+( LOOKdbstr-desc:  d s --                                                     )
+d73 1
+a73 1
+( LOOKdb-desc:  d --                                                          )
+d78 1
+a78 1
+( LOOKcmd-look:  s --                                                         )
+d84 4
+a176 2
+$include $lib/match
+$include $lib/stackrng
+d219 1
+a219 1
+    "%P" UPOspecial-unparseobj exit
+d229 1
+a229 1
+          "%P" UPOspecial-unparseobj exit
+d234 1
+a234 1
+  UPOcolor-unparseobj
+d315 1
+a315 1
+    1 - dup 2 + rotate "%P" UPOspecial-unparseobj over
+d324 1
+a324 1
+      swap 1 - swap over 3 + rotate "%P" UPOspecial-unparseobj
+d330 1
+a330 1
+    "^WHITE^and " strcat swap "%P" UPOspecial-unparseobj strcat
+d369 3
+a371 3
+    dup ";" STRsplit pop
+    "/" STRsplit swap pop
+    "thing" UPOcolor-query
+d384 1
+a384 1
+  dup "_obj/" nextprop STRblank? not swap
+d454 1
+a454 1
+      1 strcut swap pop " " STRsplit striplead striptail swap
+d499 1
+a499 1
+  over "/_/ide" getpropstr STRblank? not and if
+d650 18
+d670 2
+a671 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.23 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.23 $
+@
+
+
+1.23
+log
+@General maintenance and documentation updates
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/01/15 06:35:18 $ $Revision: 1.22 $                )
+d84 3
+d92 2
+a93 1
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+d185 2
+a186 1
+  loc @@ me @@ rot ansi_notify_except ( s -- ) ( Display string to everyone in my room except me )
+d188 1
+a188 1
+
+d192 1
+a192 1
+
+d214 1
+a214 1
+
+d353 1
+a353 1
+  
+d392 1
+a392 1
+  
+d427 1
+a427 1
+  
+d435 1
+a435 1
+  
+d444 1
+a444 1
+  
+d544 1
+a544 1
+
+d568 1
+a568 1
+
+a617 1
+@@set $lib/look=/_/de:lib-look:List lines 3-60 for documentation.
+d649 3
+a651 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.22 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.22 $
+@
+
+
+1.22
+log
+@Fixed the problem where programs relying on lib-reflist were expecting
+non feni'd and non-colorized output.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2005/01/14 16:32:13 $ $Revision: 1.21 $                )
+d84 4
+a165 3
+  
+  Revision 1.1  1998/08/23 15:47:21  glow
+  Initial revision
+d645 2
+a646 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.21 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.21 $
+@
+
+
+1.21
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/08/04 18:50:53 $ $Revision: 1.20 $                )
+d84 3
+d326 22
+d596 1
+d639 1
+a640 1
+
+d644 2
+a645 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.20 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.20 $
+@
+
+
+1.20
+log
+@Missed part of the calls when checking for #0.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/08/04 18:41:15 $ $Revision: 1.19 $                )
+d27 1
+a27 1
+(      range on the stack of the filtered contents of the object.  The first  )
+d34 2
+a35 2
+(      Dark rooms don't list anything unless the room or the objects are      )
+(      yours, dark objects not owned by you don't show, and you don't show.   )
+d43 1
+a43 1
+(      Lists all the 'objects' that are setup by the @@object/@@detail commands )
+d74 1
+a74 1
+(      Does a full description of the object, including name and succ/fail    )
+d84 3
+d618 2
+a619 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.19 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.19 $
+@
+
+
+1.19
+log
+@Fix so that if you have an @@ sign in your desc it doesn't try to use it
+to call #0 as a program.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/05/19 18:50:10 $ $Revision: 1.18 $                )
+d84 4
+d425 1
+a425 1
+      dup ok?
+d615 2
+a616 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.18 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.18 $
+@
+
+
+1.18
+log
+@Removed erroneous striplead and striptail, which would mess carefully spaced
+descriptions and lsedit lists.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/22 19:44:21 $ $Revision: 1.17 $                )
+d84 4
+d372 1
+a372 1
+    dup ok? if
+d611 2
+a612 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.17 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.17 $
+@
+
+
+1.17
+log
+@Fixed issue where darked players were hidden from wizards.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/22 17:25:53 $ $Revision: 1.16 $                )
+d84 3
+d404 1
+a404 1
+  striplead striptail dup
+d607 2
+a608 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.16 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.16 $
+@
+
+
+1.16
+log
+@Documentation Cleanup
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/22 17:16:22 $ $Revision: 1.15 $                )
+d84 3
+d218 2
+a219 2
+    prog "@@allowdarkplayers" getpropstr "yes" strcmp not if
+      dup "@@/dark" getpropstr "yes" strcmp swap pop exit
+d221 5
+a225 1
+      pop 1 exit
+d229 2
+a230 2
+    prog "@@allowdarkplayers" getpropstr "yes" strcmp not if
+      dup "@@/dark" getpropstr "yes" strcmp swap pop exit
+d232 5
+a236 1
+      pop 1 exit
+d604 2
+a605 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.15 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.15 $
+@
+
+
+1.15
+log
+@Added support for player darking via the /@@/dark:yes prop
+@
+text
+@d5 2
+a6 1
+( cmd/lib-look: $Date: 2004/04/22 01:52:09 $ $Revision: 1.14 $                )
+d84 3
+d593 2
+a594 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.14 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Fixed issues with LOOKshort-list where it wasn't colorizing as you might
+expect it to.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/20 22:05:52 $ $Revision: 1.13 $                )
+d83 4
+d210 14
+a223 2
+  dup player? if pop 1 exit then
+  dup dup thing? swap "z" flag? and if pop 1 exit then
+d589 2
+a590 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.13 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Okay. This time, I REALLY made std-filter public. And fixed the docs up
+properly.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-look...
+d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/20 21:55:45 $ $Revision: 1.12 $                )
+d83 4
+d259 1
+a259 1
+    1 - dup 2 + rotate name over
+d268 2
+a269 1
+      swap 1 - swap over 3 + rotate name ", " strcat strcat
+d274 1
+a274 1
+    "and " strcat swap name strcat
+d287 1
+a287 1
+: list-details ( d -- )
+d303 1
+a303 1
+; PUBLIC list-details
+d311 1
+a311 1
+    list-details
+d562 1
+a562 1
+@@set $lib/look=/_defs/LOOKlist-details:"$lib/look" match "list-details" call
+d573 3
+a575 3
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.12 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.12 $
+"Installation of lib-look complete.
+@
+
+
+1.12
+log
+@Made the standard filter [LOOKstd-filter] public so extended filters can be
+written without having to recreate the functionality of std-filter.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/15 21:15:11 $ $Revision: 1.11 $                )
+a80 1
+  
+d83 4
+d93 1
+a93 1
+
+d96 1
+a96 1
+
+d100 1
+a100 1
+
+d104 1
+a104 1
+
+d110 1
+a110 1
+
+d213 1
+a213 1
+;
+d567 3
+a569 3
+@@set $lib/look=/_docs:@@list $lib/look=1-71
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.11 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@New Feature: ~look props. Similar in function to ~connect/~arrive/~idle
+props, you can now do: @@set <item>=~look/<name>:<ref> and the program
+<ref> will be executed when <item> is looked at. As you might expect, the
+property may be set on parent rooms or #0, to have programs that are
+executed for the entire area/muck.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/13 23:18:24 $ $Revision: 1.10 $                )
+d20 4
+d84 7
+d560 2
+d565 2
+a566 2
+@@set $lib/look=/_lib-version:1.31FM$Revision: 1.10 $
+@@set $lib/look=/_version:1.31FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@Added support for IDESCs
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/12 15:50:55 $ $Revision: 1.9 $                 )
+d80 3
+d297 53
+a349 1
+ 
+d408 1
+d497 1
+a497 1
+    db-desc
+d517 37
+a553 36
+@@register #me lib-look=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=S
+@@set $tmp/prog1=H
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_/de:lib-look:List lines 3-60 for documentation.
+@@set $tmp/prog1=/_defs/.cmd-look:"$lib/look" match "cmd-look" call
+@@set $tmp/prog1=/_defs/.contents-filter:"$lib/look" match "contents-filter" call
+@@set $tmp/prog1=/_defs/.db-desc:"$lib/look" match "db-desc" call
+@@set $tmp/prog1=/_defs/.dbstr-desc:"$lib/look" match "dbstr-desc" call
+@@set $tmp/prog1=/_defs/.get-contents:"$lib/look" match "get-contents" call
+@@set $tmp/prog1=/_defs/.list-contents:"$lib/look" match "list-contents" call
+@@set $tmp/prog1=/_defs/.long-display:"$lib/look" match "long-display" call
+@@set $tmp/prog1=/_defs/.safecall:"$lib/look" match "safecall" call
+@@set $tmp/prog1=/_defs/.short-display:"$lib/look" match "short-display" call
+@@set $tmp/prog1=/_defs/.short-list:"$lib/look" match "short-list" call
+@@set $tmp/prog1=/_defs/.str-desc:"$lib/look" match "str-desc" call
+@@set $tmp/prog1=/_defs/.unparse:"$lib/look" match "unparse" call
+@@set $tmp/prog1=/_defs/LOOKcmd-look:"$lib/look" match "cmd-look" call
+@@set $tmp/prog1=/_defs/LOOKcontents-filter:"$lib/look" match "contents-filter" call
+@@set $tmp/prog1=/_defs/LOOKdb-desc:"$lib/look" match "db-desc" call
+@@set $tmp/prog1=/_defs/LOOKdbstr-desc:"$lib/look" match "dbstr-desc" call
+@@set $tmp/prog1=/_defs/LOOKdetail-dbmatch:"$lib/look" match "detail-dbmatch" call
+@@set $tmp/prog1=/_defs/LOOKdetail-desc:"$lib/look" match "detail-desc" call
+@@set $tmp/prog1=/_defs/LOOKget-contents:"$lib/look" match "get-contents" call
+@@set $tmp/prog1=/_defs/LOOKlist-contents:"$lib/look" match "list-contents" call
+@@set $tmp/prog1=/_defs/LOOKlist-details:"$lib/look" match "list-details" call
+@@set $tmp/prog1=/_defs/LOOKlong-display:"$lib/look" match "long-display" call
+@@set $tmp/prog1=/_defs/LOOKsafecall:"$lib/look" match "safecall" call
+@@set $tmp/prog1=/_defs/LOOKshort-display:"$lib/look" match "short-display" call
+@@set $tmp/prog1=/_defs/LOOKshort-list:"$lib/look" match "short-list" call
+@@set $tmp/prog1=/_defs/LOOKstr-desc:"$lib/look" match "str-desc" call
+@@set $tmp/prog1=/_defs/LOOKunparse:"$lib/look" match "unparse" call
+@@set $tmp/prog1=/_docs:@@list $lib/look=1-71
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.9 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@Fixed bug in look that caused it to display dbrefs & flags for players that
+had 'color' turned on.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/12 14:57:51 $ $Revision: 1.8 $                 )
+d80 4
+d342 1
+a342 1
+  dup room?
+d346 6
+a351 1
+  dup "/_/de" "(@@Desc)" 1 parseprop
+d353 1
+a353 1
+  dup room?
+a354 2
+$ifndef __version<Muck2.2fb4.5
+    (patch since LOCKED? goes too deep)
+a355 3
+$else
+    0
+$endif
+d495 2
+a496 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.8 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Fixed issue where obvious things like 'me' and 'here' didn't match correctly
+in cmd-look. Changed failed messages to use the FAIL color code.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/11 19:58:28 $ $Revision: 1.7 $                 )
+d80 4
+d157 1
+a157 2
+  me @@ "Silent" flag?
+  if
+d164 1
+a164 1
+      dup "Chown_OK" flag? not
+d491 2
+a492 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.7 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Changed detail-desc in preparation for adding functionality to match
+details against players and things in the room.
+Cleaned up the docs so that they display correctly for the MUF editor's
+'view' command.
+@
+text
+@d5 1
+a5 1
+( cmd/lib-look: $Date: 2004/04/11 18:46:00 $ $Revision: 1.6 $                 )
+d80 6
+d328 1
+a328 1
+    pop "I don't see that here." tell exit
+d332 1
+a332 1
+    pop "I don't know which one you mean!" tell exit
+d418 1
+a418 1
+    pop pop 1 exit
+d426 9
+a434 1
+    pop "here" match db-desc exit
+a435 2
+  dup detail-desc if exit then
+  match db-desc
+d488 2
+a489 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.6 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Added the library calls LOOKxxx, to be more inline with the standard.
+Added support for @@object/@@detail details. Correspondingly added some
+related library calls.
+@
+text
+@d1 1
+d5 1
+a5 2
+( cmd/lib-look: $Date: 2004/04/10 17:24:47 $ $Revision: 1.5 $                 )
+( Originally part of the FuzzBall MUF distribution.                           )
+d8 1
+d10 66
+a75 61
+( Set of library routines for doing 'look' functions.
+  The following functions are included in this library:
+  LOOKsafecall:  x d --
+       Takes a dbref which is assumed to be a command or @@desc-like program
+       that takes one parameter, usually a string, and returns no values.]
+       It ensures that none of the variables me, loc, trigger, or command
+       are modified, and that no garbage is left behind on the stack.
+  LOOKunparse:  d -- s
+       Takes a dbref, and returns either just its name, or the name plus
+       flags, depending on the permissions of me @@.
+  LOOKcontents-filter:  a d -- d... i
+       Takes the address of a 'filter' routine and a dbref, and returns a
+       range on the stack of the filtered contents of the object.  The first
+       item to print is the bottom of the stack range.  The filter should
+       be  d -- i; it takes a dbref and returns a true/false value to say
+       whether or not the dbref should be put into the list.
+  LOOKget-contents:  d -- d... i
+       Takes a dbref, and returns the list of its contents, filtered through
+       the standard filter which acts like the server's contents list:
+       Dark rooms don't list anything unless the room or the objects are
+       yours, dark objects not owned by you don't show, and you don't show.
+       This list has the first element in the contents at the bottom of the
+       stack.
+  LOOKlong-display:  d... i --
+       List the dbref stack range given, in the usual format for the server.
+       All elements on separate lines, using unparse.  The bottom element is
+       printed first.
+  LOOKlist-objects:  d -- 
+       Lists all the 'objects' that are setup by the @@object/@@detail commands
+       Parallels long-display.
+  LOOKshort-list:  d... i -- s
+       Turns the range of dbrefs on the stack into a properly formatted
+       string, with commas.  1 element is just returned, 2 elements returns
+       '1 and 2', more elements return '1, 2, 3, and 4' or similar.  Returns
+       a null string if there are no elements.  Again, the bottom element is
+       first in the list.
+  LOOKshort-display:  d... i --
+       Calls short-list, then prints out "You see <string>." to the user.
+       Prints "You see nothing." if nothing is on the list.
+  LOOKlist-contents:  s d --
+       Calls get-contents followed by long-display and list-objects to print
+       out all of the contents of the given dbref. If there are any contents
+       listed, then  the string on the stack is printed out, for "Contents:"
+       or the like. If the contents list is empty, the string is ignored.
+  LOOKstr-desc:  s --
+       Takes string 's', and prints it out as a description. Matches the
+       '@@###' and '@@$prog' values properly, and uses them with the present
+       trigger value.  If neither of these exist, or if they're invalid,
+       the rest of the string is just printed out. Does NOT parse MPI.
+  LOOKdbstr-desc:  d s --
+       Runs str-desc, using the value d on the stack as the effective
+       trigger value. Parses MPI as appropiate.
+  LOOKdb-desc:  d --
+       Does a full description of the object, including name and succ/fail
+       if the dbref given is a room, and contents. All programs run with
+       the dbref given in 'trigger @@'. Will return the proper values for
+       dbref's #-1 and #-2 as well. Parses MPI as appropiate.
+  LOOKcmd-look:  s --
+       Does a match function, then calls db-desc with the results.  This
+       will simulate the usual 'look' command.
+)
+d77 1
+d80 5
+a103 1
+$include $lib/glow
+a107 1
+$include $lib/case
+d252 1
+a252 1
+: list-objects ( d -- )
+d268 1
+a268 1
+; PUBLIC list-objects
+d276 1
+a276 1
+    list-objects
+d403 1
+a403 1
+;
+d405 2
+a406 1
+: detail-match ( s -- )
+d410 1
+a410 3
+  dup "" strcmp not if
+    0 exit
+  else
+d412 1
+a412 1
+    pop 1 exit
+d414 2
+a415 1
+;
+d422 1
+a422 1
+  dup detail-match if exit then
+a454 1
+@@set $tmp/prog1=/_defs/.list-objects:"$lib/look" match "list-objects" call
+d464 2
+d468 1
+a468 1
+@@set $tmp/prog1=/_defs/LOOKlist-objects:"$lib/look" match "list-objects" call
+d475 4
+a478 4
+@@set $tmp/prog1=/_docs:@@list $lib/look=3-60
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.5 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.5 $
+ff"Installation of lib-look complete.
+@
+
+
+1.5
+log
+@Fixed minor issues in the std-filter function.
+@
+text
+@d4 4
+a7 2
+( cmd/lib-look: $Date: 2004/04/10 15:09:40 $ $Revision: 1.4 $
+  Originally part of the FuzzBall MUF distribution.                           )
+d11 1
+a11 1
+  safecall:  x d --
+d16 1
+a16 1
+  unparse:  d -- s
+d19 1
+a19 1
+  contents-filter:  a d -- d... i
+d25 1
+a25 1
+  get-contents:  d -- d... i
+d32 1
+a32 1
+  long-display:  d... i --
+d36 4
+a39 1
+  short-list:  d... i -- s
+d45 1
+a45 1
+  short-display:  d... i --
+d48 7
+a54 7
+  list-contents:  s d --
+       Calls get-contents followed by long-display to print out all of the
+       contents of the given dbref.  If there are any contents listed, then
+       the string on the stack is printed out, for "Contents:" or the like.
+       If the contents list is empty, the string is ignored.
+  str-desc:  s --
+       Takes string 's', and prints it out as a description.  Matches the
+d57 2
+a58 2
+       the rest of the string is just printed out.
+  dbstr-desc:  d s --
+d60 2
+a61 2
+       trigger value.
+  db-desc:  d --
+d65 2
+a66 2
+       dbref's #-1 and #-2 as well.
+  cmd-look:  s --
+d73 3
+d79 1
+a79 1
+
+d84 1
+a84 1
+
+d87 1
+a87 1
+
+a89 1
+
+d158 1
+d242 18
+d261 2
+a262 1
+  get-contents dup
+d264 1
+a264 1
+    dup 2 + rotate tell
+d266 1
+d305 1
+a305 1
+  str-desc
+d370 36
+d410 1
+a410 1
+    pop "here"
+d412 1
+d445 1
+d451 13
+d465 2
+a466 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.4 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Fixed issue where if you didn't control the item, or you were set silent,
+the database item name wasn't colorized.
+@
+text
+@d4 1
+a4 1
+( cmd/lib-look: $Date: 2004/04/08 13:38:36 $ $Revision: 1.3 $
+d58 2
+a59 2
+       if the dbref given is a room, and contents.  All programs run with
+       the dbref given in 'trigger @@'.  Will return the proper values for
+d68 4
+d85 1
+d90 1
+d152 9
+a160 6
+  begin
+    0 over me @@ dbcmp not
+  while
+    over program? dup
+    if
+      pop over control? 3 pick "Link_OK" flag? or not
+d162 3
+a164 9
+    not
+  while
+    over room? not
+  while
+    over dark? not
+  while
+    pop 1 1
+  until
+  swap pop
+d306 1
+a306 1
+      dup "/_/fl" "(@@Fail)" 1 parseprop
+d312 6
+a317 2
+      dup "/_/ofl" "(@@OFail)" 1 parseprop 
+      otell
+d325 6
+a330 2
+      dup "/_/osc" "(@@OSucc)" 1 parseprop
+      otell
+d386 2
+a387 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.3 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Fixed issues where lib-look didn't parse color in descriptions by default.
+Fixed issue where lib-look didn't parse MPI in descriptions and messages.
+Further cleaned up dependency on macros.
+@
+text
+@d4 1
+a4 1
+( cmd/lib-look: $Date: 2004/03/26 03:21:18 $ $Revision: 1.2 $
+d68 5
+d126 1
+a126 1
+    name exit
+d136 1
+a136 1
+          name exit
+d141 1
+a141 1
+  color-unparseobj
+d375 2
+a376 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.2 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Reduced macro/library dependence.
+@
+text
+@d4 1
+a4 1
+( cmd/lib-look: $Date: 1998/08/23 15:47:21 $ $Revision: 1.1 $
+d68 3
+a75 1
+( $include $lib/glowstandard )
+d79 1
+d111 1
+a111 1
+  me @@ swap .controls
+d136 1
+a136 1
+  unparseobj
+d237 1
+a237 1
+  .stripspaces dup
+d243 1
+a243 1
+      1 strcut swap pop " " .split .stripspaces swap
+d252 1
+a252 1
+        dup trigger @@ owner swap .controls over "Link_OK" flag? or
+d287 2
+a288 1
+  dup desc str-desc
+d298 1
+a298 1
+      dup fail dup
+d304 2
+a305 1
+      dup ofail otell
+d307 1
+a307 1
+      dup succ dup
+d313 2
+a314 1
+      dup osucc otell
+d316 1
+a316 1
+    "Contents:" over list-contents
+d320 1
+a320 1
+      "Carrying:" over list-contents
+d355 1
+a355 1
+@@set $tmp/prog1=M2
+d370 2
+a371 2
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision: 1.1 $
+@@set $tmp/prog1=/_version:1.31FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+( cmd/lib-look: $Date$ $Revision$
+d67 4
+a70 1
+  $Log$
+d73 1
+a73 1
+$include $lib/glowstandard
+d85 8
+d114 1
+a114 1
+ 
+d188 1
+a188 1
+    .tell
+d217 1
+a217 1
+    "You see " swap strcat "." strcat .tell
+d219 1
+a219 1
+    "You see nothing." .tell
+d226 1
+a226 1
+    dup 2 + rotate .tell
+d238 1
+a238 1
+      .tell
+d253 1
+a253 1
+          pop pop "Permission Denied" .tell
+d256 1
+a256 1
+        pop .tell
+d260 1
+a260 1
+    pop "You see nothing special." .tell
+d273 1
+a273 1
+    pop "I don't see that here." .tell exit
+d277 1
+a277 1
+    pop "I don't know which one you mean!" .tell exit
+d282 1
+a282 1
+    dup unparse .tell
+d300 1
+a300 1
+      dup ofail .otell
+d308 1
+a308 1
+      dup osucc .otell
+d364 3
+a366 3
+@@set $tmp/prog1=/_lib-version:1.31FM$Revision$
+@@set $tmp/prog1=/_version:1.31FM$Revision$
+"Installation of lib-look complete.@

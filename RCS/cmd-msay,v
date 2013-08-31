@@ -1,0 +1,79 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.28.17.50.28;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-msay...
+@@prog cmd-msay
+1 99999 d
+1 i
+( cmd-msay: $Date$ $Revision$ )
+( Author: ????
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+: msay
+  dup not if pop
+    "Message substituting speech -- msay" .tell
+    " " .tell
+    "You can set format strings with the following, where %m will" .tell
+    "substitute whatever you are saying into the format string." .tell
+    " " .tell
+    "@@set me=_say:You say, \"%m\"  -- what you see" .tell
+    "@@set me=_osay:says, \"%m\"    -- what everyone else in the room sees"
+    .tell
+    "To make 'msay' your normal say, type: alias say=msay $*" .tell
+    exit
+  then
+  me @@ .mpi? if me @@ swap "(say)" 1 parsempi then
+  "^^" "^" subst
+  me @@ "_say" getpropstr dup not if
+    pop "You say, \"%m\""
+  then
+  swap "^YELLOW^" swap strcat "^AQUA^" strcat swap
+  over "%m" subst "^AQUA^" swap strcat
+  me @@ swap .wrapnotify
+  
+  me @@ "_osay" getpropstr dup not if pop "says, \"%m\"" then
+  "^AQUA^" me @@ name strcat " " strcat swap strcat
+  swap "%m" subst
+  loc @@ contents begin
+    dup #-1 dbcmp not while
+    dup player? not if next continue then
+    dup me @@ dbcmp if next continue then
+    dup 3 pick .wrapnotify
+  next repeat pop pop
+;
+.
+c
+q
+@@register cmd-msay=cmd/msay
+@@register #me cmd-msay=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W3
+@@action msay=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=/_/de:@@$cmd/msay
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-msay complete.
+@

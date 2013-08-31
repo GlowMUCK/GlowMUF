@@ -1,0 +1,884 @@
+head	1.17;
+access;
+symbols
+	GlowMUF1-1-1:1.17
+	GlowMUF102:1.9;
+locks; strict;
+comment	@# @;
+
+
+1.17
+date	2006.10.14.17.23.05;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2006.07.24.13.42.38;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.09.25.13.20.40;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.04.07.21.11.11;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2005.04.05.15.38.24;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2005.04.03.15.43.46;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2004.03.26.03.16.32;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2004.03.02.03.26.22;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.03.01.23.31.43;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2004.03.01.16.58.26;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2001.02.23.16.18.39;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2000.01.10.18.53.35;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.07.28.19.22.05;	author glow;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.28.19.21.11;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.28.19.18.38;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.17
+log
+@Fixed flaw in uniquerng that didn't allow for ranges containing only one
+element.
+@
+text
+@wh me=Beginning installation of lib-stackrng...
+@@prog lib-stackrng
+1 99999 d
+1 i
+( lib-stackrng: $Date: 2006/07/24 13:42:38 $ $Revision: 1.16 $                )
+( Purpose: Stack manipulation of an entire range                              )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Stack based range handling -- SRNG                                          )
+( 'offset' is how many stack items are between range and parameters           )
+( 'pos' is the position within the range you wish to deal with.               )
+( 'num' is the qunatity of range items to deal with.                          )
+(                                                                             )
+( A 'range' is defines as a set of related items on the stack with an integer )
+( 'count' of them on the top. For example: "bat" "cat" "dog" 3                )
+(                                                                             )
+( SRNG-extractrng: {range} ... offset num pos -- {range'} ... {subrng}        )
+(   pulls a subrange out of a range buried in the stack, removing them.       )
+(                                                                             )
+( SRNG-copyrng: {range} ... offset num pos -- {range} ... {range}             )
+(   copies a subrange out of a range buried in the stack.                     )
+(                                                                             )
+( SRNG-deleterng: {range} ... offset num pos -- {range'}                      )
+(   deletes a subrange from a range buried on the stack.                      )
+(                                                                             )
+( SRNG-insertrng: {range1} ... {range2} offset pos -- {range}                 )
+(   inserts a subrange into the middle of a buried range on the stack.        )
+(                                                                             )
+( SRNG-filterrng: {range} funcaddr -- {range'} {filtrdrange}                  )
+(   Takes the given range and tests each item with the given filter function  )
+(   address. The function takes a single data value and returns an integer.   )
+(   If the integer is non-zero, it pulls that data item out of the range and  )
+(   puts it into the filtered range. The data items can be of any type.       )
+(                                                                             )
+( SRNG-uniquerng: {range} -- {original-range} {unique-range} {duplicate-range})
+(   Takes the given range and identifies duplicate items. Returns the original)
+(   range [note that the order may change], a range containing all items      )
+(   without duplicates, and a third range containing the items that were      )
+(   removed.                                                                  )
+(                                                                             )
+( SRNG-catrng: {range1} {range2} -- {range}                                   )
+(   concatenates two ranges into one range.                                   )
+(                                                                             )
+( SRNG-poprng: {range} --                                                     )
+(   removes a range from the stack.                                           )
+(                                                                             )
+( SRNG-swaprng: {range1} {range2} -- {range2} {range1}                        )
+(   takes two ranges on the stack and swaps them.                             )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-stackrng,v $
+  Revision 1.16  2006/07/24 13:42:38  feaelin
+  Added SRNG-uniquerng which filters ranges for the unique items in the range.
+
+  Revision 1.15  2005/09/25 13:20:40  feaelin
+  Documentation updates.
+ 
+  Revision 1.14  2005/04/07 21:11:11  feaelin
+  Library Symbol Added
+ 
+  Revision 1.13  2005/04/05 15:38:24  feaelin
+  Added aliases for library words to make the library use the new
+  word-name standard.
+ 
+  Revision 1.12  2005/04/03 15:43:46  feaelin
+  Documentation cleanup, whitespace fixes, script updated.
+ 
+  Revision 1.11  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.10  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+ 
+  Revision 1.9  2004/03/26 03:16:32  feaelin
+  Fixed bug with 'swaprange' where it didn't finish
+  properly.
+ 
+  Revision 1.8  2004/03/02 03:26:22  feaelin
+  Fixed bugs in swaprng. It now works as advertised.
+ 
+  Revision 1.7  2004/03/01 23:31:43  feaelin
+  Fixed logic flaws in filterrange
+ 
+  Revision 1.6  2004/03/01 16:58:26  feaelin
+  Added SRNGxxx entries, so future uses can be more obvious.
+ 
+  Revision 1.5  2001/02/23 16:18:39  feaelin
+  Fixed incompatibility problem with older versions that have been upgraded
+  Required adding a 'removal' of a definition to insure that a conflict
+  between the stackrng def of popn didn't interfere with the inserver one.
+ 
+  Revision 1.4  2000/01/10 18:53:35  feaelin
+  Fixed documentation...not all lines were being listed.
+ 
+  Revision 1.3  1998/07/28 19:22:05  feaelin
+  Fixed _lib-version number.
+ 
+  Revision 1.2  1998/07/28 19:21:11  feaelin
+  Removed popoffn and replaced the definition of sr-poprng with it simply
+  calling the inserver 'popn'.
+)
+( --------------------------------------------------------------------------- )
+ 
+: catranges ( {rng1} {rng2} -- {rng} )
+    dup 2 + rotate +
+;
+ 
+: copy-loop ( {rng} ... {rng2} offset num pos -- {rng} ... {rng} )
+    4 pick 4 pick + 5 + pick over < 3 pick 1 < or if pop pop pop exit then
+    ( {rng} ... {rng2} offset num pos )
+    4 pick 4 pick + 5 + pick
+    ( {rng} ... {rng2} offset num pos xc)
+    5 pick + 4 pick + 6 + over - pick
+    ( {rng} ... {rng2} offset num pos xn)
+    5 rotate 1 + -5 rotate -5 rotate
+    ( {rng} ... {rng2} offset num pos)
+    1 + swap 1 - swap
+    'copy-loop jmp
+;
+ 
+: copyrange ( {rng} ... offset num pos -- {rng} ... {rng} )
+    0 -4 rotate copy-loop
+;
+ 
+: extract-loop ( {rng} ... {rng2} offset num pos -- {rng} ... {rng} )
+    4 pick 4 pick + 6 + dup pick 3 pick <
+    4 pick 1 < or if pop pop pop pop exit then
+    ( {rng} ... {rng2} offset num pos rot)
+    dup pick over + 1 + 3 pick - rotate
+    ( {rng} ... {rng2} offset num pos rot xn)
+    swap dup 1 + rotate 1 - swap -1 * rotate
+    ( {rng} ... {rng2} offset num pos xn)
+    -5 rotate 4 rotate 1 + -4 rotate
+    ( {rng} ... {rng2} offset num pos)
+    swap 1 - swap
+    'extract-loop jmp
+;
+ 
+: extractrange ( {rng} ... offset num pos -- {rng'} ... {subrng} )
+  0 -4 rotate extract-loop
+;
+ 
+: swapranges ( {rng1} {rng2} -- {rng2} {rng1} )
+    dup 1 + dup 2 + pick 1 extractrange
+    dup dup 3 + pick + 3 + rotate pop
+;
+ 
+: deleterange  ( {rng} ... offset num pos -- {rng'} )
+    extractrange popn
+;
+ 
+: insertrange  ( {rng1} ... {rng2} offset pos-- {rng} )
+    3 pick not if pop pop pop exit then
+    ( {rng1} ... {rng2} offset pos )
+    rot 1 - rot rot 4 rotate
+    ( {rng1} ... {rng2} offset pos elem )
+    4 pick 5 + 4 pick + dup 2 + dup rotate
+    ( {rng1} ... {rng2} offset pos elem rot rots rng1c )
+    1 + dup rot -1 * rotate +
+    ( {rng1} ... {rng2} offset pos elem rot )
+    3 pick - -1 * rotate
+    ( {rng1} ... {rng2} offset pos )
+    'insertrange jmp
+;
+ 
+: filterrange-loop ( {rng} {rng2} funcaddr pnt -- {rng'} {rng2'} )
+   dup 0 = if pop pop exit then     (If done, then clean up and exit)
+   3 pick over + 4 + pick           (get the datum from the old range)
+   3 pick execute if                (check to see if datum is to be filtered)
+     3 pick over + 4 + rotate         (get data from old range)
+     -4 rotate                        (out it in the new one)
+     rot 1 + rot rot                  (Increment the new range counter)
+     3 pick 4 + pick 1 -              (decrememnt the old range counter)
+     4 pick 4 + put                   (and put it back)
+   then
+   1 - 'filterrange-loop jmp        (repeat until done.)
+;
+ 
+: filterrange ( {rng} funcaddr -- {rng'} {filtrdrng} )
+   0 swap 3 pick filterrange-loop
+;
+
+( This is needed because the sort prim sorts dbref by name, which won't work ) 
+: dbref-sort ( d1 d2 ... di i -- d1 d2 ... di i )
+  dup begin
+    dup 2 + pick intostr over 2 + put
+  1 - dup 0 = until
+  pop
+  0 sort
+  dup begin
+    dup 2 + pick atoi dbref over 2 + put
+  1 - dup 0 = until
+  pop
+;
+
+( Sort prim doesn't support integers? Why...)
+: integer-sort ( d1 d2 ... di i -- d1 d2 ... di i )
+  dup begin
+    dup 2 + pick intostr over 2 + put
+  1 - dup 0 = until
+  pop
+  0 sort
+  dup begin
+    dup 2 + pick atoi over 2 + put
+  1 - dup 0 = until
+  pop
+;
+
+: string-compare
+  strcmp not
+;
+ 
+: dbref-compare
+  dbcmp
+;
+ 
+: int-compare
+  =
+;
+ 
+: SRNG-uniquerange ( range -- orig-range unique-range duplicates-range )
+  dup int? not if
+    "lib-stackrng: SRNG-uniquerng called without an integer on top of the stack."
+    abort
+  then 
+  dup 1 = if 
+    over 1 0 exit
+  then
+  dup not if 0 0 exit then
+  dup intostr "?" swap strcat " i" strcat checkargs
+  over 
+  dup string? if
+    pop 0 sort 'string-compare
+  else
+    dup dbref? if 
+      pop dbref-sort 'dbref-compare
+    else
+      int? if integer-sort 'int-compare then
+    then
+  then
+  over 2 + pick 1 0 4 rotate ( range unique-range dup-range address )
+  5 pick 1 - ( rng rng rng a count )
+  begin
+    3 pick ( rng rng rng a count dup-range-cnt )
+    dup 5 + pick ( rng rng rng a count dup-range-cnt uniqu-range-cnt )
+    ( rng rng a count dup-range-cnt uniqu-range-cnt d )
+    dup 3 pick + 7 + 4 pick + pick 
+    dup 4 rotate 8 + pick
+    6 pick execute
+    if ( 0 = no match, 1 = match )
+      swap pop -4 rotate 3 pick 1 + 3 put
+    else
+      swap pop 4 pick 5 + 0 swap - rotate 3 pick 
+      4 + pick 1 + 
+      4 pick 4 + put
+    then
+    1 -
+  dup 0 = until  
+  pop pop
+; public SRNG-uniquerange
+
+ 
+public catranges
+public extractrange
+public swapranges
+public copyrange
+public deleterange
+public insertrange
+public filterrange
+.
+c
+q
+@@register lib-stackrng=lib/stackrng
+@@set $lib/stackrng=L
+@@set $lib/stackrng=M3
+@@set $lib/stackrng=/_defs/popn:
+@@set $lib/stackrng=/_defs/sr-catrng:"$lib/stackrng" match "catranges" call
+@@set $lib/stackrng=/_defs/sr-copyrng:"$lib/stackrng" match "copyrange" call
+@@set $lib/stackrng=/_defs/sr-deleterng:"$lib/stackrng" match "deleterange" call
+@@set $lib/stackrng=/_defs/sr-extractrng:"$lib/stackrng" match "extractrange" call
+@@set $lib/stackrng=/_defs/sr-filterrng:"$lib/stackrng" match "filterrange" call
+@@set $lib/stackrng=/_defs/sr-insertrng:"$lib/stackrng" match "insertrange" call
+@@set $lib/stackrng=/_defs/sr-poprng:popn
+@@set $lib/stackrng=/_defs/sr-swaprng:"$lib/stackrng" match "swapranges" call
+@@set $lib/stackrng=/_defs/SRNGcatrng:"$lib/stackrng" match "catranges" call
+@@set $lib/stackrng=/_defs/SRNGcopyrng:"$lib/stackrng" match "copyrange" call
+@@set $lib/stackrng=/_defs/SRNGdeleterng:"$lib/stackrng" match "deleterange" call
+@@set $lib/stackrng=/_defs/SRNGextractrng:"$lib/stackrng" match "extractrange" call
+@@set $lib/stackrng=/_defs/SRNGfilterrng:"$lib/stackrng" match "filterrange" call
+@@set $lib/stackrng=/_defs/SRNGinsertrng:"$lib/stackrng" match "insertrange" call
+@@set $lib/stackrng=/_defs/SRNGpoprng:popn
+@@set $lib/stackrng=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
+@@set $lib/stackrng=/_defs/SRNG-catrng:"$lib/stackrng" match "catranges" call
+@@set $lib/stackrng=/_defs/SRNG-copyrng:"$lib/stackrng" match "copyrange" call
+@@set $lib/stackrng=/_defs/SRNG-deleterng:"$lib/stackrng" match "deleterange" call
+@@set $lib/stackrng=/_defs/SRNG-extractrng:"$lib/stackrng" match "extractrange" call
+@@set $lib/stackrng=/_defs/SRNG-filterrng:"$lib/stackrng" match "filterrange" call
+@@set $lib/stackrng=/_defs/SRNG-insertrng:"$lib/stackrng" match "insertrange" call
+@@set $lib/stackrng=/_defs/SRNG-uniquerng:"$lib/stackrng" match "SRNG-uniquerange" call
+@@set $lib/stackrng=/_defs/SRNG-poprng:popn
+@@set $lib/stackrng=/_defs/SRNG-swaprng:"$lib/stackrng" match "swapranges" call
+@@set $lib/stackrng=/_docs:@@list $lib/stackrng=1-47
+@@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-47 for documentation or use @@view $lib/stackrng
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.16 $
+@@set $lib/stackrng=/_lib-symbol:SRNG
+wh me=Installation of lib-stackrng completed
+@
+
+
+1.16
+log
+@Added SRNG-uniquerng which filters ranges for the unique items in the range.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2005/09/25 13:20:40 $ $Revision: 1.15 $                )
+d54 3
+d229 4
+a232 1
+  dup not if exit then
+d307 1
+a307 1
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.15 $
+@
+
+
+1.15
+log
+@Documentation updates.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2005/04/07 21:11:11 $ $Revision: 1.14 $                )
+d37 6
+d54 3
+d182 77
+d296 1
+d299 3
+a301 3
+@@set $lib/stackrng=/_docs:@@list $lib/stackrng=1-41
+@@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-41 for documentation.
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Library Symbol Added
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2005/04/05 15:38:24 $ $Revision: 1.13 $                )
+a9 1
+( Originally from the FuzzBall MUF distribution				      )
+d48 3
+d54 1
+a54 1
+
+d57 1
+a57 1
+
+d60 1
+a60 1
+
+d64 1
+a64 1
+
+d68 1
+a68 1
+
+d71 1
+a71 1
+
+d74 1
+a74 1
+
+d77 1
+a77 1
+
+d82 1
+a82 1
+
+d85 1
+a85 1
+
+d88 1
+a88 1
+
+d131 1
+a131 1
+    0 -4 rotate extract-loop
+d212 3
+a214 3
+@@set $lib/stackrng=/_docs:@@list $lib/stackrng=1-42
+@@set $lib/stackrng=/_/de:lib-stackrng: List lines 1-42 for documentation.
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Added aliases for library words to make the library use the new
+word-name standard.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2005/04/03 15:43:46 $ $Revision: 1.12 $                )
+d49 4
+d212 2
+a213 1
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@Documentation cleanup, whitespace fixes, script updated.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2005/03/21 01:31:43 $ $Revision: 1.11 $                )
+d20 2
+a21 2
+( SRNGextractrng [     {rng} ... offset num pos -- {rng'} ... {subrng} ]      )
+(     pulls a subrange out of a range buried in the stack, removing them.     )
+d23 2
+a24 2
+( SRNGcopyrng    [     {rng} ... offset num pos -- {rng} ... {rng}     ]      )
+(     copies a subrange out of a range buried in the stack.                   )
+d26 2
+a27 2
+( SRNGdeleterng  [     {rng} ... offset num pos -- {rng'}              ]      )
+(     deletes a subrange from a range buried on the stack.                    )
+d29 2
+a30 2
+( SRNGinsertrng  [ {rng1} ... {rng2} offset pos -- {rng}               ]      )
+(     inserts a subrange into the middle of a buried range on the stack.      )
+d32 5
+a36 5
+( SRNGfilterrng  [               {rng} funcaddr -- {rng'} {filtrdrng}  ]      )
+(    Takes the given range and tests each item with the given filter function )
+(    address.  The function takes a single data value and returns an integer. )
+(    If the integer is non-zero, it pulls that data item out of the range and )
+(    puts it into the filtered range. The data items can be of any type.      )
+d38 2
+a39 2
+( SRNGcatrng     [                {rng1} {rng2} -- {rng}               ]      )
+(     concatenates two ranges into one range.                                 )
+d41 2
+a42 2
+( SRNGpoprng     [                        {rng} --                     ]      )
+(     removes a range from the stack.                                         )
+d44 2
+a45 2
+( SRNGswaprng    [                {rng1} {rng2} -- {rng2} {rng1}       ]      )
+(     takes two ranges on the stack and swaps them.                           )
+d49 3
+d198 8
+d208 1
+a208 1
+@@set $lib/stackrng=/_lib-version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-stackrng...
+d5 6
+a10 2
+( lib-stackrng: $Date: 2005/01/14 16:32:13 $ $Revision: 1.10 $
+  Originally from the FuzzBall MUF distribution				      )
+d12 34
+a45 37
+( ***** Stack based range handling -- SRNG ****                 
+         offset is how many stack items are between range and parms    
+         pos is the position within the range you wish to deal with.   
+         num is the number of range items to deal with.                
+  
+  A 'range' is defines as a set of related items on the stack with an
+  integer 'count' of them on the top.  ie:  "bat" "cat" "dog" 3
+  
+   sr-extractrng[     {rng} ... offset num pos -- {rng'} ... {subrng} ]
+     pulls a subrange out of a range buried in the stack, removing them.
+  
+   sr-copyrng   [     {rng} ... offset num pos -- {rng} ... {rng}     ]
+     copies a subrange out of a range buried in the stack.
+  
+   sr-deleterng [     {rng} ... offset num pos -- {rng'}              ]
+     deletes a subrange from a range buried on the stack.
+  
+   sr-insertrng [ {rng1} ... {rng2} offset pos -- {rng}               ]
+     inserts a subrange into the middle of a buried range on the stack.
+  
+   sr-filterrng [               {rng} funcaddr -- {rng'} {filtrdrng}  ]
+     Takes the given range and tests each item with the given filter
+     function address.  The function takes a single data value and
+     returns an integer.  If the integer is non-zero, it pulls that
+     data item out of the range and puts it into the filtered range.
+     The data items can be of any type.
+  
+   sr-catrng    [                {rng1} {rng2} -- {rng}               ]
+     concatenates two ranges into one range.
+  
+   sr-poprng    [                        {rng} --                     ]
+     removes a range from the stack.
+  
+   sr-swaprng   [                {rng1} {rng2} -- {rng2} {rng1}       ]
+     takes two ranges on the stack and swaps them.
+  
+)
+d49 3
+d53 2
+a54 1
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+d85 1
+a85 1
+  
+d89 1
+a89 1
+  
+d102 1
+a102 1
+  
+d106 1
+a106 2
+  
+  
+d120 1
+a120 1
+  
+d124 1
+a124 2
+  
+  
+d129 1
+a129 1
+  
+d133 1
+a133 1
+  
+d147 1
+a147 2
+  
+  
+d160 1
+d164 1
+d176 23
+a198 24
+@@register #me lib-stackrng=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=/_defs/popn:
+@@set $tmp/prog1=/_defs/sr-catrng:"$lib/stackrng" match "catranges" call
+@@set $tmp/prog1=/_defs/sr-copyrng:"$lib/stackrng" match "copyrange" call
+@@set $tmp/prog1=/_defs/sr-deleterng:"$lib/stackrng" match "deleterange" call
+@@set $tmp/prog1=/_defs/sr-extractrng:"$lib/stackrng" match "extractrange" call
+@@set $tmp/prog1=/_defs/sr-filterrng:"$lib/stackrng" match "filterrange" call
+@@set $tmp/prog1=/_defs/sr-insertrng:"$lib/stackrng" match "insertrange" call
+@@set $tmp/prog1=/_defs/sr-poprng:popn
+@@set $tmp/prog1=/_defs/sr-swaprng:"$lib/stackrng" match "swapranges" call
+@@set $tmp/prog1=/_defs/SRNGcatrng:"$lib/stackrng" match "catranges" call
+@@set $tmp/prog1=/_defs/SRNGcopyrng:"$lib/stackrng" match "copyrange" call
+@@set $tmp/prog1=/_defs/SRNGdeleterng:"$lib/stackrng" match "deleterange" call
+@@set $tmp/prog1=/_defs/SRNGextractrng:"$lib/stackrng" match "extractrange" call
+@@set $tmp/prog1=/_defs/SRNGfilterrng:"$lib/stackrng" match "filterrange" call
+@@set $tmp/prog1=/_defs/SRNGinsertrng:"$lib/stackrng" match "insertrange" call
+@@set $tmp/prog1=/_defs/SRNGpoprng:popn
+@@set $tmp/prog1=/_defs/SRNGswaprng:"$lib/stackrng" match "swapranges" call
+@@set $tmp/prog1=/_docs:@@list $lib/stackrng=1-41
+@@set $tmp/prog1=/_/de:lib-stackrng: List lines 1-41 for documentation.
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+"Installation of lib-stackrng completed
+@
+
+
+1.10
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2004/03/26 03:16:32 $ $Revision: 1.9 $
+d48 3
+d72 1
+a72 1
+  Revision 1.3  1998/07/28 19:22:05  glow
+d75 1
+a75 1
+  Revision 1.2  1998/07/28 19:21:11  glow
+a77 3
+
+  Revision 1.1  1998/07/28 19:18:38  glow
+  Initial revision
+d194 1
+a194 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@Fixed bug with 'swaprange' where it didn't finish
+properly.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2004/03/02 03:26:22 $ $Revision: 1.8 $
+d8 1
+a8 1
+( ***** Stack based range handling object -- SRNG ****                 
+d48 4
+d194 1
+a194 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Fixed bugs in swaprng. It now works as advertised.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2004/03/01 23:31:43 $ $Revision: 1.7 $
+d48 3
+d120 1
+d190 1
+a190 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Fixed logic flaws in filterrange
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2004/03/01 16:58:26 $ $Revision: 1.6 $
+d48 3
+d116 1
+a116 2
+    dup 1 + 520 1 extractrange
+    dup 2 + pick over + 4 + 3 + rotate pop
+d186 1
+a186 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Added SRNGxxx entries, so future uses can be more obvious.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2001/02/23 16:18:39 $ $Revision: 1.5 $
+d48 3
+d136 2
+a137 3
+: filterrange-loop ( {rng} {rng2} funcaddr cnt-- {rng'} {rng2'} )
+   3 pick 4 + pick over
+   <= if pop pop pop exit then      (If done, then clean up and exit)
+d140 5
+a144 5
+      3 pick over + 4 + rotate         (get data from old range)
+      -4 rotate                        (out it in the new one)
+      rot 1 + rot rot                  (Increment the new range counter)
+      3 pick 4 + pick 1 -              (decrememnt the old range counter)
+      4 pick 4 + put                   (and put it back)
+d146 1
+a146 1
+   1 + 'filterrange-loop jmp        (repeat until done.)
+d149 1
+a149 1
+   0 swap 0 filterrange-loop
+d184 1
+a184 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Fixed incompatibility problem with older versions that have been upgraded
+Required adding a 'removal' of a definition to insure that a conflict
+between the stackrng def of popn didn't interfere with the inserver one.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 2000/01/10 18:53:35 $ $Revision: 1.4 $
+d48 5
+d172 8
+d182 1
+a182 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Fixed documentation...not all lines were being listed.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 1998/07/28 19:22:05 $ $Revision: 1.3 $
+d48 3
+d158 1
+d169 1
+a169 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Fixed _lib-version number.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 1998/07/28 19:21:11 $ $Revision: 1.2 $
+d48 3
+a154 1
+@@set $tmp/prog1=/_/de:lib-stackrng: List lines 7-41 for documentation.
+d163 4
+a166 3
+@@set $tmp/prog1=/_docs:@@list $lib/stackrng=7-41
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+"Installation of lib-stackrng completed@
+
+
+1.2
+log
+@Removed popoffn and replaced the definition of sr-poprng with it simply calling the inserver 'popn'.
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date: 1998/07/28 19:18:38 $ $Revision: 1.1 $
+d48 4
+d162 1
+a162 1
+@@set $tmp/prog1=/_lib-version:FM1.0
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-stackrng: $Date$ $Revision$
+d47 3
+a49 1
+  $Log$
+@

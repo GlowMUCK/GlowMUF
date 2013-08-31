@@ -1,0 +1,1175 @@
+head	1.21;
+access;
+symbols
+	GlowMUF1-1-1:1.21
+	GlowMUF102:1.18;
+locks; strict;
+comment	@# @;
+
+
+1.21
+date	2005.09.25.13.01.18;	author feaelin;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2005.04.06.18.48.01;	author feaelin;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2005.04.03.14.37.58;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2004.04.15.00.50.56;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2004.04.14.21.08.41;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2004.03.26.03.03.30;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2004.02.07.17.20.31;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2004.02.07.17.19.18;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.01.10.16.56.46;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	99.12.29.23.20.40;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	99.12.21.17.59.20;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	99.04.16.20.29.19;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.04.16.19.55.55;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	98.07.27.21.12.30;	author glow;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	98.07.27.21.07.41;	author glow;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	98.07.27.19.40.20;	author glow;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.07.27.02.35.25;	author glow;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.07.27.02.30.41;	author glow;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.07.27.01.50.50;	author glow;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.26.20.26.58;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.26.20.14.21;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.21
+log
+@Minor cosmetic update.
+@
+text
+@wh me=Beginning Installation of cmd-register
+@@prog cmd-register
+1 99999 d
+1 i
+( cmd-register $Date: 2005/04/06 18:48:01 $ $Revision: 1.20 $                 )
+( Purpose: Handle registration of database items for virtual references       )
+( Author: Unknown                                                             )
+( Contributors: Andy, Feaelin                                                 )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( 
+   $Log: cmd-register,v $
+   Revision 1.20  2005/04/06 18:48:01  feaelin
+   Output changes. Now prints the library prefix/symbol. This is the
+   set of letters that precedes the library words in the library: STR, LMGR,
+   etc.
+   Adjusted indentation so the level of items is clearer.
+ 
+   Revision 1.19  2005/04/03 14:37:58  feaelin
+   Documentation update, changes to the installation script to make it cleaner.
+ 
+   Revision 1.18  2004/04/15 00:50:56  feaelin
+   Updated cmd-register's documentation again. Added some color and version
+   display.
+ 
+   Revision 1.17  2004/04/14 21:08:41  feaelin
+   Updated cmd-register's documentation.
+ 
+   Revision 1.16  2004/03/26 03:03:30  feaelin
+   Further rcs-log fixes.
+ 
+   Revision 1.15  2004/02/07 17:20:31  feaelin
+   Using a $ in the propname now generates an error, preventing
+   messy registry entries.  Fixed the rcs-log.
+   
+   Revision 1.14  2004/02/07 17:19:18  feaelin
+   Attempting to use a $ in the prop name now fails.
+  
+   Revision 1.13  2000/01/10 16:56:46  feaelin
+   Added support for @@view/_docs.  Made #del prompts a littl
+   easier to understand.  Added some color to the output.
+  
+   Revision 1.12  1999/12/29 23:20:40  feaelin
+   New Feature! You can now remove registry entries with
+   @@reg #del <database item>=<name>
+  
+   Revision 1.11  1999/12/21 17:59:20  feaelin
+   Cleaned up the log and header comments.
+   Fixed any ansi colors to use ^SUCC^/^FAIL^ instead of ^GREEN^/^RED^,
+   making cmd-register more site customizable.
+  
+   Revision 1.10  1999/04/16 20:29:19
+   Brought in line with FBMUF5.64.  A minor idiot proofing with @@reg #prop =
+  
+   Revision 1.9  1999/04/16 19:55:55
+   Changed the priority of the exit to M3.
+  
+   Revision 1.8  1998/07/27 21:12:30
+   Fixed annoying bug with updating the revision string used for comparing.
+  
+   Revision 1.7  1998/07/27 21:07:41
+   Fixed strip-rcs to handle a null revision string.
+  
+   Revision 1.6  1998/07/27 19:40:20
+   During earlier changes, messed up the wiz-m-level.  It's now corrected.
+  
+   Revision 1.5  1998/07/27 02:35:25
+   Made strip-rcs actually work.
+  
+   Revision 1.3  1998/07/27 01:50:50
+   Added a rcs-info stripper to make the version number show up nicely.
+ 
+   Revision 1.1  1998/07/26 20:14:21
+   Updated to bring it in line with any improvements made in FBMUF5.61.
+   Cleaned up use of macros, e.g. made it so no macros or libs are required to
+   run/compile cmd-register on a glowmuck server.
+   Also added some pretty colors! 
+   Fixed _reg props to use refs instead of string props.  Included backward
+   compatibility with servers that are still using strings for those
+   references.
+)          
+( --------------------------------------------------------------------------- )
+
+$define tell me @@ swap ansi_notify $enddef
+
+lvar regobj
+lvar regprop
+ 
+: do-header
+  "^WHITE^------------------------------------------------------------------------------" tell
+  "^FOREST^cmd-register: " "$Revision: 1.20 $" 
+  1 strcut swap pop dup strlen 2 - strcut pop strcat tell
+  "^WHITE^------------------------------------------------------------------------------" tell
+;
+ 
+: do-footer
+  "^WHITE^------------------------------------------------------------------------------" tell
+;
+ 
+: do-help
+  do-header
+  "^RESET^The @@register program is used to make database items, particularly programs," tell
+  "^RESET^globally available to all users. Basic syntax:" tell
+  " " tell
+  "^INFO^  @@reg                      ^RESET^- to list globally registered items." tell
+  "^INFO^  @@reg <directory>          ^RESET^- to list globally registered items in a" tell
+  "^RESET^                              particular directory." tell
+  "^INFO^  @@reg <item> = <name>^RESET^      ^RESET^- to register <item> as <name>." tell
+  "^INFO^  @@reg <item> = <dir>/<name>^RESET^- to register <item> as <name> in directory <dir>" tell
+  "^INFO^  @@reg #del <item> = <name> ^RESET^- to remove entry <name> on <item>." tell
+  " " tell
+  "^RESET^By default, registrations are stored on #0. Of course, only wizards have" tell
+  "^RESET^permission to change #0, but mortal players can still store registrations on" tell
+  "^RESET^themselves or other items which they own, using the following options:" tell
+  "  ^INFO^@@reg #me                  ^RESET^- makes the registration on the user." tell
+  "  ^INFO^@@reg #prop <item>:<prop>  ^RESET^- makes the registration on <item>" tell
+  "^RESET^                                in propdir <prop>" tell
+  " "
+  "^RESET^Some typical directories:" tell
+  "^INFO^cmd  ^RESET^- 'command' programs           ^INFO^lib  ^RESET^- program libararies" tell
+  "^INFO^con  ^RESET^- connect/disconnect programs  ^INFO^lock ^RESET^- lock programs" tell
+  "^INFO^game ^RESET^- games such as yahtzee        ^INFO^par  ^RESET^- parent rooms" tell
+  "^RESET^Type '^INFO^@@reg #help2^RESET^' for additional information." tell
+  do-footer
+;
+ 
+: do-help-2
+  do-header
+  "^INFO^Example:  '@@reg #12345 = sample^RESET^'" tell
+  "This registers database item #12345 as '_reg/sample' on #0, so that players" tell
+  "can refer to it as '$sample' instead of '#12345'." tell
+  " " tell
+  "^INFO^Example:  '@@reg lib-reflist = lib/reflist'" tell
+  "This registers the program lib-reflist as '_reg/lib/reflist' on #0," tell
+  "so that coders can use '$include $lib/reflist' in their programs." tell
+  " " tell
+  "^INFO^Example:  '@@reg #me #20645 = pet'" tell
+  "This registers database item #20645 as '_reg/pet' on the user.  The user" tell
+  "may now refer to #20645 as '$pet'.  Since the registration is not" tell
+  "on #0, only the user may use this reference." tell
+  " " tell
+  "^INFO^Example:  '@@reg #prop #9876:_arrive #12345=sample'" tell
+  "This registers database item #12345 as '_arrive/sample' on #9876.  Notice" tell
+  "that it is not registered as '_reg/_arrive/sample'.  The #prop" tell
+  "option does not include '_reg' automatically." tell
+  do-footer
+;
+ 
+: split
+    swap over over swap
+    instr dup not if
+        pop swap pop ""
+    else
+        1 - strcut rot
+        strlen strcut
+        swap pop
+    then
+;
+ 
+( Using RCS to automatically update the version prop? This prettifies the     )
+( result! FM-IDE 1998July26                                                   )
+: strip-rcs ( s -- s' )
+  dup dup "$" instr dup if
+    1 - strcut dup "$Revis" "ion$" strcat stringcmp if
+      11 strcut swap pop dup "$" instr 2 - strcut 
+      dup " $" stringcmp if 2 strcut swap pop strcat else pop then
+      strcat swap pop
+    else
+      pop swap pop
+    then
+  else
+    pop pop
+  then
+  "^ ^" swap strcat
+;
+ 
+: list-props ( d s -- )
+  begin
+    dup while
+    dup strlen 1 - strcut
+    dup "/" strcmp if
+      strcat break
+    else pop
+    then
+  repeat
+  "/" strcat over swap nextprop
+  begin
+    dup while
+    over over getprop
+    dup if
+      dup number? if
+        atoi dbref
+      then
+      dup ok? if
+        dup unparseobj
+	over "_version" getpropstr
+        dup if strip-rcs
+          "     ^INFO^Ver. " swap strcat strcat
+        else pop
+        then
+        over "_lib-version" getpropstr
+        dup if strip-rcs
+          "     ^INFO^Lib.ver. " swap strcat strcat
+        else pop
+        then
+        swap "_lib-symbol" getpropstr
+        dup if
+          " (^INFO^" swap strcat "^RESET^)" strcat strcat
+        else pop
+        then
+      else pop "^RED^<garbage>^ ^"
+      then
+      over ": " strcat swap strcat
+      regprop @@ strlen strcut swap pop
+      "  " swap strcat tell
+    else pop
+    then
+    over over propdir? if
+      dup regprop @@ strlen strcut swap pop
+      "  " swap strcat
+      "/ (^SUCC^directory^ ^)" strcat tell
+    then
+    over swap nextprop
+  repeat
+  pop pop
+;
+ 
+: cmd-@@register
+  "me" match dup "guest" flag? swap "truemage" flag? not and if
+    me @@ "^FAIL^This command is unavailable to guests." ansi_notify pop exit
+  then
+  "me" match me !
+  dup "#help2" stringcmp not if do-help-2 exit then
+  dup "#help" over if
+    over strlen strcut pop stringcmp not else pop pop 0
+  then if do-help exit then
+  striplead dup tolower "#del" 3 strncmp not if
+    " " split swap pop
+    dup "=" instr dup not if
+      me @@ "^FAIL^Please specify both database item and registry entry to remove."
+      ansi_notify
+      depth popn exit
+    then
+    1 - strcut 1 strcut swap pop swap match
+    dup dup #-1 dbcmp swap ok? not or if
+      me @@ "^FAIL^Remove a registry entry from what database item?" ansi_notify
+      depth popn exit
+    then
+    dup #-2 dbcmp if
+      me @@ "^INFO^I don't know which one you mean!" ansi_notify
+      depth popn exit
+    then
+    dup #0 dbcmp me @@ "arch" flag? not and if
+      me @@ "^FAIL^Sorry. Only Arch-Wizards can remove registry entries from #0."
+      ansi_notify
+      depth popn exit
+    then
+    swap dup "/_reg/" swap strcat
+    3 pick over getpropstr dup not if
+      me @@ "^FAIL^That registry entry does not exist." ansi_notify
+      depth popn exit
+    then
+    dup string? if
+      dup "#" instr if
+        1 strcut swap pop
+      then
+      atoi dbref
+    else
+      me @@ "^FAIL^Strange...that registry entry isn't in a valid format."
+      ansi_notify depth popn exit
+    then
+    unparseobj me @@ swap 
+    "^INFO^Are you sure you want to delete the registry entry: '^NOTE^"
+    5 pick strcat "^INFO^' which is pointing to: '^NOTE^" strcat swap strcat 
+    "^INFO^' (yes/no)?" strcat
+    ansi_notify
+    read tolower dup "y" strcmp not if
+       pop me @@ "^INFO^Please type either 'yes' or 'no' entirely." ansi_notify
+       me @@ "^INFO^Try again:" ansi_notify
+       read tolower
+    then
+    dup "no" strcmp not if
+      me @@ "^FAIL^Aborted..." ansi_notify
+      depth popn exit
+    then
+    "yes" strcmp not if
+      swap pop remove_prop
+      me @@ "^SUCC^Registry entry removed." ansi_notify
+    else
+      me @@ "^FAIL^Invalid input...aborting." ansi_notify
+      depth popn exit
+    then
+    depth popn exit
+  then    
+  dup tolower "#me" 3 strncmp not if
+    " " split swap pop
+    me @@ regobj !
+    "_reg/" regprop !
+  else
+    dup tolower "#prop" 5 strncmp not if
+      " " split swap pop
+      " " split swap
+      ":" split
+      (rest obj prop)
+      swap dup not if pop "me" then
+      dup "@@" strcmp not if pop "#0" then
+      match dup not if
+        me @@ "^FAIL^I don't see that target database item here." ansi_notify
+        pop pop pop exit
+      then
+      dup #-2 dbcmp if
+        me @@ "^FAIL^I don't know which target database item you mean." ansi_notify
+        pop pop pop exit
+      then
+      me @@ over owner dbcmp
+      me @@ "wizard" flag? or not if
+        me @@ "^FAIL^Permission Denied." ansi_notify
+        pop pop pop exit
+      then
+      regobj !
+      dup not if pop "/" then      (if no propdir selected, use default)
+      dup dup strlen 1 - strcut swap pop
+      "/" strcmp if "/" strcat then    (if propdir doesn't end in /, append /)
+      regprop !
+    else
+      me @@ "w" flag? not
+      over "=" instr and if
+        me @@ "^FAIL^Permission denied." ansi_notify
+        pop exit
+      then
+      #0 regobj !
+      "_reg/" regprop !
+    then
+  then
+  
+  dup "=" instr not if
+    regobj @@ #0 dbcmp not if
+      "You need to specify a value to set with @@reg #prop" tell
+      pop exit
+    then
+    "^SUCC^Registered database items on "
+    regobj @@ unparseobj strcat
+    ":" strcat tell
+    regobj @@ regprop @@ rot strcat list-props
+    "^INFO^Done." tell exit
+  then
+  "=" split strip swap strip
+  match dup not if
+    "^FAIL^I don't see that database item here." tell pop exit
+  then
+  dup #-2 dbcmp if
+    "^FAIL^I don't know which database item you mean." tell pop exit
+  then
+  swap
+  " " split if
+    pop pop "^FAIL^You cannot have spaces in the registration name." tell exit
+  then
+  dup "$" instr if
+    pop pop "^FAIL^You cannot have a dollar sign ($) in the registration name." tell exit
+  then
+  regobj @@ regprop @@ 3 pick strcat getpropstr
+  dup if
+    dup "#" 1 strncmp not if 1 strcut swap pop then
+    regprop @@ 3 pick strcat " used to be registered to " strcat
+    swap atoi dbref unparseobj strcat
+    "^INFO^" swap strcat tell
+  else pop
+  then
+  regobj @@ regprop @@ 3 pick strcat 4 pick setprop
+  regprop @@ swap strcat " is now registered to " strcat
+  swap unparseobj strcat " on " strcat 
+  regobj @@ unparseobj strcat
+  "^INFO^" swap strcat tell
+;
+.
+c
+q
+@@set cmd-register=W2
+@@action @@register;@@registe;@@regist;@@regis;@@regi;@@reg=here=tmp/exit1
+@@link $tmp/exit1=cmd-register
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/register #help
+@@register cmd-register=cmd/register
+@@set $cmd/register=/_version:FM$Revision: 1.20 $
+@@set $cmd/register=/_/de:Use '@@register #help' or 'help @@register' to get more information.
+@@set $cmd/register=_docs:@@register #help
+wh me=Installation of cmd-register finished.
+@
+
+
+1.20
+log
+@Output changes. Now prints the library prefix/symbol. This is the
+set of letters that precedes the library words in the library: STR, LMGR,
+etc.
+Adjusted indentation so the level of items is clearer.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 2005/04/03 14:37:58 $ $Revision: 1.19 $                 )
+d13 6
+d21 1
+a21 1
+
+d25 1
+a25 1
+
+d28 1
+a28 1
+
+d31 1
+a31 1
+
+d91 1
+a91 1
+  "^FOREST^cmd-register: " "$Revision: 1.19 $" 
+d160 2
+a161 2
+( Using RCS to automatically update the version prop? This prettifies the
+  result! FM-IDE 1998July26                                                )
+a374 1
+
+d384 2
+a385 2
+@@set $cmd/register=/_version:FM$Revision: 1.19 $
+@@set $cmd/register=/_/de:Use '@@register #help' to get more information.
+@
+
+
+1.19
+log
+@Documentation update, changes to the installation script to make it cleaner.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 2004/04/15 00:50:56 $ $Revision: 1.18 $                 )
+d13 3
+d85 1
+a85 1
+  "^FOREST^cmd-register: " "$Revision: 1.18 $" 
+d195 1
+a195 1
+        swap "_lib-version" getpropstr
+d200 5
+d214 1
+a214 1
+      "    " swap strcat
+d379 1
+a379 1
+@@set $cmd/register=/_version:FM$Revision: 1.18 $
+@
+
+
+1.18
+log
+@Updated cmd-register's documentation again. Added some color and version
+display.
+@
+text
+@d1 1
+a1 1
+"Beginning Installation of cmd-register
+d5 1
+a5 1
+( cmd-register $Date: 2004/04/14 21:08:41 $ $Revision: 1.17 $                 )
+d8 1
+a8 1
+( Contributors: Andy & Feaelin                                                )
+d13 4
+d82 1
+a82 1
+  "^FOREST^cmd-register: " "$Revision: 1.17 $" 
+d117 1
+a117 1
+
+d150 1
+a150 1
+
+d167 1
+a167 1
+
+d213 1
+a213 1
+  
+d371 2
+a372 1
+@@set $cmd/register=_version:FM$Revision: 1.17 $
+d374 1
+a374 1
+"Installation of cmd-register finished.
+@
+
+
+1.17
+log
+@Updated cmd-register's documentation.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 2004/03/26 03:03:30 $ $Revision: 1.16 $                 )
+d13 3
+d75 12
+a86 1
+
+d88 3
+a90 8
+  "The @@register program is used to make database items, particularly programs," tell
+  "globally available to all users.  Basic syntax:" tell
+  " " tell
+  "  @@reg                        - to list globally registered items." tell
+  "  @@reg <propdir>              - to list globally registered items" tell
+  "                                in a particular propdir." tell
+  "  @@reg <item> = <name>        to register <item> as <name>." tell
+  "  @@reg #del <item> = <name> - to remove entry <name> on <item>." tell
+d92 6
+a97 2
+  "By default, registrations are made on #0 in _reg or the specified" tell
+  "subpropdir of _reg." tell
+d99 13
+a111 7
+  "Of course, only wizards have permission to change #0, but mortal" tell
+  "players can still store registrations on themselves or other items" tell
+  "which they own, using the following options:" tell
+  "  #me                         - makes the registration on the user." tell
+  "  #prop <targetitem>:<prop>   - makes the registration on <targetitem>" tell
+  "                                in propdir <prop>" tell
+  "Type '@@reg #help2' for examples." tell
+d115 2
+a116 1
+  "Example:  @@reg #12345 = sample" tell
+d120 1
+a120 1
+  "Example:  @@reg lib-reflist = lib/reflist" tell
+d124 1
+a124 1
+  "Example:  @@reg #me #20645 = pet" tell
+d129 1
+a129 1
+  "Example:  @@reg #prop #9876:_arrive #12345=sample" tell
+d133 1
+d367 1
+a367 1
+@@set $cmd/register=_version:FM$Revision: 1.16 $
+@
+
+
+1.16
+log
+@Further rcs-log fixes.
+@
+text
+@d5 5
+a9 3
+( cmd-register $Date: 2004/02/07 17:20:31 $ $Revision: 1.15 $                 )
+( Original Author: Unknown, presumably Foxen                                  )
+( Updated for Glowmuck by: Andy & Feaelin                                     )
+a10 1
+(
+d13 3
+d29 1
+a29 1
+   @@reg #del <object>=<name>
+d74 1
+a74 1
+  "The @@register program is used to make objects, particularly programs," tell
+d77 2
+a78 2
+  "  @@reg                        - to list globally registered programs." tell
+  "  @@reg <propdir>              - to list globally registered programs" tell
+d80 2
+a81 2
+  "  @@reg <object> = <name>        to register <object> as <name>." tell
+  "  @@reg #del <object> = <name> - to remove entry <name> on <object>." tell
+d87 1
+a87 1
+  "players can still store registrations on themselves or other objects" tell
+d90 1
+a90 1
+  "  #prop <targobj>:<prop>      - makes the registration on <targobj>" tell
+d97 1
+a97 1
+  "This registers object #12345 as '_reg/sample' on #0, so that players" tell
+d105 1
+a105 1
+  "This registers object #20645 as '_reg/pet' on the user.  The user" tell
+d110 1
+a110 1
+  "This registers object #12345 as '_arrive/sample' on #9876.  Notice" tell
+d201 1
+a201 1
+      me @@ "^FAIL^Please specify both object and registry entry to remove."
+d207 1
+a207 1
+      me @@ "^FAIL^Remove a registry entry from what object?" ansi_notify
+d269 1
+a269 1
+        me @@ "^FAIL^I don't see that target object here." ansi_notify
+d273 1
+a273 1
+        me @@ "^FAIL^I don't know which target object you mean." ansi_notify
+d302 1
+a302 1
+    "^SUCC^Registered objects on "
+d310 1
+a310 1
+    "^FAIL^I don't see that object here." tell pop exit
+d313 1
+a313 1
+    "^FAIL^I don't know which object you mean." tell pop exit
+a314 1
+  
+d346 1
+a346 1
+@@set $cmd/register=_version:FM$Revision: 1.15 $
+@
+
+
+1.15
+log
+@Using a $ in the propname now generates an error, preventing
+messy registry entries.  Fixed the rcs-log.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 2004/02/07 17:19:18 $ $Revision: 1.14 $                 )
+d10 52
+a61 2
+  $Log$
+)
+a63 1
+
+a333 46
+( 
+   $Log: cmd-register,v $
+   Revision 1.14  2004/02/07 17:19:18  feaelin
+   Attempting to use a $ in the prop name now fails.
+
+   Revision 1.13  2000/01/10 16:56:46  feaelin
+   Added support for @@view/_docs.  Made #del prompts a littl
+   easier to understand.  Added some color to the output.
+
+   Revision 1.12  1999/12/29 23:20:40  feaelin
+   New Feature! You can now remove registry entries with @@reg #del <object>=<name>
+
+   Revision 1.11  1999/12/21 17:59:20  feaelin
+   Cleaned up the log and header comments.
+   Fixed any ansi colors to use ^SUCC^/^FAIL^ instead of ^GREEN^/^RED^, making cmd-register more site customizable.
+
+   Revision 1.10  1999/04/16 20:29:19
+   Brought in line with FBMUF5.64.  A minor idiot proofing with @@reg #prop =
+
+   Revision 1.9  1999/04/16 19:55:55
+   Changed the priority of the exit to M3.
+
+   Revision 1.8  1998/07/27 21:12:30
+   Fixed annoying bug with updating the revision string used for comparing.
+
+   Revision 1.7  1998/07/27 21:07:41
+   Fixed strip-rcs to handle a null revision string.
+
+   Revision 1.6  1998/07/27 19:40:20
+   During earlier changes, messed up the wiz-m-level.  It's now corrected.
+
+   Revision 1.5  1998/07/27 02:35:25
+   Made strip-rcs actually work.
+
+   Revision 1.3  1998/07/27 01:50:50
+   Added a rcs-info stripper to make the version number show up nicely.
+ 
+   Revision 1.1  1998/07/26 20:14:21
+   Updated to bring it in line with any improvements made in FBMUF5.61.
+   Cleaned up use of macros, e.g. made it so no macros or libs are required to
+   run/compile cmd-register on a glowmuck server.
+   Also added some pretty colors! 
+   Fixed _reg props to use refs instead of string props.  Included backward
+   compatibility with servers that are still using strings for those
+   references.
+)          
+d343 1
+a343 1
+@@set $cmd/register=_version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Attempting to use a $ in the prop name now fails.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 2000/01/10 16:56:46 $ $Revision: 1.13 $                 )
+d9 5
+d287 3
+d340 1
+a340 1
+@@set $cmd/register=_version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Added support for @@view/_docs.  Made #del prompts a littl
+easier to understand.  Added some color to the output.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1999/12/29 23:20:40 $ $Revision: 1.12 $                 )
+d262 3
+d282 4
+d332 1
+a332 1
+@@set $cmd/register=_version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@New Feature! You can now remove registry entries with @@reg #del <object>=<name>
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1999/12/21 17:59:20 $ $Revision: 1.11 $                 )
+d82 1
+d106 1
+a106 1
+          "     Ver. " swap strcat strcat
+d111 1
+a111 1
+          "     Lib.ver. " swap strcat strcat
+d114 1
+a114 1
+      else pop "<garbage>"
+d124 1
+a124 1
+      "/ (directory)" strcat tell
+d178 1
+a178 1
+    "^INFO^'?" strcat
+d279 3
+d299 1
+a299 1
+   During earlier changes, messed up the wiz-level.  It's now corrected.
+d325 2
+a326 1
+@@set $cmd/register=_version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@Cleaned up the log and header comments.
+Fixed any ansi colors to use ^SUCC^/^FAIL^ instead of ^GREEN^/^RED^, making cmd-register more site customizable.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1999/04/16 20:29:19 $ $Revision: 1.10 $                 )
+d19 5
+a23 4
+  "  @@reg                     ... to list globally registered programs." tell
+  "  @@reg <propdir>           ... to list globally registered programs" tell
+  "                               in a particular propdir." tell
+  "  @@reg <object> = <name>   ... to register <object> as <name>." tell
+d31 3
+a33 3
+  "  #me                      ... makes the registration on the user." tell
+  "  #prop <targobj>:<prop>   ... makes the registration on <targobj>" tell
+  "                               in propdir <prop>" tell
+d139 59
+a197 1
+  striplead dup tolower "#me" 3 strncmp not if
+d278 4
+d302 1
+a302 1
+
+d306 1
+a306 1
+    run/compile cmd-register on a glowmuck server.
+d321 1
+a321 1
+@@set $cmd/register=_version:FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@Brought in line with FBMUF5.64.  A minor idiot proofing with @@reg #prop =
+@
+text
+@d5 3
+a7 5
+( cmd-register $Date: 1999/04/16 19:55:55 $ $Revision: 1.9 $
+  Original Author: Unknown                              
+  Updated for Glowmuck by: Andy
+  Further Updates for Glow by: Feaelin Moilar aka Iain E. Davis
+  Requires GlowMuck 3.0.0 or Later                                            )
+a8 16
+( 
+   $Log: cmd-register,v $
+   Revision 1.9  1999/04/16 19:55:55  feaelin
+   Changed the priority of the exit to M3.
+
+   Revision 1.8  1998/07/27 21:12:30  glow
+   Fixed annoying bug with updating the Revision string used for comparing.
+
+   Revision 1.7  1998/07/27 21:07:41  glow
+   Fixed strip-rcs to handle a null $Revision: 1.9 $
+
+   Revision 1.6  1998/07/27 19:40:20  glow
+   During earlier changes, messed up the wiz-level.  It's now corrected.
+
+   Revision 1.5  1998/07/27 02:35:25  glow
+   Made strip-rcs actually work.
+a9 13
+   Revision 1.3  1998/07/27 01:50:50  glow
+   Added a rcs-info stripper to make the version number show up nicely.
+
+   Revision 1.1  1998/07/26 20:14:21  glow
+   Initial revision
+   Updated to bring it in line with any improvements made in FBMUF5.61.
+   Cleaned up use of macros, e.g. made it so no macros or libs are required to
+    run/compile cmd-register on a glowmuck server.
+   Also added some pretty colors! Fixed _reg props to use refs instead of
+    string props.  Included backward compatibility with servers that are still
+    using strings for those references.
+
+)          
+d131 1
+a131 1
+    me @@ "^RED^This command is unavailable to guests." ansi_notify pop exit
+d151 1
+a151 1
+        me @@ "^RED^I don't see that target object here." ansi_notify
+d155 1
+a155 1
+        me @@ "^RED^I don't know which target object you mean." ansi_notify
+d160 1
+a160 1
+        me @@ "^RED^Permission Denied." ansi_notify
+d171 1
+a171 1
+        me @@ "^RED^Permission denied." ansi_notify
+d181 1
+a181 1
+      "You need to specify a value to set with @@reg #prop" .tell
+d184 1
+a184 1
+    "^GREEN^Registered objects on "
+d188 1
+a188 1
+    "^YELLOW^Done." tell exit
+d192 1
+a192 1
+    "^RED^I don't see that object here." tell pop exit
+d195 1
+a195 1
+    "^RED^I don't know which object you mean." tell pop exit
+d200 1
+a200 1
+    pop pop "^RED^You cannot have spaces in the registration name." tell exit
+d207 1
+a207 1
+    "^YELLOW^" swap strcat tell
+d214 1
+a214 1
+  "^YELLOW^" swap strcat tell
+d216 33
+d258 1
+a258 1
+@@set $cmd/register=_version:FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@Changed the priority of the exit to M3.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 21:12:30 $ $Revision: 1.8 $
+d13 3
+d20 1
+a20 1
+   Fixed strip-rcs to handle a null $Revision: 1.8 $
+d211 4
+d256 1
+a256 1
+@@set $cmd/register=_version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Fixed annoying bug with updating the Revision string used for comparing.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 21:07:41 $ $Revision: 1.7 $
+d13 3
+d17 1
+a17 1
+   Fixed strip-rcs to handle a null $Revision$
+d246 1
+a246 1
+@@set $tmp/exit1=M1
+d249 1
+a249 1
+@@set $cmd/register=_version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Fixed strip-rcs to handle a null $Revision$
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 19:40:20 $ $Revision: 1.6 $
+d13 3
+d96 1
+a96 1
+    1 - strcut dup "$Revision$" stringcmp if
+d246 1
+a246 1
+@@set $cmd/register=_version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@During earlier changes, messed up the wiz-level.  It's now corrected.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 02:35:25 $ $Revision: 1.5 $
+d13 3
+d93 10
+a102 3
+    1 - strcut 11 strcut swap pop dup "$" instr 2 - strcut 
+    dup " $" stringcmp if 2 strcut swap pop strcat else pop then strcat
+  swap pop else pop pop then
+d243 1
+a243 1
+@@set $cmd/register=_version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Hmm. Smilies in comments are a bad idea.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 02:30:41 $ $Revision: 1.4 $
+d13 1
+a13 1
+   Revision 1.4  1998/07/27 02:30:41  glow
+d227 1
+a227 1
+@@set cmd-register=M3
+d233 1
+a233 1
+@@set $cmd/register=_version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Made strip-rcs actually work. :)
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/27 01:50:50 $ $Revision: 1.3 $
+d13 3
+d233 1
+a233 1
+@@set $cmd/register=_version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Added a rcs-info stripper to make the version number show up nicely.
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/26 20:26:58 $ $Revision: 1.2 $
+d13 3
+d87 3
+a89 3
+    1 - strcut 11 strcut swap pop dup "$" instr 2 - 2 strcut swap pop
+    strcat strcat
+  then
+d224 1
+a224 1
+@@set cmd-register=W2
+d230 1
+a230 1
+@@set $cmd/register=_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/26 20:14:21 $ $Revision: 1.1 $
+d79 10
+a88 1
+  
+d109 1
+a109 1
+        dup if
+d114 1
+a114 1
+        dup if
+d227 1
+a227 1
+@@set $cmd/register=_version:$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-register $Date: 1998/07/26 20:05:23 $ $Revision: 1.0 $
+d12 3
+a14 1
+   $Log$
+@

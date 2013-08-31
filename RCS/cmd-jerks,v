@@ -1,0 +1,286 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.27.19.43.07;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-jerks...
+@@prog cmd-jerks
+1 99999 d
+1 i
+( cmd-jerks: $Date$ $Revision$ )
+( Author: ??? )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+$def tell me @@ swap notify
+$def for dup if begin
+$def endfor 1 - dup not until then pop
+lvar object lvar propcount
+lvar jerk
+: strcutat  ( s s' -- s1 s2 )
+  over over instr dup if
+    rot swap 1 - strcut
+    rot strlen strcut swap pop
+  else pop pop "" then
+  strip swap strip swap
+;
+: strcutafter ( s s' -- s1 s2 )
+  over over instr dup if
+    rot swap 1 - strcut
+    rot strlen strcut swap pop
+  else pop pop "" swap then
+  strip swap strip swap
+;
+: do.propread
+  begin
+    object @@ swap nextprop
+    dup .null? if break then dup
+    propcount @@ 1 + propcount !
+  repeat pop
+;
+: propread
+  0 propcount ! swap object !
+  dup if
+    dup dup strlen 1 - strcut swap pop
+    "/" strcmp if "/" strcat then
+  else pop "/" then
+  do.propread propcount @@
+;
+: skip?  ( s -- i )
+  dup not swap "." stringcmp not or
+;
+: check  ( s -- )
+  dup not if
+    pop #0 "@@/jerks" propread for swap tell endfor
+  else
+    tolower #0 "@@/jerks" propread 0 swap for
+      rot "" "@@/jerks/" subst dup
+      "@@" strcutafter swap pop "" "*" subst tolower
+      3 pick 4 + pick over if
+        instr if
+          "Match: " swap #0 over "@@/jerks/" swap strcat getpropstr
+          ": " swap strcat strcat strcat tell over 1 + 2 put
+        else pop then
+      else pop pop pop then
+    endfor
+    "Total matches: " swap intostr strcat tell pop
+  then
+;
+: delete  ( s -- )
+  .pmatch dup ok? if jerk !
+    jerk @@ "@@/jerks/email" getpropstr dup if
+      #0 "@@/jerks/" rot strcat
+      over over getpropstr if
+        remove_prop "Information on #0 deleted." tell
+      else
+        pop pop "Information not found on #0; not deleted from #0." tell
+      then
+    else
+      pop "E-mail information not registered on the player." tell
+    then
+    jerk @@ "@@/jerks" remove_prop
+    jerk @@ "@@/lockout-msg" remove_prop
+    "Jerk unregistered." tell
+  else
+    "I don't know who that is." tell
+  then
+;
+: help  ( -- )
+  "Obnoxious player lockout and tinyjerk site banning:" tell
+me @@ .archwizard? if
+  "  @@jerk <address>                -- to check an email address." tell
+  "  @@jerk #register <player>       -- the long way to register someone." tell
+  "  @@jerk #delete <player>         -- to remove tinyjerk status." tell
+  "  @@jerk #view <player>           -- to see tinyjerk registration info." tell
+  " " tell
+then
+  "  @@jerk #lockout <player>        -- to see a player's lockout message." tell
+  "  @@jerk #lockout <player> = msg  -- to set a player's lockout message." tell
+me @@ .archwizard? if
+  "  @@jerk #unlock <player>         -- to clear a player's lockout message."
+  tell
+then
+  " " tell
+  "  @@jerk #ban <player>            -- to see if a player's site is banned." tell
+  "  @@jerk #ban <player> = msg      -- to ban a player's site." tell
+me @@ .archwizard? if
+  "  @@jerk #unban <player>          -- to remove a player's site ban." tell
+then
+;
+: lockout  ( s -- )
+  "=" strcutat swap .pmatch dup ok? if jerk !
+    dup not if
+    pop jerk @@ "@@/lockout-msg" getpropstr dup not if
+        "No lockout message set." tell
+      else
+        "Lockout message:" tell
+        "  " swap strcat tell
+      then
+    else
+      jerk @@ "@@/lockout-msg" rot 0 addprop
+      "Lockout message set." tell
+    then
+  else
+    "I don't know who that is." tell
+  then
+;
+: popoff ( {s} n -- {s} )
+  dup if over 2 + rotate pop swap 1 - swap 1 - popoff else pop then
+;
+: zerofour ( {s} -- {s} )
+  dup 4 < if "0" over 2 + -1 * rotate 1 + zerofour then
+;
+: join ( {s} s -- {s} )
+  over 1 > if rot over strcat 4 rotate strcat rot rot swap 1 - swap join
+  else pop pop then
+;
+$def LEVEL 3
+: addy2prop ( s -- s )
+  "." explode 4 LEVEL - popoff zerofour "." join
+  " " strcat "@@/sites/" swap strcat
+  jerk @@ name "guest" instring jerk @@ .guest? and if "g" else "l" then strcat
+;
+( Level is the # of significant subnets of an internet # to keep for bans )
+: ban  ( s -- )
+  "=" strcutat swap .pmatch dup ok? if
+    jerk ! dup if
+      jerk @@ .truemage? not if
+        jerk @@ "@@/host" getpropstr dup if
+          addy2prop #0 swap rot 0 addprop
+          "Site ban imposed." tell
+        else "That player has no host information." tell then
+      else "You can't ban wizards!" tell then
+    else
+      jerk @@ "@@/host" getpropstr dup if
+        addy2prop #0 over getpropstr dup if
+          "Player site is banned: " swap strcat tell
+        else "That player's site is not banned." tell then
+      else "That player has no host information." tell then
+    then
+  else "I don't know who that is." tell then
+;
+: unban  ( s -- )
+  .pmatch dup ok? if
+    jerk ! jerk @@ "@@/host" getpropstr dup if
+      addy2prop #0 over getpropstr dup if
+        "Reason for ban: " swap strcat tell
+        "Are you sure you want to remove this?" tell
+        read .yes? if
+          #0 swap remove_prop
+          "Site ban removed." tell
+        else "Site ban left in place." tell then
+      else "That player's site is not banned." tell then
+    else "That player has no host information." tell then
+  else "I don't know who that is." tell then
+;
+: register  ( s -- )
+  .pmatch dup ok? if jerk !
+    "Please enter the following information." tell
+    "You may enter '.' to skip a section." tell
+    "What is the player's real-life name?" tell read dup skip? if
+      pop "Player name skipped." tell
+    else
+      jerk @@ "@@/jerks/playername" rot 0 addprop then
+    "What is the player's e-mail address?" tell read dup skip? if
+      pop "E-mail address skipped." tell ""
+    else
+      jerk @@ "@@/jerks/email" 3 pick 0 addprop then
+    "What lockout message should be shown at attempted login?" tell
+    read dup skip? if
+      pop "Login rejection message skipped." tell
+    else
+      jerk @@ "@@/lockout-msg" rot 0 addprop then
+    "Why is this person being registered?" tell read dup skip? if
+      pop "Reason skipped." tell ""
+    else
+      jerk @@ "@@/jerks/reason" 3 pick 0 addprop then
+    jerk @@ "@@/jerks/regwiz" "me" match name 0 addprop
+    jerk @@ "@@/jerks/regdate" "" systime addprop
+    (Store information on #0 as well.)
+    "%y%b%d" systime timefmt ":" strcat
+    "me" match name strcat ":" strcat
+    swap strcat
+    #0 "@@/jerks/" 4 rotate strcat rot 0 addprop
+    "Tinyjerk registration done." tell
+  else
+    "I don't know who that is." tell
+  then
+;
+: unlock  ( s -- )
+  .pmatch dup ok? if
+    "@@/lockout-msg" remove_prop
+    "Lockout message cleared." tell
+  else
+    "I don't know who that is." tell
+  then
+;
+: view  ( s -- )
+  .pmatch dup ok? if jerk !
+    jerk @@ "@@/jerks" propdir? if
+      "Player name: " jerk @@ "@@/jerks/playername" getpropstr strcat tell
+      "Character names: " jerk @@ "@@/jerks/charname" getpropstr strcat tell
+      "E-mail addresses: " jerk @@ "@@/jerks/email" getpropstr strcat tell
+      "Registered by: " jerk @@ "@@/jerks/regwiz" getpropstr strcat tell
+      "Registration date: %e %B %Y" jerk @@ "@@/jerks/regdate" getpropval
+        timefmt tell
+      "Lockout message: " jerk @@ "@@/lockout-msg" getpropstr strcat tell
+      "Reason: " jerk @@ "@@/jerks/reason" getpropstr strcat tell
+    else
+      "That player has not been registered as a tinyjerk." tell
+    then
+  else
+    "I don't know who that is." tell
+  then
+;
+: main
+  .initialize
+    dup not if pop help exit then
+    " " strcutat swap
+  me @@ .mage? if
+    dup "#ban" .strcheck if pop ban exit then
+    dup "#lockout" .strcheck if pop lockout exit then
+    dup "#help" .strcheck if pop help exit then
+  else "Permission denied." tell exit then
+  me @@ .archwizard? if
+    dup "#delete" .strcheck if pop delete exit then
+    dup "#register" .strcheck if pop register exit then
+    dup "#unlock" .strcheck if pop unlock exit then
+    dup "#view" .strcheck if pop view exit then
+    dup "#unban" .strcheck if pop unban exit then
+    swap pop check
+  else help then
+;
+.
+c
+q
+@@register cmd-jerks=cmd/jerks
+@@register #me cmd-jerks=tmp/prog1
+@@set $tmp/prog1=W3
+@@action @@jerks;@@jerk;jerks;jerk=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/jerks 
+@@set $tmp/exit1=/_/fl:This command may only be used by wizards.
+@@set $tmp/prog1=/_version:FM$Revision$
+"Installation of cmd-jerks complete.
+@

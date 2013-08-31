@@ -1,0 +1,111 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2000.12.22.16.10.54;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.22.16.08.43;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Documentation correction.
+@
+text
+@"Beginning installation of cmd-pcreate...
+@@prog cmd-pcreate
+1 99999 d
+1 i
+( cmd-pcreate: $Date: 2000/12/22 16:08:43 $ $Revision: 1.1 $                  )
+( Author: Pakrat                                                              )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-pcreate,v $
+  Revision 1.1  2000/12/22 16:08:43  feaelin
+  Initial revision
+
+)
+
+$include $lib/glowstandard
+$include $lib/strings
+
+var rlname var email
+: cmd-@@pcreate
+  me @@ .wizard? not if pop "Permission denied." .tell exit then
+  strip dup not if
+  pop "Create failed." .tell exit
+  then
+  "=" .split strip swap strip swap
+  dup not 3 pick not or if
+    pop pop "Create failed." .tell exit
+  then
+  "Enter RL name for " 3 pick strcat ":" strcat .tell
+  read strip begin
+    dup if rlname ! break then
+    pop "You must enter the RL name.  Please enter it now:" .tell
+    read strip
+  repeat
+  "Enter email address for " 3 pick strcat ":" strcat .tell
+  read strip begin
+    dup if email ! break then
+    pop "You must enter the email address.  Please enter it now:" .tell
+    read strip
+  repeat
+  over "=" strcat swap strcat
+  prog owner "!@@pcreate " rot strcat force
+  "*" swap strcat match
+  "@@/id" rlname @@ (dObj sProp sId)
+  "|original name:" strcat (dObj sProp sId)
+  3 pick name strcat "|created by:" strcat (dObj sProp sId)
+  "me" match name strcat  (dObj sProp sId)
+  "|%x %X|email:" systime timefmt strcat (dObj sProp sId)
+  email @@ strcat 0 
+  addprop
+  "Identity set." .tell
+;
+.
+c
+q
+@@register cmd-pcreate=cmd/pcreate
+@@register #me cmd-pcreate=tmp/prog1
+@@set $tmp/prog1=W3
+@@action @@pcreate=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:Permission denied.
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+"Installation of cmd-pcreate complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-pcreate: $Date$ $Revision$                                              )
+d9 4
+a12 1
+  $Log$
+d63 1
+a63 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

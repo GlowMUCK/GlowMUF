@@ -1,0 +1,167 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.21.20.37.17;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@"Beginning installation of cmd-mwrite...
+@@prog cmd-mwrite
+1 99999 d
+1 i
+( cmd-mwrite: $Date: 2000/12/21 20:37:17 $ $Revision: 1.1 $                                               )
+( Author: Unknown                                                             )
+( --------------------------------------------------------------------------- )
+(
+  $Log: cmd-mwrite,v $
+  Revision 1.1  2000/12/21 20:37:17  feaelin
+  Initial revision
+
+)
+$include $lib/glowstandard
+
+ : longdesc "@@$list " ;
+ : edit "$lib/write" match call   ;
+ : wizard? dup "WIZARD" flag? swap "QUELL" flag? not and ;
+ : note me @@ swap notify ;
+ : safe? dup "_" 1 strncmp over "." 1 strncmp and over "~" 1 strncmp and
+   swap "@@" 1 strncmp and not ; 
+ : controls? (d d -- i) over swap owner dbcmp if pop 1 exit then wizard? if
+  "Warning: You do _NOT_ control this database item." note 1 exit then 0 ;
+ 
+ : help
+   "Write -- a multi-line description maker" note
+   "Usage: write databaseitemname (or `me', or `here' if you own the room)" note
+   " " note
+   "   After typing the above line you are asked for a 'property' to" note
+   "store the text in.  This is simply a unique name that write uses" note
+   "to know what to save the text lines as, it can be almost anything." note
+   "It is best to start the property with a `_' and end it with a `/'" note
+   "If you don't, write will add them for you." note
+   " " note
+   "Some examples of valid properties are:" note
+   "_desc/ _desc1/ _desc137/ _mydesc/ _freudianslip/ _My_ExGirlFriend/" note
+   " " note
+   "   After a successful write/edit session, you are asked if you wish" note
+   "to set the database item's (or person's) description to show the saved text." note
+   "Answering yes will set the command to show it for the @@desc." note
+   "Answering no will tell you what to do if you wish to set it later." note
+   " " note
+   "Note: To use the property with an @@succ, @@fail, or @@drop answer no" note
+   "there and use @@succ, @@fail, or @@drop instead of @@desc in the command" note
+   "it tells you to type later to make it show the property." note
+   " " note
+   "More <y/n>? (Gives tips within the editor itself)" note read .yes? if
+   " " note
+"   If the property was never written to before, you start out by entering" note
+"text immediately.  If something was already there you get the menu" note
+"prompt.  Type a `.' (a period) on a line by itself to finish entering text" note
+"and go to the menu.  Enter an 's' to save your text, or an 'a' to abort." note 
+"'h' lists help for some of the advanced commands in the editor." note
+   " " note
+"   There are some apparent bugs when deleting and inserting text in the" note   
+"middle of a document, but for simple type-it-in-like-you-want-it wysiwyg" note
+"multi-line descriptions, write and longdesc do a pretty good job." note
+   else "More ended." note then
+ ; 
+ 
+ : writemain
+   .noguest
+   dup dup "help" stringcmp and if
+ 
+   match dup #-2 dbcmp if 
+   "I don't know which one you mean!  Type `write help' for help." 
+   note exit then dup ok? not if 
+   "I don't see that here.  Type `write help' for help." note exit then
+   dup me @@ swap controls? not if 
+   "Permission denied.  Type 'write help' for help." note exit then
+ 
+   "What is the property name? (Use _desc/ for a @@desc.)" note read
+   dup not if pop "_desc/" then 
+   dup safe? not if "_" swap strcat then
+   dup dup strlen 1 - strcut swap pop "/" strcmp if "/" strcat then
+   " " note
+   
+   dup "/" 1 strncmp if "/" over strcat else dup then
+   dup "/@@" instr swap "/~" instr or me @@ wizard? not and if
+   "Permission denied." note exit then
+  
+  over over edit if ( text saved, see if they want it as @@desc ) 
+  ( We ask only if text was saved successfully, ignore aborts. )
+  
+  " " note over name "Would you like this text to be set as "
+  swap strcat "'s actual description now?" strcat note
+  over name "(Note: Entering yes WILL OVERWRITE " 
+  swap strcat "'s current @@desc!)" strcat note
+  read .yes? if 
+    over name "Setting " swap strcat "'s @@desc to: " 
+    strcat longdesc strcat over strcat note
+    over over longdesc swap strcat setdesc 
+  else 
+    "To set the description later you will need to type:" note over 
+    name "@@desc " swap strcat "=" strcat longdesc strcat over strcat note 
+  then
+  then else help then
+ ;
+.
+c
+q
+@@register cmd-mwrite=cmd/mwrite
+@@register #me cmd-mwrite=tmp/prog1
+@@set $tmp/prog1=M2
+@@action mwrite;mw=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/mwrite
+@@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of cmd-mwrite complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-mwrite: $Date$ $Revision$                                               )
+d9 4
+a12 1
+  $Log$
+d23 1
+a23 1
+  "Warning: You do _NOT_ control this object." note 1 exit then 0 ;
+d27 1
+a27 1
+   "Usage: write objectname (or `me', or `here' if you own the room)" note
+d39 1
+a39 1
+   "to set the object's (or person's) description to show the saved text." note
+d109 1
+a109 1
+@@set $tmp/prog1=/_version:FM$Revision$
+@
+

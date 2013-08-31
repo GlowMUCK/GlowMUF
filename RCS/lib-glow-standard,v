@@ -1,0 +1,1222 @@
+head	1.26;
+access;
+symbols
+	GlowMUF1-1-1:1.26
+	GlowMUF102:1.19;
+locks; strict;
+comment	@# @;
+
+
+1.26
+date	2006.08.03.19.52.24;	author feaelin;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2005.09.22.20.30.24;	author feaelin;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2004.09.05.13.29.13;	author feaelin;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2004.08.06.14.12.22;	author feaelin;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2004.08.06.14.05.52;	author feaelin;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2004.04.11.20.06.28;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2003.05.04.22.42.46;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2001.02.24.21.35.27;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2001.02.24.21.31.53;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2001.02.21.17.30.37;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2000.01.10.18.42.07;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2000.01.10.18.23.21;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2000.01.10.18.18.54;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2000.01.10.18.17.04;	author feaelin;	state Exp;
+branches
+	1.11.1.1;
+next	1.10;
+
+1.10
+date	99.04.18.19.08.32;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	99.04.18.04.10.45;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	99.04.16.23.43.17;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	99.04.16.21.02.35;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	99.02.13.16.24.25;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	98.07.30.19.28.29;	author glow;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	98.07.30.19.19.54;	author glow;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	98.07.30.04.18.44;	author glow;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.30.04.13.02;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.27.19.50.36;	author glow;	state Exp;
+branches;
+next	;
+
+1.11.1.1
+date	2000.01.10.18.40.37;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.26
+log
+@Registration update
+@
+text
+@wh me=Beginning installation of lib-glow-standard...
+@@prog lib-glow-standard
+1 99999 d
+1 i
+( lib-glow-standard: $Date: 2005/09/22 20:30:24 $ $Revision: 1.25 $          )
+( Author: Various                                                            )
+( Contributors: Feaelin, Various                                             )
+( Dependencies: None                                                         )
+( -------------------------------------------------------------------------- )
+( A library based on the macros originally stored in the following files:    )
+( macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file        )
+( Majority of these library functions are small enough they are simply       )
+( defined in the /_defs/ properties on this program and no reference to them )
+( are in the body of this muf-program.                                       )
+( After some debugging problems, I've made the decision to make ALL the      )
+( functions in this library begin with a period.  I know that this will      )
+( cause a little confusion on mucks that are still using macros, but it's    )
+( necessary to make it clear that it's these functions are not local to the  )
+( program using them.  Okay, there are four exceptions, deal with it:        )
+( for, endfor, stringncmp, xor. They are all defined both with periods and   )
+( without.                                                                   )
+( -------------------------------------------------------------------------- )
+( Many macros taken from:                                                    )
+( PakRat's Macro Package A [macro-macro]                                     )
+( Copyright 1996 by Andrew Nelson, All rights reserved                       )
+( cleancommas -- make commafied lists prettier                               )
+( run         -- run description programs                                    )
+( wrapnotify  -- do line-wrapping for notify                                 )
+( pmatch      -- match a player name                                         )
+( null        -- basic null program, for locks, always true                  )
+( -------------------------------------------------------------------------- )
+( lib-props (now merged with lib-glow-standard, Originally in FB's MUF Dist. )
+( PROPS Library -- Contains useful property handling routines.               )
+(                                                                            )
+( setpropstr [dbref propname strval -- ]                                     )
+(   sets a property, or removes it if the string is null.                    )
+(                                                                            )
+( envprop [startdbref propname -- stringval]                                 )
+(   searches down the environment tree from the given db-item, looking for   )
+(   a property with the given name.  Returns it's value, or a null string    )
+(   if it wasn't found.                                                      )
+(                                                                            ) 
+( envsearch [startdbref propname -- locationdbref]                           )
+(   Also searches down the envtree for the given property, but returns the   )
+(   dbref of the db-item it was found on instead of the string value. Returns)
+(   #-1 if it cannot find the property.                                      )
+(                                                                            )
+( locate-prop [startdbref propname -- locationdbref]                         )
+(   Given a property name and dbref, finds the property, whether on the dbref)
+(   itself, an environment of the dbref, or a proploc of the dbref.  If none,)
+(   returns #-1.                                                             )
+( -------------------------------------------------------------------------- )
+  
+(
+  $Log: lib-glow-standard,v $
+  Revision 1.25  2005/09/22 20:30:24  feaelin
+  Removed duplicative library functions from lib-glow-standard:
+  .debug-on, .debug-off, .debug-line. All are now inserver defines without
+  the period.
+  Updated muf prgs that used the period versions to use the inserver define.
+
+  Revision 1.24  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
+  Revision 1.23  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database item/object/thing
+
+  Revision 1.22  2004/09/05 13:29:13  feaelin
+  Corrected flaw where guest? was checking against truemage instead of mage
+
+  Revision 1.21  2004/08/06 14:12:22  feaelin
+  Minor documentation corrections.
+
+  Revision 1.20  2004/08/06 14:05:52  feaelin
+  Updated @@list lines to reflect new size of documentation. Replaced
+  old-style 'says' for the installation notification with new-style whispers.
+
+  Revision 1.19  2004/04/11 20:06:28  feaelin
+  Fixed documentation for compatibility with the MUF editor's 'view' command.
+
+  Revision 1.18  2003/05/04 22:42:46  feaelin
+  Change .noguest to use ^FAIL^ instead of ^RED^
+
+  Revision 1.17  2001/02/24 21:35:27  feaelin
+  Incorrect public declaration.
+
+  Revision 1.15  2001/02/21 17:30:37  feaelin
+  Added null and nothing to the 'registered' names of the library.
+
+  Revision 1.14  2000/01/10 18:42:07  feaelin
+  Finished fixing up documentation...for now.
+
+  Revision 1.13  2000/01/10 18:23:21  feaelin
+  Updated documentation and added the _docs property.
+
+  Revision 1.10  1999/04/18 19:08:32  feaelin
+  Added alias for stringncmp
+
+  Revision 1.9  1999/04/18 04:10:45  feaelin
+  Added alias for .setpropstr
+
+  Revision 1.8  1999/04/16 23:43:17  feaelin
+  Oops.  Some that crap wasn't supposed to be in here. *grin*
+
+  Revision 1.7  1999/04/16 21:02:35  feaelin
+  Oh Me! Oh My! Added all the feeps and goodies from glow 3.1.0.
+  primarily from macro-macro.  Enjoy.
+
+  Revision 1.6  1999/02/13 16:24:25  feaelin
+  Hee. It'd help if I remember not to use parentheses in my comments.
+
+  Revision 1.5  1998/07/30 19:28:29  feaelin
+  Added @@register of lib/glow for this library.
+
+  Revision 1.4  1998/07/30 19:19:54  feaelin
+  Moved .strcutat, .splitarg, .splitfirst all synonyms of .splitargs
+  to lib-strings.
+
+  Revision 1.3  1998/07/30 04:18:44  feaelin
+  Cleanup related to .split/.split2
+
+  Revision 1.2  1998/07/30 04:13:02  feaelin
+  Moved split to lib-strings.
+)
+( -------------------------------------------------------------------------- ) 
+$define tell me @@ swap notify $enddef
+$define wrap me @@ swap wrapnotify $enddef
+$define yes? ( s -- i ) tolower "y" 1 strncmp not $enddef
+ 
+( Beginning of Wrapnotify )
+: last-color ( s -- s )
+  "\\~" "\\^" subst
+  dup "^" rinstr dup if
+    1 - strcut pop
+    dup "^" rinstr dup if
+      strcut swap pop
+      "^" swap strcat
+      "^" strcat
+    else pop pop "" then
+  else pop pop "" then
+;
+ 
+: wraploop ( i d s -- d s )
+  dup ansi_strlen 4 pick > if
+    3 pick over swap 1 ansi_offset strcut
+    swap dup " " rinstr
+    dup 0 > if
+      strcut swap striptail
+      4 pick swap
+      dup last-color
+      rot rot ansi_notify
+      swap striplead strcat swap strcat
+    else
+      pop 3 pick swap
+      dup last-color
+      rot rot ansi_notify
+      swap strcat
+    then
+    wraploop
+  else rot pop then
+;
+ 
+: wrapnotify ( d s -- )
+  over "_prefs/linewrap" getpropstr yes? not if ansi_notify exit then
+  over "_prefs/screenwidth" getpropstr dup if
+    (set custom linewidth)
+    atoi dup 0 >= not if
+      pop 80
+    then
+  else pop 80 then
+  dup if
+    rot rot wraploop
+  else pop then
+  ansi_notify
+;
+ 
+( End of Wrapnotify )
+  
+( Beginning of locate-prop )
+: proplocsearch ( startdbref propname -- locationdbref )
+  over swap                                   ( d d s )
+  me @@ "search" remove_prop
+  begin over ok? while
+    over over getpropstr if
+      me @@ "search" remove_prop
+      pop swap pop exit               ( d )
+    then
+    over intostr "search/" swap strcat me @@ swap getpropstr if
+      me @@ "search" remove_prop
+      pop pop intostr
+      "Error: loop in proploc found at #" swap strcat tell
+      #-1 exit
+    then
+    over intostr "search/" swap strcat me @@ swap "yes" 0 addprop
+    swap "_proploc" getpropstr dup if       ( d s d' )
+      atoi dbref swap                 ( d d' s )
+    else
+      pop #-1 swap
+    then
+  repeat
+  me @@ "search" remove_prop
+  pop pop pop #-1 exit
+;
+ 
+: locate-prop ( d s -- d' )
+    over ok? not over not or if
+        pop pop #-1 exit
+    then
+    over over proplocsearch dup ok? if              ( d s d' )
+        rot rot pop pop exit
+    then
+    pop envpropstr pop
+;
+  
+( End of locate-prop )
+ 
+: CleanCommas ( s -- s )
+  dup not if exit then
+  dup strlen 1 - over ", " rinstr = if dup strlen 2 - strcut pop then
+  dup strlen over "," rinstr = if dup strlen 1 - strcut pop then
+  dup " " 1 strncmp not if 1 strcut swap pop then
+  dup ", " rinstr dup if
+     over swap 1 - strcut pop ", " rinstr if
+  dup ", " rinstr strcut " and" swap strcat strcat
+  else " and " ", " subst then else pop then
+;
+ 
+: pmatch ( d -- s )
+  dup "me" strcmp not if pop "me" match exit then
+    "*" swap strcat match
+;
+ 
+: run ( s -- ) ( Run program or else show the text )
+  dup "{" instr over "}" instr and if
+    trigger @@ swap "(@@Desc)" 1 parsempi
+  then
+  dup "@@" 1 strncmp if wrap exit then
+  dup " " instr dup if
+    1 - strcut 1 strcut swap pop
+  else pop "" then
+  swap 1 strcut swap pop
+  dup "$" 1 strncmp not if match else atoi dbref then
+  dup program? if
+    depth 22 > if  
+      pop pop "Program loop aborted." tell
+    else call then
+  else pop wrap then
+;
+  
+: fhelp ( s -- )
+  "he" match if "Cannot find help here." tell pop exit then
+  "me" match swap "he " swap strcat force
+;
+  
+( This must be the last word in the library! )
+: null-true ( -- ) 
+  depth 1 = if pop 1 then 
+; ( ** LAST PROGRAM ** )
+  
+public null-true
+public cleancommas
+public fhelp
+public pmatch
+public run
+public wrapnotify
+.
+c
+q
+@@register lib-glow-standard=cmd/null
+@@register lib-glow-standard=null
+@@register lib-glow-standard=nothing
+@@register lib-glow-standard=lib/glowstandard
+@@register lib-glow-standard=lib/glow-standard
+@@register lib-glow-standard=lib/glow
+@@register lib-glow-standard=lock/true
+@@register #me lib-glow-standard=tmp/prog1
+@@register #me lib-glow-standard=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=V
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_/de:A library of macros, intended to replace those usually defined by using def in the MUF program editor.
+@@set $tmp/prog1=/_defs/.addpropstr:dup not if pop remove_prop else 0 addprop then
+@@set $tmp/prog1=/_defs/.arch?:"archwizard" flag?
+@@set $tmp/prog1=/_defs/.archwizard?:"ARCHWIZARD" flag?
+@@set $tmp/prog1=/_defs/.blank?:striplead not
+@@set $tmp/prog1=/_defs/.builder?:dup "builder" flag? swap "mage" flag? or
+@@set $tmp/prog1=/_defs/.cap:( s -- s') 1 strcut swap toupper swap strcat
+@@set $tmp/prog1=/_defs/.cleancommas:"$lib/glowstandard" match "cleancommas" call
+@@set $tmp/prog1=/_defs/.confirm:( s -- i ) ( displays query string and waits for user input-- returns 1 if user said "y" ) me @@ swap notify read 1 strcut pop "y" stringcmp not
+@@set $tmp/prog1=/_defs/.control?:(d --i) me @@ swap controls
+@@set $tmp/prog1=/_defs/.controls:controls
+@@set $tmp/prog1=/_defs/.cr:me @@ " " notify
+@@set $tmp/prog1=/_defs/.dark?:dup "D" flag? swap "_dark" \getpropstr or ( d -- i )
+@@set $tmp/prog1=/_defs/.descwrap:"$macro/descwrap" match call
+@@set $tmp/prog1=/_defs/.endfor:1 - dup not until then pop
+@@set $tmp/prog1=/_defs/.envprop:envpropstr swap pop
+@@set $tmp/prog1=/_defs/.envsearch:envpropstr pop
+@@set $tmp/prog1=/_defs/.explode:2 pick swap instr dup if strcut swap dup strlen 1 - strcut pop swap else pop then
+@@set $tmp/prog1=/_defs/.fhelp:"$lib/glowstandard" match "fhelp" call
+@@set $tmp/prog1=/_defs/.firstname:( d -- s ) name dup ";" instr if dup ";" instr 1 - strcut pop then
+@@set $tmp/prog1=/_defs/.for:dup if begin
+@@set $tmp/prog1=/_defs/.getprop?:getpropstr dup if 1 else pop 0 then
+@@set $tmp/prog1=/_defs/.guest?:dup "guest" flag? swap "mage" flag? not and
+@@set $tmp/prog1=/_defs/.hide:( L x -- x L ) over 2 + .neg rotate
+@@set $tmp/prog1=/_defs/.initialize:"me" match dup me ! location loc !
+@@set $tmp/prog1=/_defs/.input:( s -- s' ) (Notify to ME and READ.) me @@ swap notify read
+@@set $tmp/prog1=/_defs/.kill-stack:( ? -- ) depth popn
+@@set $tmp/prog1=/_defs/.letterstr:"abcdefghijklmnopqrstuvwxyz"
+@@set $tmp/prog1=/_defs/.locate-prop:"$lib/glowstandard" match "locate-prop"
+@@set $tmp/prog1=/_defs/.longdesc:"$macro/longdesc" match call
+@@set $tmp/prog1=/_defs/.macro:( "macro" -- ? ) "$macro/" swap strcat match call
+@@set $tmp/prog1=/_defs/.mage?:"mage" flag?
+@@set $tmp/prog1=/_defs/.make-loc-safe:( -- ) .safe-loc loc !
+@@set $tmp/prog1=/_defs/.make-me-safe:( -- ) .safe-me me !
+@@set $tmp/prog1=/_defs/.moveto:"$macro/moveto" match call
+@@set $tmp/prog1=/_defs/.mpi?:dup "meeper" flag? swap .truemage? or
+@@set $tmp/prog1=/_defs/.namesplit:( d -- s1 s2 ) dup unparseobj swap name strlen strcut
+@@set $tmp/prog1=/_defs/.neg:( i -- -i ) 0 swap -
+@@set $tmp/prog1=/_defs/.no?:( s -- i ) ( checks that string starts with "n", is "0", or is blank ) tolower "n" 1 strncmp not
+@@set $tmp/prog1=/_defs/.noguest:"me" match .guest? if me @@ "^FAIL^This command is unavailable to guests." ansi_notify pop exit then
+@@set $tmp/prog1=/_defs/.null:not
+@@set $tmp/prog1=/_defs/.null?:not
+@@set $tmp/prog1=/_defs/.otell:loc @@ me @@ rot notify_except ( s -- ) ( Display string to everyone in my room except me )
+@@set $tmp/prog1=/_defs/.pb:me @@ "----------------------------------------------------------------------------" notify
+@@set $tmp/prog1=/_defs/.pmatch:"$lib/glowstandard" match "pmatch" call
+@@set $tmp/prog1=/_defs/.pmatch+:"$lib/glowstandard" match "pmatch" call
+@@set $tmp/prog1=/_defs/.private?:( dbref -- private? )  "_private" getpropstr .yes?
+@@set $tmp/prog1=/_defs/.quote_string:(s -- "s") "\"" swap strcat "\"" strcat 
+@@set $tmp/prog1=/_defs/.read:( s -- s' ) tell read
+@@set $tmp/prog1=/_defs/.reg-call:( "regprogname" -- ? ) "$" swap strcat match call
+@@set $tmp/prog1=/_defs/.remove:( not implemented ) pop pop
+@@set $tmp/prog1=/_defs/.run:"$lib/glowstandard" match "run" call
+@@set $tmp/prog1=/_defs/.safe-loc:( -- d ) "here" match
+@@set $tmp/prog1=/_defs/.safe-me:( -- d ) "me" match
+@@set $tmp/prog1=/_defs/.say:me @@ swap notify
+@@set $tmp/prog1=/_defs/.secure:( -- ) "me" match dup me ! location loc !
+@@set $tmp/prog1=/_defs/.security?:"_private" getpropstr .yes?
+@@set $tmp/prog1=/_defs/.seek:( x L -- L x ) dup 2 + rotate
+@@set $tmp/prog1=/_defs/.setpropstr:dup if setprop else pop remove_prop then
+@@set $tmp/prog1=/_defs/setpropstr:dup if setprop else pop remove_prop then
+@@set $tmp/prog1=/_defs/.setpennies:( d i -- ) over pennies 0 swap - 3 pick swap addpennies addpennies ( sets d's pennies to i )
+@@set $tmp/prog1=/_defs/.showstr:( s1 ... si i -- ) begin dup while dup 1 + rotate tell 1 - repeat pop
+@@set $tmp/prog1=/_defs/.sort:2 \sort
+@@set $tmp/prog1=/_defs/.spacecut:( s -- s' ) begin "  " "   " subst dup "   " instr not until
+@@set $tmp/prog1=/_defs/.sps:striplead
+@@set $tmp/prog1=/_defs/.stackset:( s -- s' ) dup " " instr dup not if pop pop "" else strcut swap pop then
+@@set $tmp/prog1=/_defs/.strcheck:over if over strlen strcut pop stringcmp not else pop pop 0 then
+@@set $tmp/prog1=/_defs/.stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
+@@set $tmp/prog1=/_defs/stringncmp:( s1 s2 i -- i' ) rot tolower rot tolower rot strncmp
+@@set $tmp/prog1=/_defs/.strip:strip
+@@set $tmp/prog1=/_defs/.strip_extra:dup ";" instr dup if 1 - strcut pop else pop then
+@@set $tmp/prog1=/_defs/.stripspaces:strip
+@@set $tmp/prog1=/_defs/.sts:striptail
+@@set $tmp/prog1=/_defs/.suwiz?:me @@ "M" flag? swap "B" flag? or
+@@set $tmp/prog1=/_defs/.swait:swap sleep #-1 swap notify_except
+@@set $tmp/prog1=/_defs/.tell:me @@ swap notify
+@@set $tmp/prog1=/_defs/.tell-all:me @@ location #-1 rot notify_except
+@@set $tmp/prog1=/_defs/.tell-me:me @@ swap notify
+@@set $tmp/prog1=/_defs/.tell_me:me @@ swap notify
+@@set $tmp/prog1=/_defs/.tellme:me @@ swap notify
+@@set $tmp/prog1=/_defs/.tmage?:"TRUEMAGE" flag?
+@@set $tmp/prog1=/_defs/.trim_spaces:striplead striptail
+@@set $tmp/prog1=/_defs/.truemage?:"TRUEMAGE" flag?
+@@set $tmp/prog1=/_defs/.unique:(not implemented) pop pop
+@@set $tmp/prog1=/_defs/.wiz?:"me" match "wizard" flag?
+@@set $tmp/prog1=/_defs/.wizard?:"wizard" flag?
+@@set $tmp/prog1=/_defs/.wizmatch:"$lib/glowstandard" match "pmatch" call
+@@set $tmp/prog1=/_defs/.wizpmatch:"$lib/glowstandard" match "pmatch" call
+@@set $tmp/prog1=/_defs/.wrap:me @@ swap .wrapnotify
+@@set $tmp/prog1=/_defs/.wrapnotify:"$lib/glowstandard" match "wrapnotify" call
+@@set $tmp/prog1=/_defs/.wrapstr:( s1 ... si i -- ) begin dup while dup 1 + rotate .wrap 1 - repeat pop
+@@set $tmp/prog1=/_defs/.xor:over over or rot rot and not and ( i1 i2 -- i )
+@@set $tmp/prog1=/_defs/.yes?:( s -- i ) ( checks that string starts with y ) tolower "y" 1 strncmp not
+@@set $tmp/prog1=/_defs/.yto1:1 strcut pop "y" stringcmp not if 1 else 0 then
+@@set $tmp/prog1=/_defs/endfor:1 - dup not until then pop
+@@set $tmp/prog1=/_defs/for:dup if begin
+@@set $tmp/prog1=/_defs/xor:over over or rot rot and not and ( i1 i2 -- i )
+@@set $tmp/prog1=/_de:lib-glow:@@list lines 1-48 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/glow=1-48
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.25 $
+wh me=Installation of lib-glow-standard completed.
+@
+
+
+1.25
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2005/03/21 01:31:43 $ $Revision: 1.24 $          )
+d56 6
+d273 1
+d380 1
+a380 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.24 $
+@
+
+
+1.24
+log
+@General maintenance and documentation updates
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2005/01/14 16:32:13 $ $Revision: 1.23 $          )
+d56 3
+a286 3
+@@set $tmp/prog1=/_defs/.debug-line:( -- ) prog "!d" over "d" set set (shows a single debug line)
+@@set $tmp/prog1=/_defs/.debug-off:( -- ) prog "!D" set ( set a program !debug from this line )
+@@set $tmp/prog1=/_defs/.debug-on:( -- ) prog "D" set ( set a program debug from this line )
+d373 1
+a373 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.23 $
+@
+
+
+1.23
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2004/09/05 13:29:13 $ $Revision: 1.22 $          )
+d56 3
+d103 1
+a103 1
+  Revision 1.5  1998/07/30 19:28:29  glow
+d106 1
+a106 1
+  Revision 1.4  1998/07/30 19:19:54  glow
+d110 1
+a110 1
+  Revision 1.3  1998/07/30 04:18:44  glow
+d113 1
+a113 1
+  Revision 1.2  1998/07/30 04:13:02  glow
+a114 4
+
+  Revision 1.1  1998/07/27 19:50:36  glow
+  Initial revision
+
+d373 1
+a373 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.22 $
+@
+
+
+1.22
+log
+@Corrected flaw where guest? was checking against truemage instead of mage
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2004/08/06 14:12:22 $ $Revision: 1.21 $          )
+d39 1
+a39 1
+(   searches down the environment tree from the given object, looking for    )
+d45 1
+a45 1
+(   dbref of the object it was found on instead of the string value. Returns )
+d56 3
+d374 1
+a374 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.21 $
+@
+
+
+1.21
+log
+@Minor documentation corrections.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2004/08/06 14:05:52 $ $Revision: 1.20 $          )
+d56 3
+d294 1
+a294 1
+@@set $tmp/prog1=/_defs/.guest?:dup "guest" flag? swap "truemage" flag? not and
+d371 1
+a371 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.20 $
+@
+
+
+1.20
+log
+@Updated @@list lines to reflect new size of documentation. Replaced
+old-style 'says' for the installation notification with new-style whispers.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2004/04/11 20:06:28 $ $Revision: 1.19 $          )
+d56 4
+d366 3
+a368 3
+@@set $tmp/prog1=/_de:lib-glow:@@list lines 1-52 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/glow=1-52
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.19 $
+@
+
+
+1.19
+log
+@Fixed documentation for compatibility with the MUF editor's 'view' command.
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-glow-standard...
+d5 1
+a5 1
+( lib-glow-standard: $Date: 2003/05/04 22:42:46 $ $Revision: 1.18 $          )
+d56 3
+d362 4
+a365 4
+@@set $tmp/prog1=/_de:lib-glow:@@list lines 1-46 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/glow=1-46
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.18 $
+"Installation of lib-glow-standard completed.
+@
+
+
+1.18
+log
+@Change .noguest to use ^FAIL^ instead of ^RED^
+@
+text
+@d5 4
+a8 1
+( lib-glow-standard: $Date: 2001/02/24 21:35:27 $ $Revision: 1.17 $          )
+d10 12
+a21 12
+( A library based on the macros originally stored in the following files:
+  macro-macro, def-pmatch, std-defs, lib-props, and the 'macros' file
+  Majority of these library functions are small enough they are simply
+  defined in the /_defs/ properties on this program and no reference to them
+  are in the body of this muf-program.
+  After some debugging problems, I've made the decision to make ALL the
+  functions in this library begin with a period.  I know that this will
+  cause a little confusion on mucks that are still using macros, but it's
+  necessary to make it clear that it's these functions are not local to the
+  program using them.  Okay, there are four exceptions, deal with it:
+  for, endfor, stringncmp, xor. They are all defined both with periods and
+  without. )
+d23 29
+a51 8
+( Many macros taken from:
+  PakRat's Macro Package A [macro-macro]
+  Copyright 1996 by Andrew Nelson, All rights reserved
+  cleancommas -- make commafied lists prettier
+  run         -- run description programs
+  wrapnotify  -- do line-wrapping for notify
+  pmatch      -- match a player name
+  null        -- basic null program, for locks, always true                  )
+a52 15
+( lib-props (now merged with lib-glow-standard, Originally in FB's MUF Dist.
+  PROPS Library -- Contains useful property handling routines.
+                                                                            
+  setpropstr [dbref propname strval -- ]
+    sets a property, or removes it if the string is null.
+   
+  envprop [startdbref propname -- stringval]
+    searches down the environment tree from the given object, looking for
+    a property with the given name.  Returns it's value, or a null string
+    if it wasn't found.
+  
+  envsearch [startdbref propname -- locationdbref]
+    Also searches down the envtree for the given property, but returns the
+    dbref of the object it was found on instead of the string value.  Returns
+    #-1 if it cannot find the property.
+a53 6
+  locate-prop [startdbref propname -- locationdbref]
+    Given a property name and dbref, finds the property, whether on the dbref
+    itself, an environment of the dbref, or a proploc of the dbref.  If none,
+    returns #-1.
+)  
+( -------------------------------------------------------------------------- )
+d56 3
+d361 1
+a361 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
+@
+
+
+1.17
+log
+@Incorrect public declaration.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2001/02/21 17:30:37 $ $Revision: 1.15 $          )
+d53 3
+d295 1
+a295 1
+@@set $tmp/prog1=/_defs/.noguest:"me" match .guest? if me @@ "^RED^This command is unavailable to guests." ansi_notify pop exit then
+d355 1
+a355 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.15 $
+@
+
+
+1.16
+log
+@Minor cleanup.
+Fixed a recursing definition bug with $def sort blah .sort
+definitions.
+@
+text
+@d230 1
+a230 1
+public null
+@
+
+
+1.15
+log
+@Added null and nothing to the 'registered' names of the library.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2000/01/10 18:42:07 $ $Revision: 1.14 $          )
+d53 3
+d255 1
+a255 1
+@@set $tmp/prog1=/_defs/.builder?:dup "builder" flag? swap .truemage? or
+a256 1
+@@set $tmp/prog1=/_defs/.check:stringcmp not
+a257 1
+@@set $tmp/prog1=/_defs/.cmd?:( s -- i ) dup "#" 1 strncmp not swap "-" 1 strncmp not or
+d315 1
+a315 1
+@@set $tmp/prog1=/_defs/.sort:2 sort
+d352 1
+a352 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Finished fixing up documentation...for now.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2000/01/10 18:23:21 $ $Revision: 1.13 $          )
+d53 3
+d145 1
+a145 1
+
+d181 1
+a181 1
+
+d216 1
+a216 1
+
+d221 3
+a223 2
+
+: null ( -- ) 
+d226 1
+a226 1
+
+d237 2
+d351 1
+a351 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Updated documentation and added the _docs property.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2000/01/10 18:17:04 $ $Revision: 1.11 $          )
+d53 3
+d343 1
+d345 1
+a345 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
+@
+
+
+1.12
+log
+@Updated docs and fixed the _docs property.
+@
+text
+@d340 1
+a340 1
+@@set $tmp/prog!=/_docs:@@list $lib/glow=1-46
+@
+
+
+1.11
+log
+@Updated docs and fixed the _docs property.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1999/04/18 19:08:32 $ $Revision: 1.10 $          )
+d341 1
+a341 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@
+
+
+1.11.1.1
+log
+@*** empty log message ***
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 2000/01/10 18:23:21 $ $Revision: 1.13 $          )
+a52 3
+  Revision 1.13  2000/01/10 18:23:21  feaelin
+  Updated documentation and added the _docs property.
+
+d340 2
+a341 3
+@@set $tmp/prog1=/_de:lib-glow:@@list lines 1-46 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/glow=1-46
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.10
+log
+@Added alias for stringncmp
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1999/04/18 04:10:45 $ $Revision: 1.9 $                                       )
+d16 3
+a18 2
+  program using them.  Okay, therez three exceptions, deal with it:
+  for, endfor, xor.  They are all defined both with periods and without..    )
+d53 3
+d340 2
+a341 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@Added alias for .setpropstr
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1999/04/16 23:43:17 $ $Revision: 1.8 $                                       )
+d52 3
+d307 1
+d336 1
+a336 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Oops.  Some that crap wasn't supposed to be in here. *grin*
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1999/04/16 21:02:35 $ $Revision: 1.7 $                                       )
+d52 3
+d295 1
+d332 1
+a332 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Oh Me! Oh My! Added all the feeps and goodies from glow 3.1.0.
+primarily from macro-macro.  Enjoy.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1999/02/13 16:24:25 $ $Revision: 1.6 $                                       )
+d52 4
+d328 1
+a328 130
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@@action pounce=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@lock $tmp/exit1=here&!here
+@@set $tmp/exit1=M
+@@set $tmp/exit1=^/@@/glow/fl2:4
+@@set $tmp/exit1=/_/de:Get em tiger!
+@@set $tmp/exit1=/_/fl:{if:{lt:{ref:{&arg}},#0},Who?,{otell:{name:me} pounces on {name:{&arg}}\, {pronouns:{rand:_pounce2},{&arg}}}}
+@@set $tmp/exit1=/_/lok:PakRat(#9PJKCIW2)&!PakRat(#9PJKCIW2)
+@@set $tmp/exit1=/_dark:yes
+@@action \;\d=here=tmp/exit2
+@@link $tmp/exit2=$tmp/prog1
+@@set $tmp/exit2=M
+@@set $tmp/exit2=M3
+@@set $tmp/exit2=^/@@/glow/fl2:4
+@@set $tmp/exit2=/\:{eval:{&arg}}
+@@set $tmp/exit2=/\d:{debug:{eval:{&arg}}}
+@@set $tmp/exit2=/_/de:{list:use,this}
+@@set $tmp/exit2=/_/sc:{if:{not:{&arg}},{list:use,this},{exec:{&cmd},this}}
+@@set $tmp/exit2=/duh:{with:v1,{:1},{with:v2,{:2},{with:v3,{:3},{if:{not:{:3}},{set:v3,/}}{parse:var,{listprops:{&v3},{&v1}},{if:{propdir:{&var},{&v1}},{recurse-copy:{{&v1},{&v2},{&var}},{null:{store:{prop:{&var},{&v1}},{&var},{&v2}}}}}}}
+@@set $tmp/exit2=/use#:5
+@@set $tmp/exit2=/use#/1:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@set $tmp/exit2=/use#/2:USAGE:  \ (expression)  | parses MPI (expression)
+@@set $tmp/exit2=/use#/3:        \d (expression) | debugs and parses MPI (expression)
+@@set $tmp/exit2=/use#/4:       Written by:Mystikite@@DelusionsMUCK: Freeware
+@@set $tmp/exit2=/use#/5:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@action world;worlds;land;lands;realm;realms=here=tmp/exit3
+@@link $tmp/exit3=$tmp/prog1
+@@set $tmp/exit3=W
+@@set $tmp/exit3=/_/de:{null:{ansi:^YELLOW^Typing '^GREEN^world^YELLOW^' or '^GREEN^land^YELLOW^' will tell what world or land you are in.  Worlds can contain many different lands.  For a list of world and land managers type '^GREEN^managers^YELLOW^'.  If you would like to move your rooms to exist in a particular land or world type '^GREEN^setworld^YELLOW^'.}}
+@@set $tmp/exit3=/_/sc:{null:{ansi:^YELLOW^{eval:{prop:{prop:_{&cmd},this},this}}}}
+@@set $tmp/exit3=/_land:_show_land
+@@set $tmp/exit3=/_lands:_show_land
+@@set $tmp/exit3=/_realm:_show_world
+@@set $tmp/exit3=/_realms:_show_world
+@@set $tmp/exit3=/_show_land:You are in the land of {prop:_land,here} run by {prop:_landlord,here}.
+@@set $tmp/exit3=/_show_world:You are in the world of {prop:~world,here} managed by {prop:~manager,here}.
+@@set $tmp/exit3=/_world:_show_world
+@@set $tmp/exit3=/_worlds:_show_world
+@@action diceroll;droll=here=tmp/exit4
+@@link $tmp/exit4=$tmp/prog1
+@@set $tmp/exit4=M
+@@set $tmp/exit4=M3
+@@set $tmp/exit4=^/@@/glow/fl2:4
+@@set $tmp/exit4=/_/de:Dice roller!{nl}{nl}Usage: {&cmd} XdY+Z{nl}{nl}X is the number of dice.{nl}Y is the number of sides on each die.{nl}Z is a number to add to the result.{nl}{nl}'{&cmd} XdY' acts like XdY+0.{nl}'{&cmd} Y' acts like 1dY+0.{nl}'{&cmd} Y+Z' acts like 1dY+Z.
+@@set $tmp/exit4=/_/sc:{with:dpos,{instr:{&arg},d},{with:ppos,{instr:{&arg},+},{with:sides,{if:{&dpos},{add:0,{midstr:{&arg},{add:{&dpos},1},{subt:{&ppos},1}}},{add:0,{midstr:{&arg},1,{if:{&ppos},{subt:{&ppos},1},{strlen:{&arg}}}}}},{with:rolls,{if:{&dpos},{add:0,{midstr:{&arg},1,{subt:{&dpos},}1}},1},{with:plus,{if:{&ppos},{add:0,{midstr:{&arg},{add:{&ppos},1},{strlen:{&arg}}}},0},You roll {&rolls}d{&sides}+{&plus} and get {dice:{&sides},{&rolls},{&plus}}}}}}}.
+@@action old\d=here=tmp/exit5
+@@link $tmp/exit5=$tmp/prog1
+@@lock $tmp/exit5=#0
+@@set $tmp/exit5=D
+@@set $tmp/exit5=M
+@@set $tmp/exit5=^/@@/glow/fl2:4
+@@set $tmp/exit5=/\:{eval:{&arg}}
+@@set $tmp/exit5=/\d:{debug:{eval:{&arg}}}
+@@set $tmp/exit5=/_/lok:lock-meeper(#474FLM1)
+@@set $tmp/exit5=/_/sc:{exec:{&cmd},this}
+@@action stand=here=tmp/exit6
+@@link $tmp/exit6=$tmp/prog1
+@@lock $tmp/exit6=here&!here
+@@set $tmp/exit6=/_/fl:You stand up from the soft rug and stretch happily
+@@set $tmp/exit6=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
+@@set $tmp/exit6=/_/ofl:stands up from the rug and stretches
+@@action stand=here=tmp/exit7
+@@link $tmp/exit7=$tmp/prog1
+@@lock $tmp/exit7=here&!here
+@@set $tmp/exit7=D
+@@set $tmp/exit7=/_/fl:You stand up from the bench.
+@@set $tmp/exit7=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
+@@set $tmp/exit7=/_/ofl:stands up from the bench.
+@@action sit=here=tmp/exit8
+@@link $tmp/exit8=$tmp/prog1
+@@lock $tmp/exit8=here&!here
+@@set $tmp/exit8=D
+@@set $tmp/exit8=/_/fl:You sit on the bench and warm yourself by the fire.
+@@set $tmp/exit8=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
+@@set $tmp/exit8=/_/ofl:sits on the bench and warms up by the fire.
+@@action quit;exit;logout=here=tmp/exit9
+@@link $tmp/exit9=$tmp/prog1
+@@lock $tmp/exit9=#0&!#0
+@@set $tmp/exit9=D
+@@set $tmp/exit9=M3
+@@set $tmp/exit9=/_/de:To leave type QUIT in all caps.
+@@set $tmp/exit9=/_/fl:To leave type QUIT in all caps.
+@@set $tmp/exit9=/_/lok:StarFire(#0RDS)&!StarFire(#0RDS)
+@@action cls=here=tmp/exit10
+@@link $tmp/exit10=$tmp/prog1
+@@set $tmp/exit10=M
+@@set $tmp/exit10=M1
+@@set $tmp/exit10=^/@@/glow/fl2:4
+@@set $tmp/exit10=/_/de:Cls clears your screen.
+@@set $tmp/exit10=/_/sc:\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r
+@@action telescope=here=tmp/exit11
+@@link $tmp/exit11=$tmp/prog1
+@@lock $tmp/exit11=here&!here
+@@set $tmp/exit11=/_/fl:You put you eye to the eyepiece and look off into the sky and stars beyond.  They shine brighter and clearer than you have ever seen them before.  You can pick out your favorite constellations, and see each star with remarkable clarity.  It is a breathtaking sight.
+@@set $tmp/exit11=/_/lok:Kismet(#141PJW)&!Kismet(#141PJW)
+@@set $tmp/exit11=/_/ofl:puts thier eye up to the telescope and stares out at the stars twinkling in the night, like diamonds.
+@@action clock;time;date=here=tmp/exit12
+@@link $tmp/exit12=$tmp/prog1
+@@set $tmp/exit12=M
+@@set $tmp/exit12=^/@@/glow/fl2:4
+@@set $tmp/exit12=/_/de:{eval:{prop:_/sc,this}}
+@@set $tmp/exit12=/_/sc:The current {muckname} time is {ftime:%r %Z} on {ftime:%C}.
+@@action @@uptime;uptime=here=tmp/exit13
+@@link $tmp/exit13=$tmp/prog1
+@@set $tmp/exit13=M
+@@set $tmp/exit13=M1
+@@set $tmp/exit13=^/@@/glow/fl2:4
+@@set $tmp/exit13=/_/de:{eval:{prop:_/sc,this}}
+@@set $tmp/exit13=/_/sc:{eval:{nl}{prop:_downtime,this}{nl}{prop:_lastclean,this}{nl}{prop:_lastdump,this}{nl}{prop:_nextdump,this}{nl}{nl}{prop:_uptime,this}{nl}{prop:_time,this}{nl} }
+@@set $tmp/exit13=/_downtime:Last down {ltimestr:{subt:{secs},{prop:~sys/shutdowntime,#0}}} ago for {ltimestr:{subt:{prop:~sys/startuptime,#0},{prop:~sys/shutdowntime,#0}}}.
+@@set $tmp/exit13=/_lastclean:Last prop clean {ltimestr:{subt:{secs},{prop:~sys/lastcleantime,#0}}} ago.
+@@set $tmp/exit13=/_lastdump:Last dump {ltimestr:{subt:{secs},{prop:~sys/lastdumptime,#0}}} ago{if:{ge:{prop:~sys/lastdumpdone,#0},{prop:~sys/lastdumptime,#0}}, took {ltimestr:{subt:{prop:~sys/lastdumpdone,#0},{prop:~sys/lastdumptime}}}}.
+@@set $tmp/exit13=/_nextdump:Next dump in {ltimestr:{add:{subt:{prop:~sys/lastdumptime,#0},{secs}},{prop:~sys/dumpinterval,#0}}}.
+@@set $tmp/exit13=/_time:Current {muckname} time is {ftime:%r %Z} on {ftime:%C}.
+@@set $tmp/exit13=/_uptime:Up for {ltimestr:{subt:{secs},{prop:~sys/startuptime,#0}}}.
+@@action twho;whospe;ws=here=tmp/exit14
+@@link $tmp/exit14=$tmp/prog1
+@@set $tmp/exit14=W2
+@@set $tmp/exit14=/_/de:{eval:{prop:_twho,this}}
+@@set $tmp/exit14=/_/sc:{eval:{prop:_twho,this}}
+@@set $tmp/exit14=/_idlestr:{if:{ge:{&i},86400},{div:{&i},86400}d,{if:{ge:{&i},3600},{div:{&i},3600}h,{if:{ge:{&i},60},{div:{&i},60}m,{&i}s}}}
+@@set $tmp/exit14=/_twho:{null:{ansi:^FOREST^{left:Player,16} ^CRIMSON^{left:Gender,6} ^NAVY^{left:Species,6} ^VIOLET^{left:Status,6} ^BROWN^{left:Idle,4} ^AQUA^{midstr:{left:{if:{prop:_poll,#0},{prop:_poll,#0},@@doing},35},1,35}}{foreach:who,{if:{&arg},{online},{contents:here,player}},{if:1,{ansi:^GREEN^{midstr:{left:{name:{&who}},16},1,16} ^RED^{midstr:{left:{prop:sex,{&who}},6},1,6} ^BLUE^{midstr:{left:{prop:species,{&who}},7},1,7} ^PURPLE^{left:{if:{awake:{&who}},Awake,Asleep},6} ^YELLOW^{if:{awake:{&who}},{midstr:{right:{with:i,{idle:{&who}},{exec:_idlestr}},4},1,4},{left:,4}} ^CYAN^{midstr:{left:{prop:_/do,{&who}},35},1,35}}}}}
+@@action who=here=tmp/exit15
+@@link $tmp/exit15=$tmp/prog1
+@@set $tmp/exit15=W
+@@set $tmp/exit15=/_/de:'who' lists everybody currently playing, and everyone in the room.
+@@set $tmp/exit15=/_/sc:{eval:{prop:_who,this}{prop:_here,this}}
+@@set $tmp/exit15=/_here:{null:{ansi:^CYAN^In the room: {commas:{contents:here,player},\, ^YELLOW^and ,plr,^GREEN^{name:{&plr}}^AQUA^{if:{awake:{&plr}},{if:{ge:{idle:{&plr}},600},^BLUE^(idle)^AQUA^,},^BLUE^(sleeping)^AQUA^}}.}}
+@@set $tmp/exit15=/_who:{null:{ansi:^CYAN^Players online: {commas:{online},\, ^YELLOW^and ,plr,^GREEN^{name:{&plr}}^AQUA^}.}}
+@
+
+
+1.6
+log
+@Hee. It'd help if I remember not to use parentheses in my comments.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/30 19:28:29 $ $Revision: 1.5 $                                       )
+d52 3
+a180 1
+  me @@ swap pronoun_sub
+d324 130
+a453 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Added @@register of lib/glow for this library.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/30 19:19:54 $ $Revision: 1.4 $                                       )
+d52 3
+d56 1
+a56 1
+  Moved .strcutat, .splitarg, .splitfirst (all synonyms of .splitargs)
+d322 1
+a322 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Moved .strcutat, .splitarg, .splitfirst (all synonyms of .splitargs)
+to lib-strings.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/30 04:18:44 $ $Revision: 1.3 $                                       )
+d52 4
+d212 1
+d319 1
+a319 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Cleanup related to .split/.split2
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/30 04:13:02 $ $Revision: 1.2 $                                       )
+a24 1
+  splitarg    -- split a string at first space or = sign
+d52 3
+a186 10
+ 
+: splitargs ( s -- s s )
+  dup " " instr if
+    dup "=" instr if
+      dup " " instr over "=" instr - 0 < if
+        " " split
+      else "=" split then
+    else " " split then
+  else "=" split then
+;
+a201 2
+public split
+public splitargs
+a281 3
+@@set $tmp/prog1=/_defs/.splitarg:"$lib/glowstandard" match "splitargs" call
+@@set $tmp/prog1=/_defs/.splitargs:"$lib/glowstandard" match "splitargs" call
+@@set $tmp/prog1=/_defs/.splitfirst:"$lib/glowstandard" match "splitargs" call
+a284 1
+@@set $tmp/prog1=/_defs/.strcutat:"$lib/glowstandard" match "split" call
+d314 1
+a314 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Moved split to lib-strings.
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/27 19:50:36 $ $Revision: 1.1 $                                       )
+d53 3
+a291 2
+@@set $tmp/prog1=/_defs/.split:"$lib/glowstandard" match "split" call
+@@set $tmp/prog1=/_defs/.split2:"$lib/glowstandard" match "split" call
+d328 1
+a328 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-glow-standard: $Date: 1998/07/27 19:45:44 $ $Revision: 1.1 $                                       )
+a24 1
+  split       -- split a string given a delimiter
+d52 4
+a55 1
+  $Log$
+a180 6
+;
+ 
+: split ( s si -- s s )
+   over over instr dup if
+      rot swap 1 - strcut rot strlen strcut swap pop
+   else pop pop "" then
+@

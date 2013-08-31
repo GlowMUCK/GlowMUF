@@ -1,0 +1,877 @@
+head	1.7;
+access;
+symbols
+	GlowMUF1-1-1:1.7
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.7
+date	2005.09.25.13.20.40;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2005.04.07.21.19.52;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.04.05.15.44.43;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.03.16.46.17;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.29.16.30.37;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.29.01.25.09;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.7
+log
+@Documentation updates.
+@
+text
+@wh me=Beginning installation of lib-lmgr...
+@@prog lib-lmgr
+1 99999 d
+1 i
+( lib-lmgr: $Date: 2005/04/07 21:19:52 $ $Revision: 1.6 $                     )
+( Purpose: Routines for manipulating lists                                    )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( List Manager  - LMGR                                                        )
+( 'elem#' represents an integer value specifying a specific element           )
+( 'list-name' is the name including the property path of the list             )
+( 'dbref' is the database reference of the database item that has the list    )
+( 'element' is an individual element of the list...a string type              )
+( 'count' is a quantity of elements to manipulate                             )
+( 'strrange' is a range of strings...see lib-stackrng                         )
+( '--' represents the library word                                            )
+(                                                                             )
+( LMGR-ClearElem: <elem#> <list-name> <dbref> --                              )
+(   Clears an element in the list -- does NOT delete                          )
+(                                                                             )
+( LMGR-ClearRange: <count> <first-elem> <list-name> <dbref> --                )
+(   Clears a range of elements in the list - does NOT delete                  )
+(                                                                             )
+( LMGR-CopyRange:                                                             )
+(   <dest> <cnt> <src> <src-lst> <src-ref> <dest-lst> <dest-ref> --           )
+(   Copy a range of elements from one list into another, inserting into the   )
+(   dest list                                                                 )
+(                                                                             )
+( LMGR-DeleteList: <list-name> <dbref> --                                     )
+(   Delete an entire list.                                                    )
+(                                                                             )
+( LMGR-DeleteRange: <count> <first-elem> <list-name> <dbref> --               )
+(   Delete a range of elements from the list, shifting the later elements     )
+(   back to fill the gap.                                                     )
+(                                                                             )
+( LMGR-FullRange: <list-name> <dbref> -- <num-elements> 1 <list-name> <dbref> )
+(   Returns the parameters on the stack, prepared for LMGR-GetRange           )
+(                                                                             )
+( LMGR-GetElem: <elem#> <list-name> <dbref> -- <element>                      )
+(   Get an element of a list                                                  )
+(                                                                             )
+( LMGR-Getlist: <list-name> <dbref> --                                        )
+(   Get an entire list.                                                       )
+(                                                                             )
+( LMGR-GetBRange:                                                             )
+(   <count> <first-elem> <list-name> <dbref> -- {bstrrange}                   )
+(   Different from 'GetRange' in that the range is backward/reversed          )
+(                                                                             )
+( LMGR-GetRange: <count> <first-elem> <list-name> <dbref>  -- {strrange}      )
+(   Returns the element values [strings] on the stack, with <count> on top    )
+(                                                                             )
+( LMGR-InsertRange: <elements> <count> <first-elem> <list-name> <dbref> --    )
+(   Insert a range of elemnts into a list                                     )
+(                                                                             )
+( LMGR-MoveRange: <dest> <count> <source> <list-name> <dbref> --              )
+(   Move [copy] a range of elements inside a list                             )
+(                                                                             )
+( LMGR-PutElem: <new-element> <elem#> <list-name> <dbref> --                  )
+(   Put an element into a list                                                )
+(                                                                             )
+( LMGR-PutRange: <elements> <count> <first-elem> <list-name> <dbref> --       )
+(   Put a range of elements into a list                                       )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-lmgr,v $
+  Revision 1.6  2005/04/07 21:19:52  feaelin
+  Added Library Symbols
+ 
+  Revision 1.5  2005/04/05 15:44:43  feaelin
+  Revised word names in light of the new library word name standard
+ 
+  Revision 1.4  2005/04/03 16:46:17  feaelin
+  Cleaned up the library documentation and fixed the install script.
+ 
+  Revision 1.3  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+
+)
+( --------------------------------------------------------------------------- )
+(standard list writing format)
+$def COUNTSUFFIX "#"
+$def ITEMNUMSEP "#/"   ( "" in old format )
+ 
+: safeclear (d s -- )
+  over over propdir? if
+    over over "" -1 addprop
+    "" 0 addprop
+  else
+    remove_prop
+  then
+;
+ 
+: lmgr-getoldelem (elem list db -- str)
+  swap rot intostr strcat getpropstr
+;
+ 
+: lmgr-getmidelem ( elem list db -- str )
+  swap "/" strcat rot intostr strcat getpropstr
+;
+ 
+: lmgr-getnewelem ( elem list db -- str )
+  swap "#/" strcat rot intostr strcat getpropstr
+;
+ 
+: lmgr-getelem (elem list db -- str)
+  "isd" checkargs
+  3 pick 3 pick 3 pick lmgr-getnewelem
+  dup if -4 rotate pop pop pop exit then
+  pop 3 pick 3 pick 3 pick lmgr-getmidelem
+  dup if -4 rotate pop pop pop exit then
+  pop lmgr-getoldelem
+;
+ 
+: lmgr-setcount ( count list db -- )
+  "isd" checkargs
+  swap COUNTSUFFIX strcat rot dup if
+    intostr 0 addprop
+  else
+    pop remove_prop
+  then
+;
+ 
+: lmgr-getnewcount ( list db -- count )
+  swap "#" strcat getpropstr atoi
+;
+ 
+: lmgr-getoldcount ( list db -- count )
+  swap "/#" strcat getpropstr atoi
+;
+ 
+: lmgr-getnocount-loop ( item list db -- count )
+  3 pick 3 pick 3 pick lmgr-getelem
+  not if pop pop 1 - exit then
+  rot 1 + rot rot
+  lmgr-getnocount-loop
+;
+ 
+: lmgr-getnocount ( list db -- count )
+  1 rot rot lmgr-getnocount-loop
+;
+ 
+: lmgr-getcount (list db -- count)
+  "sd" checkargs
+  over over lmgr-getnewcount
+  dup if rot rot pop pop exit then
+  pop over over lmgr-getoldcount
+  dup if rot rot pop pop exit then
+  pop lmgr-getnocount
+;
+ 
+: lmgr-putelem ( str elem list db -- )
+  "sisd" checkargs
+  over over LMGR-GETCOUNT 4 pick < if
+    3 pick 3 pick 3 pick LMGR-SETCOUNT
+  then
+  swap ITEMNUMSEP strcat rot intostr strcat rot 0 addprop
+;
+ 
+: lmgr-clearelem ( elem list db -- )
+  "isd" checkargs
+  dup 3 pick 5 pick intostr strcat remove_prop
+  dup 3 pick "/" strcat 5 pick intostr strcat remove_prop
+  swap "#/" strcat rot intostr strcat remove_prop
+;
+ 
+: lmgr-getrange_loop ( ... count count first name db -- elems... n )
+  4 rotate dup if
+( count first name db count )
+    1 - -4 rotate
+( count count-1 first name db )
+    rot dup 4 pick 4 pick LMGR-GETELEM
+( count count-1 name db first elem )
+    -6 rotate 1 + -3 rotate
+( elem count count-1 first+1 name db )
+    'lmgr-getrange_loop jmp
+( elem ... count )
+  else
+( ... count first name db 0 )
+    pop pop pop pop
+  then
+;
+ 
+: lmgr-getrange ( count first name db -- elems... n )
+  "iisd" checkargs
+  4 pick -5 rotate lmgr-getrange_loop
+;
+ 
+: lmgr-fullrange ( list obj -- count start list obj )
+  "sd" checkargs
+  over over lmgr-getcount -3 rotate 1 -3 rotate
+;
+ 
+: lmgr-getbrange_loop ( ... count count first name db -- elems... n )
+  4 rotate dup if
+( count first name db count )
+    1 - -4 rotate
+( count count-1 first name db )
+    rot 1 - dup 4 pick 4 pick LMGR-GETELEM
+( count count-1 name db first-1 elem )
+    -6 rotate -3 rotate
+( elem count count-1 first-1 name db )
+    'lmgr-getbrange_loop jmp
+( elem ... count )
+  else
+( ... count first name db 0 )
+    pop pop pop pop
+  then
+;
+ 
+: lmgr-getbrange ( count first name db -- elems... n )
+  "iisd" checkargs
+  rot 4 pick dup -6 rotate + -3 rotate lmgr-getbrange_loop
+;
+ 
+: lmgr-putrange_loop ( elems... count first name db which -- )
+  5 pick over over over = if
+( count first name db count count count )
+    pop pop pop pop pop pop pop
+( )
+  else
+( elems... count first name db which count which )
+    - 5 + rotate
+( elems... count first name db which elem )
+    over 6 pick + 5 pick 5 pick LMGR-PUTELEM
+( elems... count first name db which )
+    1 + 'lmgr-putrange_loop jmp
+( )
+  then
+;
+ 
+: lmgr-putrange ( elems... count first name db -- )
+  "{s}isd" checkargs
+  0 lmgr-putrange_loop
+;
+ 
+: lmgr-putbrange ( elems... count first name db -- )
+  "{s}isd" checkargs
+  4 rotate dup if
+( elems... first name db count )
+    1 - -4 rotate
+( elems... count first name db )
+    5 rotate 4 pick 4 pick 4 pick LMGR-PUTELEM
+( elems... count first name db )
+    rot 1 + -3 rotate
+( elems... count first name db )
+    'lmgr-putbrange jmp
+( )
+  else
+( 0 first name db )
+    pop pop pop pop
+( )
+  then
+;
+ 
+: lmgr-clearrange ( count first name db -- )
+  "iisd" checkargs
+  4 rotate dup if
+( first name db count )
+    1 - -4 rotate
+( count first name db )
+    rot dup 4 pick 4 pick LMGR-CLEARELEM
+( count name db first )
+    1 + -3 rotate
+( count first+1 name db )
+    'lmgr-clearrange jmp
+( )
+  else
+( first name db 0 )
+    pop pop pop pop
+( )
+  then
+;
+ 
+: lmgr-moverange_loop ( dest count src name db inc -- )
+  5 rotate dup if
+( dest src name db inc count )
+    1 - -5 rotate
+( dest count-1 src name db inc )
+    4 rotate dup 5 pick 5 pick LMGR-GETELEM
+( dest count-1 name db inc src elem )
+    7 rotate swap over 7 pick 7 pick LMGR-PUTELEM
+( count-1 name db inc src dest )
+    3 pick + -6 rotate
+( dest+inc count-1 name db inc src )
+    over + -4 rotate
+( dest+inc count-1 src+inc name db inc )
+    'lmgr-moverange_loop jmp
+( )
+  else
+( dest src name db 0 inc )
+    pop pop pop pop pop pop
+( )
+  then
+;
+ 
+: lmgr-moverange ( dest count src name db -- )
+  "iiisd" checkargs
+  5 rotate 4 rotate over over < if
+( count name db dest src )
+    -4 rotate -5 rotate 1
+( count name db dest src inc )
+  else
+( count name db dest src )
+    5 pick + 1 - -4 rotate
+( count src+count-1 name db dest )
+    5 pick + 1 - -5 rotate
+( dest+count-1 count src+count-1 name db )
+    -1
+( dest+count-1 count src+count-1 name db inc )
+  then
+( dest count src name db inc )
+  lmgr-moverange_loop
+( )
+;
+ 
+: lmgr-insertrange ( elem-1 ... elem-n count first list db -- )
+  "{s}isd" checkargs
+  3 pick 5 pick over + swap
+( elem-1 ... elem-n count first list db first+count first )
+  4 pick 4 pick LMGR-GETCOUNT
+( elem-1 ... elem-n count first list db first+count first list-count )
+  over - 1 + swap
+( elem-1 ... elem-n count first list db first+count range-count first )
+  5 pick 5 pick LMGR-MOVERANGE
+( elem-1 ... elem-n count first list db )
+  LMGR-PUTRANGE
+( )
+;
+ 
+: lmgr-deleterange ( count first list db -- )
+  "iisd" checkargs
+  over over LMGR-GETCOUNT
+( count first list db list-count )
+  4 pick 6 pick over +
+( count first list db list-count first first+count )
+  3 pick
+( count first list db list-count first first+count list-count )
+  over - 1 + swap
+( count first list db list-count first range-count first+count )
+  6 pick 6 pick LMGR-MOVERANGE
+( count first list db list-count )
+  5 rotate swap over - 1 +
+( first list db count delstart )
+  1 - 4 rotate 4 rotate 4 pick 4 pick 1 + 4 pick 4 pick LMGR-CLEARRANGE
+( first count delstart list db )
+  LMGR-SETCOUNT pop pop
+( )
+;
+ 
+: lmgr-extractrange ( count first list db -- elem-1 ... elem-n n )
+  "iisd" checkargs
+  4 pick 4 pick 4 pick 4 pick LMGR-GETRANGE
+( count first list db elem-1 ... elem-n n )
+  dup 5 + rotate over 5 + rotate 3 pick 5 + rotate 4 pick 5 + rotate
+( elem-1 ... elem-n n count first list db )
+  LMGR-DELETERANGE
+( elem-1 ... elem-n n )
+;
+ 
+: LMGR-deletelist
+  "sd" checkargs
+  over over LMGR-getcount
+  1 4 rotate 4 rotate LMGR-deleterange
+;
+ 
+: LMGR-getlist
+  "sd" checkargs
+  over over LMGR-getcount
+  rot rot 1 rot rot
+  LMGR-getrange
+;
+ 
+PUBLIC lmgr-getcount
+PUBLIC lmgr-setcount
+PUBLIC lmgr-getelem
+PUBLIC lmgr-putelem
+PUBLIC lmgr-clearelem
+PUBLIC lmgr-getrange
+PUBLIC lmgr-fullrange
+PUBLIC lmgr-getbrange
+PUBLIC lmgr-putrange
+PUBLIC lmgr-putbrange
+PUBLIC lmgr-clearrange
+PUBLIC lmgr-moverange
+PUBLIC lmgr-insertrange
+PUBLIC lmgr-deleterange
+PUBLIC lmgr-extractrange
+PUBLIC lmgr-deletelist
+PUBLIC lmgr-getlist
+.
+c
+q
+@@register lib-lmgr=lib/lmgr
+@@set $lib/lmgr=L
+@@set $lib/lmgr=B
+@@set $lib/lmgr=H
+@@set $lib/lmgr=S
+@@set $lib/lmgr=W2
+@@set $lib/lmgr=/_/de:lib-lmgr: List lines 1-61 for documentation.
+@@set $lib/lmgr=/_defs/.lmgr-clearelem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $lib/lmgr=/_defs/.lmgr-clearrange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $lib/lmgr=/_defs/.lmgr-deletelist:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $lib/lmgr=/_defs/.lmgr-deleterange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $lib/lmgr=/_defs/.lmgr-extractrange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $lib/lmgr=/_defs/.lmgr-fullrange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $lib/lmgr=/_defs/.lmgr-getbrange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $lib/lmgr=/_defs/.lmgr-getcount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $lib/lmgr=/_defs/.lmgr-getelem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $lib/lmgr=/_defs/.lmgr-getlist:"$lib/lmgr" match "lmgr-getlist" call
+@@set $lib/lmgr=/_defs/.lmgr-getrange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $lib/lmgr=/_defs/.lmgr-insertrange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $lib/lmgr=/_defs/.lmgr-moverange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $lib/lmgr=/_defs/.lmgr-putbrange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $lib/lmgr=/_defs/.lmgr-putelem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $lib/lmgr=/_defs/.lmgr-putrange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $lib/lmgr=/_defs/.lmgr-setcount:"$lib/lmgr" match "lmgr-setcount" call
+@@set $lib/lmgr=/_defs/LMGRclearelem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $lib/lmgr=/_defs/LMGRclearrange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $lib/lmgr=/_defs/LMGRdeletelist:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $lib/lmgr=/_defs/LMGRdeleterange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $lib/lmgr=/_defs/LMGRextractrange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $lib/lmgr=/_defs/LMGRfullrange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $lib/lmgr=/_defs/LMGRgetbrange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $lib/lmgr=/_defs/LMGRgetcount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $lib/lmgr=/_defs/LMGRgetelem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $lib/lmgr=/_defs/LMGRgetlist:"$lib/lmgr" match "lmgr-getlist" call
+@@set $lib/lmgr=/_defs/LMGRgetrange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $lib/lmgr=/_defs/LMGRinsertrange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $lib/lmgr=/_defs/LMGRmoverange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $lib/lmgr=/_defs/LMGRputbrange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $lib/lmgr=/_defs/LMGRputelem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $lib/lmgr=/_defs/LMGRputrange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $lib/lmgr=/_defs/LMGRsetcount:"$lib/lmgr" match "lmgr-setcount" call
+@@set $lib/lmgr=/_defs/LMGR-ClearElem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $lib/lmgr=/_defs/LMGR-ClearRange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $lib/lmgr=/_defs/LMGR-DeleteList:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $lib/lmgr=/_defs/LMGR-DeleteRange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $lib/lmgr=/_defs/LMGR-ExtractRange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $lib/lmgr=/_defs/LMGR-FullRange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $lib/lmgr=/_defs/LMGR-GetBRange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $lib/lmgr=/_defs/LMGR-GetCount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $lib/lmgr=/_defs/LMGR-GetElem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $lib/lmgr=/_defs/LMGR-GetList:"$lib/lmgr" match "lmgr-getlist" call
+@@set $lib/lmgr=/_defs/LMGR-GetRange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $lib/lmgr=/_defs/LMGR-InsertRange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $lib/lmgr=/_defs/LMGR-MoveRange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $lib/lmgr=/_defs/LMGR-PutBRange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $lib/lmgr=/_defs/LMGR-PutElem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $lib/lmgr=/_defs/LMGR-PutRange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $lib/lmgr=/_defs/LMGR-SetCount:"$lib/lmgr" match "lmgr-setcount" call
+@@set $lib/lmgr=/_docs:@@list $lib/lmgr=1-61
+@@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.6 $
+@@set $lib/lmgr=/_lib-symbol:LMGR
+wh me=Installation of lib-lmgr complete.
+@
+
+
+1.6
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-lmgr: $Date: 2005/04/05 15:44:43 $ $Revision: 1.5 $                     )
+d68 3
+d73 1
+a73 1
+
+d76 1
+a76 1
+
+d454 1
+a454 1
+@@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Revised word names in light of the new library word name standard
+@
+text
+@d5 1
+a5 1
+( lib-lmgr: $Date: 2005/04/03 16:46:17 $ $Revision: 1.4 $                     )
+d68 3
+d451 2
+a452 1
+@@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Cleaned up the library documentation and fixed the install script.
+@
+text
+@d5 1
+a5 1
+( lib-lmgr: $Date: 2005/03/21 01:31:43 $ $Revision: 1.3 $                     )
+d20 1
+a20 1
+( LMGRClearElem: <elem#> <list-name> <dbref> --                               )
+d23 1
+a23 1
+( LMGRClearRange: <count> <first-elem> <list-name> <dbref> --                 )
+d26 1
+a26 1
+( LMGRCopyRange:                                                              )
+d31 1
+a31 1
+( LMGRDeleteList: <list-name> <dbref> --                                      )
+d34 1
+a34 1
+( LMGRDeleteRange: <count> <first-elem> <list-name> <dbref> --                )
+d38 1
+a38 1
+( LMGRFullRange: <list-name> <dbref> -- <num-elements> 1 <list-name> <dbref>  )
+d41 1
+a41 1
+( LMGRGetElem: <elem#> <list-name> <dbref> -- <element>                       )
+d44 1
+a44 1
+( LMGRGetlist: <list-name> <dbref> --                                         )
+d47 1
+a47 1
+( LMGRGetBRange:                                                              )
+d51 1
+a51 1
+( LMGRGetRange: <count> <first-elem> <list-name> <dbref>  -- {strrange}       )
+d54 1
+a54 1
+( LMGRInsertRange: <elements> <count> <first-elem> <list-name> <dbref> --     )
+d57 1
+a57 1
+( LMGRMoveRange: <dest> <count> <source> <list-name> <dbref> --               )
+d60 1
+a60 1
+( LMGRPutElem: <new-element> <elem#> <list-name> <dbref> --                   )
+d63 1
+a63 1
+( LMGRPutRange: <elements> <count> <first-elem> <list-name> <dbref> --        )
+d68 3
+a412 18
+@@set $lib/lmgr=/_defs/lmgr-clearelem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $lib/lmgr=/_defs/lmgr-clearrange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $lib/lmgr=/_defs/lmgr-deletelist:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $lib/lmgr=/_defs/lmgr-deleterange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $lib/lmgr=/_defs/lmgr-extractrange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $lib/lmgr=/_defs/lmgr-fullrange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $lib/lmgr=/_defs/lmgr-getbrange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $lib/lmgr=/_defs/lmgr-getcount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $lib/lmgr=/_defs/lmgr-getelem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $lib/lmgr=/_defs/lmgr-getlist:"$lib/lmgr" match "lmgr-getlist" call
+@@set $lib/lmgr=/_defs/lmgr-getrange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $lib/lmgr=/_defs/lmgr-insertrange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $lib/lmgr=/_defs/lmgr-moverange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $lib/lmgr=/_defs/lmgr-putbrange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $lib/lmgr=/_defs/lmgr-putelem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $lib/lmgr=/_defs/lmgr-putrange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $lib/lmgr=/_defs/lmgr-setcount:"$lib/lmgr" match "lmgr-setcount" call
+
+d430 17
+d448 1
+a448 1
+@@set $lib/lmgr=/_lib-version:1.2FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-lmgr...
+d5 60
+a64 54
+( lib-lmgr: $Date: 1998/07/29 16:30:37 $ $Revision: 1.2 $
+  Originally from Fuzzball MUF distribution                                    )
+( ---------------------------------------------------------------------------- )
+( ***** List Manager Object - LMGR *****  Version 1.2
+  
+ LMGR-ClearElem -- Clears an element in the list -- does NOT delete
+     <elem#> <list-name> <dbref> LMGRclearelem
+  
+ LMGR-GetElem -- Get an element of a list
+     <elem#> <list-name> <dbref> LMGRgetelem -- string
+  
+ LMGR-PutElem -- Put an element into a list
+     <val> <elem#> <list-name> <dbref> LMGRputelem
+  
+ LMGR-GetRange -- Get a range of elements from a list
+     <count> <first-elem> <list-name> <dbref> LMGRgetrange -- {strrange}
+   returns the element values [strings] on the stack, with <count> on top
+  
+ LMGR-FullRange -- Define entire list for getrange purposes
+     <list-name> <dbref> LMGRfullrange -- <num-elements> 1 <list-name> <dbref>
+   returns the parms on the stack, ready for LMGR-GetRange
+  
+ LMGR-GetBRange -- Get a range of elements from a list
+              Different from 'GetRange' in that the top element on the
+              stack is the first element from the range.
+     <count> <first-elem> <list-name> <dbref> LMGRgetbrange -- {bstrrange}
+   returns the element values [strings] on the stack, with <count> on top
+  
+ LMGR-PutRange -- Put a range of elements into a list
+     <values> <count> <first-elem> <list-name> <dbref> LMGRputrange
+  
+ LMGR-ClearRange -- Clears a range of elements in the list -- does NOT delete
+     <count> <first-elem> <list-name> <dbref> LMGRclearrange
+  
+ LMGR-DeleteRange -- Delete a range of elements from the list, shifting the
+                later elements back to fill the gap.
+     <count> <first-elem> <list-name> <dbref> LMGRdeleterange
+  
+ LMGR-InsertRange -- Insert a range of elemnts into a list
+     <values> <count> <first-elem> <list-name> <dbref> LMGRinsertrange
+  
+ LMGR-MoveRange -- Move [copy] a range of elements inside a list
+     <dest> <count> <source> <list-name> <dbref> LMGRmoverange
+  
+ LMGR-CopyRange -- Copy a range of elements from one list into another,
+              inserting into the new list
+     <dst> <cnt> <src> <src-lst> <src-ref> <dst-lst> <dst-ref> LMGRcopyrange
+  
+ LMGR-DeleteList -- Delete an entire list.
+     <list-name> <dbref> LMGRdeletelist
+  
+ LMGR-Getlist -- Get an entire list.
+     <list-name> <dbref> LMGRgetlist
+)
+d68 3
+d76 1
+a76 2
+  
+  
+d85 1
+a85 2
+  
+  
+d89 1
+a89 1
+  
+d93 1
+a93 1
+  
+d97 1
+a97 1
+  
+d106 1
+a106 2
+  
+  
+d115 1
+a115 1
+  
+d119 1
+a119 1
+  
+d123 1
+a123 1
+  
+d130 1
+a130 1
+  
+d134 1
+a134 1
+  
+d143 1
+a143 2
+  
+  
+d151 1
+a151 1
+  
+d158 1
+a158 2
+  
+  
+d175 1
+a175 1
+  
+d185 1
+a185 1
+  
+d202 1
+a202 1
+  
+d207 1
+a207 2
+  
+  
+d223 1
+a223 1
+  
+d228 1
+a228 1
+  
+d247 1
+a247 1
+  
+d266 1
+a266 2
+  
+  
+d288 1
+a288 1
+  
+d308 1
+a308 1
+  
+d322 1
+a322 1
+  
+d342 1
+a342 2
+  
+  
+d352 1
+a352 2
+  
+  
+d358 1
+a358 2
+  
+  
+d365 1
+a365 2
+  
+  
+d387 61
+a447 44
+@@register #me lib-lmgr=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=B
+@@set $tmp/prog1=H
+@@set $tmp/prog1=S
+@@set $tmp/prog1=W2
+@@set $tmp/prog1=/_/de:lib-lmgr: List lines 4-54 for documentation.
+@@set $tmp/prog1=/_defs/.lmgr-clearelem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $tmp/prog1=/_defs/.lmgr-clearrange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $tmp/prog1=/_defs/.lmgr-deletelist:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $tmp/prog1=/_defs/.lmgr-deleterange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $tmp/prog1=/_defs/.lmgr-extractrange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $tmp/prog1=/_defs/.lmgr-fullrange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $tmp/prog1=/_defs/.lmgr-getbrange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $tmp/prog1=/_defs/.lmgr-getcount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $tmp/prog1=/_defs/.lmgr-getelem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $tmp/prog1=/_defs/.lmgr-getlist:"$lib/lmgr" match "lmgr-getlist" call
+@@set $tmp/prog1=/_defs/.lmgr-getrange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $tmp/prog1=/_defs/.lmgr-insertrange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $tmp/prog1=/_defs/.lmgr-moverange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $tmp/prog1=/_defs/.lmgr-putbrange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $tmp/prog1=/_defs/.lmgr-putelem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $tmp/prog1=/_defs/.lmgr-putrange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $tmp/prog1=/_defs/.lmgr-setcount:"$lib/lmgr" match "lmgr-setcount" call
+@@set $tmp/prog1=/_defs/lmgr-clearelem:"$lib/lmgr" match "lmgr-clearelem" call
+@@set $tmp/prog1=/_defs/lmgr-clearrange:"$lib/lmgr" match "lmgr-clearrange" call
+@@set $tmp/prog1=/_defs/lmgr-deletelist:"$lib/lmgr" match "lmgr-deletelist" call
+@@set $tmp/prog1=/_defs/lmgr-deleterange:"$lib/lmgr" match "lmgr-deleterange" call
+@@set $tmp/prog1=/_defs/lmgr-extractrange:"$lib/lmgr" match "lmgr-extractrange" call
+@@set $tmp/prog1=/_defs/lmgr-fullrange:"$lib/lmgr" match "lmgr-fullrange" call
+@@set $tmp/prog1=/_defs/lmgr-getbrange:"$lib/lmgr" match "lmgr-getbrange" call
+@@set $tmp/prog1=/_defs/lmgr-getcount:"$lib/lmgr" match "lmgr-getcount" call
+@@set $tmp/prog1=/_defs/lmgr-getelem:"$lib/lmgr" match "lmgr-getelem" call
+@@set $tmp/prog1=/_defs/lmgr-getlist:"$lib/lmgr" match "lmgr-getlist" call
+@@set $tmp/prog1=/_defs/lmgr-getrange:"$lib/lmgr" match "lmgr-getrange" call
+@@set $tmp/prog1=/_defs/lmgr-insertrange:"$lib/lmgr" match "lmgr-insertrange" call
+@@set $tmp/prog1=/_defs/lmgr-moverange:"$lib/lmgr" match "lmgr-moverange" call
+@@set $tmp/prog1=/_defs/lmgr-putbrange:"$lib/lmgr" match "lmgr-putbrange" call
+@@set $tmp/prog1=/_defs/lmgr-putelem:"$lib/lmgr" match "lmgr-putelem" call
+@@set $tmp/prog1=/_defs/lmgr-putrange:"$lib/lmgr" match "lmgr-putrange" call
+@@set $tmp/prog1=/_defs/lmgr-setcount:"$lib/lmgr" match "lmgr-setcount" call
+@@set $tmp/prog1=/_docs:@@list $lib/lmgr=4-54
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision: 1.2 $
+"Installation of lib-lmgr complete.
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d5 1
+a5 1
+( lib-lmgr: $Date: 1998/07/29 01:25:09 $ $Revision: 1.1 $
+d59 1
+a59 1
+( ---------------------------------------------------------------------------- )
+a61 3
+  Revision 1.1  1998/07/29 01:25:09  glow
+  Initial revision
+
+d63 1
+a63 1
+( ---------------------------------------------------------------------------- )
+d431 1
+a431 1
+@@set $tmp/prog1=/_lib-version:1.2FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lib-lmgr: $Date$ $Revision$
+d61 4
+a64 1
+  $Log$
+d434 1
+a434 1
+@@set $tmp/prog1=/_lib-version:1.2FM1.0
+@

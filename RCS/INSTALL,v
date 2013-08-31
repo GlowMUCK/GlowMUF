@@ -1,0 +1,596 @@
+head	1.18;
+access;
+symbols
+	GlowMUF1-1-1:1.17
+	GlowMUF102:1.14;
+locks; strict;
+comment	@# @;
+
+
+1.18
+date	2012.04.12.18.34.37;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2006.08.15.13.10.51;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.04.07.13.03.14;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.01.14.16.32.03;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2004.04.10.21.44.27;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2004.04.05.01.32.41;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2004.04.02.18.37.18;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2004.02.27.18.16.17;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2004.02.12.04.39.56;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2001.01.15.15.17.27;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2000.12.20.14.11.51;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2000.01.25.17.14.39;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2000.01.10.18.10.23;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	99.04.18.21.04.20;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	99.04.18.20.38.17;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.04.17.16.31.04;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.02.13.19.10.02;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.25.18.34.21;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.18
+log
+@Updated dependency information.
+@
+text
+@INSTALL $Date: 2006/08/15 13:10:51 $ $Revision: 1.17 $
+---------------------------------------------------------------------------
+Glow Distribution of "Standard" Programs
+-----------
+I. How to install a MUF program to the muck
+-------------------------------------------
+  A. Overview
+    In general, you have to connect to the muck, and transmit the contents of
+    the muf source file to the muck. All the source files in this package
+    assume the following:
+    1. That the player installing them is a Wizard (typically #1).
+    2. That the player installing them is currently located in #0, or the
+       "top level" environment/parent room.
+  B. Specific Client Example: TinyFugue
+     Tinyfugue makes this process particularly easy.  Simply type:
+     /quote -S 'path-to-source-file to install a given file.  For example:
+     /quote -S '~/cmd-register would install cmd-register.
+  C. Specific Client Example: SimpleMU
+     In most cases, you can open the file in a text editor (such as notepad)
+     and highlight the _entire_ file and use the classic windows copy-and-paste
+     method.
+  D. Specific Client Example: zMUD
+     1. Connect to the muck.
+     2. Click on "Actions"
+     3. Click on "Send To Mud"
+     4. Click on the folder icon to browse to the file. You'll need to change
+        the "Files of Type" to "All Files"
+     5. Make sure "String to prefix" and "String to postfix are empty.
+     6. Click on "Send"
+
+II. Core Library Install
+------------------------
+The following have to be installed FIRST (before all other programs/libs) in
+this order:
+
+cmd-register
+lib-glow-standard
+lib-strings
+lib-stackrng
+lib-lmgr
+lib-safe-call
+lib-edit
+lib-editor
+lib-match
+lib-mesg
+lib-mesgbox
+lib-case
+lib-unparseobj
+lib-look
+lib-reflist
+lib-index
+lib-mpi
+lib-connects
+lib-showlist
+cmd-mv-cp
+lib-userprop
+lib-wordwrap
+lib-write
+
+III. cmd-path (deprecated)
+------------
+(Not recommended, but provided if you want to)
+At this point, if you're going to install cmd-path, you should do so now.
+Then you can install the rest of the programs as you wish.  
+  A. Install the cmd-path muf.
+  B. Use @@tune path_prog=<dbref of path prog>
+  C. Use wpsetup to set the path dir. If you're using the standard dir (which
+     I strongly advise) use wpsetup cmd-path=d. If not, use wpsetup as
+     appropiate and update the @@tune path_dir appropiately.
+
+IV. Comments about specific programs
+------------------------------------
+  Mainly notes on problem areas
+
+  cmd-path:
+    This program requires lib-userprop.
+
+  cmd-page:
+    This program requires lib-userprop.  You'll also need to use the wpsetup
+    command to setup a userpropdir for it (wpsetup add cmd-page=p).  Don't
+    forget to use page #setup.
+
+  cmd-laston:
+    This program has a dependency on cmd-page. I recommend installing cmd-page
+    first.
+
+  cmd-cinfo:
+    This program requires you have cmd-find and cmd-laston installed to
+    function properly.
+
+  cmd-emotion:
+    The @@action for it was starting to be a nuisance, besides, some of you
+    may not want the default set of emotion/global/socials, so the action
+    and it's props are stored separately in 'cmd-emotion-exit'.  Note that
+    it is at least useful in seeing what props are set by -setup new.
+    DO NOT EDIT THE FILE 'CMD-EMOTION-EXIT' WITH PICO!!!!!! You will mess
+    up the @@action line, since pico will try to wrap the long line.
+
+  cmd-compass:
+    This program requires that you install a current version of cmd-path to
+    function correctly.
+
+  con-bbsindex:
+    Requires /_bbs/boardname:boardroomref to be set on #0 to function properly.
+
+  cmd-bbs:
+    This program requires that you have con-bbsindex installed to function
+    correctly.
+
+  cmd-enterdesc:
+    This program requires cmd-lsedit.
+
+  cmd-watch/con-watch: 
+    These programs need to be installed together.
+
+  cmd-tell:
+    You need cmd-page installed beofre this program will work.
+
+  cmd-pcreate:
+  cmd-mufrestart:
+    On GlowMuck 3.0.1, this program needs to be 'owned' by a w3/w4 and
+    cannot be owned by #1 (The Man).  Both of thes use the force prim,
+    and #1 cannot be forced.
+
+  cmd-archive:
+    Can't be used by #1 to archive programs on glowmuck 3.0.1+.  cmd-archive
+    uses the force prim to @@list programs, and #1 cannot be forced.
+
+  cmd-conhistory:
+    Requires a current version of cmd-page to be installed.
+
+  cmd-roomcheck:
+    Renamed @@check.  @@check is a in-server command revealing who controls
+    an database item. If you prefer to have @@check=@@roomcheck, @@permissions
+    will do the same as the inserver @@check.  Requires lib-match and lib-path
+
+  cmd-notify:
+    Requires con-caller to function.
+
+  con-guest:
+    If you're not using con-caller, don't forget to set a ~connect prop
+    for this program.  You will also need to set the GS string in the program
+    to whatever names you want for your guests.  Then create the guest
+    characters named xxx_Guest using all but one of the names you've chosen.
+    Then create a 'Guest' (no name_) character.  Set all of these characters
+    'G' and set their /@@/id prop to 'Guest'.  All done.
+
+  con-caller (con all connect):
+    There is a section of code commented out.  This section is used on
+    legacy to make sure folks have read all the new user and policy info.
+    Since most mucks don't have the room that this uses, I commented it
+    out by default.  Keep in mind this program calls several others,
+    I'd look it over before using it, and see if you actually need it.
+    Programs it will need to be installed: con-guest, cmd-announce, cmd-page,
+    and con-watch.  It will be more useful if cmd-notify is installed also.
+
+  cmd-parclean:
+    You will need to register your parent of all parents using @@register as
+    par/par (@@reg <dbref>=par/par) and register a parent to drop things into
+    as par/misc (@@reg <dbref>=par/misc).  Cleans up parents and drops extras
+    in $par/misc.
+
+  cmd-morph:
+    For now, cmd-morph relies on macro-longdesc to handle lsedit lists.
+
+The only one of these libraries or muf-programs I "wrote" is the
+lib-glow-standard one (which is mostly just a cut n' paste of the macros that
+are commonly used in the muf programs). All others are either taken from the
+glowmuf distribution or the fbmuf distribution. I'm leaving any existing
+credits/author/copyright information intact as well as adding any that I may
+discover or find out later on.
+
+Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
+
+And much later, added lib-unparseobj, a fancier, colorful, unparseobj, inspired
+by a similar library written by Syvel.
+@
+
+
+1.17
+log
+@Added the new safe call library to the repository.
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2005/04/07 13:03:14 $ $Revision: 1.16 $
+d163 2
+a164 6
+	The only one of these libraries or muf-programs I "wrote" is the
+lib-glow-standard one (which is mostly just a cut n' paste of the macros
+that are commonly used in the muf programs).  All others are either taken
+from the glowmuf distribution or the fbmuf distribution.  I'm leaving any
+existing credits/author/copyright information intact as well as adding any
+that I may discover or find out later on.
+d166 11
+a176 1
+   Okay, I added cmd-ic-ooc, a quick hack to utilize the ic-in-who code.
+@
+
+
+1.16
+log
+@Updated
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2005/01/14 16:32:03 $ $Revision: 1.15 $
+d3 1
+a3 1
+FMMUF 1.0.1
+d15 3
+a17 3
+    Tinyfugue makes this process particularly easy.  Simply type:
+    /quote -S 'path-to-source-file to install a given file.  For example:
+    /quote -S '~/cmd-register would install cmd-register.
+d41 1
+d60 1
+a60 1
+III. cmd-path
+d62 1
+@
+
+
+1.15
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2004/04/10 21:44:27 $ $Revision: 1.14 $
+d56 2
+@
+
+
+1.14
+log
+@Documentation updates.
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2004/04/05 01:32:41 $ $Revision: 1.13 $
+d130 2
+a131 2
+    an object.  If you prefer to have @@check=@@roomcheck, @@permissions will do
+    the same as the inserver @@check.  Requires lib-match and lib-path
+@
+
+
+1.13
+log
+@Updated INSTALL to include zMUD instructions.
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2004/04/02 18:37:18 $ $Revision: 1.12 $
+d46 2
+a50 1
+lib-case
+@
+
+
+1.12
+log
+@Fixed cmd-roomcheck to be intelligent about transparent_paths.
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2004/02/27 18:16:17 $ $Revision: 1.11 $
+d4 1
+a4 1
+---------
+d6 1
+d23 7
+a29 1
+     Forthcoming...
+d32 1
+a32 1
+-----------------------
+d59 1
+a59 2
+(Hopefully you've not done any building...).  Then you can install the rest of
+the programs as you wish.  
+d67 1
+@
+
+
+1.11
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2004/02/12 04:39:56 $ $Revision: 1.10 $
+d3 1
+a3 1
+FMMUF 1.1
+d5 22
+a26 3
+  Warning: Some of these libs require Glow 3.0.0 or later.   You were going to
+upgrade, weren't you? 
+  The following have to be installed FIRST (before all other programs/libs) in
+d49 13
+a61 12
+	At this point, if you're going to install cmd-path, you should do
+so now.  (Hopefully you've not done any building...).  Then you can
+install the rest of the programs as you wish.  
+	Be sure to @@tune path_prog=<dbref of path prog> after installing
+cmd-path.
+	NOTE: These installation scripts assume that the player installing
+the programs is a Wizard.  They also assume that any global actions made
+are to be made in the room that Wizard is standing in.  So If you want all
+your global actions to be stored in a specific room, be sure to
+be in that room when quoting them.
+	To install a program or library, simply quote it to the Glow server,
+using tinyfugue's /quote feature, or something equivalent.
+a62 1
+Comments about some other programs:
+d123 1
+a123 1
+    the same as the inserver @@check.  Requires lib-match
+a158 1
+
+@
+
+
+1.10
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2001/01/15 15:17:27 $ $Revision: 1.9 $
+d3 1
+a3 1
+FMMUF 1.0.2 (Alpha Release)
+d101 5
+@
+
+
+1.9
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2000/12/20 14:11:51 $ $Revision: 1.8 $
+d27 1
+d47 9
+d72 3
+a77 3
+   
+  con-bbsindex:
+    Requires /_bbs/boardname:boardroomref to be set on #0 to function properly.
+a84 5
+  cmd-page:
+    This program requires lib-userprop.  You'll also need to use the wpsetup
+    command to setup a userpropdir for it (wpsetup add cmd-page=p).  Don't
+    forget to use page #setup.
+
+d95 1
+a95 1
+    Can't be used by #1 to archive programs on glowmuck 3.0.1.  cmd-archive
+@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2000/01/25 17:14:39 $ $Revision: 1.7 $
+d96 3
+d114 7
+a120 1
+    and con-watch.
+@
+
+
+1.7
+log
+@More information about con-guest
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 2000/01/10 18:10:23 $ $Revision: 1.6 $
+d66 3
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 1999/04/18 21:04:20 $ $Revision: 1.5 $
+d74 2
+a75 1
+    command to setup a userpropdir for it.  Don't forget to use page #setup.
+d95 5
+a99 1
+  for this program.
+d107 2
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 1999/04/18 20:38:17 $ $Revision: 1.4 $
+d3 1
+a3 1
+FMMUF 1.0.1 (Beta Release)
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 1999/04/17 16:31:04 $ $Revision: 1.3 $
+d88 3
+@
+
+
+1.3
+log
+@Minor update
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 1999/02/13 19:10:02 $ $Revision: 1.2 $
+d59 2
+a60 1
+    This program requires that you install cmd-path to function correctly.
+@
+
+
+1.2
+log
+@minor changes.
+@
+text
+@d1 1
+a1 1
+INSTALL $Date: 1998/07/25 18:34:21 $ $Revision: 1.1 $
+d96 2
+a97 1
+    out by default.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+INSTALL $Date$ $Revision$
+d44 1
+a44 3
+    This program requires lib-userprop.  Also do not forget to use @@tune
+    to set path_prog to the dbref of the path program. Also, do not forget
+    to use @@psetup full.
+@

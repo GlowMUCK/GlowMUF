@@ -1,0 +1,458 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2000.12.22.19.09.23;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.22.19.08.43;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@Fixed bug where if wizard, but staff not set, can't change bot votes.
+@
+text
+@"Beginning installation of cmd-vote...
+@@prog cmd-vote
+1 99999 d
+1 i
+( cmd-vote: $Date: 2000/12/22 19:08:43 $ $Revision: 1.1 $ )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+( Vote by PakRat Copyright 1997 All rights reserved )
+(
+  $Log: cmd-vote,v $
+  Revision 1.1  2000/12/22 19:08:43  feaelin
+  Initial revision
+
+)  
+( macros )
+$include $lib/glowstandard
+$include $lib/strings
+
+$def n me @@ swap notify
+$def oc ( s s ) over tolower swap 1 strncmp not
+$def fc ( s s ) over tolower swap strcmp not
+$def wiz? dup "@@/staff" getpropstr .yes? swap .mage? or
+$def plr? dup player? if "@@/owner" getpropstr not else pop 0 then
+$def RESDAYS 30
+$def VREF trig
+$def VDIR "_v/"
+$def VVDIR "v/"
+$def VPDIR "p/"
+$def VTOP  "top"
+$def VSUM  "s"
+$def VDESC "d"
+$def VEND  "e"
+$def VANS  "a"
+$def VWIZ  "W"
+$def VSEP  "}{"
+  
+: rpad ( s i -- s )
+  over strlen ( s ip is )
+  over over < if
+    pop strcut pop
+  else over over > if
+    - "                                                               "
+    swap strcut pop swap strcat
+  else pop pop then then
+;
+  
+: vget ( sprop )
+  VREF VDIR rot strcat getpropstr
+;
+  
+: vset ( ival sprop )
+  VREF VDIR rot strcat rot setprop
+;
+  
+: vvget ( ivote sprop )
+  VVDIR rot intostr strcat "/" strcat
+  swap strcat vget
+;
+  
+: vvset ( ival ivote sprop ) VVDIR
+  rot intostr strcat "/" strcat
+  swap strcat vset
+;
+  
+: vpget ( iplr ivote sprop ) VPDIR
+  rot intostr strcat "/" strcat
+  rot intostr strcat "/" strcat
+  swap strcat vget
+;
+  
+: vpcnt ( ivote -- i ) VPDIR
+  swap intostr strcat "/" strcat VREF swap VDIR swap strcat nextprop
+  0 ( itally sdir icnt ) begin over while
+      over VREF swap "/" strcat VANS strcat getpropstr atoi
+      0 > if 1 + then
+    swap VREF swap nextprop swap
+  repeat swap pop
+;
+  
+: vpsum ( ivote itally -- i ) VPDIR
+  rot intostr strcat "/" strcat VREF swap VDIR swap strcat nextprop
+  0 ( itally sdir icnt ) begin over while
+      over VREF swap "/" strcat VANS strcat getpropstr atoi
+      4 pick = if 1 + then
+    swap VREF swap nextprop swap
+  repeat swap pop swap pop
+;
+  
+: vpstr ( ivote -- sstr ) VPDIR
+  swap intostr strcat "/" strcat VREF swap VDIR swap strcat nextprop
+  "|" ( sdir sstr ) begin over while
+      over VREF swap "/" strcat VANS strcat getpropstr atoi dup if
+        intostr dup "|" swap strcat "|" strcat
+        3 pick swap instr not if
+          ( sdir sstr sval )
+          strcat "|" strcat
+        else pop then
+      else pop then
+    swap VREF swap nextprop swap
+  repeat swap pop
+;
+  
+: vpset ( ival iplr ivote sprop ) VPDIR 
+  rot intostr strcat "/" strcat 
+  rot intostr strcat "/" strcat
+  swap strcat vset
+;
+  
+: vote-player ( s -- d ) strip
+  dup not if pop #-1 exit then
+  .pmatch
+;
+  
+: vote-val ( s -- d ) strip
+  dup not if pop 0 exit then
+  dup atoi dup 0 > if swap pop exit else pop then
+  1 strcut pop tolower
+  dup "y" strcmp not if pop 1 exit then
+  dup "n" strcmp not if pop 2 exit then
+  "abcdefghijklm" swap instr
+  dup 0 <= if pop 1 then
+;
+  
+: vote-num ( itop ival -- s )
+  over over >= over and if
+    swap 2 = if
+      1 = if "yes" else "no" then
+    else
+      "ABCDEFGHIJKLM" swap 1 - strcut swap pop 1 strcut pop
+    then
+  else pop pop "*invalid*" then
+;
+  
+: vote-name ( dplr ivote )
+  swap int swap
+  dup not if pop pop "" exit then
+  dup VANS vvget atoi rot rot ( itype iplr ivote )
+  VANS vpget ( itype sans )
+  dup not if pop pop "" exit then
+  over not if
+    atoi dbref dup player? if name else pop "*invalid*" then
+  else
+    vote-val over swap vote-num
+  then
+  swap pop
+;
+  
+: lookup-votes ( d -- {d} / d ) ( Find available votes )
+  dup not if 0 swap then VTOP vget atoi 1 ( [{d}] dnum dtop dat )
+  begin over over >= while
+    dup VWIZ vvget .yes? not me @@ wiz? or if
+      dup VEND vvget atoi dup 0 <= swap systime >= or if
+        3 pick not if ( {d} dnum dtop dat )
+          4 rotate 1 + -4 rotate
+          dup 5 pick 4 + -1 * rotate
+        else ( return vote )
+          rot 1 - rot rot
+          3 pick not if rot rot pop pop exit then
+        then
+      then
+    then
+  1 + repeat
+  pop pop dup if 0 swap then pop
+;
+  
+: vote-reslist ( -- )
+  VTOP vget atoi dup not if pop "No vote topics available." n exit then
+  " " n
+  "      Close Time   Vote   Summary" n
+  1 begin over over >= while ( itop ivote )
+  dup VEND vvget atoi
+  dup if
+    dup systime < if
+      pop "[ - CLOSED - ]"
+    else "%b %e at %l %p" swap timefmt then
+  else pop "- none set -" then 16 rpad
+    over intostr 7 rpad strcat
+    over VWIZ vvget .yes? if " W " else "   " then strcat
+    over VSUM vvget strcat n
+  1 + repeat pop pop
+  "Done." n
+;
+  
+lvar itopic lvar icnt lvar imax lvar itype
+  
+: vote-results ( ivote -- ) ( Show results for last xx days )
+  "" itopic ! 0 imax ! 0 icnt ! 1 itype !
+  dup 0 <= if pop vote-reslist exit then
+  "Results for vote " over intostr strcat ": " strcat
+  over VSUM vvget strcat n
+  " " n
+  ( ivote )
+  dup VDESC vvget dup not if pop pop exit then
+  VSEP explode
+  begin dup while 1 - swap
+    dup if "  " swap strcat n else pop then
+  repeat pop
+  " " n
+  dup vpcnt icnt !
+  dup VWIZ vvget .yes? if 1 else 0 then swap ( iwiz ivote )
+  dup VANS vvget atoi dup itype ! dup if swap ( iwiz itype ivote )
+    1 begin 3 pick over >= while ( iwiz itype ivote ipos )
+      over over vpsum ( iwiz itype ivote ipos isum )
+      imax @@ over < if
+        dup imax ! over intostr "|" swap strcat "|" strcat itopic !
+      else imax @@ over = if
+        over intostr "|" strcat itopic @@ swap strcat itopic !
+      then then
+      4 pick 3 pick vote-num
+      " tally: " strcat over intostr strcat n
+    pop 1 + repeat pop pop pop pop
+  else pop ( players: iwiz ivote )
+    dup vpstr begin dup while ( iwiz ivote splrs )
+      dup "|" instr dup if ( iwiz ivote splrs ipos )
+        strcut swap pop
+        dup atoi dbref dup player? if ( iwiz ivote splrs dref )
+          dup int 4 pick swap vpsum ( iwiz ivote splrs dref isum )
+          imax @@ over < if
+            dup imax ! over intostr "|" swap strcat "|" strcat itopic !
+          else imax @@ over = if
+            over intostr "|" strcat itopic @@ swap strcat itopic !
+          then then
+          swap name ": " strcat swap intostr strcat n
+        else pop then
+      else pop pop "" then
+    repeat pop pop pop
+  then
+  " " n
+  "And the winner is:" n
+  itopic @@ "|" explode
+  begin dup while 1 - swap
+    dup if atoi
+      itype @@ not if dbref name else itype @@ swap vote-num then
+      " with " strcat imax @@ intostr strcat
+      " out of " strcat icnt @@ intostr strcat " votes." strcat n
+    else pop then
+  repeat pop
+;
+  
+: vote-close ( d -- ) ( Close a vote )
+  dup 0 <= if pop vote-reslist exit then
+  dup VTOP vget atoi > if pop "Invalid vote." n exit then
+  "How many days should this vote run from today?" n
+  read atoi dup 0 > if 86400 * systime + then
+  intostr swap VEND vvset
+  "Vote close date changed." n
+;
+  
+: vote-new ( -- ) ( Add a new vote )
+  VTOP vget atoi 1 + dup intostr VTOP vset ( d )
+  "Is this a wiz-only vote? (y/n)" n
+  read .yes? if "yes" over VWIZ vvset then
+  "Enter max answer count:  0 = playername, 2 = yes/no" n
+  read atoi intostr over VANS vvset
+  "Enter 3/4 line summary of vote:" n
+  read over VSUM vvset
+  "Example:" n " " n
+  "  Do you want half of your pobbles to go to PakRat's retirement fund?" n
+  "  If the vote passes, half of all pobbles on the muck will go to pakky." n
+  "  " n
+  "  Yes> Give PakRat all my money!" n
+  "   No> He's got more than enough now!" n
+  " " n
+  "For multiple choice use Yes/No or A/B/C/D or 1/2/3/4." n
+  "For player votes just mention a player is to be voted on." n
+  "Enter full description of vote with answers on separate lines:" n
+  "A period '.' on a line by itself ends entry." n
+  "" begin read dup "." strcmp while
+    over if "}{" swap strcat strcat else swap pop then
+  repeat pop over VDESC vvset
+  "How many days should this vote run from today?" n
+  read atoi dup 0 > if 86400 * systime + then
+  intostr over VEND vvset
+  pop "Vote added!" n
+;
+  
+: vote-vote ( svote icnt -- ) ( Do a vote )
+  dup lookup-votes ( svote icnt ivote )
+  dup not if pop pop pop "Unknown vote, 'vote lists' shows open votes." n exit then
+  " " n
+  ( svote icnt ivote )
+  "Vote " 3 pick intostr strcat ": " strcat over VSUM vvget strcat n
+  " " n
+  ( svote icnt ivote )
+  dup VDESC vvget dup not if pop pop exit then
+  VSEP explode
+  begin dup while 1 - swap
+    dup if "  " swap strcat n else pop then
+  repeat pop
+  " " n
+  ( svote icnt ivote )
+  rot over VANS vvget atoi if vote-val intostr
+  else .pmatch int intostr then
+  me @@ 3 pick VANS vpset
+  ( icnt ivote )
+  "Your vote has been cast as '"
+  me @@ 3 pick vote-name dup not if pop "*empty*" then
+  strcat "'." strcat n
+  pop pop
+;
+  
+: vote-show ( icntvote -- ) ( Show info on a vote )
+  dup lookup-votes ( icnt ivote )
+  dup not if pop pop "Unknown vote, 'vote lists' shows open votes." n exit then
+  " " n
+  ( icnt ivote )
+  "Vote " 3 pick intostr strcat ": " strcat over VSUM vvget strcat n
+  " " n
+  ( icnt ivote )
+  dup VDESC vvget dup not if pop pop pop exit then
+  VSEP explode
+  begin dup while 1 - swap
+    "  " swap strcat n
+  repeat pop
+  " " n
+  ( icnt ivote )
+  me @@ over vote-name dup if
+    "Your current vote on this topic is '"
+    swap strcat "'." strcat n
+    " " n
+  else pop then
+  ( icnt ivote )
+  dup VANS vvget atoi dup if
+    dup 2 = if
+      "To cast your vote type 'vote " 4 pick intostr strcat
+      " yes' or 'vote " strcat 4 pick intostr strcat
+      " no'." strcat n
+    else ( A/B/C/D vote )
+      "To cast your vote type 'vote " 4 pick intostr strcat
+      " X' where 'X' is one of the choices listed above." strcat n
+    then
+  else ( player vote )
+    "To vote for a specific player use 'vote " 4 pick intostr strcat
+    " PlayerName' where 'PlayerName' is the" strcat n
+    "person you want to vote for." n
+  then
+  ( icnt ivote ians )
+  pop pop pop
+;
+  
+: vote-list ( -- )
+  0 lookup-votes
+  dup not if pop "There are no votes currently open." n exit then
+  "Current vote topics: (Type 'vote help' for help.)" n
+  " " n
+  "      Close Time   Vote   Summary" n
+  1 begin over while ( {d} dl )
+    rot rot 1 - rot rot ( {d} dl ivote )
+    dup VEND vvget atoi
+    dup if "%b %e at %l %p" swap timefmt else pop "- none set -" then 16 rpad
+    3 pick intostr 7 rpad strcat
+    over VWIZ vvget .yes? if " W " else "   " then strcat
+    swap VSUM vvget strcat n
+  1 + repeat pop pop
+  " " n
+  "To read more about a vote, type 'vote <n>' where <n> is the vote number." n
+;
+  
+: vote-help ( -- )
+  "VOTE! by PakRat" n
+  "~~~~~" n
+  "vote help         -- show this screen" n
+  "vote list         -- list summaries of current vote topics available" n
+  "vote <n>          -- display vote with full information" n
+  "vote <n> <x>      -- Vote yes/no/A/B/C/../playername on vote topic" n
+    me @@ wiz? if
+  "vote new          -- Add a new vote" n
+  "vote close        -- Close a vote with no ending date" n
+  "vote results      -- list all vote topics" n
+  "vote results <n>  -- list full results of a vote topic" n
+    then
+  " " n
+  "Example: 'vote 1 yes' would vote 'yes' for the first listed topic." n
+  " " n
+  "Send questions and comments to PakRat." n
+;
+  
+: vote-main ( s -- )
+  .noguest
+  me @@ plr? not if "Duplicate characters can't vote." n pop exit then
+  "me" match me !
+  strip
+  "l" oc over not or if pop vote-list exit then
+  "h" oc if pop vote-help exit then
+  "r" oc if " " .split2 swap pop atoi vote-results exit then
+    me @@ wiz? if
+  "new" fc if pop vote-new exit then
+  "c" oc if " " .split2 swap pop atoi vote-close exit then
+    then
+  " " .split2 strip swap strip atoi
+  dup 0 <= if pop pop vote-help exit then
+  over not if swap pop vote-show exit then
+  vote-vote
+;
+  
+: vote-debug ( s -- )
+  vote-main
+  depth if depth intostr "EEP! Ending stack depth: " swap strcat n then
+;
+.
+c
+q
+@@register cmd-vote=cmd/vote
+@@register #me cmd-vote=tmp/prog1
+@@set $tmp/prog1=W3
+@@action vote=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/vote help
+@@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+"Installation of cmd-vote complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-vote: $Date$ $Revision$ )
+d10 4
+a13 1
+  $Log$
+d410 1
+a410 1
+@@set $tmp/prog1=/_version:FM$Revision$
+@

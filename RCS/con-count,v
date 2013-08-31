@@ -1,0 +1,249 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	99.04.17.20.29.35;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.17.20.23.44;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.2
+log
+@Oops.  Left out some $includes
+@
+text
+@"Beginning installation of con-count...
+@@prog con-count
+1 99999 d
+1 i
+( con-count: $Date$ $Revision$
+  Author: PakRat/Andy
+  --------------------------------------------------------------------------- )
+(
+  $Log
+)
+( Con-count by PakRat, copyright 1997 all rights reserved. )
+
+$include $lib/glow
+$include $lib/strings
+  
+$def REF prog
+$def LHP "_lasthour"
+$def LWP "_lastwho"
+$def MINDIR "_min/"
+$def MAXDIR "_max/"
+$def a me @@ swap ansi_notify
+  
+lvar lasthour
+lvar hour
+lvar cc
+lvar maxmax
+lvar hours
+  
+: stars ( imin imax -- s )
+  dup 0 < if pop 0 then swap
+  dup 0 < if pop 0 then swap
+  over over > if swap then
+  ( imin imax )
+  maxmax @@ 50 / 1 + / swap
+  maxmax @@ 50 / 1 + / swap
+  "**********" dup strcat dup strcat dup strcat
+  ( imin imax str )
+  swap strcut pop
+  ( imin str )
+  swap strcut strlen
+  ( str ileft )
+  "++++++++++" dup strcat dup strcat dup strcat
+  ( str ileft difstr )
+  swap strcut pop strcat
+  ( str )
+  "          " dup strcat dup strcat dup strcat
+  strcat 50 strcut pop
+  dup "+" instr dup if 1 - strcut "^YELLOW^" swap strcat strcat else pop then
+  "^BLUE^|" strcat "^BLUE^|^GREEN^" swap strcat
+;
+  
+: hourstr ( i -- s )
+  24 %
+  dup 12 >= if " pm" else " am" then
+  swap 12 % dup not if pop 12 then
+  dup 10 < if " " else "" then
+  swap intostr strcat swap strcat
+;
+  
+: count-help ( -- )
+  "Connection Counter by PakRat" .tell
+  "~~~~~~~~~~~~~~~~~~" .tell
+  "CC keeps track of the highs and lows of user connections by hour." .tell
+  "It also lists the max users for the day and the last 20 users to logout."
+  .tell
+  "CC also accepts two formats of selecting the hours to list:" .tell
+  "CC <n>     -- List the last <n> hours of connections (1-24)" .tell
+  "CC <s> <e> -- List from hours <s> to <e> (0-23 army time)" .tell
+;
+  
+: add-me ( -- )
+  me @@ awake? 1 > if exit then
+  REF LWP getpropstr
+  dup if
+    " " explode
+    1 begin over over >= while 2 +
+      dup pick me @@ name stringcmp not if
+        dup rotate pop swap 1 - swap
+      then
+    1 - repeat pop
+    begin dup 20 >= while
+      dup 1 + rotate pop 1 -
+    repeat
+  else pop 0 then
+  me @@ name swap 1 +
+  "" begin over 0 > while
+    dup if " " strcat then
+    rot strcat swap 1 - swap
+  repeat swap pop
+  REF LWP rot setprop
+;
+  
+: count-update ( -- )
+    ( Copy current hour's max and min if there has been no change in hours )
+    REF MINDIR lasthour @@ intostr strcat getpropval
+    REF MAXDIR lasthour @@ intostr strcat getpropval
+    lasthour @@ begin dup 24 % hour @@ = not while
+    ( min max hour )
+      REF MINDIR 3 pick 24 % intostr strcat 5 pick setprop
+      REF MAXDIR 3 pick 24 % intostr strcat 4 pick setprop
+    1 + repeat pop pop pop
+    ( Clear this hour's max and min )
+    REF MINDIR hour @@ intostr strcat cc @@ setprop
+    REF MAXDIR hour @@ intostr strcat cc @@ setprop
+    ( Set hour for next run )
+    REF LHP hour @@ setprop
+;
+  
+: count-connect ( -- )
+  lasthour @@ hour @@ = not if ( change of an hour! )
+    count-update
+  else
+    REF MAXDIR hour @@ intostr strcat getpropval
+    cc @@ < if ( max is upped for the hour! )
+      REF MAXDIR hour @@ intostr strcat cc @@ setprop
+    then
+  
+    REF MINDIR hour @@ intostr strcat getpropval
+    cc @@ > if ( max is upped for the hour! )
+      REF MINDIR hour @@ intostr strcat cc @@ setprop
+    then
+  then
+;
+  
+: count-list ( s -- )
+    lasthour @@ hour @@ = not if ( change of an hour! )
+      count-update
+    then
+    dup "#" instr if pop count-help exit then
+    0 maxmax !
+    0 begin dup 24 < while
+      REF MAXDIR 3 pick intostr strcat getpropval
+      maxmax @@ over < if maxmax ! else pop then
+    1 + repeat pop
+    
+    striplead striptail
+    dup not if pop "8" then
+    
+    dup " " instr over "-" instring or if
+      dup " " instr if " " else "-" then .split2
+      atoi dup 0 < if pop 0 then dup 23 > if pop 23 then swap
+      atoi dup 0 < if pop 0 then dup 23 > if pop 23 then swap
+      over over > if swap then
+      dup hour !
+      swap - 24 swap - hours !
+    else
+      atoi dup 0 <= if pop 24 then
+      dup 24 > if pop 24 then 25 swap - hours !
+    then
+    
+    hour @@ hours @@ + begin
+      dup hour @@ 24 + <=
+    while
+      dup 24 %
+      dup hourstr " " strcat " ^AQUA^" swap strcat
+      REF MINDIR 4 pick intostr strcat getpropval
+      REF MAXDIR 5 pick intostr strcat getpropval
+      over over stars "  ^GREEN^" strcat
+      rot intostr "   " swap strcat dup strlen 3 - strcut swap pop strcat
+      "  ^YELLOW^" strcat
+      swap intostr "   " swap strcat dup strlen 3 - strcut swap pop strcat
+      strcat
+      a
+    pop 1 + repeat pop
+  
+    "~~~~~~~~~~" dup strcat dup strcat dup strcat 49
+    maxmax @@ 50 / 1 + 50 * intostr strlen - strcut pop
+    "^BLUE^~~~~~~~|^YELLOW^0^BLUE^" swap strcat
+    maxmax @@ 50 / 1 + 50 * intostr "^YELLOW^" swap strcat strcat
+    "^BLUE^|~~^FOREST^Min^BLUE^~~^BROWN^Max^BLUE^~~" strcat a
+    
+    "^AQUA^The most players on in the last 24 hours was ^YELLOW^"
+    maxmax @@ intostr strcat "^AQUA^." strcat a
+  
+    "^AQUA^The last 20 players on were ^GREEN^"
+    REF LWP getpropstr
+    "^AQUA^, ^GREEN^" " " subst .cleancommas
+    strcat "^AQUA^." strcat .wrap
+;
+  
+: count-main ( s -- )
+  "me" match me !
+  time hour ! pop pop
+  concount cc !
+  REF LHP getpropval lasthour !
+  
+  trig if count-list exit then
+  
+  dup "Connect" strcmp not if pop count-connect exit then
+  dup "Disconnect" strcmp not if pop count-connect add-me exit then
+  
+  pop 
+;
+.
+c
+q
+@@register con-count=con/count
+@@register #me con-count=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=S
+@@set $tmp/prog1=V
+@@set $tmp/prog1=M1
+@@action @@concount;@@cc;concount;cc=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$con/count #help
+@@set $tmp/prog1=_version:FM$Revision$
+@@set #0=~connect/count:$con/count
+"Installation of con-count complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d12 3
+@

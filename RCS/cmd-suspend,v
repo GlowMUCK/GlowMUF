@@ -1,0 +1,66 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.12.22.18.00.24;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-suspend...
+@@prog cmd-suspend
+1 99999 d
+1 i
+( cmd-suspend: $Date$ $Revision$                                              )
+( Author: Deuce@@QwestMuck - Takes ya back, doesn't it?                        )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+
+: main
+  me @@ .mage? not if
+    pop "Permission denied." .tell exit then
+  strip
+  dup not if
+    pop "You must specify the person you want to boot." .tell exit then
+  .pmatch dup ok? not if
+    pop "I can't find that player." .tell exit then
+  dup .mage? if
+    pop "You cannot suspend a wizard." .tell exit then
+  "You have been temporarily suspended from the game." over swap notify
+  concount begin
+    dup 0 > while
+    dup condbref
+    3 pick dbcmp if conboot break then
+  1 - repeat
+  pop
+  dup "@@/suspend-until" "" systime 43200 + addprop
+name " has been suspended temporarily." strcat .tell
+;
+.
+c
+q
+@@register cmd-suspend=cmd/suspend
+@@register #me cmd-suspend=tmp/prog1
+@@set $tmp/prog1=W3
+@@action @@suspend;suspend=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-suspend complete.
+@

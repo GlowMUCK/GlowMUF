@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.02.21.01.04.07;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial rcs-ification.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of lock-mage...
+@@prog lock-mage
+1 99999 d
+1 i
+( lock-mage: $Date$$Revision$
+  --------------------------------------------------------------------------- )
+
+$include $lib/glowstandard
+
+: lock-mage ( s -- )
+  "me" match .mage?
+;
+.
+c
+q
+@@register lock-mage=lock/mage
+@@register #me lock-mage=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M1
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-mage complete.
+@

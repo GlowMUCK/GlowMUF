@@ -1,0 +1,104 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.30.15.52.32;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-muftimer...
+@@prog cmd-muftimer
+1 99999 d
+1 i
+( cmd-muftimer: $Date$ $Revision$ )
+( Author: ???
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$include $lib/strings
+
+: split
+  .split2
+;
+: timer ( s -- )
+  ( Takes a program and argument, calls it, and times it. )
+  dup not if
+    pop
+    "Usage: muftimer @@prognum argument" .tell
+    exit
+  then
+   " " split swap
+   dup match
+   dup if
+     swap command !
+     dup trigger !
+     dup program? not if
+       getlink
+     then
+     dup not if
+       pop
+       "That isn't linked." .tell
+       exit
+     then
+   else
+     pop
+     dup
+     1 strcut
+     pop
+     "@@#" swap
+     instr if
+       1 strcut
+       swap pop
+     then
+     atoi dbref
+     dup not if
+       pop
+       "I don't see that here." .tell
+       exit
+     then
+   then
+   
+   dup program?
+   not if
+     pop
+     "That doesn't call a program." .tell
+     exit
+   then
+   call
+  "me" match dup me ! location loc !
+background
+fork if
+  2 sleep
+else
+    me @@ "!@@ps" force
+then
+;
+.
+c
+q
+@@register cmd-muftimer=cmd/muftimer
+@@register #me cmd-muftimer=tmp/prog1
+@@set $tmp/prog1=W3
+@@action muftimer;mt;tm=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/muftimer
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-muftimer complete.
+@

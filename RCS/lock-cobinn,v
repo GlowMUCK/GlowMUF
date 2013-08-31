@@ -1,0 +1,239 @@
+head	1.4;
+access;
+symbols
+	GlowMUF1-1-1:1.4
+	GlowMUF102:1.3;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2005.09.22.20.30.24;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	99.04.17.13.10.51;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	99.02.14.14.56.01;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.22.15.10;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.4
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@"Beginning installation of lock-cobinn
+@@prog lock-cobinn
+1 99999 d
+1 i
+( lock-cobinn: $Date: 1999/04/17 13:10:51 $ $Revision: 1.3 $
+  Author: Pakrat                                                            
+  Cobblertown Inn locking and entry program by PakRat, Copyright 1996.        )
+( --------------------------------------------------------------------------- )
+  
+$include $lib/glowstandard
+$include $lib/strings
+
+$def n me @@ swap notify
+  
+: empty? ( d -- i )
+  contents begin dup while
+    dup player? if pop 0 exit then
+  next repeat
+  pop 1
+;
+  
+: path-free? ( d s -- i )
+  "$cmd/path" match "path-getlink" call
+  dup room? not if pop 0 exit then
+  dup "_occupied" getpropstr .yes? not if pop 1 exit then
+  dup empty? if pop 2 else pop 0 then
+;
+  
+: path-locked? ( -- i 1=free, 0=occupied )
+  loc @@ command @@ path-free?
+  dup not if "There is a do not disturb sign on the door." n then
+  dup 2 = if
+    "** This room is currently locked but it is empty." n
+    "   Type 'room unlock' to allow others to enter here." n
+  then
+;
+  
+: list-occupied-rooms ( floor -- )
+  100 * "" 1 begin dup 11 < while
+    loc @@ over intostr path-free? if
+      3 pick over + intostr "Room " swap strcat
+      ", " strcat rot swap strcat swap
+    then
+  1 + repeat pop swap pop
+  dup not if
+    pop "All the rooms on this floor are occupied." n
+  else
+    .cleancommas dup " and " instring if " are" else " is" then
+    strcat " vacant." strcat n "" "$cmd/path" match call
+  then
+;
+  
+: cobbin ( s -- ) "me" match dup me ! location loc !
+  
+  dup "free" stringcmp not if
+    pop loc @@ "_floor" getpropstr dup not if pop exit then
+    atoi list-occupied-rooms
+  exit then
+  
+  trig room? over not and command @@ "(" 1 strncmp and trig player? or if
+    pop path-locked?
+    exit 
+  then ( Seems locks give players as trigs )
+  
+  command @@ "knock" stringcmp if
+    " " .split2 swap dup "knock" stringcmp not if pop 1 else swap pop 0 then
+  else 1 then if
+    loc @@ "_floor" getpropstr not if
+      pop "You're not in a hallway." n
+    exit then
+    strip dup not if pop "Which door?" n exit then
+    loc @@ swap "$cmd/path" match "path-getlink" call
+    dup not if pop "Which door?" n exit then
+    "You knock on the door." n
+    #-1 me @@ name " knocks on the door." strcat notify_except
+  exit then
+  
+  dup not if pop
+    "Welcome to the Cobbletown Inn!" n " " n
+    "For your convenience we have a simple registration and room locking" n
+    "system so you can have private conversations with loved ones and get" n
+    "a decent night's sleep.  To lock your room do the following:" n " " n
+    "room lock    -- locks the room so noone can enter while you are here" n
+    "room unlock  -- unlocks the room so others can enter" n
+    "knock <door> -- knock on door 1 from the hallway of the inn" n " " n
+    "Should there be nobody in an occupied room a person will be allowed" n
+    "to enter it but will need to unlock it for others to enter." n
+    loc @@ "_floor" getpropstr not if " " n
+      "This room is "
+      loc @@ "_occupied" getpropstr .yes? not if "not " strcat then
+      "locked from entry." strcat n
+    then
+  exit then
+  
+  loc @@ "_floor" getpropstr if
+    pop "You are not in a hotel room." n
+  exit then
+  
+  dup "lock" stringcmp not if
+    pop loc @@ "_occupied" "yes" setprop
+    "You put a do not disturb sign on the door." n
+    loc @@ me @@ dup name " puts a do not disturb sign on the door."
+    strcat notify_except
+  exit then
+  
+  dup "unlock" stringcmp not if
+    pop loc @@ "_occupied" remove_prop
+    "You remove the do not disturb sign from the door." n
+    loc @@ me @@ dup name " removes the do not disturb sign from the door."
+    strcat notify_except
+  exit then
+  
+  pop "Do what?" n
+;
+  
+lvar dep
+: debug ( s -- )
+  command @@ .tell
+  depth dep ! cobbin
+  depth dep @@ trig player?
+  trig room? command @@ "(" 1 strncmp and
+  or not if 1 - then = not if
+    "Please tell Andy you saw this." n debug-line
+  then
+;
+.
+c
+q
+@@register lock-cobinn=lock/cobinn
+@@register #me lock-cobinn=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=S
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=/_/de:World needs to own this program
+@@action room;knock=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=/_/de:@@$lock/cobinn
+@@set $tmp/prog1=/_version:FM$Revision: 1.3 $
+"Installation of lock-cobinn complete.
+@
+
+
+1.3
+log
+@Bringing in line with changes in Glow 3.1.0
+@
+text
+@d5 1
+a5 1
+( lock-cobinn: $Date: 1999/02/14 14:56:01 $ $Revision: 1.2 $
+d123 1
+a123 1
+    "Please tell Andy you saw this." n .debug-line
+d139 1
+a139 1
+@@set $tmp/prog1=/_version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Neeeded lib-strings.
+@
+text
+@d5 1
+a5 1
+( lock-cobinn: $Date: 1998/08/23 22:15:10 $ $Revision: 1.1 $
+d60 1
+a60 1
+  trig player? if
+d62 2
+a63 1
+  exit then ( Seems locks give players as trigs )
+d118 1
+d120 3
+a122 1
+  depth dep @@ trig player? not if 1 - then = not if
+d139 1
+a139 1
+@@set $tmp/prog1=/_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( lock-cobinn: $Date$ $Revision$
+d11 1
+d135 1
+a135 1
+@@set $tmp/prog1=/_version:FM$Revision$
+@

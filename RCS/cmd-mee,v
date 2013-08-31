@@ -1,0 +1,63 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2000.01.28.14.48.02;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of cmd-mee...
+@@prog cmd-mee
+1 99999 d
+1 i
+( cmd-mee: $Date$ $Revision$ )
+( Author: ??? )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$def n me @@ swap notify
+: clapper ( s -- )
+  .noguest
+  "me" match dup me ! location loc !
+  .strip
+  dup not me @@ "truemage" flag? not or command @@ "wiz" stringcmp or if
+    "You are " me @@ unparseobj strcat "." strcat n
+  else
+    dup "on" stringcmp not over .yes? or if
+        me @@ "@@set me=!quell" force
+        "Wizard powers enabled." n
+    else
+        me @@ "@@set me=quell" force
+        "Wizard powers disabled." n
+    then
+  then
+;
+.
+c
+q
+@@register cmd-mee=cmd/mee
+@@register #me cmd-mee=tmp/prog1
+@@set $tmp/prog1=W4
+@@action mee;me;whoami=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/mee 
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of cmd-mee complete.
+@

@@ -1,0 +1,542 @@
+head	1.6;
+access;
+symbols
+	GlowMUF1-1-1:1.6
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.6
+date	2005.09.22.20.18.08;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2005.04.06.00.03.07;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.05.23.09.43;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.01.14.16.32.13;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2001.01.22.05.27.01;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.21.02.25.01;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@In
+@
+
+
+1.6
+log
+@Added library symbol.
+@
+text
+@wh me=Beginning installation of cmd-mv-cp...
+@@prog cmd-mv-cp
+1 99999 d
+1 i
+( cmd-mv-cp: $Date: 2005/04/06 00:03:07 $ $Revision: 1.5 $                    )
+( Purpose: Provides a facility for copying and moving properties/proptrees    )
+( Author: Unknown                                                             )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-edit, lib-match                              )
+( --------------------------------------------------------------------------- )
+( cp [orig][=prop],[dest][=destprop]                                          )
+(   Copies prop from orig to dest, renaming it to destprop.                   )
+(                                                                             )
+( mv [orig][=prop],[dest][=destprop]                                          )
+(   Moves prop from orig to dest, renaming it to destprop.                    )
+(                                                                             )
+( Arguments in []s are optional.                                              )
+(   if orig is omitted, it assumes a property on the user.                    )
+(   if dest is omitten, it assumes dest is the same as orig.                  )
+(   if destprop is omitted, it assumes the same name as prop.                 )
+(   if prop is omitted, it prompts for it.                                    )
+(   if both prop and orig are omitted, it prompts for both.                   )
+(   if both dest and destprop are omitted, it prompts for them.               )
+( --------------------------------------------------------------------------- )
+( Library Words:                                                              )
+( MVCP-copy: source-dbref source-proppath dest-dbref dest-proppath -- i       )
+(   Copies property or property tree at source-proppath on source-dbref to    )
+(   the property or property tree dest-proppath on the destination dbref.     )
+(   Returns 1 if it succeeded, 0 if it failed.                                )
+(                                                                             )
+( MVCP-move: source-dbref source-proppath dest-dbref dest-proppath -- i       )
+(   Moves property or property tree at source-proppath on source-dbref to     )
+(   the property or property tree dest-proppath on the destination dbref.     )
+(   Returns 1 if it succeeded, 0 if it failed.                                )
+( --------------------------------------------------------------------------- )
+( 
+  $Log: cmd-mv-cp,v $
+  Revision 1.5  2005/04/06 00:03:07  feaelin
+  Fixed issues where 'help cp' and 'help mv' did not work.
+
+  Revision 1.4  2005/04/05 23:09:43  feaelin
+  Documented library words
+  Added library word aliases to fit the new standard
+  Corrected library calls to fit the new standard
+  Formatted the header and documentation
+  Added colorized error messages.
+  Eliminated dependency on lib-glow-standard
+
+  Revision 1.3  2005/01/14 16:32:13  feaelin
+  Broad sweep to clear up terminology usage in regards to database
+  item/object/thing
+
+  Revision 1.2  2001/01/22 05:27:01  feaelin
+  Fixed the mv and cp library support.
+)
+ 
+$include $lib/strings
+$include $lib/edit
+$include $lib/match
+ 
+lvar copy?
+ 
+: cp-mv-prop ( d s d s -- i )
+  4 pick me @@ swap controls not if
+    4 popn
+    me @@ "^FAIL^You don't control the source." ansi_notify 0 exit
+  then
+  over me @@ swap controls not if
+    4 popn
+    me @@ "^FAIL^You don't control the destination." ansi_notify 0 exit
+  then
+  me @@ "archwizard" flag? not if
+    3 pick dup "@@" 1 strncmp not swap "/@@" instring or if
+      4 popn
+      me @@ "^FAIL^Source property: You cannot access @@ props." ansi_notify 0 exit
+    then
+    dup dup "@@" 1 strncmp not swap "/@@" instring or if
+      4 popn
+      me @@ "Destination Property: You cannot access @@ props." ansi_notify 0 exit
+    then
+    me @@ "wizard" flag? not if
+      dup dup "~" 1 strncmp not swap "/~" instring or if
+        4 popn
+        me @@ "Destination property: You cannot access ~ props."
+        ansi_notify 0 exit
+      then
+    then
+  then
+  4 pick 4 pick getpropstr
+  dup if
+    3 pick 3 pick rot 0 addprop
+  else
+    pop 4 pick 4 pick getpropval
+    dup if
+      3 pick 3 pick "" 4 rotate addprop
+    else
+      pop 4 pick 4 pick propdir? not if
+        "^FAIL^I don't see what property to "
+        copy? @@ if "copy." else "move." then
+        strcat me @@ swap ansi_notify pop pop pop pop 0 exit
+      then
+    then
+  then
+  4 pick 4 pick propdir? if
+    4 pick dup 5 pick "/" strcat nextprop
+    (d s dd ds d ss)
+    begin
+      dup while
+      over dup 3 pick nextprop
+      4 rotate 4 rotate
+      6 pick 6 pick "/" strcat
+      3 pick dup "/" rinstr
+      strcut swap pop strcat
+      cp-mv-prop pop
+    repeat
+    pop pop
+  then
+  pop pop
+  copy? @@ not if remove_prop else pop pop then
+  1
+;
+ 
+: strip-slashes ( s -- s' )
+  begin
+    dup while
+    dup strlen 1 - strcut
+    dup "/" strcmp if strcat exit then
+    pop
+  repeat
+;
+ 
+: cp-prop
+  1 copy? ! cp-mv-prop
+;
+ 
+: mv-prop
+  0 copy? ! cp-mv-prop
+;
+ 
+: parse-command ( s -- )
+  "me" match dup me ! location loc !
+  command @@ tolower
+  "command @@ = \"" over strcat "\"" strcat me @@ swap notify
+  "c" instr copy? !
+  
+  dup "#help" stringcmp not if
+    pop
+    copy? @@ if
+      "cp orig=prop,dest=destprop"
+      "  Copies prop from orig to dest, renaming it to destprop."
+    else
+      "mv orig=prop,dest=destprop"
+      "  Moves prop from orig to dest, renaming it to destprop."
+    then
+    " "
+    "  if orig is omitted, it assumes a property on the user."
+    "  if dest is omitted, it assumes dest is the same as orig."
+    "  if destprop is omitted, it assumes it is the same name as prop."
+    "  if prop is omitted, it asks the user for it."
+    "  if both prop and orig are omitted, it asks the user for both."
+    "  if both dest and destprop are omitted, it asks the user for them."
+    depth EDIT-display exit
+  then
+  
+  "," STR-split strip swap strip
+  "=" STR-split strip swap strip
+  dup if
+    MATCH-noisy_match
+    dup not if pop exit then
+  else
+    over not if
+      me @@ "^INFO^Please enter the name of the original database item."
+      ansi_notify pop read strip
+    then
+    dup if
+      MATCH-noisy_match
+      dup not if pop exit then
+    else pop me @@
+    then
+  then
+  -3 rotate
+  begin
+    strip-slashes
+    dup not while
+    me @@ "^INFO^Please enter the name of the original property." ansi_notify
+    pop read strip
+  repeat
+  swap
+  "=" STR-split strip strip-slashes swap strip
+  begin
+    over over or not while
+    pop pop
+    me @@ 
+    "^INFO^Please enter the name of the destination database item." ansi_notify
+    read strip
+    me @@
+    "^INFO^Please enter the name of the destination property." ansi_notify
+    read strip
+    strip-slashes swap
+  repeat
+  dup if
+    MATCH-noisy_match
+    dup not if pop exit then
+  else
+    pop 3 pick
+  then
+  swap
+  dup not if pop over then
+  
+  (origdbref origpropname destdbref destpropname)
+  cp-mv-prop if
+    copy? @@ if "^SUCC^Property copied."
+    else "^SUCC^Property moved."
+    then me @@ swap ansi_notify
+  then
+;
+
+public cp-prop
+public mv-prop
+.
+c
+q
+@@register cmd-mv-cp=cmd/mv-cp
+@@register cmd-mv-cp=lib/mv-cp
+@@set $lib/mv-cp=W3
+@@set $lib/mv-cp=/_defs/copy-prop:"$lib/mv-cp" match "cp-prop" call
+@@set $lib/mv-cp=/_defs/move-prop:"$lib/mv-cp" match "mv-prop" call
+@@set $lib/mv-cp=/_defs/MVCP-copy-prop:"$lib/mv-cp" match "cp-prop" call
+@@set $lib/mv-cp=/_defs/MVCP-move-prop:"$lib/mv-cp" match "mv-prop" call
+@@action mv;cp=here=tmp/exit1
+@@link $tmp/exit1=$lib/mv-cp
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:@@$cmd/mv-cp #help
+@@set $tmp/prog1=/_/de:@@list lines 1-31 for documentation.
+@@set $lib/mv-cp=/_docs:@@list $lib/mv-cp=1-31
+@@set $lib/mv-cp=/_version:FM$Revision: 1.5 $
+@@set $lib/mv-cp=/_lib-version:FM$Revision: 1.5 $
+@@set $lib/mv-cp=/_lib-symbol:MVCP
+wh me=Installation of cmd-mv-cp complete.
+@
+
+
+1.5
+log
+@Fixed issues where 'help cp' and 'help mv' did not work.
+@
+text
+@d5 1
+a5 1
+( cmd-mv-cp: $Date: 2005/04/05 23:09:43 $ $Revision: 1.4 $                    )
+d38 3
+d236 3
+a238 2
+@@set $lib/mv-cp=/_version:FM$Revision: 1.4 $
+@@set $lib/mv-cp=/_lib-version:FM$Revision: 1.4 $
+@
+
+
+1.4
+log
+@Documented library words
+Added library word aliases to fit the new standard
+Corrected library calls to fit the new standard
+Formatted the header and documentation
+Added colorized error messages.
+Eliminated dependency on lib-glow-standard
+@
+text
+@d5 1
+a5 1
+( cmd-mv-cp: $Date: 2005/01/14 16:32:13 $ $Revision: 1.3 $                    )
+d38 8
+d229 2
+a230 5
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M1
+@@set $tmp/exit1=L
+@@set $tmp/exit1=/_/fl:Permission denied.
+@@set $tmp/exit1=/_/de:@@list lines 1-31 for documentation.
+d233 2
+a234 2
+@@set $lib/mv-cp=/_version:FM$Revision: 1.3 $
+@@set $lib/mv-cp=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@Broad sweep to clear up terminology usage in regards to database item/object/thing
+@
+text
+@d1 1
+a1 1
+"Beginning installation of cmd-mv-cp...
+d5 30
+a34 2
+( cmd-mv-cp: $Date: 2001/01/22 05:27:01 $ $Revision: 1.2 $                                                )
+( Original Author: Unknown                                                    )
+a35 15
+(   cp [orig][=prop],[dest][=destprop]
+      Copies prop from orig to dest, renaming it to destprop.
+  
+    mv [orig][=prop],[dest][=destprop]
+      Moves prop from orig to dest, renaming it to destprop.
+  
+      Arguments in []s are optional.
+      if orig is omitted, it assumes a property on the user.
+      if dest is omitten, it assumes dest is the same as orig.
+      if destprop is omitted, it assumes the same name as prop.
+      if prop is omitted, it prompts for it.
+      if both prop and orig are omitted, it prompts for both.
+      if both dest and destprop are omitted, it prompts for them.
+)
+
+d38 4
+a43 1
+
+d45 1
+a45 2
+
+  
+d49 1
+a49 2
+$include $lib/glowstandard
+  
+d51 1
+a51 1
+
+d55 1
+a55 1
+    "You don't control the source." .tell 0 exit
+d59 1
+a59 1
+    "You don't control the destination." .tell 0 exit
+d61 1
+a61 1
+  me @@ .arch? not if
+d64 1
+a64 1
+      "Source property: Permission denied." .tell 0 exit
+d68 1
+a68 1
+      "Dest property: Permission denied." .tell 0 exit
+d70 1
+a70 1
+    me @@ .wizard? not if
+d73 2
+a74 1
+        "Dest property: Permission denied." .tell 0 exit
+d87 1
+a87 1
+        "I don't see what property to "
+d89 1
+a89 1
+        strcat .tell pop pop pop pop 0 exit
+d111 1
+a111 1
+  
+d120 1
+a120 1
+
+d124 1
+a124 1
+
+d128 1
+a128 2
+  
+  
+d132 1
+a132 1
+  "command @@ = \"" over strcat "\"" strcat .tell
+d151 1
+a151 1
+    depth EDITdisplay exit
+d154 2
+a155 2
+  "," .split .strip swap .strip
+  "=" .split .strip swap .strip
+d157 1
+a157 1
+    .noisy_match
+d161 2
+a162 2
+      "Please enter the name of the original database item."
+      .tell pop read .strip
+d165 1
+a165 1
+      .noisy_match
+d174 2
+a175 2
+    "Please enter the name of the original property." .tell
+    pop read .strip
+d178 1
+a178 1
+  "=" .split .strip strip-slashes swap .strip
+d182 6
+a187 4
+    "Please enter the name of the destination database item." .tell
+    read .strip
+    "Please enter the name of the destination property." .tell
+    read .strip
+d191 1
+a191 1
+    .noisy_match
+d201 3
+a203 3
+    copy? @@ if "Property copied."
+    else "Property moved."
+    then .tell
+d214 5
+a218 4
+@@register #me cmd-mv-cp=tmp/prog1
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_defs/copy-prop:"$lib/mv-cp" match "cp-prop" call
+@@set $tmp/prog1=/_defs/move-prop:"$lib/mv-cp" match "mv-prop" call
+d220 1
+a220 1
+@@link $tmp/exit1=$tmp/prog1
+a223 1
+@@set $tmp/exit1=/_/de:Permission denied.
+d225 6
+a230 3
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+@@set $tmp/prog1=_lib-version:FM$Revision: 1.2 $
+"Installation of cmd-mv-cp complete.
+@
+
+
+1.2
+log
+@Fixed the mv and cp library support.
+@
+text
+@d5 1
+a5 1
+( cmd-mv-cp: $Date$ $Revision$                                                )
+d8 2
+a9 2
+(   cp [origobj][=prop],[destobj][=destprop]
+      Copies prop from origobj to destobj, renaming it to destprop.
+d11 2
+a12 2
+    mv [origobj][=prop],[destobj][=destprop]
+      Moves prop from origobj to destobj, renaming it to destprop.
+d15 2
+a16 2
+      if origobj is omitted, it assumes a property on the user.
+      if destobj is omitten, it assumes destobj is the same as origobj.
+d19 2
+a20 2
+      if both prop and origobj are omitted, it prompts for both.
+      if both destobj and destprop are omitted, it prompts for them.
+d24 4
+a27 1
+  $Log$
+d124 2
+a125 2
+      "cp origobj=prop,destobj=destprop"
+      "  Copies prop from origobj to destobj, renaming it to destprop."
+d127 2
+a128 2
+      "mv origobj=prop,destobj=destprop"
+      "  Moves prop from origobj to destobj, renaming it to destprop."
+d131 2
+a132 2
+    "  if origobj is omitted, it assumes a property on the user."
+    "  if destobj is omitted, it assumes destobj is the same as origobj."
+d135 2
+a136 2
+    "  if both prop and origobj are omitted, it asks the user for both."
+    "  if both destobj and destprop are omitted, it asks the user for them."
+d147 1
+a147 1
+      "Please enter the name of the original object."
+d168 1
+a168 1
+    "Please enter the name of the destination object." .tell
+d209 2
+a210 2
+@@set $tmp/prog1=_version:FM$Revision$
+@@set $tmp/prog1=_lib-version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 208
+a208 1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @

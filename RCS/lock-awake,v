@@ -1,0 +1,53 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	98.08.23.22.13.40;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of lock-awake...
+@@prog lock-awake
+1 99999 d
+1 i
+( lock-awake: $Date$ $Revision$
+  Author: Pakrat                                                              )
+( --------------------------------------------------------------------------- )
+: lock-awake
+  "me" match awake?
+;
+.
+c
+q
+@@register lock-awake=lock/awake
+@@register #me lock-awake=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M1
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-awake complete.
+
+
+
+
+
+
+
+
+
+@

@@ -1,0 +1,44 @@
+head	1.1;
+access;
+symbols
+	GlowMUF1-1-1:1.1
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	98.08.23.22.10.19;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@"Beginning installation of lock-arch...
+@@prog lock-arch
+1 99999 d
+1 i
+( lock-arch: $Date$ $Revision$
+  Author: Pakrat                         				      )
+( --------------------------------------------------------------------------- )
+: lock-arch
+  "me" match "archwizard" flag?
+;
+.
+c
+q
+@@register lock-arch=lock/arch
+@@register #me lock-arch=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=_version:FM$Revision$
+"Installation of lock-arch complete.
+@

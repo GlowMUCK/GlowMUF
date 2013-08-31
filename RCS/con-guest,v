@@ -1,0 +1,201 @@
+head	1.2;
+access;
+symbols
+	GlowMUF1-1-1:1.2
+	GlowMUF102:1.1;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2005.04.25.14.26.38;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.04.17.20.38.44;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Check-In
+@
+
+
+1.2
+log
+@Removed dependency on lib-glow-standard
+Updated installer script
+Added customization through props as part of the features.
+Cleaned up documentation.
+@
+text
+@wh me=Beginning installation of con-guest...
+@@prog con-guest
+1 99999 d
+1 i
+( con-guest: $Date: 1999/04/17 20:38:44 $ $Revision: 1.1 $                    )
+( Purpose: Provides multiple guest account support                            )
+( Author: PakRat/Andy                                                         )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-match                                        )
+( --------------------------------------------------------------------------- )
+(
+  $Log: con-guest,v $
+)
+( PakRat's More interesting Multi-Guest system Copyright 1996 )
+
+$include $lib/strings
+$include $lib/match
+ 
+$def GuestPW "yes"
+$def n me @@ swap notify
+  
+lvar guest
+lvar newname
+ 
+: GS ( -- s )
+  prog "GS" getpropstr
+  dup "" strcmp not if
+    pop "#0Bard#1Peasant#2Hero#3Serf#4Rogue#5Knight#6Knave#7Noble#8Pauper#"
+  then
+;
+ 
+: name-prefix ( -- s )
+  prog "name-prefix" getpropstr
+;
+ 
+: name-suffix ( -- s )
+  prog "name-suffix" getpropstr
+;
+ 
+: num-color ( i s )
+  intostr "#" swap strcat
+  GS swap instring dup if
+    1 + GS swap strcut swap pop
+    dup "#" instring 1 - strcut pop
+  else pop "" then
+;
+ 
+: Rand-Guest ( -- d ) ( #-1 means we couldn't find one )
+  0 begin
+    random 9 % num-color name-prefix swap strcat
+    name-suffix strcat MATCH-pmatch dup guest !
+    dup if awake? not else pop 0 then if pop exit then
+  1 + dup 30 < while repeat pop #-1 guest !
+;
+ 
+: main ( s -- )
+  "me" match dup location loc ! me !
+  me @@ name "Guest" stringcmp if pop exit then
+  
+  trig if pop "MultiGuest given bad trigger." n exit then
+  "Connect" strcmp if "MultiGuest is for connection only." n exit then
+  
+  "" newname ! #-1 guest !
+    
+  me @@ awake? 1 > if
+    "More than one person is using Guest, please page a wizard for help." n
+    exit
+  then
+  
+  Rand-Guest guest @@ player? not if
+    "Random guest selection failed, staying with Guest." n exit
+  then
+  
+  guest @@ "@@/id" getpropstr "Guest" stringcmp
+  guest @@ "G" flag? not or if
+    "Please tell a wizard that guests are messed up." n exit
+    (Not a real Guest Character)
+  then
+  
+  guest @@ name newname !
+  
+  guest @@ "Guest" systime intostr dup strlen 8 - strcut swap pop strcat
+  " " strcat GuestPW strcat setname
+ 
+  me @@ newname @@ " " strcat GuestPW strcat setname
+ 
+  me @@ name "Guest" stringcmp if
+    me @@ "@@/lockout-msg" "Please use 'connect guest' to use a guest."
+    setprop
+  then
+  
+  guest @@ "Guest " GuestPW strcat setname
+  
+  guest @@ name "Guest" stringcmp not if
+    guest @@ "@@/lockout-msg" remove_prop
+  then
+  
+  me @@ "!C" set
+  me @@ "_/do" "I'm exploring the realms as a " newname @@ "_" STR-split
+  me @@ "_prefs" remove_prop
+  pop tolower strcat "!" strcat setprop
+  " " n
+  "      -[===-  You are now exploring the realms as " newname @@ strcat
+  ".  -===]-" strcat n
+  " " n
+;
+.
+c
+q
+@@register con-guest=con/guest
+@@set $con/guest=/_/de:A multiguest program.
+@@set $con/guest=L
+@@set $con/guest=W3
+@@set $con/guest=/_version:FM$Revision: 1.1 $
+wh me=Installation of con-guest complete.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 1
+"Beginning installation of con-guest...
+d5 6
+a10 3
+( con-guest: $Date$ $Revision$
+  Author: PakRat/Andy
+  --------------------------------------------------------------------------- )
+d12 1
+a12 1
+  $Log$
+a15 1
+$include $lib/glow
+d17 1
+d22 3
+a24 2
+lvar guest lvar newname
+  
+d26 12
+a37 1
+  "#0Bard#1Peasant#2Hero#3Serf#4Rogue#5Knight#6Knave#7Noble#8Pauper#"
+d39 1
+a39 1
+  
+d47 1
+a47 1
+  
+d50 2
+a51 1
+    random 9 % num-color "_Guest" strcat .pmatch dup guest !
+d55 1
+a55 1
+  
+d99 1
+a99 1
+  me @@ "_/do" "I'm exploring the realms as a " newname @@ "_" .split
+d111 5
+a115 5
+@@register #me con-guest=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_version:FM$Revision$
+"Installation of con-guest complete.
+@
+

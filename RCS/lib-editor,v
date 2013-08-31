@@ -1,0 +1,1776 @@
+head	1.26;
+access;
+symbols
+	GlowMUF1-1-1:1.26
+	GlowMUF102:1.13;
+locks; strict;
+comment	@# @;
+
+
+1.26
+date	2006.08.15.14.13.23;	author feaelin;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2005.09.25.13.36.41;	author feaelin;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2005.04.22.15.15.21;	author feaelin;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2005.04.07.21.21.56;	author feaelin;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2005.04.07.21.19.49;	author feaelin;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2005.04.05.21.04.46;	author feaelin;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2005.04.05.19.50.50;	author feaelin;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2005.04.04.14.31.05;	author feaelin;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2005.03.21.01.31.43;	author feaelin;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2005.03.14.02.55.28;	author feaelin;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2005.01.18.16.23.46;	author feaelin;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2005.01.14.06.55.14;	author feaelin;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2005.01.14.06.37.48;	author feaelin;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2004.04.16.02.03.22;	author feaelin;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2004.04.05.01.34.02;	author feaelin;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2004.04.03.05.44.11;	author feaelin;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2004.04.03.00.07.11;	author feaelin;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2004.04.01.23.13.38;	author feaelin;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2004.04.01.23.11.31;	author feaelin;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2004.04.01.05.39.12;	author feaelin;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2004.02.20.17.09.24;	author feaelin;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2001.01.22.02.17.34;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2001.01.22.01.01.03;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2000.01.10.21.03.38;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	98.07.29.17.54.23;	author glow;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.07.29.04.18.47;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.26
+log
+@Added the ability to run external commands from the editor.
+@
+text
+@wh me=Installing lib-editor...
+@@prog lib-editor
+1 99999 d
+1 i
+( lib-editor: $Date: 2005/09/25 13:36:41 $ $Revision: 1.25 $                  )
+( Purpose:                                                                    )
+( Author: Foxen                                                               )
+( Contributors: Feaelin                                                       )
+( Dependencies: lib-strings, lib-stackrng, lib-edit                           )
+( --------------------------------------------------------------------------- )
+( This code is hereby stated as public domain, for use in any program it      )
+( might be needed for, under the condition that the original author's name is )
+( kept in the header, and full credit is given online in any programs written )
+( with it.                                                                    )
+(               - 6/25/1991 by Foxen                 foxen@@netcom.com         )
+( --------------------------------------------------------------------------- )
+( EDITOR takes a bunch of strings on the stack, with a count on top, and      )
+(        returns a set of strings with the count, and a string on top         )
+(        containing the command used to exit. [so you can have abort or end.] )
+(        The format is:                                                       )
+(          {strs} count -- {strs'} count' exitcmdstr                          )
+(                                                                             )
+( EDITOR-loop is more complex. it takes the strings and count [hereafter to be)
+(        referred to as a range], a string containing the space seperated     )
+(        names of the commands it should return on [in addition to abort and  )
+(        end], the position in the range that you want it to set the          )
+(        insertion point at, and the command you want it to first execute     )
+(        [usually ".i"]. It lets the user edit the range until the user       )
+(        enters a .command that you have listed in the mask, or until they    )
+(        enter .end, or .abort.                                               )
+(        It returns the new range, the mask, the insertion point that the user)
+(        was at when it returned, and the arguments that were given to the    )
+(        command that made the routine return, and the name of the command    )
+(        that made it return.                                                 )
+(        The format of a .command is:                                         )
+(          .cmd <startline> <endline> =<argstr>                               )
+(        So, overall, the input/output of the function is:                    )
+(          {rng} mask curpos cmdstr --                                        )
+(               {rng'} mask curpos argstr startline endline exitcmd           )
+(                                                                             )
+( EDITOR-parse takes and returns arguments identically to .sedit_loop, but    )
+(        only executes the command you pass it without doing any more editing )
+(        on the range, before returning.                                      )
+(                                                                             )
+( EDITOR-header takes and returns no arguments, but prints out a standard     )
+( message about the user entering the editor.  EDITOR calls this              )
+( automatically.                                                              )
+(                                                                             )
+( ***** Stack based string range editor -- EDITOR *****                       )
+( 1  EDITOR      [ {string_range} -- {string_range'} ]                        )
+( 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --                       )
+(                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ] )
+( 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1 or   )
+(                 {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ])
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-editor,v $
+  Revision 1.25  2005/09/25 13:36:41  feaelin
+  Documentation update.
+
+  Revision 1.24  2005/04/22 15:15:21  feaelin
+  Output to the lsedit user wasn't formatted properly for 'say in the editor'
+  messages.
+ 
+  Revision 1.23  2005/04/07 21:21:56  feaelin
+  Corrected typo in library symbol property
+ 
+  Revision 1.22  2005/04/07 21:19:49  feaelin
+  Added Library Symbols
+ 
+  Revision 1.21  2005/04/05 21:04:46  feaelin
+  Corrected misspelled library calls
+ 
+  Revision 1.20  2005/04/05 19:50:50  feaelin
+  Revised library word names and library calls to reflect standards change.
+ 
+  Revision 1.19  2005/04/04 14:31:05  feaelin
+  Documentation and script updated.
+ 
+  Revision 1.18  2005/03/21 01:31:43  feaelin
+  General maintenance and documentation updates
+ 
+  Revision 1.17  2005/03/14 02:55:28  feaelin
+  Changed the 'in the editor' say/pose to use the default colors.
+ 
+  Revision 1.16  2005/01/18 16:23:46  feaelin
+  Corrected problem that would crash the editor when formatting lines with
+  ANSI codes in them.
+ 
+  Revision 1.15  2005/01/14 06:55:14  feaelin
+  Entering a command string starting with a period and a space no longer
+  generates a program error.
+ 
+  Revision 1.14  2005/01/14 06:37:48  feaelin
+  Entering a period without any commands no longer results in an program
+  error.
+ 
+  Revision 1.13  2004/04/16 02:03:22  feaelin
+  Fixed bug in EDITORargument that caused the editor to crash after being
+  passed certain combinations of "invalid line references".
+ 
+  Revision 1.12  2004/04/05 01:34:02  feaelin
+  Wizbit change.
+ 
+  Revision 1.11  2004/04/03 05:44:11  feaelin
+  Added the .ruler command.
+  Spotted a minor bug in .color that would allow you to 'color' with
+  things like 'r' and 'f' ...because it thought they were red and flash.
+ 
+  Revision 1.10  2004/04/03 00:07:11  feaelin
+  Fixed yet another bug in the new .color command.
+ 
+  Revision 1.9  2004/04/01 23:13:38  feaelin
+  You'd think I'd have learned by now to not put parens in my RCS log entries.
+ 
+  Revision 1.8  2004/04/01 23:11:31  feaelin
+  Fixed issue where .color # # [no color specified] would cause the editor
+  to crash.
+   
+  Revision 1.7  2004/04/01 05:39:12  feaelin
+  Added feature which allows the user to prepend each line in a range with
+  a color code. Updated documentation for recent changes.
+  
+  Revision 1.6  2004/02/20 17:09:24  feaelin
+  Colorized the responses.  Added two listing commands that
+  are idential to .l and .p, except they display in color
+  
+  Revision 1.5  2001/01/22 02:17:34  feaelin
+  Fixed a small bug in the sort where it didn't returne the
+  correct info to the editor.
+  
+  Revision 1.3  2000/01/10 21:03:38  feaelin
+  Documentation cleanup.
+  
+  Revision 1.2  1998/07/29 17:54:23  feaelin
+  Cleaned up documentation.
+)  
+( ---------------------------------------------------------------------- )
+$include $lib/strings
+$include $lib/stackrng
+$include $lib/edit
+$include $lib/safe-call
+  
+: EDITORerror ( errnum -- )
+    dup       1 = if pop "Invalid line reference."
+    else dup  2 = if pop "Error: Line referred to is before first line."
+    else dup  3 = if pop "Error: Line referred to is after last line."
+    else dup  4 = if pop "Error: 1st line ref is after 2nd reference."
+    else dup  5 = if pop "Warning: First line reference ignored."
+    else dup  6 = if pop "Warning: Second line reference ignored."
+    else dup  7 = if pop "Warning: String argument ignored."
+    else dup  8 = if pop "Error: Unknown command.  Enter '.h' for help."
+    else dup  9 = if pop "Error: Command needs string parameter."
+    else dup 10 = if pop "Error: Must have pattern to search for."
+    else dup 11 = if pop "Error: Must have a destination line reference."
+    else dup 12 = if pop "Error: Columns parameter invalid."
+    else dup 13 = if pop "Error: Extraneous line references ignored."
+    else dup 14 = if pop "Error: Invalid ANSI code."
+    else pop "Unknown error."
+    then then then then then
+    then then then then then
+    then then then then
+    "^FAIL^< ** " swap strcat " ** >^RESET^" strcat
+    me @@ swap ansi_notify
+;
+ 
+: EDITORargument ( endline currentline string -- linenum )
+    dup "$" 1 strncmp not if
+        1 strcut swap pop
+        swap pop over 1 + swap
+    else dup "^" 1 strncmp not if
+        1 strcut swap pop
+        swap pop 1 swap
+    else dup "." 1 strncmp not if
+        1 strcut swap pop
+    then then then
+  
+    dup not if pop swap pop exit then
+  
+    dup "+" 1 strncmp not if
+      1 strcut swap pop atoi +
+    else
+      dup "-" 1 strncmp not if
+        1 strcut swap pop atoi -
+      else
+        dup number? if
+          atoi swap pop
+        else
+          3 popn 1 EDITORerror 0 exit
+        then
+      then
+    then
+  
+    (max line)
+    dup 1 < if 2 popn 1
+    else
+        swap 1 + over over
+        > if swap then pop
+    then
+;
+ 
+: EDITORmesg  (int1 int2 int3 string -- )
+    swap intostr "%3" subst
+    swap intostr "%2" subst
+    swap intostr "%1" subst
+    me @@ swap ansi_notify
+;
+ 
+: EDITORparse ( {str_rng} mask currline cmdstr --
+                {str_rng'} mask currline arg1 arg2 exitcmd 1   or
+                {str_rng'} mask currline 0                        )
+    dup not if pop read then
+    dup "\"" 1 strncmp not if
+        1 strcut swap pop
+        "^NOTE^< In the editor > ^AQUA^You say, \"^YELLOW^" over strcat "^AQUA^\"" strcat
+        me @@ swap ansi_notify
+        "^AQUA^" me @@ name strcat " says, \"^YELLOW^" strcat
+        swap strcat "^AQUA^\"^RESET^" strcat
+        me @@ location me @@ rot ansi_notify_except
+        1 exit
+    then
+    dup ":" 1 strncmp not if
+        1 strcut swap pop
+        "^AQUA^" me @@ name strcat " " strcat swap strcat
+        "^NOTE^< In the editor > " over strcat
+        me @@ swap ansi_notify
+        me @@ location me @@
+        rot ansi_notify_except
+        1 exit
+    then
+    dup ".\"" 2 strncmp not over ".:" 2 strncmp not or
+    over ".." 2 strncmp not or if 1 strcut swap pop 1 else 0 then
+    over "." 1 strncmp or if
+        ( {str_rng} mask currlinenum string )
+        4 pick 5 + 3 pick - -1 * rotate
+        1 + rot 1 + rot rot 1 exit
+    then
+    " " STR-split swap 1 strcut swap pop
+    dup not if
+      dup string? if pop then 
+      pop 8 EDITORerror 1 exit
+    then
+    dup
+    "i#end#abort#h#i#l#p#al#ap#del#copy#move#find#repl#join#split#left#center#right#color#indent#format#ruler#ruler1#ruler2#ruler3#sort"
+    swap instr not if
+      dup 5 pick swap instr not if
+        dup match dup ok? if
+          dup exit? if
+            getlink dup program? if
+              "mycmd" 4 rotate
+              me @@ "^SUCC^Launching external program..." ansi_notify
+              SAFECALL-arg-cmd
+              me @@ "^SUCC^Returning to editor..." ansi_notify
+              pop pop 1 exit
+            else
+              pop
+            then
+          else
+            pop
+          then
+        else
+          pop
+        then
+        pop pop 8 EDITORerror 1 exit
+      then
+    then
+    swap
+    "=" STR-split strip swap
+    dup strip if
+        " " STR-split strip swap strip
+        7 pick 6 pick rot EDITORargument
+        ( {str_rng} mask currline cmd arg3str arg2str arg1int )
+        dup not if
+            pop pop pop pop 1 exit
+        then
+        swap dup if
+            ( {str_rng} mask currline cmd arg3str arg1int arg2str )
+            7 pick 6 pick rot EDITORargument dup not if
+                pop pop pop pop 1 exit
+            then
+            over over > if
+                4 EDITORerror
+                pop pop pop pop 1 exit
+            then
+        else pop 0
+        then
+    else pop 0 0
+    then
+  
+    ( {strrng} mask currline cmdstr arg3str args1int arg2int )
+    4 rotate dup " " swap over strcat strcat
+    7 pick " " swap over strcat strcat STR-singlespace swap instr if
+        0 exit
+    then
+  
+    ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+    dup "i" stringcmp not if
+        pop if 6 EDITORerror then
+        dup not if pop over then
+        swap if 7 EDITORerror then
+        dup 0 0 "^INFO^< Insert at line %1 >^RESET^" EDITORmesg
+        swap pop 1 exit
+    then
+    dup "sort" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr ) 
+        pop and if 13 EDITORerror then
+        rot rot 4 pick 4 + 0 swap - rotate 3 pick 4 + 0 swap - rotate
+        dup "as" stringcmp not if 
+          pop 0 0
+        else
+          dup "d" stringcmp not if
+            pop 1 1
+          else
+            dup "s" stringcmp not if
+              pop 0 0
+            else
+              dup "di" stringcmp not if
+                pop 1 1
+              else
+                dup "ds" stringcmp not if
+                  pop 1 0
+                else
+                  pop 0 1
+                then                    
+              then
+            then
+          then
+        then
+        EDIT-sort dup 3 + rotate over 3 + rotate
+        dup 1 - 0 0 "^SUCC^< %1 lines sorted. >" EDITORmesg
+        1 exit
+    then
+    dup "del" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop over not if swap pop 3 pick swap then
+        dup not if pop dup then
+        rot if 7 EDITORerror then
+        over 3 put over - 1 +
+        over over 0
+        "^SUCC^< deleting %2 lines starting at line %1  (Now current line) >"
+        EDITORmesg
+        2 swap rot SRNG-deleterng
+        1 exit
+    then
+    dup "l" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not over not and if pop pop 1 4 pick then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick
+        -4 rotate -4 rotate
+        ( {strrng} mask currline cnt frst start end )
+        4 0 4 rotate 4 rotate EDIT-list
+        0 "^SUCC^< listed %1 lines starting at line %2 >"
+        EDITORmesg 1 exit
+    then
+    dup "al" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not over not and if pop pop 1 4 pick then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick
+        -4 rotate -4 rotate
+        ( {strrng} mask currline cnt frst start end )
+        4 0 4 rotate 4 rotate EDIT-ansi_list
+        0 "^SUCC^< listed %1 lines starting at line %2 >"
+        EDITORmesg 1 exit
+    then
+    dup "p" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not over not and if pop pop 1 4 pick then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick
+        -4 rotate -4 rotate
+        ( {strrng} mask currline cnt frst start end )
+        4 1 4 rotate 4 rotate EDIT-list
+        0 "^SUCC^< listed %1 lines starting at line %2 >"
+        EDITORmesg 1 exit
+    then
+    dup "ap" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not over not and if pop pop 1 4 pick then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick
+        -4 rotate -4 rotate
+        ( {strrng} mask currline cnt frst start end )
+        4 1 4 rotate 4 rotate EDIT-ansi_list
+        0 "^SUCC^< listed %1 lines starting at line %2 >"
+        EDITORmesg 1 exit
+    then
+    dup "find" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop if 6 EDITORerror then
+        dup not if pop over then
+        over not if 10 EDITORerror pop pop 1 exit then
+        2 rot rot EDIT-search dup if
+            dup 0 0 "^SUCC^< Found.  Going to line %1 >"
+            EDITORmesg swap pop
+            2 over dup 1 EDIT-list
+        else
+            pop 0 0 0
+            "^FAIL^< pattern not found >"
+            EDITORmesg
+        then
+        1 exit
+    then
+    dup "move" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop 3 pick not if 11 EDITORerror pop pop pop 1 exit then
+        over not if pop pop over dup then
+        dup not if pop dup then
+        rot 6 pick 5 pick rot strip EDITORargument
+        dup not if pop pop pop 1 exit then rot rot
+        ( {strrng} mask currline arg3i arg1i arg2i )
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Moved %1 lines from line %2 to line %3.  (dest now curr line) >"
+        EDITORmesg 3 pick 4 put
+        2 -4 rotate EDIT-move 1 exit
+    then
+    dup "copy" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop 3 pick not if 11 EDITORerror pop pop pop 1 exit then
+        over not if pop pop over dup then
+        dup not if pop dup then
+        rot 6 pick 5 pick rot strip EDITORargument
+        dup not if pop pop pop 1 exit then rot rot
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Copied %1 lines from line %2 to line %3.  (now current line) >"
+        EDITORmesg 3 pick 4 put
+        2 -4 rotate EDIT-copy 1 exit
+    then
+    dup "repl" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop over not over not and if pop pop 1 5 pick then
+        dup not if pop dup then
+        rot dup not if
+            9 EDITORerror
+            pop pop pop 1 exit
+        then
+        ( {strrng} mask currline args1int arg2int arg3str )
+        1 strcut swap STR-split -4 rotate
+        dup not if
+            pop pop pop pop
+            10 EDITORerror 1 exit
+        then
+        -4 rotate 3 -5 rotate
+        7 5 pick 4 pick EDIT-search dup if
+            dup 0 0 "< Replaced.  Going to line %1 >"
+            EDITORmesg dup 7 put
+            rot pop swap over -6 rotate
+            ({rng} mask currline first 3 oldtext newtext first arg2int)
+            EDIT-replace ({rng} mask currline first)
+            2 1 rot dup ({rng} mask currline 2 1 first first) EDIT-list
+        else
+            pop pop pop pop pop pop
+            0 0 0 "< pattern not found >"
+            EDITORmesg
+        then
+        1 exit
+    then
+    dup "join" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not if pop pop dup dup 1 + then
+        dup not if pop dup 1 + then over 3 put
+        over over swap - 1 + 3 pick 0
+        "^SUCC^< Joining %1 lines starting at line %2. (Now current line) >"
+        EDITORmesg 2 rot rot EDIT-join_rng
+        1 exit
+    then
+    dup "split" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop if 6 EDITORerror then
+        dup not if pop over then
+        over not if 10 EDITORerror pop pop 1 exit then
+        ( {strrng} mask currline arg3str args1int )
+        5 pick 6 + over - dup 1 + rotate
+        ( {rng} mask currline ars3str arg1int rot str)
+        dup 5 pick instr dup if
+            5 rotate strlen + 1 - strcut
+            ( {rng} mask currline arg1int rot strb stre )
+            rot 1 + -1 * swap over rotate
+            1 + rotate dup 0 0
+            "^SUCC^< Split line %1.  (Now current line) >"
+            EDITORmesg swap pop
+            rot 1 + rot rot
+        else
+            pop swap -1 * rotate
+            0 0 0 "^FAIL^< Text not found.  Line not split. >"
+            EDITORmesg pop pop
+        then 1 exit
+    then
+    dup "edit" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop if 6 EDITORerror then
+        dup not if pop over then
+        swap if 7 EDITORerror then
+        ( {strrng} mask currline args1int )
+        4 pick 4 + over - dup 2 + rotate
+        ( {rng} mask currline arg1int rot str)
+        rot dup 4 put 0 0 "^SUCC^< Editing line %1. >" EDITORmesg
+        ( {rng} mask currline rot str)
+        "##edit> " swap strcat me @@ swap ansi_notify
+        read swap -1 * rotate 1 exit
+    then
+    dup "left" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot if 7 EDITORerror then
+        over not if pop pop dup dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 0
+        "^SUCC^< Left justifying %1 lines starting at line %2. >"
+        EDITORmesg 2 rot rot EDIT-left
+        1 exit
+    then
+    dup "center" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot dup not if pop "80" then
+        dup number? not if
+            pop pop pop 12 EDITORerror 1 exit
+        then atoi
+        dup 160 > if pop 160 then
+        dup 40 < if pop 40 then rot rot
+        over not if pop pop over dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Centered %1 lines starting at line %2 for screenwidth %3. >"
+        EDITORmesg 2 -4 rotate EDIT-center 1 exit
+    then
+    dup "color" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop 3 pick "" "^" subst toupper 3 put
+        3 pick "" strcmp not if
+          3 popn 9 EDITORerror 1 exit
+        then
+        3 pick "^" swap strcat "^" strcat 3 put
+        3 pick
+        "^RED^^BLACK^^CRIMSON^^FOREST^^BROWN^^NAVY^^VIOLET^^AQUA^^GRAY^^GLOOM^^BLUE^^PURPLE^^GREEN^^CYAN^^YELLOW^^WHITE^^BBLACK^^BBLUE^^BRED^^BPURPLE^^BGREEN^^BCYAN^^BBROWN^^BGRAY^^NORMAL^^FLASH^^INVERT^"
+        swap instr not if
+          3 popn 14 EDITORerror 1 exit
+        then
+        over not if pop pop over dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 0
+        "^SUCC^< Colorized %1 lines starting at line %2. >"
+        EDITORmesg 2 -4 rotate EDIT-color 1 exit
+    then
+    dup "right" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot dup not if pop "80" then
+        dup number? not if
+            pop pop pop 12 EDITORerror 1 exit
+        then atoi
+        dup 160 > if pop 160 then
+        dup 40 < if pop 40 then rot rot
+        over not if pop pop over dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Right justified %1 lines starting at line %2 to column %3. >"
+        EDITORmesg 2 -4 rotate EDIT-right 1 exit
+    then
+    dup "format" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot strip dup not if pop "80" then
+        dup number? not if
+            pop pop pop 12 EDITORerror 1 exit
+        then atoi
+        dup 160 > if pop 160 then
+        dup 40 < if pop 40 then rot rot
+        over not if pop pop over dup then
+        dup not if pop dup then over 4 put
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
+        EDITORmesg 2 -4 rotate EDIT-fmt_rng 1 exit
+    then
+    dup "indent" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        pop rot dup not if pop "2" then
+        dup number? not if
+            pop pop pop 12 EDITORerror 1 exit
+        then atoi
+        dup 80 > if pop 80 then
+        dup -80 < if pop -80 then rot rot
+        over not if pop pop over dup then
+        dup not if pop dup then
+        over over swap - 1 + 3 pick 5 pick
+        "^SUCC^< Indented %1 lines starting at line %2, %3 columns. >"
+        EDITORmesg 2 -4 rotate EDIT-indent 1 exit
+    then
+    dup "ruler" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @@ "^WHITE^12345678901234567890123456789012345678901234567890123456789012345678901234567890" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler1" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @@ "^WHITE^12345678901234567890123456789012345678901234567890123456789012345678901234567890" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler2" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @@ "^WHITE^.........1.........2.........3.........4.........5.........6.........7.........8" ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "ruler3" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        me @@ "^WHITE^.........1.........2.........3.........4.........5.........6.........7.........8" ansi_notify
+        me @@ "^WHITE^123456789.123456789.123456789.123456789.123456789.123456789.123456789.123456789." ansi_notify
+        pop pop pop pop 1 exit
+    then
+    dup "end" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        0 0 0 "^INFO^< Editor exited. >"
+        EDITORmesg
+        0 exit
+    then
+    dup "abort" stringcmp not if
+        ( {strrng} mask currline arg3str args1int arg2int cmdstr )
+        0 0 0 "^INFO^< Edit aborted. >"
+        EDITORmesg
+        pop pop pop pop pop pop SRNG-poprng
+        0 "" 1 "" 1 1 "abort" 0 exit
+    then
+    dup tolower "h" 1 strncmp not if
+"^NOTE^          MUFedit Help Screen.  Arguments in [] are optional."
+"^NOTE^    Any line not starting with a '.' is inserted at the current line."
+"^NOTE^Lines starting with '..', '.\"' , or '.:' are added with the '.' removed."
+"^NOTE^-------  st = start line   en = end line   de = destination line  -------"
+" ^MOVE^.end^RESET^                      Exits the editor with the changes intact."
+" ^MOVE^.save^RESET^                     Saves the changes without leaving editor."
+" ^MOVE^.abort^RESET^                    Aborts the edit."
+" ^MOVE^.h^RESET^                        Displays this help screen."
+" ^MOVE^.i [st]^RESET^                   Changes the current line for insertion."
+" ^MOVE^.l [st [en]]^RESET^              Lists the line(s) given. (if none, lists all.)"
+" ^MOVE^.p [st [en]]^RESET^              Like .l, except that it prints line numbers too."
+" ^MOVE^.al [st [en]]^RESET^             Like .l, except that it displays in color."
+" ^MOVE^.ap [st [en]]^RESET^             Like .p, except that it displays in color."
+" ^MOVE^.del [st [en]]^RESET^            Deletes the given lines, or the current one."
+" ^MOVE^.copy [st [en]]=de^RESET^        Copies the given range of lines to the dest."
+" ^MOVE^.move [st [en]]=de^RESET^        Moves the given range of lines to the dest."
+" ^MOVE^.find [st]=text^RESET^           Searches for the given text starting at line start."
+" ^MOVE^.repl [st [en]]=/old/new^RESET^  Replaces old text with new in the given lines."
+" ^MOVE^.join [st [en]]^RESET^           Joins together the lines given in the range."
+" ^MOVE^.split [st]=text^RESET^          Splits given line into 2 lines.  Splits after text"
+" ^MOVE^.left [st [en]]^RESET^           Aligns all the text to the left side of the screen."
+" ^MOVE^.center [st [en]]=cols^RESET^    Centers the given lines for cols screenwidth."
+" ^MOVE^.right [st [en]]=col^RESET^      Right justifies to column col."
+" ^MOVE^.color [st [en]]=color^RESET^    Sets the color at the start of each line."
+" ^MOVE^.indent [st [en]]=cols^RESET^    Indents or undents text by cols characters"
+" ^MOVE^.format [st [en]]=cols^RESET^    Formats text nicely to cols columns."
+" ^MOVE^.ruler[#]^RESET^                 Prints out a line of numbers as a ruler-guide."
+" ^MOVE^.sort [=method]^RESET^           Sorts all lines. Method can have: a - ascending,"
+"                           d - descending, i - case-insensitive,"
+"                           s - case-sensitive. Default is: ai."
+"^NOTE^---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
+"^NOTE^12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
+"^NOTE^.+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
+        33 EDIT-ansi_display
+        pop pop pop pop 1 exit
+    then
+    pop pop pop pop 8 EDITORerror 1
+;
+ 
+: EDITORloop ( {rng} mask currpos cmdstr --
+              {rng'} mask currpos arg3str arg1int arg2int exitcmd )
+    EDITORparse if "" EDITORloop then
+;
+ 
+: EDITORheader ( -- )
+    "^NOTE^< Entering editor.  Type '.h' on a line by itself for help. >^RESET^"
+    me @@ swap ansi_notify
+    "^NOTE^< '.end' will exit the editor.   '.abort' aborts the edit.  >^RESET^"
+    me @@ swap ansi_notify
+    "^NOTE^<  Poses and says will pose and say as usual.  To start a   >^RESET^"
+    me @@ swap ansi_notify
+    "^NOTE^<   line with : or \" just preceed it with a period  ('.')   >^RESET^"
+    me @@ swap ansi_notify
+;
+ 
+: EDITOR ( {str_rng} -- {str_rnd'} exitcmdstr )
+    EDITORheader
+    "" 1 ".i $" EDITORloop -6 rotate pop pop pop pop pop
+;
+  
+PUBLIC EDITOR
+PUBLIC EDITORloop
+PUBLIC EDITORparse
+PUBLIC EDITORheader
+.
+c
+q
+@@register lib-editor=lib/editor
+@@set $lib/editor=L
+@@set $lib/editor=W3
+@@set $lib/editor=/_defs/EDITOR:"$lib/editor" match "editor" call
+@@set $lib/editor=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
+@@set $lib/editor=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
+@@set $lib/editor=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
+@@set $lib/editor=/_defs/EDITOR:"$lib/editor" match "editor" call
+@@set $lib/editor=/_defs/EDITOR-header:"$lib/editor" match "editorheader" call
+@@set $lib/editor=/_defs/EDITOR-loop:"$lib/editor" match "editorloop" call
+@@set $lib/editor=/_defs/EDITOR-parse:"$lib/editor" match "editorparse" call
+@@set $lib/editor=/_docs:@@list $lib/editor=1-51
+@@set $lib/editor=/_/de:lib-editor:List lines 1-51 for documentation
+@@set $lib/editor=/_lib-version:FM$Revision: 1.25 $
+@@set $lib/editor=/_lib-symbol:EDITOR
+wh me=Installation of lib-editor complete.
+@
+
+
+1.25
+log
+@Documentation update.
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/22 15:15:21 $ $Revision: 1.24 $                  )
+d58 3
+d142 2
+a143 1
+ 
+d247 17
+d707 1
+a707 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.24 $
+@
+
+
+1.24
+log
+@Output to the lsedit user wasn't formatted properly for 'say in the editor'
+messages.
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/07 21:21:56 $ $Revision: 1.23 $             )
+d58 4
+d64 1
+a64 1
+
+d67 1
+a67 1
+
+d70 1
+a70 1
+
+d73 1
+a73 1
+
+d76 1
+a76 1
+
+d79 1
+a79 1
+
+d82 1
+a82 1
+
+d86 1
+a86 1
+
+d90 1
+a90 1
+
+d94 1
+a94 1
+
+d98 1
+a98 1
+
+d101 1
+a101 1
+
+d106 1
+a106 1
+
+d109 1
+a109 1
+
+d112 1
+a112 1
+
+d116 1
+a116 1
+  
+d686 1
+a686 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.23 $
+@
+
+
+1.23
+log
+@Corrected typo in library symbol property
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/07 21:19:49 $ $Revision: 1.22 $             )
+d58 3
+d207 1
+a207 1
+        "^NOTE^< In the editor > You say, \"" over strcat "\"" strcat
+d682 1
+a682 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.22 $
+@
+
+
+1.22
+log
+@Added Library Symbols
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/05 21:04:46 $ $Revision: 1.21 $             )
+d58 3
+d679 2
+a680 2
+@@set $lib/editor=/_lib-version:FM$Revision: 1.21 $
+@@set $lib/editor=/_lib-editor:EDITOR
+@
+
+
+1.21
+log
+@Corrected misspelled library calls
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/05 19:50:50 $ $Revision: 1.20 $             )
+d58 3
+d676 2
+a677 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.20 $
+@
+
+
+1.20
+log
+@Revised library word names and library calls to reflect standards change.
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/04/04 14:31:05 $ $Revision: 1.19 $             )
+d58 3
+d308 1
+a308 1
+        2 swap rot SRNG-delete
+d589 1
+a589 1
+        pop pop pop pop pop pop SRNG-pop
+d673 1
+a673 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.19 $
+@
+
+
+1.19
+log
+@Documentation and script updated.
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/03/21 01:31:43 $ $Revision: 1.18 $             )
+d23 1
+a23 1
+( EDITORloop is more complex. it takes the strings and count [hereafter to be )
+d41 1
+a41 1
+( EDITORparse takes and returns arguments identically to .sedit_loop, but     )
+d45 1
+a45 1
+( EDITORheader takes and returns no arguments, but prints out a standard      )
+d58 3
+a122 8
+
+$define SRNGcat     sr-catrng     $enddef
+$define SRNGpop     sr-poprng     $enddef
+$define SRNGextract sr-extractrng $enddef
+$define SRNGswap    sr-swaprng    $enddef
+$define SRNGcopy    sr-copyrng    $enddef
+$define SRNGdelete  sr-deleterng  $enddef
+$define SRNGinsert  sr-insertrng  $enddef
+d218 1
+a218 1
+    " " STRsplit swap 1 strcut swap pop
+d231 3
+a233 3
+    "=" STRsplit STRstrip swap
+    dup STRstrip if
+        " " STRsplit STRstrip swap STRstrip
+d255 1
+a255 1
+    7 pick " " swap over strcat strcat STRsinglespace swap instr if
+d292 1
+a292 1
+        EDITsort dup 3 + rotate over 3 + rotate
+d305 1
+a305 1
+        2 swap rot SRNGdelete
+d316 1
+a316 1
+        4 0 4 rotate 4 rotate EDITlist
+d328 1
+a328 1
+        4 0 4 rotate 4 rotate EDITansi_list
+d340 1
+a340 1
+        4 1 4 rotate 4 rotate EDITlist
+d352 1
+a352 1
+        4 1 4 rotate 4 rotate EDITansi_list
+d361 1
+a361 1
+        2 rot rot EDITsearch dup if
+d364 1
+a364 1
+            2 over dup 1 EDITlist
+d377 1
+a377 1
+        rot 6 pick 5 pick rot STRstrip EDITORargument
+d383 1
+a383 1
+        2 -4 rotate EDITmove 1 exit
+d390 1
+a390 1
+        rot 6 pick 5 pick rot STRstrip EDITORargument
+d395 1
+a395 1
+        2 -4 rotate EDITcopy 1 exit
+d406 1
+a406 1
+        1 strcut swap STRsplit -4 rotate
+d412 1
+a412 1
+        7 5 pick 4 pick EDITsearch dup if
+d417 2
+a418 2
+            EDITreplace ({rng} mask currline first)
+            2 1 rot dup ({rng} mask currline 2 1 first first) EDITlist
+d433 1
+a433 1
+        EDITORmesg 2 rot rot EDITjoin_rng
+d478 1
+a478 1
+        EDITORmesg 2 rot rot EDITleft
+d493 1
+a493 1
+        EDITORmesg 2 -4 rotate EDITcenter 1 exit
+d511 1
+a511 1
+        EDITORmesg 2 -4 rotate EDITcolor 1 exit
+d525 1
+a525 1
+        EDITORmesg 2 -4 rotate EDITright 1 exit
+d529 1
+a529 1
+        pop rot STRstrip dup not if pop "80" then
+d539 1
+a539 1
+        EDITORmesg 2 -4 rotate EDITfmt_rng 1 exit
+d553 1
+a553 1
+        EDITORmesg 2 -4 rotate EDITindent 1 exit
+d586 1
+a586 1
+        pop pop pop pop pop pop SRNGpop
+d623 1
+a623 1
+        33 EDITansi_display
+d664 4
+d670 1
+a670 1
+@@set $lib/editor=/_lib-version:FM$Revision: 1.18 $
+@
+
+
+1.18
+log
+@General maintenance and documentation updates
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/03/14 02:55:28 $ $Revision: 1.17 $             )
+d58 3
+d128 1
+a128 1
+  
+d151 1
+a151 1
+  
+d186 1
+a186 1
+  
+d193 1
+a193 1
+  
+d633 1
+a633 2
+  
+  
+d638 1
+a638 1
+  
+d649 1
+a649 1
+  
+d663 9
+a671 10
+@@register #me lib-editor=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=W3
+@@set $tmp/prog1=/_defs/EDITOR:"$lib/editor" match "editor" call
+@@set $tmp/prog1=/_defs/EDITORheader:"$lib/editor" match "editorheader" call
+@@set $tmp/prog1=/_defs/EDITORloop:"$lib/editor" match "editorloop" call
+@@set $tmp/prog1=/_defs/EDITORparse:"$lib/editor" match "editorparse" call
+@@set $tmp/prog1=/_docs:@@list $lib/editor=1-46
+@@set $tmp/prog1=/_/de:lib-editor:List lines 1-46 for documentation
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.17 $
+@
+
+
+1.17
+log
+@Changed the 'in the editor' say/pose to use the default colors.
+@
+text
+@d5 1
+a5 1
+( lib-editor: $Date: 2005/01/18 16:23:46 $ $Revision: 1.16 $             )
+d58 3
+d110 1
+a110 1
+  Revision 1.2  1998/07/29 17:54:23  glow
+a111 3
+  
+  Revision 1.1  1998/07/29 04:18:47  glow
+  Initial revision
+d670 1
+a670 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.16 $
+@
+
+
+1.16
+log
+@Corrected problem that would crash the editor when formatting lines with
+ANSI codes in them.
+@
+text
+@d1 1
+d5 1
+a5 1
+( lib-editor: $Date: 2005/01/14 06:55:14 $ $Revision: 1.15 $             )
+d58 4
+d198 3
+a200 2
+        me @@ swap ansi_notify me @@ name " says, \"" strcat
+        swap strcat "\"" strcat
+d206 1
+a206 1
+        me @@ name " " strcat swap strcat
+d670 2
+a671 2
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.15 $
+"Installation of lib-editor complete.
+@
+
+
+1.15
+log
+@Entering a command string starting with a period and a space no longer
+generates a program error.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2005/01/14 06:37:48 $ $Revision: 1.14 $             )
+d57 4
+d479 1
+a479 1
+        pop rot dup not if pop "72" then
+d511 1
+a511 1
+        pop rot dup not if pop "72" then
+d525 1
+a525 1
+        pop rot STRstrip dup not if pop "72" then
+d591 1
+d619 1
+a619 1
+        32 EDITansi_display
+d664 1
+a664 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.14 $
+@
+
+
+1.14
+log
+@Entering a period without any commands no longer results in an program
+error.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/16 02:03:22 $ $Revision: 1.13 $             )
+d57 4
+d212 2
+a213 1
+      me @@ "^RED^Invalid Command." ansi_notify pop 1 exit
+d659 1
+a659 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.13 $
+@
+
+
+1.13
+log
+@Fixed bug in EDITORargument that caused the editor to crash after being
+passed certain combinations of "invalid line references".
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/05 01:34:02 $ $Revision: 1.12 $             )
+d57 4
+d207 3
+d654 1
+a654 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.12 $
+@
+
+
+1.12
+log
+@Wizbit change.
+@
+text
+@d4 51
+a54 49
+( lib-editor: $Date: 2004/04/03 05:44:11 $ $Revision: 1.11 $
+  Original Author: Foxen                                                 )
+( ---------------------------------------------------------------------- )
+( This code is hereby stated as public domain, for use in any program
+  It might be needed for, under the condition that the original author's
+  name is kept in the header, and full credit is given online in any
+  programs written with it.
+                - 6/25/1991 by Foxen                 foxen@@netcom.com    )
+  
+( To use these routines from a program of yours, just do a:
+  $include $lib/editor
+  
+EDITOR takes a bunch of strings on the stack, with a count on top, and
+  returns a set of strings with the count, and a string on top containing
+  the command used to exit. [so you can have abort or end.]  The format is:
+      {strs} count -- {strs'} count' exitcmdstr
+  
+EDITORloop is more complex. it takes the strings and count [hereafter
+  to be referred to as a range], a string containing the space
+  seperated names of the commands it should return on [in addition to
+  abort and end], the position in the range that you want it to set the
+  insertion point at, and the command you want it to first execute
+  [usually ".i"].
+    It lets the user edit the range until the user enters a .command that
+  you have listed in the mask, or until they enter .end, or .abort.
+    It returns the new range, the mask, the insertion point that the user
+  was at when it returned, and the arguments that were given to the
+  command that made the routine return, and the name of the command
+  that made it return.  The format of a .command is:
+      .cmd <startline> <endline> =<argstr>
+  So, overall, the input/output of the function is:
+      {rng} mask curpos cmdstr --
+                      {rng'} mask curpos argstr startline endline exitcmd
+  
+EDITORparse takes and returns arguments identically to .sedit_loop,
+  but only executes the command you pass it without doing any more
+  editing on the range, before returning.
+  
+EDITORheader takes and returns no arguments, but prints out a standard
+  message about you entering the editor.  EDITOR calls this automatically.
+
+  ***** Stack based string range editor -- EDITOR *****
+ 1  EDITOR      [ {string_range} -- {string_range'} ]
+ 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ]
+ 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1     or
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ]
+)
+( ---------------------------------------------------------------------- )
+d57 3
+d145 13
+a157 5
+    dup "+" 1 strncmp not if 1 strcut swap pop atoi +
+    else dup "-" 1 strncmp not if 1 strcut swap pop atoi -
+    else dup number? if atoi swap pop
+    else pop pop pop 1 EDITORerror 0
+    then then then
+d160 1
+a160 1
+    dup 1 < if pop pop 1
+d202 10
+a211 2
+    " " STRsplit swap 1 strcut swap pop swap
+    "=" STRsplit swap STRstrip
+d641 4
+a644 4
+@@set $tmp/prog1=/_defs/editor:"$lib/editor" match "editor" call
+@@set $tmp/prog1=/_defs/editorheader:"$lib/editor" match "editorheader" call
+@@set $tmp/prog1=/_defs/editorloop:"$lib/editor" match "editorloop" call
+@@set $tmp/prog1=/_defs/editorparse:"$lib/editor" match "editorparse" call
+d647 1
+a647 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.11 $
+@
+
+
+1.11
+log
+@Added the .ruler command.
+Spotted a minor bug in .color that would allow you to 'color' with
+things like 'r' and 'f' ...because it thought they were red and flash.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/03 00:07:11 $ $Revision: 1.10 $
+d55 5
+d619 1
+a619 1
+@@set $tmp/prog1=W4
+d626 1
+a626 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.10 $
+@
+
+
+1.10
+log
+@Fixed yet another bug in the new .color command.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/01 23:13:38 $ $Revision: 1.9 $
+d55 3
+d455 1
+d457 1
+a457 1
+        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT"
+a460 1
+        3 pick "^" swap strcat "^" strcat 3 put
+d509 21
+d543 1
+a543 1
+    dup "h" stringcmp not if
+d569 1
+d576 1
+a576 1
+        31 EDITansi_display
+d621 1
+a621 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.9 $
+@
+
+
+1.9
+log
+@You'd think I'd have learned by now to not put parens in my RCS log entries.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/01 23:11:31 $ $Revision: 1.8 $
+d55 3
+d455 1
+a455 1
+          14 EDITORerror 1 exit
+d589 1
+a589 1
+@@set $tmp/prog1=M3
+d596 1
+a596 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.8 $
+@
+
+
+1.8
+log
+@Fixed issue where .color # # (no color specified) would cause the editor
+to crash.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/04/01 05:39:12 $ $Revision: 1.7 $
+d55 4
+d62 1
+a62 1
+
+d66 1
+a66 1
+
+d70 1
+a70 1
+
+d73 1
+a73 1
+
+d76 1
+a76 1
+
+a78 1
+
+d593 1
+a593 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.7 $
+@
+
+
+1.7
+log
+@Added feature which allows the user to prepend each line in a range with
+a color code. Updated documentation for recent changes.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2004/02/20 17:09:24 $ $Revision: 1.6 $
+d55 4
+d442 7
+a448 3
+        pop 3 pick "" "^" subst toupper 3 put 3 pick
+        "REDBLACKCRIMSONFORESTBROWNNAVYVIOLETAQUAGRAYGLOOMBLUEPURPLEGREENCYANYELLOWWHITEBBLACKBBLUEBREDBPURPLEBGREENBCYANBBROWNBGRAYNORMALFLASHINVERT" swap
+        instr not if
+d536 1
+d545 1
+a545 1
+        30 EDITansi_display
+d590 1
+a590 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.6 $
+@
+
+
+1.6
+log
+@Colorized the responses.  Added two listing commands that
+are idential to .l and .p, except they display in color
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2001/01/22 02:17:34 $ $Revision: 1.5 $
+d55 4
+d100 1
+d104 1
+a104 1
+    then then then
+d436 14
+d531 2
+a532 2
+"^NOTE^                           d - descending, i - case-insensitive,"
+"^NOTE^                           s - case-sensitive. Default is: ai."
+d581 1
+a581 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.5 $
+@
+
+
+1.5
+log
+@Fixed a small bug in the sort where it didn't returne the
+correct info to the editor.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 2000/01/10 21:03:38 $ $Revision: 1.3 $
+d55 4
+d100 2
+a101 2
+    "< ** " swap strcat " ** >" strcat
+    me @@ swap notify
+d135 1
+a135 1
+    me @@ swap notify
+d144 2
+a145 2
+        "< In the editor > You say, \"" over strcat "\"" strcat
+        me @@ swap notify me @@ name " says, \"" strcat
+d147 1
+a147 1
+        me @@ location me @@ rot notify_except
+d153 2
+a154 2
+        "< In the editor > " over strcat
+        me @@ swap notify
+d156 1
+a156 1
+        rot notify_except
+d200 1
+a200 1
+        dup 0 0 "< Insert at line %1 >" EDITORmesg
+d229 1
+a229 1
+        dup 1 - 0 0 "< %1 lines sorted. >" EDITORmesg
+d239 1
+a239 1
+        "< deleting %2 lines starting at line %1  (Now current line) >"
+d253 13
+a265 1
+        0 "< listed %1 lines starting at line %2 >"
+d277 13
+a289 1
+        0 "< listed %1 lines starting at line %2 >"
+d298 1
+a298 1
+            dup 0 0 "< Found.  Going to line %1 >"
+d303 1
+a303 1
+            "< pattern not found >"
+a315 1
+  
+d317 1
+a317 1
+        "< Moved %1 lines from line %2 to line %3.  (dest now curr line) >"
+a327 1
+  
+d329 1
+a329 1
+        "< Copied %1 lines from line %2 to line %3.  (now current line) >"
+d368 1
+a368 1
+        "< Joining %1 lines starting at line %2. (Now current line) >"
+d385 1
+a385 1
+            "< Split line %1.  (Now current line) >"
+d390 1
+a390 1
+            0 0 0 "< Text not found.  Line not split. >"
+d402 1
+a402 1
+        rot dup 4 put 0 0 "< Editing line %1. >" EDITORmesg
+d404 1
+a404 1
+        "##edit> " swap strcat me @@ swap notify
+d413 1
+a413 1
+        "< Left justifying %1 lines starting at line %2. >"
+d428 1
+a428 1
+        "< Centered %1 lines starting at line %2 for screenwidth %3. >"
+d442 1
+a442 1
+        "< Right justified %1 lines starting at line %2 to column %3. >"
+d456 1
+a456 1
+        "< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
+d470 1
+a470 1
+        "< Indented %1 lines starting at line %2, %3 columns. >"
+d475 1
+a475 1
+        0 0 0 "< Editor exited. >"
+d481 1
+a481 1
+        0 0 0 "< Edit aborted. >"
+d487 31
+a517 29
+"          MUFedit Help Screen.  Arguments in [] are optional."
+"    Any line not starting with a '.' is inserted at the current line."
+"Lines starting with '..', '.\"' , or '.:' are added with the '.' removed."
+"-------  st = start line   en = end line   de = destination line  -------"
+" .end                    Exits the editor with the changes intact."
+" .abort                  Aborts the edit."
+" .h                      Displays this help screen."
+" .i [st]                 Changes the current line for insertion."
+" .l [st [en]]            Lists the line(s) given. (if none, lists all.)"
+" .p [st [en]]            Like .l, except that it prints line numbers too."
+" .del [st [en]]          Deletes the given lines, or the current one."
+" .copy [st [en]]=de      Copies the given range of lines to the dest."
+" .move [st [en]]=de      Moves the given range of lines to the dest."
+" .find [st]=text         Searches for the given text starting at line start."
+" .repl [st [en]]=/old/new  Replaces old text with new in the given lines."
+" .join [st [en]]         Joins together the lines given in the range."
+" .split [st]=text        Splits given line into 2 lines.  Splits after text"
+" .left [st [en]]         Aligns all the text to the left side of the screen."
+" .center [st [en]]=cols  Centers the given lines for cols screenwidth."
+" .right [st [en]]=col    Right justifies to column col."
+" .indent [st [en]]=cols  Indents or undents text by cols characters"
+" .format [st [en]]=cols  Formats text nicely to cols columns."
+" .sort [=method]         Sorts all lines. Method can have: a - ascending,"
+"                         d - descending, i - case-insensitive,"
+"                         s - case-sensitive. Default is: ai."
+"---- Example line refs:  $ = last line, . = curr line, ^ = first line. ----"
+"12 15 (lines 12 to 15)    5 $ (line 5 to last line)    ^+3 6 (lines 4 to 6)"
+".+2 $-3 (curr line + 2 to last line - 3)     5 +3 (line 5 to curr line + 3)"
+        28 EDITdisplay
+d530 8
+a537 8
+    "< Entering editor.  Type '.h' on a line by itself for help. >"
+    me @@ swap notify
+    "< '.end' will exit the editor.   '.abort' aborts the edit.  >"
+    me @@ swap notify
+    "<  Poses and says will pose and say as usual.  To start a   >"
+    me @@ swap notify
+    "<   line with : or \" just preceed it with a period  ('.')   >"
+    me @@ swap notify
+d562 1
+a562 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.4
+log
+@Added the new sort command to the editor.
+@
+text
+@d202 1
+a202 1
+        2 pick 2 + swap
+d224 2
+a225 2
+        EDITsort
+        3 - 0 0 "< %1 lines sorted. >" EDITORmesg
+@
+
+
+1.3
+log
+@Documentation cleanup.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 1998/07/29 17:54:23 $ $Revision: 1.2 $
+d55 3
+d91 1
+d95 1
+a95 1
+    then then
+d199 29
+d430 1
+a430 1
+"< Formatted %1 lines starting at line %2 (Now curr line) to %3 columns. >"
+d483 3
+d489 1
+a489 1
+        25 EDITdisplay
+d534 1
+a534 1
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+@
+
+
+1.2
+log
+@Cleaned up documentation.
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date: 1998/07/29 04:18:47 $ $Revision: 1.1 $
+d55 3
+a491 1
+@@set $tmp/prog1=/_/de:lib-editor:List lines 7-37 for documentation
+d496 4
+a499 3
+@@set $tmp/prog1=/_docs:@@list $lib/editor=7-37
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.1 $
+"Installation of lib-editor complete.@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+( lib-editor: $Date$ $Revision$
+d44 7
+d54 4
+a57 1
+  $Log$
+a60 3
+  
+  
+  
+d62 2
+a71 10
+$include $lib/edit
+  
+( ***** Stack based string range editor -- EDITOR *****
+ 1  EDITOR      [ {string_range} -- {string_range'} ]
+ 2  EDITORloop  [ {str_rng} maskstr currline cmdstr --
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname ]
+ 3  EDITORparse [ {string_range} command -- {string_range'} mask curr 1     or
+                  {str_rng'} mask currline arg3str arg1ing arg2int cmdname 0 ]
+)
+  
+a92 1
+  
+a119 1
+  
+a126 1
+  
+d489 1
+a489 1
+@@set $tmp/prog1=/_/de:lib-editor:List lines 1-50 for documentation
+d494 2
+a495 2
+@@set $tmp/prog1=/_docs:@@list $lib/editor=1-50
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+@

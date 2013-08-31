@@ -1,0 +1,104 @@
+head	1.3;
+access;
+symbols
+	GlowMUF1-1-1:1.3
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2005.09.22.20.30.24;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.12.22.18.36.54;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2000.12.22.18.27.01;	author feaelin;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.3
+log
+@Removed duplicative library functions from lib-glow-standard:
+.debug-on, .debug-off, .debug-line. All are now inserver defines without
+the period.
+Updated muf prgs that used the period versions to use the inserver define.
+@
+text
+@"Beginning installation of cmd-tell...
+@@prog cmd-tell
+1 99999 d
+1 i
+( cmd-tell: $Date: 2000/12/22 18:36:54 $ $Revision: 1.2 $                                                 )
+( Author: PakRat                                                              )
+( --------------------------------------------------------------------------- )
+$include $lib/glowstandard
+$include $lib/strings
+
+: do-tell ( s -- )
+  dup " " instr over "=" instr not and if
+  " " STR-split
+  "=" swap strcat strcat
+  then
+  "$cmd/page" match call
+;
+.
+c
+q
+@@register cmd-tell=cmd/tell
+@@register #me cmd-tell=tmp/prog1
+@@set $tmp/prog1=M3
+@@action tell=here=tmp/exit1
+@@link $tmp/exit1=$tmp/prog1
+@@set $tmp/exit1=D
+@@set $tmp/exit1=M3
+@@set $tmp/exit1=/_/de:Usage: tell player message
+@@set $tmp/prog1=_version:FM$Revision: 1.2 $
+"Installation of cmd-tell complete.
+@
+
+
+1.2
+log
+@Removed extraneou s properties
+@
+text
+@d5 1
+a5 1
+( cmd-tell: $Date: 2000/12/22 18:27:01 $ $Revision: 1.1 $                                                 )
+d13 1
+a13 1
+  " " .split2
+d29 1
+a29 1
+@@set $tmp/prog1=_version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+( cmd-tell: $Date$ $Revision$                                                 )
+a27 4
+@@set $tmp/exit1=/@@u/p/formats/opage:%n pages, "%m" to %t.
+@@set $tmp/exit1=/@@u/p/formats/opose:In a page-pose to %t, %n %m
+@@set $tmp/exit1=/@@u/p/formats/page:You page, "%m" to %n.
+@@set $tmp/exit1=/@@u/p/formats/pose:You page-pose, "%i %m" to %n
+d29 1
+a29 1
+@@set $tmp/prog1=_version:FM$Revision$
+@

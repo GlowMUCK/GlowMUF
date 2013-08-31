@@ -1,0 +1,247 @@
+head	1.5;
+access;
+symbols
+	GlowMUF1-1-1:1.5
+	GlowMUF102:1.2;
+locks; strict;
+comment	@# @;
+
+
+1.5
+date	2005.04.07.21.19.47;	author feaelin;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2005.04.06.18.27.37;	author feaelin;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2005.03.21.01.31.42;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2000.01.11.15.36.15;	author feaelin;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	98.08.23.16.48.30;	author glow;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.5
+log
+@Added Library Symbols
+@
+text
+@wh me=Beginning installation of lib-connects...
+@@prog lib-connects
+1 99999 d
+1 i
+( lib-connects: $Date: 2005/04/06 18:27:37 $ $Revision: 1.4 $                 )
+( Purpose: Provides words related to various player connections               )
+( Author: Unknown                                                             )
+( Contributors: None                                                          )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( CONN-firstconn  d -- i     Returns d's first connection number              )
+( CONN-findconn   a d -- i   Using function at address a for comparison,      )
+(                            finds the connection meeting that criteria       )
+( CONN-lastconn   d -- i     Returns d's last connection number               )
+( CONN-leastidle  d -- i     Returns d's least idle connection                )
+( CONN-mostidle   d -- i     Returns d's most idle connection                 )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-connects,v $
+  Revision 1.4  2005/04/06 18:27:37  feaelin
+  Updated documentation. Fixed library words to be in line with new
+  standard.
+
+  Revision 1.3  2005/03/21 01:31:42  feaelin
+  General maintenance and documentation updates
+
+  Revision 1.2  2000/01/11 15:36:15  feaelin
+  Added documentation.
+)
+( --------------------------------------------------------------------------- )
+: findconn (a d -- i)
+  0 swap concount
+  begin
+    dup while
+    dup condbref 3 pick dbcmp if
+      3 pick if
+ 3 pick over 6 pick execute if
+   dup 3 put
+ then
+      else
+ dup 3 put
+      then
+    then
+    1 -
+  repeat
+  pop pop swap pop
+;
+ 
+: leastidle-comp conidle swap conidle < ;
+ 
+: leastidle
+  (returns the number of the least idle connection for the given player)
+  'leastidle-comp swap findconn
+;
+ 
+: mostidle-comp conidle swap conidle > ;
+ 
+: mostidle
+  (returns the number of the most idle connection for the given player)
+  'mostidle-comp swap findconn
+;
+ 
+: firstconn (d -- i)
+  1 begin
+    dup concount <= while
+    dup condbref 3 pick dbcmp if swap pop exit then
+    1 +
+  repeat
+  pop pop 0
+;
+ 
+: lastconn (d -- i)
+  concount begin
+    dup while
+    dup condbref 3 pick dbcmp if swap pop exit then
+    1 -
+  repeat
+  pop pop 0
+;
+public findconn
+public leastidle
+public mostidle
+public firstconn
+public lastconn
+.
+c
+q
+@@register lib-connects=lib/connects
+@@set $lib/connects=L
+@@set $lib/connects=M3
+@@set $lib/connects=/_defs/CONN-findconn:"$lib/connects" match "findconn" call
+@@set $lib/connects=/_defs/CONN-firstconn:"$lib/connects" match "firstconn" call
+@@set $lib/connects=/_defs/CONN-lastconn:"$lib/connects" match "lastconn" call
+@@set $lib/connects=/_defs/CONN-leastidle:"$lib/connects" match "leastidle" call
+@@set $lib/connects=/_defs/CONN-mostidle:"$lib/connects" match "mostidle" call
+@@set $lib/connects=/_/de:lib-connects: @@list $lib/connects=1-10 for documentation.
+@@set $lib/connects=/_docs:@@list $lib/connects=1-10
+@@set $lib/connects=/_lib-version:FM$Revision: 1.4 $
+@@set $lib/connects=/_lib-symbol:CONN
+wh me=Installation of lib-connects completed.
+@
+
+
+1.4
+log
+@Updated documentation. Fixed library words to be in line with new
+standard.
+@
+text
+@d5 1
+a5 1
+( lib-connects: $Date: 2005/03/21 01:31:42 $ $Revision: 1.3 $                 )
+d20 4
+d98 2
+a99 1
+@@set $lib/connects=/_lib-version:FM$Revision: 1.3 $
+@
+
+
+1.3
+log
+@General maintenance and documentation updates
+@
+text
+@d1 1
+a1 1
+"Beginning installation of lib-connects...
+d5 5
+a9 2
+( lib-connects: $Date: 2000/01/11 15:36:15 $ $Revision: 1.2 $                 )
+( Originally from the Glowmuck MUF distribution                               )
+d11 6
+a16 6
+( firstconn  d -- i              Returns d's first connection number          )
+( findconn   a d -- i            Using function at address a for comparison,  )
+(                                finds the connection meeting that criteria   )
+( lastconn   d -- i              Returns d's last connection number           )
+( leastidle  d -- i              Returns d's least idle connection            )
+( mostidle   d -- i              Returns d's most idle connection             )
+d20 3
+d44 1
+a44 1
+  
+d46 1
+d51 1
+d53 1
+d58 1
+d67 1
+a83 1
+@@register lib-connects=cmd/look
+d85 11
+a95 12
+@@register #me lib-connects=tmp/prog1
+@@set $tmp/prog1=L
+@@set $tmp/prog1=M3
+@@set $tmp/prog1=/_defs/conn-findconn:"$lib/connects" match "findconn" call
+@@set $tmp/prog1=/_defs/conn-firstconn:"$lib/connects" match "firstconn" call
+@@set $tmp/prog1=/_defs/conn-lastconn:"$lib/connects" match "lastconn" call
+@@set $tmp/prog1=/_defs/conn-leastidle:"$lib/connects" match "leastidle" call
+@@set $tmp/prog1=/_defs/conn-mostidle:"$lib/connects" match "mostidle" call
+@@set $tmp/prog1=/_/de:lib-connects: @@list $lib/connects=1-10 for documentation.
+@@set $tmp/prog1=/_docs:@@list $lib/connects=1-10
+@@set $tmp/prog1=/_lib-version:FM$Revision: 1.2 $
+"Installation of lib-connects completed.
+@
+
+
+1.2
+log
+@Added documentation.
+@
+text
+@d5 1
+a5 1
+( lib-connects: $Date: 1998/08/23 16:48:30 $ $Revision: 1.1 $                 )
+d17 2
+a18 3
+  Revision 1.1  1998/08/23 16:48:30  glow
+  Initial revision
+
+d85 1
+a85 1
+@@set $tmp/prog1=/_lib-version:FM$Revision$
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 9
+a13 2
+( lib-connects: $Date$ $Revision$
+  Originally from the Glowmuck MUF distribution
+d16 4
+a19 1
+  $Log$
+d84 3
+a86 2
+@@set $tmp/prog1=/_docs:@@list $lib/connects=1-29
+@@set $tmp/prog1=/_lib-version:FM1.0
+@
