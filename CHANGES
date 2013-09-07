@@ -1,4 +1,4 @@
-CHANGES $Date: 2007/04/20 03:45:28 $ $Revision: 1.21 $
+CHANGES
 Author: Feaelin
 -------------------------------------------------------------------------------
 I try to keep all the changes on a by program basis, so that you can install
@@ -7,6 +7,40 @@ all the changes in, so it is wise to check the CVS repository for each program
 and their current versions, or check the version number in the individual files
 and compare it to the version shown by @register.
 -------------------------------------------------------------------------------
+
+2013 September 07: Release 1.2
+-------------------------------------------------------------------------------
+* lib-unparseobj: Increased flexibility of FENI support.
+                  Fixed bug in color-query.
+                  Sped up typical special-unparse calls.
+* lib-strings:    STR-parse now parses -cmd and /cmd.
+                  Added STR-countOccurrence.
+* cmd-page:       Fixed bug where 'Queued Event.' wasn't being handled.
+                  Fixed notifying new players that page has been changed.
+                  Fixed bug that would cause guest characters to get an error
+                  while connecting.
+                  Fixed issue where paging dark wizards didn't behave as
+                  expected.
+                  Reduced dependency on lib-glow-standard.
+                  Dark players are treated as if they are sleeping.
+* lib-look:       More explicit error output for permission denied type errors.
+                  Fixed bug that cause lib-look content-handlers to crash.
+                  Fixed bug that allowed mortals to far-look.
+                  Added @lookatallow and @lookatdesc commands.
+                  Fixed bug in dbdesc that left junk on the stack.
+                  Fixed bugs in contents-handler.
+* lib-match:      Fixed bug in noisy-plmatch that would match things others than
+                  players.
+                  Fixed bug in noisy_pmatch where *name didn't work as expected.
+                  Colorized messages for noisy matches.
+* cmd-find:       Cleaned up output so that it fits nicely on an 80-col terminal.
+* cmd-recycle     Notifies wizards the owner of an item that isn't theirs that
+                  they control.
+* lib-wordwrap:   Added word that presents the line-list in the opposite order.
+* cmd-roomcheck:  Split into path aware and not-path-aware versions.
+
+
+
 2007 April 19: FM 1.1.1
 -------------------------------------------------------------------------------
 00) Most Programs:Various updates to documentation and installation scripts.
@@ -71,11 +105,11 @@ and compare it to the version shown by @register.
                   Added additional library calls to the new @detail related
                   words. General documentation cleanup. Support for @idesc
                   added. Fixed 'me' & 'here'matching to work as you might
-  		  					expect. FAIL messages now use ^FAIL^ to colorize.
-								  Fixed colorization issues with LOOKshort-list*. WARNING!
-								  This has a hidden side-effect. lib-reflist relies on this
-								  public library word to generate a formatted list.  Any
-				          program relying on lib-reflist may generate colorized strings
+  		  expect. FAIL messages now use ^FAIL^ to colorize.
+		  Fixed colorization issues with LOOKshort-list*. WARNING!
+		  This has a hidden side-effect. lib-reflist relies on this
+		  public library word to generate a formatted list.  Any
+	          program relying on lib-reflist may generate colorized strings
                   where they didn't before. Unfortunately, many of those same
                   programs do not use ansi_notify, which means instead of
                   seeing colored text, you see '^RED^Fred rides away' etc.
@@ -85,9 +119,9 @@ and compare it to the version shown by @register.
                   New Feature: ~look props. If a ~look/something:ref prop is
                   set anywhere in the environment, the program 'ref' will be
                   called by lib-look, with (Look) on top of the stack.
-            		  New Feature: Made the standard filter public so that extended
-            		  filters can be written without having to recreate the
-            		  functionality of the standard filter yourself.
+                  New Feature: Made the standard filter public so that extended
+                  filters can be written without having to recreate the
+                  functionality of the standard filter yourself.
                   Added support for Wixenstyx's FENI library. If it exists on
                   the server, lib-look will use it.
 05) cmd-teleport: Added define to allow customization of the format of the
