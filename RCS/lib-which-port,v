@@ -1,9 +1,19 @@
-head	1.1;
+head	1.3;
 access;
 symbols;
 locks; strict;
 comment	@# @;
 
+
+1.3
+date	2014.08.23.20.30.25;	author feaelin;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.08.23.20.25.26;	author feaelin;	state Exp;
+branches;
+next	1.1;
 
 1.1
 date	2014.08.23.20.16.59;	author feaelin;	state Exp;
@@ -16,9 +26,9 @@ desc
 @
 
 
-1.1
+1.3
 log
-@Initial revision
+@Fix path on the screenreaderport property
 @
 text
 @wh me=Beginning installation of lib-which-port...
@@ -26,13 +36,13 @@ text
 @@prog lib-which-port
 1 99999 d
 1 i
-( lib-which-port: $Date$ $Revision$                 )
+( lib-which-port: $Date: 2014/08/23 20:25:26 $ $Revision: 1.2 $               )
 ( Purpose: Provides methods for checking what port someone connected to       )
 ( Author: Feaelin                                                             )
 ( Dependencies: None                                                          )
 ( --------------------------------------------------------------------------- )
 ( Where relevant, all of these functions should be glow-ansi-color code aware.)
-(
+(                                                                             )
 ( PORT-onScreenReaderPort? [ player-ref -- boolean ]                          )
 (     Returns 1 if the player has connected to the screen reader port on any  )
 (     of their connections. The screen reader port is retrieved from the      )
@@ -43,11 +53,17 @@ text
 (     connections.                                                            )
 ( --------------------------------------------------------------------------- )
 (
-  $Log$
+  $Log: lib-which-port,v $
+  Revision 1.2  2014/08/23 20:25:26  feaelin
+  Cleaned up stray parentheses
+ 
+  Revision 1.1  2014/08/23 20:16:59  feaelin
+  Initial revision
+ 
 )  
 ( --------------------------------------------------------------------------- )
-$def SCREEN_READER_PORT_PROPERTY "/~/sys/screen_reader_port"
-
+$def SCREEN_READER_PORT_PROPERTY "/~sys/screenReaderPort"
+ 
 : connectedOnPort? ( player-database-reference i-port -- boolean )
   "P i" checkargs
   swap descriptors
@@ -62,12 +78,12 @@ $def SCREEN_READER_PORT_PROPERTY "/~/sys/screen_reader_port"
   UNTIL
   pop pop 0 exit
 ; public connectedOnPort?
-
+ 
 : onScreenReaderPort? ( player-database-reference -- boolean )
   "P" checkargs
   #0 SCREEN_READER_PORT_PROPERTY getpropval connectedOnPort?
 ; public onScreenReaderPort?
-
+ 
 : main ( s -- ) ( for testing )
   pop
   me @@ me @@ 2050 connectedOnPort? intostr ansi_notify
@@ -81,8 +97,55 @@ q
 @@set $lib/which-port=/_defs/PORT-onScreenReaderPort?:onScreenReaderPort?
 @@set $lib/which-port=/_docs:@@list $lib/which-port=1-16
 @@set $lib/which-port=/_/de:lib-which-port: List lines 1-16 for documentation.
-@@set $lib/which-port=/_lib-version:FM$Revision$
+@@set $lib/which-port=/_lib-version:FM$Revision: 1.2 $
 @@set $lib/which-port=/_version:
 @@set $lib/which-port=/_lib-symbol:PORT
 wh me=Installation of lib-which-port complete.
+@
+
+
+1.2
+log
+@Cleaned up stray parentheses
+@
+text
+@d6 1
+a6 1
+( lib-which-port: $Date: 2014/08/23 20:16:59 $ $Revision: 1.1 $               )
+d24 3
+d32 1
+a32 1
+$def SCREEN_READER_PORT_PROPERTY "/~/sys/screen_reader_port"
+d67 1
+a67 1
+@@set $lib/which-port=/_lib-version:FM$Revision: 1.1 $
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 1
+a6 1
+( lib-which-port: $Date$ $Revision$                 )
+d12 1
+a12 1
+(
+d23 4
+a26 1
+  $Log$
+d30 1
+a30 1
+
+d45 1
+a45 1
+
+d50 1
+a50 1
+
+d64 1
+a64 1
+@@set $lib/which-port=/_lib-version:FM$Revision$
 @
