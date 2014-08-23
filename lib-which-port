@@ -3,7 +3,7 @@ wh me=Beginning installation of lib-which-port...
 @prog lib-which-port
 1 99999 d
 1 i
-( lib-which-port: $Date: 2014/08/23 20:35:12 $ $Revision: 1.4 $               )
+( lib-which-port: $Date: 2014/08/23 21:11:16 $ $Revision: 1.5 $               )
 ( Purpose: Provides methods for checking what port someone connected to       )
 ( Author: Feaelin                                                             )
 ( Dependencies: None                                                          )
@@ -22,6 +22,9 @@ wh me=Beginning installation of lib-which-port...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-which-port,v $
+  Revision 1.5  2014/08/23 21:11:16  feaelin
+  Fix library word definitions.
+
   Revision 1.4  2014/08/23 20:35:12  feaelin
   Add setting of W and L flags.
 
@@ -69,11 +72,11 @@ q
 @register lib-which-port=lib/which-port
 @set $lib/which-port=W
 @set $lib/which-port=L
-@set $lib/which-port=/_defs/PORT-connectedOnPort?:connectedOnPort?
-@set $lib/which-port=/_defs/PORT-onScreenReaderPort?:onScreenReaderPort?
+@set $lib/which-port=/_defs/PORT-connectedOnPort?:"$lib/which-port" match "connectedOnPort?" call
+@set $lib/which-port=/_defs/PORT-onScreenReaderPort?:"$lib/which-port" match "onScreenReaderPort?" call
 @set $lib/which-port=/_docs:@list $lib/which-port=1-16
 @set $lib/which-port=/_/de:lib-which-port: List lines 1-16 for documentation.
-@set $lib/which-port=/_lib-version:FM$Revision: 1.4 $
+@set $lib/which-port=/_lib-version:FM$Revision: 1.5 $
 @set $lib/which-port=/_version:
 @set $lib/which-port=/_lib-symbol:PORT
 wh me=Installation of lib-which-port complete.
