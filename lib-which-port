@@ -1,0 +1,67 @@
+wh me=Beginning installation of lib-which-port...
+@tel $lib/which-port=me
+@prog lib-which-port
+1 99999 d
+1 i
+( lib-which-port: $Date: 2014/08/23 20:16:59 $ $Revision: 1.1 $                 )
+( Purpose: Provides methods for checking what port someone connected to       )
+( Author: Feaelin                                                             )
+( Dependencies: None                                                          )
+( --------------------------------------------------------------------------- )
+( Where relevant, all of these functions should be glow-ansi-color code aware.)
+(
+( PORT-onScreenReaderPort? [ player-ref -- boolean ]                          )
+(     Returns 1 if the player has connected to the screen reader port on any  )
+(     of their connections. The screen reader port is retrieved from the      )
+(     /~/sys/screen_reader_port integer property on #0.                       )
+(                                                                             )
+( PORT-connectedOnPort? [ player-ref port -- bolean ]                         )
+(     Returns 1 if the player has connected to the given port on any of their )
+(     connections.                                                            )
+( --------------------------------------------------------------------------- )
+(
+  $Log: lib-which-port,v $
+  Revision 1.1  2014/08/23 20:16:59  feaelin
+  Initial revision
+
+)  
+( --------------------------------------------------------------------------- )
+$def SCREEN_READER_PORT_PROPERTY "/~/sys/screen_reader_port"
+
+: connectedOnPort? ( player-database-reference i-port -- boolean )
+  "P i" checkargs
+  swap descriptors
+  BEGIN ( matchport descr1 descr2 descr3 3 )
+    1 -  ( matchport descr1 descr2 descr3 2 )
+    swap descrcon con_listener_port ( matchport descr1 descr2 2 port )
+    over 3 + pick ( matchport descr1 descr2 2 port matchport )
+    = if
+      popn pop 1 exit
+    then
+    dup not
+  UNTIL
+  pop pop 0 exit
+; public connectedOnPort?
+
+: onScreenReaderPort? ( player-database-reference -- boolean )
+  "P" checkargs
+  #0 SCREEN_READER_PORT_PROPERTY getpropval connectedOnPort?
+; public onScreenReaderPort?
+
+: main ( s -- ) ( for testing )
+  pop
+  me @ me @ 2050 connectedOnPort? intostr ansi_notify
+  me @ me @ onScreenReaderPort? intostr ansi_notify
+;
+.
+c
+q
+@register lib-which-port=lib/which-port
+@set $lib/which-port=/_defs/PORT-connectedOnPort?:connectedOnPort?
+@set $lib/which-port=/_defs/PORT-onScreenReaderPort?:onScreenReaderPort?
+@set $lib/which-port=/_docs:@list $lib/which-port=1-16
+@set $lib/which-port=/_/de:lib-which-port: List lines 1-16 for documentation.
+@set $lib/which-port=/_lib-version:FM$Revision: 1.1 $
+@set $lib/which-port=/_version:
+@set $lib/which-port=/_lib-symbol:PORT
+wh me=Installation of lib-which-port complete.
