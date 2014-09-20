@@ -2,7 +2,7 @@ wh me=Beginning installation of cmd-3who...
 @prog cmd-3who
 1 99999 d
 1 i
-( cmd-3who: $Date: 2006/08/15 13:49:08 $ $Revision: 1.5 $                     )
+( cmd-3who: $Date: 2014/09/20 02:55:23 $ $Revision: 1.6 $                     )
 ( Purpose: Provides a who list in 3 column format                             )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin                                                       )
@@ -13,6 +13,10 @@ wh me=Beginning installation of cmd-3who...
 ( --------------------------------------------------------------------------- )
 ( 
   $Log: cmd-3who,v $
+  Revision 1.6  2014/09/20 02:55:23  feaelin
+  Fix the player count includes hidden players.
+  Refactored to be more maintainable.
+
   Revision 1.5  2006/08/15 13:49:08  feaelin
   Made 3who respect the 'who_hides_dark' sysparm.
 
@@ -30,7 +34,7 @@ wh me=Beginning installation of cmd-3who...
 
 )
  
-: stimestr (i -- s)
+: convertIdleTime (i -- s)
     dup 86400 > if
         86400 / intostr "d" strcat 
     else dup 3600 > if
@@ -46,56 +50,73 @@ wh me=Beginning installation of cmd-3who...
     dup strlen 4 - strcut swap pop
 ;
  
-: mtimestr (i -- s)
-    "" over 86400 > if
-        over 86400 / intostr "d " strcat strcat
-        swap 86400 % swap
-    then
-    over 3600 / intostr
-    "00" swap strcat
-    dup strlen 2 - strcut
-    swap pop strcat ":" strcat
-    swap 3600 % 60 / intostr
-    "00" swap strcat
-    dup strlen 2 - strcut
-    swap pop strcat
+: convertTimeOn (i -- s)
+  "" over 86400 > if
+    over 86400 / intostr "d " strcat strcat
+    swap 86400 % swap
+  then
+  over 3600 / intostr
+  "00" swap strcat
+  dup strlen 2 - strcut
+  swap pop strcat ":" strcat
+  swap 3600 % 60 / intostr
+  "00" swap strcat
+  dup strlen 2 - strcut
+  swap pop strcat
 ;
  
-: collate-entry (i -- s)
-    dup condbref 
-    "who_hides_dark" sysparm "yes" strcmp not if
-      dup "/@/dark" getpropstr 
-      "yes" strcmp not if pop pop 0 exit then
-    then
-    name
-    over contime mtimestr
-    over strlen over strlen +
-    dup 19 < if
-        "                   " (19 spaces)
-        swap strcut swap pop
-    else
-        19 - rot dup strlen rot -
-        strcut pop swap ""
-    then
-    swap "^PURPLE^" swap strcat strcat strcat
-    "^GREEN^" swap strcat
-    swap conidle stimestr "^YELLOW^" swap strcat strcat
-    1
+: buildName (i -- s)
+  condbref name "^GREEN^" swap strcat
 ;
  
-: get-namelist  ( -- {s})
-    0 concount
-    begin
-        dup 0 > while
-        dup collate-entry
-        if rot 1 + rot then
-        1 -
-    repeat
-    pop
+: buildTimeOn (i -- s)
+  contime convertTimeOn "^PURPLE^" swap strcat
+;
+ 
+: buildIdleTime (i -- s)
+  conidle convertIdleTime "^YELLOW^" swap strcat
+;
+ 
+: buildEntry (i -- s)
+  dup buildName
+  over buildTimeOn
+
+  over ansi_strlen over ansi_strlen +
+  dup 19 < if
+    "                   " (19 spaces)
+    swap strcut swap pop
+  else
+    19 - rot dup ansi_strlen rot -
+    strcut pop swap ""
+  then
+  swap strcat strcat
+
+  swap buildIdleTime strcat
+;
+ 
+: playerVisible? ( d -- b )
+  "/@/dark" getpropstr "yes" strcmp 
+  "who_hides_dark" sysparm "yes" strcmp 
+  or
+;
+ 
+: getNameList  ( -- {s})
+  preempt
+  0 concount
+  begin
+    dup 0 > while
+    dup condbref playerVisible? if
+      dup buildEntry
+      rot 1 + rot
+    then
+    1 -
+  repeat
+  pop
+  foreground
 ;
  
 lvar col
-: show-namelist ({s} -- )
+: showNameList ({s} -- )
     begin
         dup 3 >= while
         swap "   " strcat
@@ -119,23 +140,32 @@ lvar col
     pop
 ;
  
-: show-who
-  preempt
+: showHeader ( -- )
+  me @ "^FOREST^Name        ^VIOLET^Time On ^BROWN^Idle  " dup dup strcat strcat ansi_notify  
+;
+ 
+: storePlayerCount ( {s} -- i {s} )
+  dup dup 2 + -1 * rotate
+;
+ 
+: showPlayerCount ( i -- )
+  intostr "^BLUE^" swap strcat " players are connected." strcat me @ swap ansi_notify
+;
+ 
+: main
   pop
-  me @ "^FOREST^Name         ^VIOLET^OnTime ^BROWN^Idle  " dup strcat
-  "^FOREST^Name         ^VIOLET^Ontime ^BROWN^Idle" strcat ansi_notify
-  get-namelist
-  show-namelist
-  concount intostr "^BLUE^" swap strcat
-  " players are connected."
-  strcat me @ swap ansi_notify
+  showHeader
+  getNameList
+  storePlayerCount
+  showNameList
+  showPlayerCount
 ;
 .
 c
 q
 @register cmd-3who=cmd/3who
 @set $cmd/3who=W3
-@set $cmd/3who=_version:FM$Revision: 1.5 $
+@set $cmd/3who=_version:FM$Revision: 1.6 $
 @action 3who;who3;3w=here=tmp/exit1
 @link $tmp/exit1=$cmd/3who
 @set $tmp/exit1=M3
