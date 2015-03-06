@@ -1,1 +1,6 @@
 -text
+cmd-* linguist-language=MUF
+con-* linguist-language=MUF
+lib-* linguist-language=MUF
+lock-* linguist-language=MUF
+macro-* linguist-language=MUF
