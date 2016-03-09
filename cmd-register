@@ -2,7 +2,7 @@ wh me=Beginning Installation of cmd-register
 @prog cmd-register
 1 99999 d
 1 i
-( cmd-register $Date: 2005/09/25 13:01:18 $ $Revision: 1.21 $                 )
+( cmd-register $Date: 2016/03/09 03:22:55 $ $Revision: 1.22 $                 )
 ( Purpose: Handle registration of database items for virtual references       )
 ( Author: Unknown                                                             )
 ( Contributors: Andy, Feaelin                                                 )
@@ -10,6 +10,9 @@ wh me=Beginning Installation of cmd-register
 ( --------------------------------------------------------------------------- )
 ( 
    $Log: cmd-register,v $
+   Revision 1.22  2016/03/09 03:22:55  feaelin
+   Refactor guest checking.
+
    Revision 1.21  2005/09/25 13:01:18  feaelin
    Minor cosmetic update.
 
@@ -91,7 +94,7 @@ lvar regprop
  
 : do-header
   "^WHITE^------------------------------------------------------------------------------" tell
-  "^FOREST^cmd-register: " "$Revision: 1.21 $" 
+  "^FOREST^cmd-register: " "$Revision: 1.22 $" 
   1 strcut swap pop dup strlen 2 - strcut pop strcat tell
   "^WHITE^------------------------------------------------------------------------------" tell
 ;
@@ -228,11 +231,16 @@ lvar regprop
   pop pop
 ;
  
+: isGuest? ( -- boolean )
+  me @ "guest" flag? me @ "truemage" flag? not and
+;
+ 
 : cmd-@register
-  "me" match dup "guest" flag? swap "truemage" flag? not and if
+  "me" match me !
+  isGuest? if
     me @ "^FAIL^This command is unavailable to guests." ansi_notify pop exit
   then
-  "me" match me !
+
   dup "#help2" stringcmp not if do-help-2 exit then
   dup "#help" over if
     over strlen strcut pop stringcmp not else pop pop 0
@@ -384,7 +392,7 @@ q
 @set $tmp/exit1=M3
 @set $tmp/exit1=/_/de:@$cmd/register #help
 @register cmd-register=cmd/register
-@set $cmd/register=/_version:FM$Revision: 1.21 $
+@set $cmd/register=/_version:FM$Revision: 1.22 $
 @set $cmd/register=/_/de:Use '@register #help' or 'help @register' to get more information.
 @set $cmd/register=_docs:@register #help
 wh me=Installation of cmd-register finished.
