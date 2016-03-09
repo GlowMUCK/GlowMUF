@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2012/03/20 14:43:56 $ $Revision: 1.28 $                 )
+( lib-strings: $Date: 2016/03/09 03:16:45 $ $Revision: 1.29 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -58,6 +58,8 @@ wh me=Beginning installation of lib-strings...
 ( STR-singlespace [ string -- string ]                                        )
 (     Compacts pairs of space characters into one space character             )
 (     "foo  bar" --> "foo bar"                                                )
+( STR-capitalize [ string -- string ]                                         )
+(     Capitalizes the first word in the string                                )
 ( STR-cleancommas [ string -- string ]                                        )
 (     Under repair, check back later.                                         )
 ( The following routines are deprecated, do not use them.                     )
@@ -67,6 +69,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.29  2016/03/09 03:16:45  feaelin
+  Add new word 'STR-capitalize' to capitalize the first word of a string.
+
   Revision 1.28  2012/03/20 14:43:56  feaelin
   * Modified STR-parse to handle -cmd /cmd in addition to #cmd
   * Added STR-singlespace to the documentation
@@ -231,6 +236,10 @@ wh me=Beginning installation of lib-strings...
     then
 ;
  
+: STR-capitalize ( string --> string )
+  1 strcut swap toupper swap strcat
+; public STR-capitalize
+ 
 : STR-countOccurrence ( s s -- i )
   dup "" strcmp if
     dup strlen -3 rotate ( s2len s1 s2 )
@@ -240,9 +249,8 @@ wh me=Beginning installation of lib-strings...
   else
     "STR-countOccurrence cannot count empty strings." abort
   then
-;
-public STR-countOccurrence
-
+; public STR-countOccurrence
+ 
 : STR-command ( s -- s )
   dup
   "#" 1 strncmp
@@ -325,6 +333,7 @@ q
 @set $lib/strings=/_defs/STR-asc:"$lib/strings" match "STRasc" call
 @set $lib/strings=/_defs/STR-blank?:ansi_strip striplead "" strcmp not
 @set $lib/strings=/_defs/STR-null?:"" strcmp not
+@set $lib/strings=/_defs/STR-capitalize:"$lib/strings" match "STR-capitalize" call
 @set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
 @set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
@@ -344,7 +353,7 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-60
 @set $lib/strings=/_/de:lib-strings: List lines 1-60 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.28 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.29 $
 @set $lib/strings=/_version:
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.

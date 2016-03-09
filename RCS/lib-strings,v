@@ -1,11 +1,17 @@
-head	1.28;
+head	1.29;
 access;
 symbols
 	GlowMUF1-1-1:1.25
 	GlowMUF102:1.12;
-locks; strict;
+locks
+	feaelin:1.29; strict;
 comment	@# @;
 
+
+1.29
+date	2016.03.09.03.16.45;	author feaelin;	state Exp;
+branches;
+next	1.28;
 
 1.28
 date	2012.03.20.14.43.56;	author feaelin;	state Exp;
@@ -152,17 +158,16 @@ desc
 @@
 
 
-1.28
+1.29
 log
-@* Modified STR-parse to handle -cmd /cmd in addition to #cmd
-* Added STR-singlespace to the documentation
+@Add new word 'STR-capitalize' to capitalize the first word of a string.
 @
 text
 @wh me=Beginning installation of lib-strings...
 @@prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2008/10/24 02:26:18 $ $Revision: 1.27 $                 )
+( lib-strings: $Date: 2012/03/20 14:43:56 $ $Revision: 1.28 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -218,6 +223,8 @@ text
 ( STR-singlespace [ string -- string ]                                        )
 (     Compacts pairs of space characters into one space character             )
 (     "foo  bar" --> "foo bar"                                                )
+( STR-capitalize [ string -- string ]                                         )
+(     Capitalizes the first word in the string                                )
 ( STR-cleancommas [ string -- string ]                                        )
 (     Under repair, check back later.                                         )
 ( The following routines are deprecated, do not use them.                     )
@@ -227,6 +234,10 @@ text
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.28  2012/03/20 14:43:56  feaelin
+  * Modified STR-parse to handle -cmd /cmd in addition to #cmd
+  * Added STR-singlespace to the documentation
+
   Revision 1.27  2008/10/24 02:26:18  feaelin
   Added STR-countOccurrence
 
@@ -387,6 +398,10 @@ text
     then
 ;
  
+: STR-capitalize ( string --> string )
+  1 strcut swap toupper swap strcat
+; public STR-capitalize
+ 
 : STR-countOccurrence ( s s -- i )
   dup "" strcmp if
     dup strlen -3 rotate ( s2len s1 s2 )
@@ -396,9 +411,8 @@ text
   else
     "STR-countOccurrence cannot count empty strings." abort
   then
-;
-public STR-countOccurrence
-
+; public STR-countOccurrence
+ 
 : STR-command ( s -- s )
   dup
   "#" 1 strncmp
@@ -481,6 +495,7 @@ q
 @@set $lib/strings=/_defs/STR-asc:"$lib/strings" match "STRasc" call
 @@set $lib/strings=/_defs/STR-blank?:ansi_strip striplead "" strcmp not
 @@set $lib/strings=/_defs/STR-null?:"" strcmp not
+@@set $lib/strings=/_defs/STR-capitalize:"$lib/strings" match "STR-capitalize" call
 @@set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @@set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
 @@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
@@ -500,10 +515,34 @@ q
 @@set $lib/strings=/_defs/STR-sts:striptail
 @@set $lib/strings=/_docs:@@list $lib/strings=1-60
 @@set $lib/strings=/_/de:lib-strings: List lines 1-60 for documentation.
-@@set $lib/strings=/_lib-version:FM$Revision: 1.27 $
+@@set $lib/strings=/_lib-version:FM$Revision: 1.28 $
 @@set $lib/strings=/_version:
 @@set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
+@
+
+
+1.28
+log
+@* Modified STR-parse to handle -cmd /cmd in addition to #cmd
+* Added STR-singlespace to the documentation
+@
+text
+@d5 1
+a5 1
+( lib-strings: $Date: 2008/10/24 02:26:18 $ $Revision: 1.27 $                 )
+d61 2
+d72 4
+d236 4
+d249 2
+a250 3
+;
+public STR-countOccurrence
+
+d333 1
+d353 1
+a353 1
+@@set $lib/strings=/_lib-version:FM$Revision: 1.27 $
 @
 
 
