@@ -1,9 +1,15 @@
-head	1.5;
+head	1.6;
 access;
 symbols;
-locks; strict;
+locks
+	feaelin:1.6; strict;
 comment	@# @;
 
+
+1.6
+date	2016.02.26.20.49.25;	author feaelin;	state Exp;
+branches;
+next	1.5;
 
 1.5
 date	2014.08.23.21.11.16;	author feaelin;	state Exp;
@@ -36,9 +42,9 @@ desc
 @
 
 
-1.5
+1.6
 log
-@Fix library word definitions.
+@Fix issue where the loop executes once when there are no descriptors.
 @
 text
 @wh me=Beginning installation of lib-which-port...
@@ -46,7 +52,7 @@ text
 @@prog lib-which-port
 1 99999 d
 1 i
-( lib-which-port: $Date: 2014/08/23 20:35:12 $ $Revision: 1.4 $               )
+( lib-which-port: $Date: 2014/08/23 21:11:16 $ $Revision: 1.5 $               )
 ( Purpose: Provides methods for checking what port someone connected to       )
 ( Author: Feaelin                                                             )
 ( Dependencies: None                                                          )
@@ -65,6 +71,9 @@ text
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-which-port,v $
+  Revision 1.5  2014/08/23 21:11:16  feaelin
+  Fix library word definitions.
+
   Revision 1.4  2014/08/23 20:35:12  feaelin
   Add setting of W and L flags.
 
@@ -81,19 +90,18 @@ text
 ( --------------------------------------------------------------------------- )
 $def SCREEN_READER_PORT_PROPERTY "/~sys/screenReaderPort"
  
-: connectedOnPort? ( player-database-reference i-port -- boolean )
+: connectedOnPort? ( playerDatabasReference portToMatch -- boolean )
   "P i" checkargs
-  swap descriptors
-  BEGIN ( matchport descr1 descr2 descr3 3 )
-    1 -  ( matchport descr1 descr2 descr3 2 )
-    swap descrcon con_listener_port ( matchport descr1 descr2 2 port )
-    over 3 + pick ( matchport descr1 descr2 2 port matchport )
+  swap descriptors                                                               ( portToMatch descriptor1 ... descriptorN N )
+  BEGIN dup WHILE                                                                ( portToMatch descriptor1 ... descriptorN N )
+    1 -                                                                          ( portToMatch descriptor1 ... descriptorN N )
+    swap descrcon con_listener_port                                              ( portToMatch descriptor1 ... descriptorN N currentPort )
+    over 3 + pick                                                                ( portToMatch descriptor1 ... descriptorN N currentPort portToMatch )
     = if
       popn pop 1 exit
     then
-    dup not
-  UNTIL
-  pop pop 0 exit
+  REPEAT
+  pop pop 0
 ; public connectedOnPort?
  
 : onScreenReaderPort? ( player-database-reference -- boolean )
@@ -105,6 +113,7 @@ $def SCREEN_READER_PORT_PROPERTY "/~sys/screenReaderPort"
   pop
   me @@ me @@ 2050 connectedOnPort? intostr ansi_notify
   me @@ me @@ onScreenReaderPort? intostr ansi_notify
+  me @@ #1 onScreenReaderPort? intostr ansi_notify
 ;
 .
 c
@@ -116,10 +125,41 @@ q
 @@set $lib/which-port=/_defs/PORT-onScreenReaderPort?:"$lib/which-port" match "onScreenReaderPort?" call
 @@set $lib/which-port=/_docs:@@list $lib/which-port=1-16
 @@set $lib/which-port=/_/de:lib-which-port: List lines 1-16 for documentation.
-@@set $lib/which-port=/_lib-version:FM$Revision: 1.4 $
+@@set $lib/which-port=/_lib-version:FM$Revision: 1.5 $
 @@set $lib/which-port=/_version:
 @@set $lib/which-port=/_lib-symbol:PORT
 wh me=Installation of lib-which-port complete.
+@
+
+
+1.5
+log
+@Fix library word definitions.
+@
+text
+@d6 1
+a6 1
+( lib-which-port: $Date: 2014/08/23 20:35:12 $ $Revision: 1.4 $               )
+d25 3
+d44 1
+a44 1
+: connectedOnPort? ( player-database-reference i-port -- boolean )
+d46 5
+a50 5
+  swap descriptors
+  BEGIN ( matchport descr1 descr2 descr3 3 )
+    1 -  ( matchport descr1 descr2 descr3 2 )
+    swap descrcon con_listener_port ( matchport descr1 descr2 2 port )
+    over 3 + pick ( matchport descr1 descr2 2 port matchport )
+d54 2
+a55 3
+    dup not
+  UNTIL
+  pop pop 0 exit
+d67 1
+d79 1
+a79 1
+@@set $lib/which-port=/_lib-version:FM$Revision: 1.4 $
 @
 
 
