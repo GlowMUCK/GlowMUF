@@ -2,7 +2,7 @@ wh me=Beginning installation of lib-strings...
 @prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2016/03/09 03:16:45 $ $Revision: 1.29 $                 )
+( lib-strings: $Date: 2016/03/10 01:34:05 $ $Revision: 1.30 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -60,8 +60,8 @@ wh me=Beginning installation of lib-strings...
 (     "foo  bar" --> "foo bar"                                                )
 ( STR-capitalize [ string -- string ]                                         )
 (     Capitalizes the first word in the string                                )
-( STR-cleancommas [ string -- string ]                                        )
-(     Under repair, check back later.                                         )
+( STR-cleancommas [ "foo, bar, baz, " --> "foo, bar, and baz" ]               )
+(     Removes a trailing comma and replaces the last comma with 'and'         )
 ( The following routines are deprecated, do not use them.                     )
 ( STR-sls      [       str -- str'          ]  use 'striplead'                )
 ( STR-sts      [       str -- str'          ]  use 'striptail'                )
@@ -69,6 +69,9 @@ wh me=Beginning installation of lib-strings...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.30  2016/03/10 01:34:05  feaelin
+  Updated documentation for STR-cleancommas.
+
   Revision 1.29  2016/03/09 03:16:45  feaelin
   Add new word 'STR-capitalize' to capitalize the first word of a string.
 
@@ -150,7 +153,7 @@ wh me=Beginning installation of lib-strings...
   Corrected wiz-level.
 )  
 ( --------------------------------------------------------------------------- )
-: cleancommas ( s -- s )
+: STR-cleancommas ( string --> string ) ( "foo, bar, baz, " --> "foo, bar, and baz" )
   dup not if exit then
   dup strlen 1 - over ", " rinstr = if dup strlen 2 - strcut pop then
   dup strlen over "," rinstr = if dup strlen 1 - strcut pop then
@@ -159,7 +162,7 @@ wh me=Beginning installation of lib-strings...
      over swap 1 - strcut pop ", " rinstr if
   dup ", " rinstr strcut " and" swap strcat strcat
   else " and " ", " subst then else pop then
-;
+; public STR-cleancommas
  
 : split ( s si -- s s )
    over over instr dup if
@@ -289,10 +292,9 @@ public STRasc
 public STRchr
 public STRparse
 public splitargs
-public cleancommas
 .
-c
-q
+compile
+quit
 @register lib-strings=lib/strings
 @set $lib/strings=L
 @set $lib/strings=W
@@ -336,7 +338,7 @@ q
 @set $lib/strings=/_defs/STR-capitalize:"$lib/strings" match "STR-capitalize" call
 @set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
-@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
+@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "STR-cleancommas" call
 @set $lib/strings=/_defs/STR-command:"$lib/strings" match "STR-command" call
 @set $lib/strings=/_defs/STR-countOccurrence:"$lib/strings" match "STR-countOccurrence" call
 @set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
@@ -353,7 +355,7 @@ q
 @set $lib/strings=/_defs/STR-sts:striptail
 @set $lib/strings=/_docs:@list $lib/strings=1-60
 @set $lib/strings=/_/de:lib-strings: List lines 1-60 for documentation.
-@set $lib/strings=/_lib-version:FM$Revision: 1.29 $
+@set $lib/strings=/_lib-version:FM$Revision: 1.30 $
 @set $lib/strings=/_version:
 @set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.

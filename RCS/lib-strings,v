@@ -1,12 +1,17 @@
-head	1.29;
+head	1.30;
 access;
 symbols
 	GlowMUF1-1-1:1.25
 	GlowMUF102:1.12;
 locks
-	feaelin:1.29; strict;
+	feaelin:1.30; strict;
 comment	@# @;
 
+
+1.30
+date	2016.03.10.01.34.05;	author feaelin;	state Exp;
+branches;
+next	1.29;
 
 1.29
 date	2016.03.09.03.16.45;	author feaelin;	state Exp;
@@ -158,16 +163,16 @@ desc
 @@
 
 
-1.29
+1.30
 log
-@Add new word 'STR-capitalize' to capitalize the first word of a string.
+@Updated documentation for STR-cleancommas.
 @
 text
 @wh me=Beginning installation of lib-strings...
 @@prog lib-strings
 1 99999 d
 1 i
-( lib-strings: $Date: 2012/03/20 14:43:56 $ $Revision: 1.28 $                 )
+( lib-strings: $Date: 2016/03/09 03:16:45 $ $Revision: 1.29 $                 )
 ( Purpose: Provides various string cleanup and parsing routines               )
 ( Author: Unknown                                                             )
 ( Contributors: Feaelin, Andy                                                 )
@@ -225,8 +230,8 @@ text
 (     "foo  bar" --> "foo bar"                                                )
 ( STR-capitalize [ string -- string ]                                         )
 (     Capitalizes the first word in the string                                )
-( STR-cleancommas [ string -- string ]                                        )
-(     Under repair, check back later.                                         )
+( STR-cleancommas [ "foo, bar, baz, " --> "foo, bar, and baz" ]               )
+(     Removes a trailing comma and replaces the last comma with 'and'         )
 ( The following routines are deprecated, do not use them.                     )
 ( STR-sls      [       str -- str'          ]  use 'striplead'                )
 ( STR-sts      [       str -- str'          ]  use 'striptail'                )
@@ -234,6 +239,9 @@ text
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-strings,v $
+  Revision 1.29  2016/03/09 03:16:45  feaelin
+  Add new word 'STR-capitalize' to capitalize the first word of a string.
+
   Revision 1.28  2012/03/20 14:43:56  feaelin
   * Modified STR-parse to handle -cmd /cmd in addition to #cmd
   * Added STR-singlespace to the documentation
@@ -312,7 +320,7 @@ text
   Corrected wiz-level.
 )  
 ( --------------------------------------------------------------------------- )
-: cleancommas ( s -- s )
+: STR-cleancommas ( string --> string ) ( "foo, bar, baz, " --> "foo, bar, and baz" )
   dup not if exit then
   dup strlen 1 - over ", " rinstr = if dup strlen 2 - strcut pop then
   dup strlen over "," rinstr = if dup strlen 1 - strcut pop then
@@ -321,7 +329,7 @@ text
      over swap 1 - strcut pop ", " rinstr if
   dup ", " rinstr strcut " and" swap strcat strcat
   else " and " ", " subst then else pop then
-;
+; public STR-cleancommas
  
 : split ( s si -- s s )
    over over instr dup if
@@ -451,10 +459,9 @@ public STRasc
 public STRchr
 public STRparse
 public splitargs
-public cleancommas
 .
-c
-q
+compile
+quit
 @@register lib-strings=lib/strings
 @@set $lib/strings=L
 @@set $lib/strings=W
@@ -498,7 +505,7 @@ q
 @@set $lib/strings=/_defs/STR-capitalize:"$lib/strings" match "STR-capitalize" call
 @@set $lib/strings=/_defs/STR-center:"$lib/strings" match "center" call
 @@set $lib/strings=/_defs/STR-chr:"$lib/strings" match "STRchr" call
-@@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
+@@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "STR-cleancommas" call
 @@set $lib/strings=/_defs/STR-command:"$lib/strings" match "STR-command" call
 @@set $lib/strings=/_defs/STR-countOccurrence:"$lib/strings" match "STR-countOccurrence" call
 @@set $lib/strings=/_defs/STR-fillfield:"$lib/strings" match "fillfield" call
@@ -515,10 +522,44 @@ q
 @@set $lib/strings=/_defs/STR-sts:striptail
 @@set $lib/strings=/_docs:@@list $lib/strings=1-60
 @@set $lib/strings=/_/de:lib-strings: List lines 1-60 for documentation.
-@@set $lib/strings=/_lib-version:FM$Revision: 1.28 $
+@@set $lib/strings=/_lib-version:FM$Revision: 1.29 $
 @@set $lib/strings=/_version:
 @@set $lib/strings=/_lib-symbol:STR
 wh me=Installation of lib-strings complete.
+@
+
+
+1.29
+log
+@Add new word 'STR-capitalize' to capitalize the first word of a string.
+@
+text
+@d5 1
+a5 1
+( lib-strings: $Date: 2012/03/20 14:43:56 $ $Revision: 1.28 $                 )
+d63 2
+a64 2
+( STR-cleancommas [ string -- string ]                                        )
+(     Under repair, check back later.                                         )
+d72 3
+d153 1
+a153 1
+: cleancommas ( s -- s )
+d162 1
+a162 1
+;
+a291 1
+public cleancommas
+d293 2
+a294 2
+c
+q
+d338 1
+a338 1
+@@set $lib/strings=/_defs/STR-cleancommas:"$lib/strings" match "cleancommas" call
+d355 1
+a355 1
+@@set $lib/strings=/_lib-version:FM$Revision: 1.28 $
 @
 
 
