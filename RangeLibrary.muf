@@ -2,7 +2,7 @@
 !@program RangeLibrary
 1 99999 delete
 1 insert
-( RangeLibrary: $Date: 2016/03/19 16:59:03 $ $Revision: 1.1 $                                             )
+( RangeLibrary: $Date: 2016/03/21 15:20:46 $ $Revision: 1.2 $                                             )
 ( Purpose: Collection of words to perform operations with ranges.             )
 ( Author: Feaelin [Iain E. Davis]                                             )
 ( --------------------------------------------------------------------------- )
@@ -39,7 +39,7 @@
 compile
 quit
 @register RangeLibrary=lib/range
-!@set $lib/range=/_lib-version:$Revision: 1.1 $
+!@set $lib/range=/_lib-version:$Revision: 1.2 $
 !@set $lib/range=/_defs/rangeCat:"$lib/range" match "rangeCat" call
 !@set $lib/range=/_defs/rangeDup:"$lib/range" match "rangeDup" call
 !@set $lib/range=/_defs/rangePop:"$lib/range" match "rangePop" call
@@ -53,7 +53,7 @@ whisper me=---------------------------------------------------------------------
 !@program RangeLibraryTests
 1 99999 delete
 1 insert
-( RangeLibraryTests: $Date: 2016/03/19 16:59:03 $ $Revision: 1.1 $                                        )
+( RangeLibraryTests: $Date: 2016/03/21 15:20:46 $ $Revision: 1.2 $                                        )
 ( Purpose: Testing Suite for RangeLibrary                                     )
 ( Author: Feaelin [Iain E. Davis]                                             )
 ( --------------------------------------------------------------------------- )
@@ -86,6 +86,19 @@ $include $lib/range
   then  
 ;
  
+: rangeCatHandlesTopRangeEmpty ( --> )
+  #5 #3 #7 3 0 rangeCat
+  depth 4 = not if
+    "rangeCatHandlesTopRangeEmpty: Stack should have exactly four items after executing rangeCat." failureNotify cleanup exit
+  then
+  3 = not if
+    "rangeCatHandlesTopRangeEmpty: new range should have a size of 3." failureNotify cleanup exit
+  then
+  #7 dbcmp swap #3 dbcmp and swap #5 dbcmp and not if
+    "rangeCatHandlesTopRangeEmpty: rangeCat altered the order of the range." failureNotify cleanup exit
+  then
+;
+
 : rangeCatHandlesBottomRangeEmpty ( --> )
   0 #5 #3 #7 3 rangeCat
   depth 4 = not if
@@ -98,12 +111,28 @@ $include $lib/range
     "rangeCatHandlesBottomRangeEmpty: rangeCat altered the order of the range." failureNotify cleanup exit
   then
 ;
-
+ 
+: rangeCatConcatenateTwoPopulatedRanges ( --> )
+  #5 #7 #3 3 #2 #4 #6 #8 #10 5 rangeCat
+  depth 9 = not if
+    "rangeCatConcatenateTwoPopulatedRanges: Stack should have exactly nine items after executing rangeCat." failureNotify cleanup exit
+  then
+  8 = not if
+    "rangeCatConcatenateTwoPopulatedRanges: new range should have a size of 8." failureNotify cleanup exit
+  then
+  #10 dbcmp swap #8 dbcmp and swap #6 dbcmp and swap #4 dbcmp and swap #2 dbcmp and not if
+    "rangeCatConcatenateTwoPopulatedRanges: rangeCat changed the order of the second range." failureNotify cleanup exit
+  then
+  #3 dbcmp swap #7 dbcmp and swap #5 dbcmp and not if
+    "rangeCatConcatenateTwoPopulatedRanges: rangeCat changed the order of the first range." failureNotify cleanup exit
+  then
+;
+ 
 : rangeCatTests ( --> )
   rangeCatHandlesTwoEmptyRanges cleanup
   rangeCatHandlesBottomRangeEmpty cleanup
-  #1 #5 #3 #7 #2 5 #1 #5 #3 #7 #2 5 rangeCat
-  ( TODO: one range empty, both ranges empty, both have items)
+  rangeCatHandlesTopRangeEmpty cleanup
+  rangeCatConcatenateTwoPopulatedRanges cleanup
 ;
  
 : rangeDupDupsZero ( --> )
