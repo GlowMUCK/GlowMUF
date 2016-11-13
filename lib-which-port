@@ -3,7 +3,7 @@ wh me=Beginning installation of lib-which-port...
 @prog lib-which-port
 1 99999 d
 1 i
-( lib-which-port: $Date: 2016/02/26 20:49:25 $ $Revision: 1.6 $               )
+( lib-which-port: $Date: 2016/11/13 22:14:10 $ $Revision: 1.7 $               )
 ( Purpose: Provides methods for checking what port someone connected to       )
 ( Author: Feaelin                                                             )
 ( Dependencies: None                                                          )
@@ -22,6 +22,9 @@ wh me=Beginning installation of lib-which-port...
 ( --------------------------------------------------------------------------- )
 (
   $Log: lib-which-port,v $
+  Revision 1.7  2016/11/13 22:14:10  feaelin
+  When a puppet/zombie/npc is using a program that is screen reader aware, tell it that is on a screen reader. This will likely produce clean output for scripts.
+
   Revision 1.6  2016/02/26 20:49:25  feaelin
   Fix issue where the loop executes once when there are no descriptors.
 
@@ -58,9 +61,12 @@ $def SCREEN_READER_PORT_PROPERTY "/~sys/screenReaderPort"
   pop pop 0
 ; public connectedOnPort?
  
-: onScreenReaderPort? ( player-database-reference -- boolean )
-  "P" checkargs
-  #0 SCREEN_READER_PORT_PROPERTY getpropval connectedOnPort?
+: onScreenReaderPort? ( database-reference -- boolean )
+  dup player? if
+    #0 SCREEN_READER_PORT_PROPERTY getpropval connectedOnPort?
+  else
+    0
+  then
 ; public onScreenReaderPort?
  
 : main ( s -- ) ( for testing )
@@ -79,7 +85,7 @@ q
 @set $lib/which-port=/_defs/PORT-onScreenReaderPort?:"$lib/which-port" match "onScreenReaderPort?" call
 @set $lib/which-port=/_docs:@list $lib/which-port=1-16
 @set $lib/which-port=/_/de:lib-which-port: List lines 1-16 for documentation.
-@set $lib/which-port=/_lib-version:FM$Revision: 1.6 $
+@set $lib/which-port=/_lib-version:FM$Revision: 1.7 $
 @set $lib/which-port=/_version:
 @set $lib/which-port=/_lib-symbol:PORT
 wh me=Installation of lib-which-port complete.
